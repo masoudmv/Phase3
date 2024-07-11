@@ -1,4 +1,4 @@
-package model.charactersModel;
+package model;
 
 import java.awt.*;
 import java.util.Arrays;
