@@ -1,8 +1,6 @@
 
 package model.charactersModel;
 
-import model.BulletModel;
-import model.CollectibleModel;
 import model.collision.Collidable;
 import model.collision.CollisionState;
 import model.collision.Impactable;
@@ -14,11 +12,11 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.UUID;
 
-import static controller.Constants.*;
+import static controller.constants.Constants.*;
 import static controller.Controller.*;
 import static controller.Sound.playBubble;
 import static controller.Sound.playDeathSound;
-import static controller.Update.aliveEnemies;
+import static controller.GameLoop.aliveEnemies;
 import static controller.Utils.*;
 
 public class TrigorathModel implements Movable, Collidable, Impactable {
@@ -83,6 +81,13 @@ public class TrigorathModel implements Movable, Collidable, Impactable {
     public Point2D getAnchor() {
         return anchor;
     }
+
+//    @Override
+//    public void setAnchor(Point2D anchor) {
+//
+//    }
+
+
 
     @Override
     public void impact(CollisionState collisionState) {

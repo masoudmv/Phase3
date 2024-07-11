@@ -4,9 +4,6 @@ import java.awt.*;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
-import static controller.Constants.RADIUS;
-import static controller.Constants.TRIGORATH_RADIUS;
-
 public class TrigorathView implements Drawable{
     String id;
     Point2D currentLocation = new Point2D.Double(0,0);
@@ -45,7 +42,7 @@ public class TrigorathView implements Drawable{
         g.setColor(Color.white);
         Polygon poly = new Polygon(xPoly, yPoly, xPoly.length);
         g.setColor(Color.yellow);
-//        g.setClip(1,2,3,4);
+        // what the fuck does setPainMod do???
         g.setPaintMode();
         g.drawPolygon(poly);
 

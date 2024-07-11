@@ -1,7 +1,5 @@
 package model.charactersModel;
 
-import model.BulletModel;
-import model.CollectibleModel;
 import model.collision.Collidable;
 import model.collision.CollisionState;
 import model.collision.Impactable;
@@ -13,17 +11,17 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.UUID;
 
-import static controller.Constants.*;
+import static controller.constants.Constants.*;
 import static controller.Controller.*;
 import static controller.Sound.playBubble;
 import static controller.Sound.playDeathSound;
-import static controller.Update.aliveEnemies;
+import static controller.GameLoop.aliveEnemies;
 import static controller.Utils.*;
 
 public class SquarantineModel implements Movable, Collidable, Impactable {
     private int hp = 10;
     String id;
-    double nextDash=Double.MAX_VALUE;
+    double nextDash = Double.MAX_VALUE;
     private Point2D anchor;
     Direction direction;
     Point2D currentLocation;
@@ -34,7 +32,10 @@ public class SquarantineModel implements Movable, Collidable, Impactable {
     private double angle;
     private double angularVelocity;
     private double angularAcceleration;
-    public static ArrayList<SquarantineModel> squarantineModels =new ArrayList<>();
+    public static ArrayList<SquarantineModel> squarantineModels = new ArrayList<>();
+
+
+
 
     public SquarantineModel(Point2D anchor) {
         this.anchor = anchor;
@@ -80,6 +81,10 @@ public class SquarantineModel implements Movable, Collidable, Impactable {
     @Override
     public Point2D getAnchor() {
         return anchor;
+    }
+
+    public void setAnchor(Point2D anchor) {
+        this.anchor = anchor;
     }
 
     @Override
@@ -326,5 +331,9 @@ public class SquarantineModel implements Movable, Collidable, Impactable {
         if (theta<PI/2) theta = PI/2;
         if (theta>3*PI/2) theta = 3*PI/2;
         new CollectibleModel(getAnchor(), rotateVector(direction, theta));
+    }
+
+    public ArrayList<SquarantineModel> getModels() {
+        return squarantineModels;
     }
 }

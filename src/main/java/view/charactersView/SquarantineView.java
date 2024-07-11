@@ -1,13 +1,8 @@
 package view.charactersView;
 
-import view.MainPanel;
-
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
-
-import static controller.Constants.SQUARANTINE_EDGE;
-import static controller.Game.bufferedImageResult;
 //import static controller.Game.squarantine;
 
 public class SquarantineView implements Drawable{
@@ -44,12 +39,6 @@ public class SquarantineView implements Drawable{
         Polygon poly = new Polygon(xPoly, yPoly, xPoly.length);
         g.setColor(Color.green);
         g.drawPolygon(poly);
-//        g.fillPolygon(poly);
-
-
-
-//        g.drawImage(bufferedImageResult, xPoly[0]-(int) SQUARANTINE_EDGE/2, yPoly[0]-(int) SQUARANTINE_EDGE/2, MainPanel.getINSTANCE()); // see javadoc for more info on the parameters
-
     }
 
     public void setVertices(Point2D[] vertices) {

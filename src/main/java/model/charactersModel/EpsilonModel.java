@@ -1,19 +1,19 @@
 package model.charactersModel;
 
-import model.BulletModel;
 import model.collision.Collidable;
 import model.collision.CollisionState;
 import model.collision.Impactable;
 import model.movement.Direction;
 import model.movement.Movable;
 import view.MainFrame;
+import view.MainPanel;
 
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.UUID;
 
-import static controller.Constants.*;
+import static controller.constants.Constants.*;
 import static controller.Controller.createEpsilonView;
 import static controller.Utils.*;
 import static controller.Utils.normalizeVector;
@@ -32,6 +32,9 @@ public class EpsilonModel implements Movable, Collidable, Impactable {
     private double angle=0;
 
     public ArrayList<Point2D> vertices = new ArrayList<>();
+
+
+    public static MainPanel LocalPanel = MainPanel.getINSTANCE();
 
     public EpsilonModel(Point2D anchor) {
         INSTANCE = this;
