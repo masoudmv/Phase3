@@ -1,12 +1,16 @@
 package model.charactersModel;
 //import controller.SoundHandler;
+import model.FinalPanelModel;
+
 import model.collision.Collidable;
 import model.collision.CollisionState;
 import model.collision.Impactable;
 import model.movement.Direction;
 import model.movement.Movable;
 
+import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.UUID;
 
@@ -32,6 +36,8 @@ public class BulletModel implements Movable, Collidable, Impactable {
         movables.add(this);
         collidables.add(this);
         creatBulletView(id);
+
+
     }
 
     public String getId() {
@@ -128,6 +134,11 @@ public class BulletModel implements Movable, Collidable, Impactable {
     }
 
     @Override
+    public ArrayList<Line2D> getEdges() {
+        return null;
+    }
+
+    @Override
     public boolean isImpactInProgress() {
         return false;
     }
@@ -157,5 +168,15 @@ public class BulletModel implements Movable, Collidable, Impactable {
         bulletModels.remove(this);
         movables.remove(this);
         findBulletView((this).getId()).remove();
+    }
+
+    @Override
+    public void onCollision(Collidable other, Point2D intersection) {
+        if (other instanceof FinalPanelModel) remove();
+    }
+
+    @Override
+    public void onCollision(Collidable other) {
+
     }
 }

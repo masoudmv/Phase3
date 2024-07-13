@@ -5,14 +5,14 @@ import model.MyPolygon;
 import model.entities.Entity;
 import model.movement.Direction;
 
+import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.UUID;
 
 import static controller.Controller.createPolygonalEnemyView;
-import static controller.Utils.addVectors;
-import static controller.Utils.relativeLocation;
+import static controller.Utils.*;
 
 
 //todo extend mypolygon
@@ -36,13 +36,16 @@ public abstract class GeoShapeModel extends Entity {
     public GeoShapeModel(Point2D anchor, BufferedImage image, MyPolygon myPolygon) {
         this.id = UUID.randomUUID().toString(); //todo swap image and anchor set logic
         this.anchor = new Point2D.Double(
-                anchor.getX() + (double) image.getWidth() /2, anchor.getY() + (double) image.getHeight() /2
+                anchor.getX() , anchor.getY()
         );
         this.myPolygon = myPolygon;
         radius = image.getHeight()/2;
         // following line is extra??
 //        this.myPolygon.npoints = myPolygon.npoints;
-        moveVertices(anchor);
+        Point2D img = new Point2D.Double(-image.getWidth()/2, -image.getHeight()/2);
+
+
+        moveVertices(addVectors(anchor, img));
         entities.add(this);
         createPolygonalEnemyView(id, image);
     }
@@ -53,6 +56,21 @@ public abstract class GeoShapeModel extends Entity {
         entities.add(this);
         createPolygonalEnemyView(id, image);
     }
+
+    public GeoShapeModel(Point2D anchor, BufferedImage image){
+//        System.out.println("EPSILON");
+        this.id = UUID.randomUUID().toString(); //todo swap image and anchor set logic(almost done. needs one final check)
+        this.anchor = new Point2D.Double(
+                anchor.getX() , anchor.getY()
+        );
+        radius = image.getHeight()/2;
+//        moveVertices(anchor);
+        entities.add(this);
+        createPolygonalEnemyView(id, image);
+    }
+
+
+
 
     public GeoShapeModel(Point2D anchor){
         this.anchor = anchor;
@@ -116,6 +134,9 @@ public abstract class GeoShapeModel extends Entity {
 
     public void setDirection(Direction direction) {
         this.direction = direction;
+    }
+    public ArrayList<Line2D> getEdges(){
+        return findEdges(myPolygon);
     }
 }
 

@@ -1,5 +1,4 @@
-package view;
-import controller.Game;
+package view.junks;
 import org.example.Main;
 import view.MainFrame;
 
@@ -11,7 +10,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
-import static controller.Constants.*;
+import static controller.constants.Constants.*;
 
 public class SettingsMenu extends JPanel implements MouseListener, MouseMotionListener, ChangeListener {
     JLabel backLabel = new JLabel("back");

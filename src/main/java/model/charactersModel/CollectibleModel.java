@@ -3,7 +3,9 @@ import model.collision.Collidable;
 import model.movement.Direction;
 import model.movement.Movable;
 
+import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.UUID;
 
@@ -96,7 +98,22 @@ public class CollectibleModel implements Collidable, Movable {
 
     @Override
     public Point2D[] getVertices() {
-        return new Point2D[0];
+        return getVertices();
+    }
+
+    @Override
+    public ArrayList<Line2D> getEdges() {
+        return null;
+    }
+
+    @Override
+    public void onCollision(Collidable other, Point2D intersection) {
+
+    }
+
+    @Override
+    public void onCollision(Collidable other) {
+
     }
 
     public void setRadius(double radius) {

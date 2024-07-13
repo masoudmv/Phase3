@@ -3,8 +3,8 @@ package model.movement;
 import java.awt.*;
 import java.awt.geom.Point2D;
 
-import static controller.Constants.EPSILON_MAX_SPEED;
-import static controller.Constants.SPEED;
+import static controller.constants.Constants.EPSILON_MAX_SPEED;
+import static controller.constants.Constants.SPEED;
 import static controller.Utils.multiplyVector;
 
 public class Direction {
@@ -13,6 +13,7 @@ public class Direction {
     double slope;
     double magnitude;
     private DirectionState state = DirectionState.neutral;
+    private double directionAngle;
     public Direction(Point2D point){
         if (point.getX()==0 && point.getY()>0) isUpward = true;
         if (point.getX()==0 && point.getY()<0) isDownward=true;
@@ -23,19 +24,20 @@ public class Direction {
             else this.state=DirectionState.negative;
         }
         this.magnitude = Math.hypot(point.getX(),point.getY());
+        this.directionAngle = Math.atan2(point.getY(), point.getY());
     }
 
-    public Direction(double angle) {
-        angle=angle - Math.floor(angle/360) * 360;
-        if (angle==90) isUpward=true;
-        if (angle==270) isDownward=true;
-        double x=Math.cos(Math.toRadians(angle));
-        double y=Math.sin(Math.toRadians(angle));
-        this.slope=y/x;
-
-        if ((angle>=0 && angle<180)) state=DirectionState.positive;
-        else state=DirectionState.negative;
-    }
+//    public Direction(double angle) {
+//        angle=angle - Math.floor(angle/360) * 360;
+//        if (angle==90) isUpward=true;
+//        if (angle==270) isDownward=true;
+//        double x=Math.cos(Math.toRadians(angle));
+//        double y=Math.sin(Math.toRadians(angle));
+//        this.slope=y/x;
+//
+//        if ((angle>=0 && angle<180)) state=DirectionState.positive;
+//        else state=DirectionState.negative;
+//    }
 
     public Point2D getNormalizedDirectionVector(){
         if (state==DirectionState.neutral) return new Point(0,0);
@@ -74,6 +76,18 @@ public class Direction {
         if (magnitude < speed){
             magnitude *= 1.15;
         }
+    }
+
+    public Direction(double directionAngle) {
+        this.directionAngle = directionAngle;
+    }
+
+    public double getDirectionAngle() {
+        return directionAngle;
+    }
+
+    public void setDirectionAngle(double directionAngle) {
+        this.directionAngle = directionAngle;
     }
 
     public void decelerateDirection(double speed){

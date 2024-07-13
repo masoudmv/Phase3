@@ -1,6 +1,7 @@
-package view;
+package view.junks;
 
 import org.example.Main;
+import view.MainFrame;
 
 import javax.swing.*;
 import java.awt.*;

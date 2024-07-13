@@ -1,6 +1,6 @@
 package org.example;
 
-import model.charactersModel.MyPolygon;
+import model.MyPolygon;
 import model.geometry.Triangulation;
 
 import java.awt.*;
@@ -19,6 +19,10 @@ public class GraphicalObject {
     MyPolygon myBoundingPolygon;
     Triangulation triangulation;
     Point center;
+
+    public MyPolygon getMyBoundingPolygon() {
+        return myBoundingPolygon;
+    }
 
     public GraphicalObject(BufferedImage image) {
         this.image = image;

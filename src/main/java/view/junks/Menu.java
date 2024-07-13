@@ -1,10 +1,8 @@
-package view;
+package view.junks;
 
 import controller.Game;
 import org.example.Main;
 import view.MainFrame;
-import view.SettingsMenu;
-import view.SkillTreeMenu;
 
 import javax.swing.*;
 import java.awt.*;

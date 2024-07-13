@@ -2,23 +2,24 @@ package model;
 
 import controller.Utils;
 import model.charactersModel.BulletModel;
-import model.collision.Coll;
 import model.collision.Collidable;
 
 import java.awt.*;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.UUID;
 
 import static controller.Controller.*;
 import static controller.Utils.*;
 import static controller.constants.Constants.FRAME_DIMENSION;
+import static model.PanelManager.handlePanelPanelCollision;
 
-public class FinalPanelModel implements Coll {
+public class FinalPanelModel implements Collidable {
     private String id;
     private ArrayList<Point2D> vertices;
-    private ArrayList<Line2D> edges;
+    private ArrayList<Line2D> edges = new ArrayList<>();
 
     protected Dimension size;
     protected Point2D location;
@@ -26,18 +27,13 @@ public class FinalPanelModel implements Coll {
     private boolean isIsometric;
     private boolean isRigid;
     private boolean isStatic;
-
-
-
-
-
     private boolean moveUp = false;
     private boolean moveRight = false;
     private boolean moveDown = false;
     private boolean moveLeft = false;
     private double acceleration; private double velocity;
-//    private double acceleration = 0.45; private  double velocity = 0.1;
 
+//    private double acceleration = 0.45; private  double velocity = 0.1;
     public FinalPanelModel(Point2D location, Dimension size) {
         this.id = UUID.randomUUID().toString();
         this.location = location;
@@ -47,9 +43,23 @@ public class FinalPanelModel implements Coll {
         updateVertices();
         finalPanelModels.add(this);
         createFinalPanelView(id, location, size);
+        collidables.add(this);
+    }
 
+    public void setRigid(boolean rigid) {
+        isRigid = rigid;
+    }
 
-        colls.add(this);
+    public boolean isRigid() {
+        return isRigid;
+    }
+
+    public void setIsometric(boolean isometric) {
+        isIsometric = isometric;
+    }
+
+    public boolean isIsometric() {
+        return isIsometric;
     }
 
     public void moveLocation(Point2D movement){
@@ -94,6 +104,16 @@ public class FinalPanelModel implements Coll {
     public String getId() {
         return id;
     }
+    private void updateEdges(){
+        edges.clear();
+        ArrayList<Line2D> res = new ArrayList<>();
+        for (int i = 0; i < 4; i++) {
+            Point2D start = vertices.get(i);
+            Point2D end = vertices.get((i+1) % 4);
+            res.add(new Line2D.Double(start, end));
+        }
+        edges = res;
+    }
 
     private void updateVertices() {
         vertices.clear();
@@ -110,18 +130,31 @@ public class FinalPanelModel implements Coll {
         vertices.add(new Point2D.Double(x + width, y + height));
         // Bottom-left corner
         vertices.add(new Point2D.Double(x, y + height));
+        updateEdges();
     }
 
     public void eliminate(){
 
     }
 
-    public ArrayList<Point2D> getVertices() {
+    public ArrayList<Point2D> getArrayListVertices() {
         return vertices;
     }
 
+    public Point2D[] getVertices(){
+        Point2D[] array = new Point2D[vertices.size()];
+        array = vertices.toArray(array);
+        return array;
+    }
+
+    @Override
+    public ArrayList<Line2D> getEdges() {
+        return edges;
+    }
+
+
     private void handleCollisionWithBullet(Point2D intersection){
-        int index = Utils.findPanelEdgeIndex(getVertices(), intersection);
+        int index = Utils.findPanelEdgeIndex(getArrayListVertices(), intersection);
         switch (index){
             case 0 -> moveUp = true;
             case 1 -> moveRight = true;
@@ -193,12 +226,13 @@ public class FinalPanelModel implements Coll {
             Point2D movement = new Point2D.Double(contraction, 0);
             moveLocation(movement);
             updateVertices();
-//            adjustLocation();
+//            adjustLocation(); todo?
         }
     }
 
 
     public void panelMotion(){
+        if (isIsometric) return;
         velocity = acceleration + velocity;
         if (velocity < 4) {
             if (moveRight) moveRight();
@@ -209,19 +243,6 @@ public class FinalPanelModel implements Coll {
         if (velocity > 4){
             acceleration = -0.45;
         }
-
-//        moveRight = true;
-
-        if (!moveRight && !moveLeft){
-            // don't change contraction coefficient!
-            horizontalShrink(0.25);
-        }
-
-        if (!moveDown && !moveUp) {
-            // don't change contraction coefficient!
-            verticalShrink(0.25);
-        }
-//        updateEdges();
     }
 
 
@@ -231,45 +252,316 @@ public class FinalPanelModel implements Coll {
         return null;
     }
 
-    public void onCollision(Coll other, Point2D intersection){
-        if (other instanceof BulletModel) handleCollisionWithBullet(intersection);
-        if (other instanceof FinalPanelModel) handleCollisionWithBullet(intersection);
-        if (other instanceof FinalPanelModel) handleCollisionWithBullet(intersection);
-    }
-
-
-
-
-    public void onCollision(Coll other) {
-//        if (!(other instanceof BulletModel)) return;
-
-        double minDistance = Double.MAX_VALUE;
-        Point2D closest = null;
-        for (int i=0;i<vertices.size();i++){
-
-            Point2D temp = getClosestPointOnSegment(vertices.get(i),vertices.get((i+1)%vertices.size()), other.getAnchor()); // todo this calculation most be done with edges
-            double distance = temp.distance(other.getAnchor());
-            if (distance < minDistance) {
-                minDistance = distance;
-                closest = temp;
-            }
-        }
-
-
-        Point2D intersection = closest;
-
-
-
-
-
-        if (intersection.distance(other.getAnchor()) <= 5) { // todo where is get Radius?
-            this.handleCollisionWithBullet(intersection);
-            ((BulletModel) other).remove();
-        }
-    }
-
     @Override
     public boolean isCircular() {
         return false;
     }
+
+    @Override
+    public double getRadius() {
+        return 0;
+    }
+
+    public void trimRight(double shrinkage){
+        size.width -= shrinkage;
+        updateVertices();
+    }
+
+    public void trimLeft(double shrinkage){
+        size.width -= shrinkage;
+        Point2D movement = new Point2D.Double(0, shrinkage);
+        moveLocation(movement);
+        updateVertices();
+    }
+
+    public void trimTop(double shrinkage){
+        size.height -= shrinkage;
+        Point2D movement = new Point2D.Double(0, shrinkage);
+        moveLocation(movement);
+        updateVertices();
+    }
+
+    public void trimBottom(double shrinkage){
+        size.height -= shrinkage;
+        updateVertices();
+    }
+
+    public void onCollision(Collidable other, Point2D intersection){
+        if (other instanceof BulletModel) handleCollisionWithBullet(intersection);
+        if (other instanceof FinalPanelModel) handleCollisionWithBullet(intersection);
+//        if (other instanceof FinalPanelModel) handleCollisionWithBullet(intersection);
+    }
+
+    @Override
+    public void onCollision(Collidable other) {
+        if (other instanceof FinalPanelModel) handlePanelPanelCollision(this, (FinalPanelModel) other);
+    }
+
+    public void setVertices(ArrayList<Point2D> vertices) {
+        this.vertices = vertices;
+        initializeEdges();
+    }
+
+    private void initializeEdges() {
+        edges.clear();
+        for (int i = 0; i < 4; i++) {
+            int nextIndex = (i + 1) % 4;
+            edges.add(new Line2D.Double(vertices.get(i), vertices.get(nextIndex)));
+        }
+    }
+
+    public ArrayList<Line2D> getUnTrimmedEdges() {
+        ArrayList<Line2D> res = new ArrayList<>();
+        for (int i = 0; i < 4; i++) {
+            int nextIndex = (i + 1) % 4;
+            res.add(new Line2D.Double(vertices.get(i), vertices.get(nextIndex)));
+        }
+        return res;
+    }
+
+    public void adjustEdgesOnOverlap(FinalPanelModel other) {
+        this.updateVertices();
+
+        ArrayList<Point2D> thisVertices = this.getArrayListVertices();
+        ArrayList<Point2D> otherVertices = other.getArrayListVertices();
+        ArrayList<Point2D> verticesInsideOtherPanel = new ArrayList<>();
+        ArrayList<Point2D> verticesInsideThisPanel = new ArrayList<>();
+
+        for (Point2D vertex : thisVertices) {
+            if (other.isVertexInside(vertex)) {
+                verticesInsideOtherPanel.add(vertex);
+            }
+        }
+
+        for (Point2D vertex : otherVertices) {
+            if (this.isVertexInside(vertex)) {
+                verticesInsideThisPanel.add(vertex);
+            }
+        }
+
+        if (verticesInsideOtherPanel.isEmpty() && verticesInsideThisPanel.isEmpty()) {
+            initializeEdges();
+            return;
+        }
+
+        if (verticesInsideOtherPanel.size() == 4) {
+            edges.clear();
+            return;
+        }
+
+        if (verticesInsideThisPanel.size() == 4) {
+            other.edges.clear();
+            return;
+        }
+
+        if (verticesInsideOtherPanel.size() == 2) {
+            handleTwoVerticesInside(this, other, verticesInsideOtherPanel);
+        }
+
+        if (verticesInsideThisPanel.size() == 2) {
+            handleTwoVerticesInside(this, other, verticesInsideThisPanel);
+        }
+
+        if (verticesInsideOtherPanel.size() == 1) {
+            handleOneVertexInside(this, other, verticesInsideOtherPanel.get(0), verticesInsideThisPanel.isEmpty() ? null : verticesInsideThisPanel.get(0));
+        }
+
+        if (verticesInsideThisPanel.size() == 1) {
+            handleOneVertexInside(other, this, verticesInsideThisPanel.get(0), verticesInsideOtherPanel.isEmpty() ? null : verticesInsideOtherPanel.get(0));
+        }
+    }
+
+    private void handleTwoVerticesInside(FinalPanelModel thisPanel, FinalPanelModel otherPanel, ArrayList<Point2D> verticesInside) {
+        ArrayList<Point2D> intersections = findIntersections(thisPanel, otherPanel);
+
+        if (intersections.size() != 2) {
+            return; // Error: we expect exactly two intersections.
+        }
+
+        Point2D i1 = intersections.get(0);
+        Point2D i2 = intersections.get(1);
+        Point2D v1 = verticesInside.get(0);
+        Point2D v2 = verticesInside.get(1);
+
+        ArrayList<Line2D> segments = new ArrayList<>();
+        segments.add(new Line2D.Double(i1, i2));
+
+        if (i1.distance(v1) < i1.distance(v2)) {
+            segments.add(new Line2D.Double(i1, v1));
+            segments.add(new Line2D.Double(i2, v2));
+        } else {
+            segments.add(new Line2D.Double(i1, v2));
+            segments.add(new Line2D.Double(i2, v1));
+        }
+
+        segments.add(new Line2D.Double(v1, v2));
+
+        thisPanel.trimPanel(segments);
+        otherPanel.trimPanel(segments);
+
+        ArrayList<Line2D> newEdges = new ArrayList<>();
+        for (Line2D edge : thisPanel.edges) {
+            if (!otherPanel.isEdgeInside(edge)) {
+                newEdges.add(edge);
+            }
+        }
+        thisPanel.edges = newEdges;
+
+
+        ArrayList<Line2D> newEs = new ArrayList<>();
+        for (Line2D edge : otherPanel.edges) {
+            if (!thisPanel.isEdgeInside(edge)) {
+                newEs.add(edge);
+            }
+        }
+        otherPanel.edges = newEs;
+
+
+    }
+
+    private void handleOneVertexInside(FinalPanelModel thisPanel, FinalPanelModel otherPanel, Point2D thisVertex, Point2D otherVertex) {
+        ArrayList<Point2D> intersections = findIntersections(thisPanel, otherPanel);
+
+        if (intersections.size() != 2) {
+            return; // Error: we expect exactly two intersections.
+        }
+
+        ArrayList<Line2D> segments = new ArrayList<>();
+        for (Point2D vertex : intersections) {
+            segments.add(new Line2D.Double(vertex, thisVertex));
+            if (otherVertex != null) {
+                segments.add(new Line2D.Double(vertex, otherVertex));
+            }
+        }
+
+        thisPanel.trimPanel(segments);
+        otherPanel.trimPanel(segments);
+    }
+
+    public boolean isEdgeInside(Line2D edge) {
+        return isVertexInside(edge.getP1()) && isVertexInside(edge.getP2());
+    }
+
+    public static ArrayList<Line2D> trimEdge(Line2D edge, Line2D segment) {
+        boolean isEdgeVertical = edge.getX1() == edge.getX2();
+        boolean isSegmentVertical = segment.getX1() == segment.getX2();
+
+        if (isEdgeVertical && isSegmentVertical) {
+            return trimVerticalSegments(edge, segment); // Both lines are vertical
+        } else if (!isEdgeVertical && !isSegmentVertical) {
+            return trimHorizontalEdge(edge, segment); // Both lines are horizontal
+        }
+
+        return null; // Lines are not both vertical or both horizontal, return null
+    }
+
+    private static ArrayList<Line2D> trimHorizontalEdge(Line2D edge, Line2D segment) {
+        ArrayList<Line2D> result = new ArrayList<>();
+
+        // Different y-coordinates, no overlap
+        if (edge.getY1() != segment.getY1() ) return null;
+
+        double xMinEdge = Math.min(edge.getX1(), edge.getX2());
+        double xMaxEdge = Math.max(edge.getX1(), edge.getX2());
+        double xMinSegment = Math.min(segment.getX1(), segment.getX2());
+        double xMaxSegment = Math.max(segment.getX1(), segment.getX2());
+
+        // Every part of the edge is removed
+        if (xMinSegment <= xMinEdge && xMaxEdge <= xMaxSegment) {
+            return null;
+        }
+        // Segments do not overlap
+        else if (xMaxSegment < xMinEdge || xMaxEdge < xMinSegment) {
+            result.add(edge);
+        }
+        // Segment splits the edge into two parts
+        else if (xMinEdge < xMinSegment && xMaxSegment < xMaxEdge) {
+            result.add(new Line2D.Double(xMinEdge, edge.getY1(), xMinSegment, edge.getY1()));
+            result.add(new Line2D.Double(xMaxSegment, edge.getY1(), xMaxEdge, edge.getY1()));
+        }
+        // Segment overlaps the end part of the edge
+        else if (xMaxSegment < xMaxEdge && xMinEdge < xMaxSegment) {
+            result.add(new Line2D.Double(xMaxSegment, edge.getY1(), xMaxEdge, edge.getY1()));
+        }
+        // Segment overlaps the start part of the edge
+        else if (xMaxEdge <= xMaxSegment && xMinSegment < xMaxEdge) {
+            result.add(new Line2D.Double(xMinEdge, edge.getY1(), xMinSegment, edge.getY1()));
+        }
+
+        return result.isEmpty() ? null : result;
+    }
+
+    private static ArrayList<Line2D> trimVerticalSegments(Line2D edge, Line2D segment) {
+        ArrayList<Line2D> result = new ArrayList<>();
+
+        // Different x-coordinates, no overlap
+        if (edge.getX1() != segment.getX1()) return null;
+
+        double yMinEdge = Math.min(edge.getY1(), edge.getY2());
+        double yMaxEdge = Math.max(edge.getY1(), edge.getY2());
+        double yMinSegment = Math.min(segment.getY1(), segment.getY2());
+        double yMaxSegment = Math.max(segment.getY1(), segment.getY2());
+
+        // Every part of the edge is removed
+        if (yMinSegment <= yMinEdge && yMaxEdge <= yMaxSegment) {
+            return null;
+        }
+        // Segments do not overlap
+        else if (yMaxSegment < yMinEdge || yMaxEdge < yMinSegment) {
+            result.add(edge);
+        }
+        // Segment splits the edge into two parts
+        else if (yMinEdge < yMinSegment && yMaxSegment < yMaxEdge) {
+            result.add(new Line2D.Double(edge.getX1(), yMinEdge, edge.getX1(), yMinSegment));
+            result.add(new Line2D.Double(edge.getX1(), yMaxSegment, edge.getX1(), yMaxEdge));
+        }
+        // Segment overlaps the end part of the edge
+        else if (yMaxSegment < yMaxEdge && yMinEdge < yMaxSegment) {
+            result.add(new Line2D.Double(edge.getX1(), yMaxSegment, edge.getX1(), yMaxEdge));
+        }
+        // Segment overlaps the start part of the edge
+        else if (yMaxEdge <= yMaxSegment && yMinSegment < yMaxEdge) {
+            result.add(new Line2D.Double(edge.getX1(), yMinEdge, edge.getX1(), yMinSegment));
+        }
+
+        return result.isEmpty() ? null : result;
+    }
+
+
+
+    public boolean isVertexInside(Point2D vertex) {
+        Point2D[] array = getArrayListVertices().toArray(new Point2D[0]);
+        return isPointInPolygon(vertex, array);
+    }
+
+    void trimPanel(ArrayList<Line2D> segments) {
+        ArrayList<Line2D> newList = new ArrayList<>();
+        for (Line2D edge : edges) {
+            boolean edgeAdded = false;
+            for (Line2D segment : segments) {
+                ArrayList<Line2D> trimmedEdges = trimEdge(edge, segment);
+                if (trimmedEdges != null) {
+                    newList.addAll(trimmedEdges);
+                    edgeAdded = true;
+                    break;
+                }
+            }
+            if (!edgeAdded) {
+                newList.add(edge);
+            }
+        }
+        edges = newList;
+    }
+
+//    public ArrayList<Line2D> getEdges() {
+//        return edges;
+//    }
+
+    public void setEdges(ArrayList<Line2D> edges) {
+        this.edges = edges;
+    }
+
+//    public ArrayList<Point2D> getArrayListVertices() {
+//        return vertices;
+//    }
 }

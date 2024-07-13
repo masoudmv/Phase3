@@ -1,4 +1,4 @@
-package controller;
+package controller.constants;
 
 import java.awt.*;
 import java.util.concurrent.TimeUnit;

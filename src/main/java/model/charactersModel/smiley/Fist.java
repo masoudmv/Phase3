@@ -5,6 +5,8 @@ import model.FinalPanelModel;
 import model.MyPolygon;
 import model.charactersModel.ArchmireModel;
 import model.charactersModel.GeoShapeModel;
+//import model.collision.Coll;
+import model.collision.Collidable;
 import model.movement.Direction;
 import util.ThreadPoolManager;
 import view.MainFrame;
@@ -12,15 +14,17 @@ import view.charactersView.GeoShapeView;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import static controller.Utils.multiplyVector;
 import static controller.constants.SmileyConstants.*;
 import static model.imagetools.ToolBox.getBufferedImage;
 
-public class Fist extends GeoShapeModel {
+public class Fist extends GeoShapeModel implements Collidable {
 
     static BufferedImage image;
     public static ArrayList<Fist> fists = new ArrayList<>();
@@ -51,6 +55,9 @@ public class Fist extends GeoShapeModel {
         Point2D loc = new Point2D.Double(anchor.getX()-35, anchor.getY()-35);
         Dimension size = new Dimension(200, 200);
         finalPanelModel = new FinalPanelModel(loc, size);
+
+        collidables.add(this);
+        
         quake();
     }
 
@@ -141,6 +148,37 @@ public class Fist extends GeoShapeModel {
 
     @Override
     public void eliminate() {
+
+    }
+
+    @Override
+    public boolean isCircular() {
+        return false;
+    }
+
+    @Override
+    public Point2D[] getVertices() { //todo
+        Point2D[] vertices = new Point2D[myPolygon.npoints];
+        for (int i = 0; i < myPolygon.npoints; i++) {
+            double x = myPolygon.xpoints[i];
+            double y = myPolygon.ypoints[i];
+            vertices[i] = new Point2D.Double(x, y);
+        }
+        return vertices;
+    }
+
+//    @Override
+//    public ArrayList<Line2D> getEdges() {
+//        return null;
+//    }
+
+    @Override
+    public void onCollision(Collidable other, Point2D intersection) {
+
+    }
+
+    @Override
+    public void onCollision(Collidable other) {
 
     }
 }

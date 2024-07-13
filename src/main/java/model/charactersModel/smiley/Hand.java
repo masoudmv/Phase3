@@ -6,7 +6,7 @@ import model.MyPolygon;
 import model.charactersModel.EpsilonModel;
 import model.charactersModel.GeoShapeModel;
 import model.movement.Direction;
-import view.MainFrame;
+import org.example.GraphicalObject;
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,6 +15,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 import static controller.Utils.*;
+import static controller.constants.SmileyConstants.BULLET_SPEED;
 import static controller.constants.SmileyConstants.MAX_SPEED;
 import static model.imagetools.ToolBox.getBufferedImage;
 
@@ -37,20 +38,26 @@ public class Hand extends GeoShapeModel {
     private boolean isDecelerating = false;
     private double distance;
     private double halfwayDistance;
+    private Point2D projectileCenter = EpsilonModel.getINSTANCE().getAnchor();
+
+
+    private int pointerVertexIndex;
+
+
+
+
 
     public Hand(Point2D anchor, MyPolygon myPolygon) {
         super(anchor, image, myPolygon);
         hands.add(this);
 
         angleToEpsilon = findAngleToEpsilon();
-        rotate(90);
 
-        Point2D loc = new Point2D.Double(getAnchor().getX() - 80, getAnchor().getY() - 80);
-        Dimension size = new Dimension(200, 200);
-        finalPanelModel = new FinalPanelModel(loc, size);
+        setFinalPanelModel();
 
         Point2D dir = relativeLocation(EpsilonModel.getINSTANCE().getAnchor(), getAnchor());
         direction = new Direction(dir);
+
 
         distance = findDistance(getAnchor(), EpsilonModel.getINSTANCE().getAnchor());
         halfwayDistance = distance / 2;
@@ -59,9 +66,15 @@ public class Hand extends GeoShapeModel {
         deceleration = -acceleration;
         MAX_SPEED = acceleration * t / 2;
 
-//        System.out.println(acceleration);
+        setPointerVertex();
+        creatBulletFromPointingVertex();
 
-//        isMovingToDestination = true;
+    }
+
+    private void setFinalPanelModel(){
+        Point2D loc = new Point2D.Double(getAnchor().getX() - 80, getAnchor().getY() - 80);
+        Dimension size = new Dimension(200, 200);
+        finalPanelModel = new FinalPanelModel(loc, size);
     }
 
     private double findAngleToEpsilon(){
@@ -74,6 +87,29 @@ public class Hand extends GeoShapeModel {
         if (vecToEpsilon.getY() == 0) res = Math.PI;
         if (vecToEpsilon.getY() > 0) res = findAngleBetweenTwoVectors(left, vecToEpsilon) + Math.PI;
         return Math.toDegrees(res);
+    }
+
+
+    private Point2D getPointingVertexPoint2D(){
+        double x = myPolygon.xpoints[pointerVertexIndex]-25;
+        double y = myPolygon.ypoints[pointerVertexIndex]-25;
+        return new Point2D.Double(x, y);
+    }
+
+    private void creatBulletFromPointingVertex(){
+        BufferedImage ba = SmileyBullet.loadImage();
+        GraphicalObject bos = new GraphicalObject(ba);
+        MyPolygon pl = bos.getMyBoundingPolygon();
+        Point2D startPos = getPointingVertexPoint2D();
+        new SmileyBullet(startPos, pl).setDirection(findBulletDirection(startPos));
+    }
+
+    private Direction findBulletDirection(Point2D startPos){
+        Point2D dest = EpsilonModel.getINSTANCE().getAnchor();
+        Point2D vec = relativeLocation(dest, startPos);
+        Direction direction = new Direction(vec);
+        direction.setMagnitude(BULLET_SPEED);
+        return direction;
     }
 
 
@@ -106,22 +142,17 @@ public class Hand extends GeoShapeModel {
             }
         }
         direction.setMagnitude(speed);
-        System.out.println(speed);
     }
-
-//    void move(Direction direction) {
-//        Point2D movement = multiplyVector(direction.getDirectionVector(), direction.getMagnitude());
-//        movePolygon(movement);
-//    }
 
 
     public void rot() {
-        // Normal movement logic (circular motion)
-        System.out.println(angleToEpsilon);
 
+        creatBulletFromPointingVertex();
+
+        // Normal movement logic (circular motion)
         angleToEpsilon += angularSpeed;
         if (angleToEpsilon >= 360) angleToEpsilon -= 360; // Keep angle within 0-359 degrees
-        Point2D center = EpsilonModel.getINSTANCE().getAnchor();
+        Point2D center = projectileCenter;
 
         // Calculate the current radius
         double radius = findDistance(getAnchor(), center);
@@ -141,12 +172,10 @@ public class Hand extends GeoShapeModel {
         setAnchor(newAnchor);
 
         // Rotate the polygon to face the center
-        angle = getAngleTowardsCenter(center, getAnchor()) + 270;
-        rotate(angularSpeed);
-    }
-
-    private void moveToDestination() {
-        // Implement this method if necessary
+        angle += 1.5;
+//        System.out.println(angularSpeed);
+        rotate(angularSpeed
+        );
     }
 
     // Method to calculate the angle so that the same face of the object points towards the center
@@ -189,5 +218,17 @@ public class Hand extends GeoShapeModel {
         this.isMovingToDestination = true;
         this.isDecelerating = false;
         this.speed = 0; // Reset speed at the start of the movement
+    }
+
+    private void setPointerVertex(){
+        double yMin = Double.MAX_VALUE;
+        int index = -1;
+        for (int i = 0; i < myPolygon.npoints; i++) {
+            if (myPolygon.ypoints[i] < yMin){
+                yMin = myPolygon.ypoints[i];
+                index = i;
+            }
+        }
+        pointerVertexIndex = index;
     }
 }

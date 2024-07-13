@@ -71,6 +71,12 @@ public class GeoShapeView {
 
     public void draw(Graphics g){
         Graphics2D g2d = (Graphics2D) g;
+
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+        g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+
+
         g2d.drawImage(rotateImage(image, angle), (int) currentLocation.getX(), (int) currentLocation.getY(), null);
 
         int[] xpoints = new int[myPolygon.npoints];
@@ -83,7 +89,7 @@ public class GeoShapeView {
 
 //        double radius = imageHeight/2;
 //        g2d.drawOval((int) getCurrentLocation().getX(), (int) getCurrentLocation().getY(), (int) (2*radius), (int) (2*radius));
-        g2d.drawOval((int) getCurrentLocation().getX(), (int) getCurrentLocation().getY(), (int) (2), (int) (2));
+//        g2d.drawOval((int) getCurrentLocation().getX(), (int) getCurrentLocation().getY(), (int) (2), (int) (2));
 
 //        g2d.drawPolygon(xpoints, ypoints, myPolygon.npoints);
     }

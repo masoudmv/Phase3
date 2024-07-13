@@ -3,7 +3,7 @@ package model;
 import java.awt.*;
 import java.util.Arrays;
 
-public class MyPolygon extends Polygon {
+public class MyPolygon extends Polygon { //todo remove inheritance
     public int npoints;
     public double[] xpoints;
     public double[] ypoints;

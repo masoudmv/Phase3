@@ -5,8 +5,10 @@ import controller.Game;
 import javax.swing.*;
 import java.awt.*;
 
-import static controller.Constants.FRAME_DIMENSION;
+import static controller.constants.Constants.FRAME_DIMENSION;
 
+
+// it does not have paintComponent method!
 public final class MainFrame extends JFrame {
     private static MainFrame INSTANCE;
     public static JLabel label;
@@ -19,7 +21,7 @@ public final class MainFrame extends JFrame {
         setLocationRelativeTo(null);
         setVisible(true);
         setLayout(null);
-        label = new JLabel("<html>Wave: "+ Game.wave + "<br>Elapsed Time: "+ Game.elapsedTime
+        label = new JLabel("<html>Wave: "+ Game.wave + "<br>Elapsed Time: "+ Game.ELAPSED_TIME
                 + "<br> XP: "+Game.inGameXP +"<br>HP: "+ 100);
         label.setForeground(Color.red);
         label.setBounds(0,0,120,100);
@@ -32,4 +34,8 @@ public final class MainFrame extends JFrame {
         if (INSTANCE==null) INSTANCE=new MainFrame();
         return INSTANCE;
     }
+
+
+
+
 }

@@ -1,30 +1,18 @@
 package controller;
 
-import model.BulletModel;
+import model.charactersModel.BulletModel;
 import model.charactersModel.EpsilonModel;
 import model.movement.Direction;
-import view.MainFrame;
-import view.MainPanel;
 
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.UnsupportedAudioFileException;
-import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.geom.Point2D;
-import java.io.File;
-import java.io.IOException;
-import java.sql.Time;
-import java.util.Timer;
 
-import static controller.Constants.BULLET_VELOCITY;
-import static controller.Constants.PI;
+import static controller.constants.Constants.BULLET_VELOCITY;
+import static controller.constants.Constants.PI;
 import static controller.Game.*;
-import static controller.Update.lastShot;
-import static controller.Utils.findAngleBetweenTwoVectors;
+import static controller.GameLoop.lastShot;
 import static controller.Utils.relativeLocation;
 //import static controller.Sound.sound;
 //import static controller.SoundHandler.doPlay;
@@ -45,7 +33,7 @@ public class MouseController implements MouseListener,MouseMotionListener {
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        if (elapsedTime-lastShot>0.15) {
+        if (ELAPSED_TIME -lastShot>0.01) {
 
             double startX = epsilon.getAnchor().getX();
             double startY = epsilon.getAnchor().getY();
@@ -61,8 +49,8 @@ public class MouseController implements MouseListener,MouseMotionListener {
             Point2D direction = new Point2D.Double(velX, velY);
             mousePosition=new Point2D.Double(e.getX(), e.getY());
             lastBullet = new BulletModel(epsilon.getAnchor(), new Direction(direction));
-            lastShot=elapsedTime;
-            if (elapsedTime < empowerEndTime) tripleShot=true;
+            lastShot= ELAPSED_TIME;
+            if (ELAPSED_TIME < empowerEndTime) tripleShot=true;
 
         }
 

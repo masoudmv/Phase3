@@ -40,7 +40,10 @@ public class FinalPanelView extends JPanel {
         frame.setLayout(null); // Absolute layout
         frame.add(this);
         finalPanelViews.add(this);
-        repaint();
+//        repaint();
+
+//        this.setDoubleBuffered(true);
+
     }
 
     public String getId() {
@@ -76,6 +79,8 @@ public class FinalPanelView extends JPanel {
 //        g.setColor(Color.gray);
 //        BlackOrb.drawBlackOrb(this, g);
 
+
+
         for (int i = 0; i < GeoShapeModel.entities.size(); i++) {
             if (GeoShapeModel.entities.get(i).isLaser){
                 Polygon polygon = Controller.calculateEntityView(this, GeoShapeModel.entities.get(i).myPolygon);
@@ -99,7 +104,7 @@ public class FinalPanelView extends JPanel {
             );
         }
 
-        updateEntitiesLocations(this);
+//        updateEntitiesLocations(this);
 
 
         for (BulletView bulletView : bulletViews){

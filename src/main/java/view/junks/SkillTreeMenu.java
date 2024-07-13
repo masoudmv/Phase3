@@ -1,7 +1,8 @@
-package view;
+package view.junks;
 
 import controller.Game;
 import org.example.Main;
+import view.MainFrame;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,7 +11,6 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
 import static controller.Game.activeAbility;
-import static controller.Game.bufferedImage;
 import static org.example.Main.*;
 
 public class SkillTreeMenu extends JPanel implements MouseListener, MouseMotionListener {

@@ -62,21 +62,21 @@ public class Sound {
                 throw new RuntimeException("Sound: file not found: ");
             }
 
-            File themeFile = new File("C:\\Users\\masoo\\Desktop\\Projects\\windowkill_AP\\src\\main\\resources\\theme.wav");
-            if (themeFile.exists()) {
-                AudioInputStream sound = AudioSystem.getAudioInputStream(themeFile);
-                // load the sound into memory (a Clip)
-                theme = AudioSystem.getClip();
-                theme.open(sound);
-                FloatControl gainControl =
-                        (FloatControl) theme.getControl(FloatControl.Type.MASTER_GAIN);
-
-                gainControl.setValue(calculateVolumeDecrement());
-
-            }
-            else {
-                throw new RuntimeException("Sound: file not found: ");
-            }
+//            File themeFile = new File("C:\\Users\\masoo\\Desktop\\Projects\\windowkill_AP\\src\\main\\resources\\theme.wav");
+//            if (themeFile.exists()) {
+//                AudioInputStream sound = AudioSystem.getAudioInputStream(themeFile);
+//                // load the sound into memory (a Clip)
+//                theme = AudioSystem.getClip();
+//                theme.open(sound);
+//                FloatControl gainControl =
+//                        (FloatControl) theme.getControl(FloatControl.Type.MASTER_GAIN);
+//
+//                gainControl.setValue(calculateVolumeDecrement());
+//
+//            }
+//            else {
+//                throw new RuntimeException("Sound: file not found: ");
+//            }
 
 
 
@@ -101,30 +101,30 @@ public class Sound {
     }
     public static void playBubble(){
         if (soundVolume>0) {
-            collisionSound.setFramePosition(0);  // Must always rewind!
-            collisionSound.loop(0);
+//            collisionSound.setFramePosition(0);  // Must always rewind!
+//            collisionSound.loop(0);
         }
     }
 
     public static void playDeathSound(){
         if (soundVolume>0) {
-            deathSound.setFramePosition(0);  // Must always rewind!
-            deathSound.loop(0);
+//            deathSound.setFramePosition(0);  // Must always rewind!
+//            deathSound.loop(0);
         }
     }
 
     public static void playVictorySound(){
         if (soundVolume>0 && !victorySound.isRunning()) {
-            victorySound.setFramePosition(10);  // Must always rewind!
-            victorySound.loop(0);
+//            victorySound.setFramePosition(10);  // Must always rewind!
+//            victorySound.loop(0);
 
         }
     }
 
     public static void playThemeSound(){
         if (soundVolume>0 && calculateVolumeDecrement()>-20) {
-            theme.setFramePosition(0);  // Must always rewind!
-            theme.loop(Clip.LOOP_CONTINUOUSLY);
+//            theme.setFramePosition(0);  // Must always rewind!
+//            theme.loop(Clip.LOOP_CONTINUOUSLY);
 
         }
     }
@@ -149,6 +149,8 @@ public class Sound {
     }
 
     private static float calculateVolumeDecrement(){
+
+//        return 0F;
         return (float) 0.8*(soundVolume)-80;
     }
 

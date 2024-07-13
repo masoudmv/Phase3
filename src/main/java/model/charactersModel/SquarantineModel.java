@@ -6,6 +6,7 @@ import model.collision.Impactable;
 import model.movement.Direction;
 import model.movement.Movable;
 
+import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Random;
@@ -193,6 +194,21 @@ public class SquarantineModel implements Movable, Collidable, Impactable {
     @Override
     public Point2D[] getVertices() {
         return this.vertices;
+    }
+
+    @Override
+    public ArrayList<Line2D> getEdges() {
+        return null;
+    }
+
+    @Override
+    public void onCollision(Collidable other, Point2D intersection) {
+
+    }
+
+    @Override
+    public void onCollision(Collidable other) {
+
     }
 
     @Override

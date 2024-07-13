@@ -1,15 +1,24 @@
 package model.charactersModel;
 
+import model.FinalPanelModel;
+import model.MyPolygon;
+import model.charactersModel.smiley.Fist;
+import model.charactersModel.smiley.Smiley;
+import model.charactersModel.smiley.SmileyBullet;
 import model.collision.Collidable;
 import model.collision.CollisionState;
 import model.collision.Impactable;
 import model.movement.Direction;
 import model.movement.Movable;
 import view.MainFrame;
-import view.MainPanel;
+//import view.MainPanel;
+//import view.MainPanel;
 
+import javax.swing.*;
 import java.awt.*;
+import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -17,44 +26,53 @@ import static controller.constants.Constants.*;
 import static controller.Controller.createEpsilonView;
 import static controller.Utils.*;
 import static controller.Utils.normalizeVector;
+import static model.imagetools.ToolBox.getBufferedImage;
 
-public class EpsilonModel implements Movable, Collidable, Impactable {
+public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, Impactable {
+    static BufferedImage image;
     private static EpsilonModel INSTANCE;
     private int hp = 100;
-    Point2D anchor;
-    double radius;
+//    Point2D anchor;
+//    double radius;
     private boolean impactInProgress = false;
-    String id;
-    Direction direction;
+//    String id;
+//    Direction direction;
     public static ArrayList<EpsilonModel> epsilonModels = new ArrayList<>();
 
     public int numberOfVertices = 0;
-    private double angle=0;
+//    private double angle=0;
 
     public ArrayList<Point2D> vertices = new ArrayList<>();
 
 
-    public static MainPanel LocalPanel = MainPanel.getINSTANCE();
+//    public static MainPanel LocalPanel = MainPanel.getINSTANCE();
 
-    public EpsilonModel(Point2D anchor) {
+    public EpsilonModel(Point2D anchor, MyPolygon myPolygon) {
+        super(anchor, image, myPolygon);
+        System.out.println("epsilon");
         INSTANCE = this;
-        this.anchor = anchor;
-        this.radius = RADIUS;
+//        this.anchor = anchor;
+//        this.radius = 20; //todo
 
-        this.id= UUID.randomUUID().toString();
-        Point vector = new Point(0,0);
+//        this.id= UUID.randomUUID().toString();
+        Point vector = new Point(0,0); //todo shitty design
         this.direction=new Direction(vector);
+
         epsilonModels.add(this);
         collidables.add(this);
         movables.add(this);
 //        impactables.add(this);
+
+
+
+
         createEpsilonView(id);
 
     }
 
     public static EpsilonModel getINSTANCE() {
-        if (INSTANCE == null) INSTANCE = new EpsilonModel(
-                new Point2D.Double((double) MainFrame.getINSTANCE().getWidth() /2,(double) MainFrame.getINSTANCE().getHeight() /2));
+//        if (INSTANCE == null) INSTANCE = new EpsilonModel(
+//                new Point2D.Double(600, 600)); // todo revert
         return INSTANCE;
     }
 
@@ -142,6 +160,12 @@ public class EpsilonModel implements Movable, Collidable, Impactable {
     public Point2D[] getVertices() {
         return null;
     }
+
+    @Override
+    public ArrayList<Line2D> getEdges() {
+        return null;
+    }
+
     @Override
     public void move(Direction direction) {
         Point2D movement = multiplyVector(direction.getNormalizedDirectionVector(), direction.getMagnitude());
@@ -149,6 +173,7 @@ public class EpsilonModel implements Movable, Collidable, Impactable {
         for (int i = 0; i < numberOfVertices; i++) {
             vertices.set(i, addVectors(vertices.get(i), movement));
         }
+//        movePolygon(movement);
 
     }
 
@@ -165,6 +190,11 @@ public class EpsilonModel implements Movable, Collidable, Impactable {
     @Override
     public double getRadius() {
         return RADIUS;
+    }
+
+    @Override
+    public void eliminate() {
+
     }
 
     @Override
@@ -198,6 +228,7 @@ public class EpsilonModel implements Movable, Collidable, Impactable {
 
 
     // Writ of Proteus:
+
     public void addVertex(){
         numberOfVertices++;
         vertices.clear();
@@ -207,7 +238,6 @@ public class EpsilonModel implements Movable, Collidable, Impactable {
             vertices.add(new Point2D.Double(getAnchor().getX()+RADIUS*Math.cos(alpha), getAnchor().getY()+RADIUS*Math.sin(alpha)));
         }
     }
-
     public void updateVertices(){
         for (int i = 0; i < numberOfVertices; i++) {
             double alpha = 2*PI*i/numberOfVertices+angle;
@@ -223,21 +253,55 @@ public class EpsilonModel implements Movable, Collidable, Impactable {
         this.hp += hp;
         if (this.hp >100) this.hp=100;
     }
+
     public int getHp() {
         return hp;
     }
     public void damage(int damage){
         this.hp -= damage;
     }
-
     public double getAngle() {
         return angle;
     }
 
+    @Override
+    public void setMyPolygon(MyPolygon myPolygon) {
+
+    }
+
+    public static BufferedImage loadImage() {
+        Image img = new ImageIcon("./src/epsilon.png").getImage();
+        EpsilonModel.image = getBufferedImage(img);
+        return EpsilonModel.image;
+    }
+
+
     public void setAngle(double angle) {
         this.angle = angle;
     }
+
     public static void nullifyEpsilon(){
         INSTANCE = null;
+    }
+    @Override
+    public void onCollision(Collidable other, Point2D intersection) {
+//        System.out.println(intersection);
+//        System.out.println(getAnchor());
+//        System.out.println("================");
+        if (other instanceof Smiley) impact(new CollisionState(intersection));
+        if (other instanceof Fist) impact(new CollisionState(intersection));
+        if (other instanceof CollectibleModel);
+        if (other instanceof BulletModel);
+        if (other instanceof SmileyBullet);
+        if (other instanceof FinalPanelModel) {
+            System.out.println("+_+_+");
+            impact(new CollisionState(intersection));
+        }
+
+    }
+
+    @Override
+    public void onCollision(Collidable other) {
+
     }
 }
