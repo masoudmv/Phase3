@@ -53,7 +53,7 @@ public class Main {
         BufferedImage b = EpsilonModel.loadImage();
         GraphicalObject bows = new GraphicalObject(b);
         MyPolygon pol = bows.myBoundingPolygon;
-        String id = new EpsilonModel(new Point2D.Double(950, 850), pol).getId();
+        String id = new EpsilonModel(new Point2D.Double(400, 400), pol).getId();
 
 
 
@@ -69,10 +69,10 @@ public class Main {
 //        MyPolygon p = bowser.myBoundingPolygon;
 //        new OmenoctModel(new Point2D.Double(300, 400), p);
 //
-        BufferedImage bg = BarricadosModel.loadImage();
-        GraphicalObject ber = new GraphicalObject(bg);
-        MyPolygon pl = ber.myBoundingPolygon;
-        new BarricadosModel(new Point2D.Double(900, 400), pl);
+//        BufferedImage bg = BarricadosModel.loadImage();
+//        GraphicalObject ber = new GraphicalObject(bg);
+//        MyPolygon pl = ber.myBoundingPolygon;
+//        new BarricadosModel(new Point2D.Double(900, 400), pl);
 
 
 
@@ -89,10 +89,10 @@ public class Main {
 
 
 
-//        BufferedImage b = NecropickModel.loadImage();
-//        GraphicalObject bows = new GraphicalObject(b);
-//        MyPolygon pol = bows.myBoundingPolygon;
-//        new NecropickModel(new Point2D.Double(-200, -200), pol);
+        BufferedImage bq = NecropickModel.loadImage();
+        GraphicalObject boww = new GraphicalObject(bq);
+        MyPolygon polll = boww.myBoundingPolygon;
+        new NecropickModel(new Point2D.Double(-200, -200), polll);
 
 //        new FinalPanelModel();
 //todo---
@@ -120,16 +120,16 @@ public class Main {
 //        new Panelss();
 //        GamePanelView panel = new GamePanelView();
 
-        Point2D loc = new Point2D.Double(900, 800);
-        Dimension size = new Dimension(150, 500);
-        new FinalPanelModel(loc, size).setIsometric(false);
+//        Point2D loc = new Point2D.Double(300, 300);
+//        Dimension size = new Dimension(500, 500);
+//        new FinalPanelModel(loc, size).setIsometric(false);
 
 
-//        Point2D l = new Point2D.Double(800, 800);
-//        Dimension s = new Dimension(1200, 500);
-//        FinalPanelModel f = new FinalPanelModel(l, s);
-//        f.setRigid(true);
-//        f.setIsometric(false);
+        Point2D l = new Point2D.Double(700, 100);
+        Dimension s = new Dimension(700, 600);
+        FinalPanelModel f = new FinalPanelModel(l, s);
+        f.setRigid(false);
+        f.setIsometric(false);
 
 
 

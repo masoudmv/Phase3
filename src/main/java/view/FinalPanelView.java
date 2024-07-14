@@ -2,10 +2,7 @@ package view;
 
 import controller.Controller;
 import model.charactersModel.GeoShapeModel;
-import view.charactersView.BulletView;
-import view.charactersView.Drawable;
-import view.charactersView.EpsilonView;
-import view.charactersView.GeoShapeView;
+import view.charactersView.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -90,10 +87,22 @@ public class FinalPanelView extends JPanel {
 
         updateEntitiesLocations(this);
 
-        for (GeoShapeView geoShapeView:GeoShapeView.geoShapeViews){
-            g.setColor(Color.blue);
-            geoShapeView.draw(g);
+        for (GeoShapeView geoShapeView : GeoShapeView.geoShapeViews) {
+            geoShapeView.draw(g); // This should call the appropriate overridden method
         }
+
+
+//        for (NecropickView necropickView:NecropickView.necropickViews){
+////            g.setColor(Color.blue);
+////            if (geoShapeView instanceof NecropickView)
+////                necropickView.drawNecropick(g);
+////            else geoShapeView.draw(g);
+//        }
+
+
+
+
+
 
         for (EpsilonView epsilonView: EpsilonView.epsilonViews){
             epsilonView.setCurrentLocation(

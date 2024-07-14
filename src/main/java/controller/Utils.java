@@ -185,7 +185,7 @@ public class Utils {
     }
 
 
-    public static HashMap<Integer, Point2D> closestPointOnEdges(Point2D point, ArrayList<Edge> edges){
+    public static HashMap<Integer, Point2D> closestPointOnEdges(Point2D point, ArrayList<Line2D> edges){
 
 //        System.out.println("dsdsdsdsdsdsdsd");
 
@@ -196,7 +196,7 @@ public class Utils {
         Point2D closest = null;
         int edgeIndex = -1;
         for (int i=0; i<edges.size(); i++){
-            Point2D temp = getClosestPointOnSegment(edges.get(i).head1, edges.get(i).head2, point);
+            Point2D temp = getClosestPointOnSegment(edges.get(i).getP1(), edges.get(i).getP2(), point);
             double distance = temp.distance(point);
 //            System.out.println(distance);
             if (distance < minDistance) {

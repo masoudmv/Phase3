@@ -42,7 +42,7 @@ import static model.FinalPanelModel.finalPanelModels;
 import static model.PanelManager.handlePanelPanelCollision;
 import static model.charactersModel.CollectibleModel.collectibleModels;
 //import static model.NonRigid.nonRigids;
-//import static model.charactersModel.NecropickModel.necropickModels;
+import static model.charactersModel.NecropickModel.necropickModels;
 import static model.charactersModel.SquarantineModel.squarantineModels;
 import static model.charactersModel.TrigorathModel.trigorathModels;
 import static model.charactersModel.smiley.Fist.fists;
@@ -202,9 +202,7 @@ public class GameLoop implements KeyListener, Runnable {
 
 
 
-//        for (NecropickModel n : necropickModels){   // todo revert
-//            n.update();
-//        }
+
 
 
     }
@@ -357,16 +355,25 @@ public class GameLoop implements KeyListener, Runnable {
 
 
 
+        for (Movable movable: movables){
+            movable.move();
+            movable.friction();
+        }
 
 
 
 
 
 
-//        for (OmenoctModel omenoctModel : OmenoctModel.omenoctModels){
-//            omenoctModel.setOnEpsilonPanel(MainPanel.getINSTANCE()); // todo revert
-//            omenoctModel.updateDirection();
-//        }
+        for (OmenoctModel omenoctModel : OmenoctModel.omenoctModels){
+            omenoctModel.setOnEpsilonPanel(EpsilonModel.localPanel);
+            omenoctModel.updateDirection();
+        }
+
+
+        for (NecropickModel n : necropickModels){   // todo revert
+            n.update();
+        }
 
 
 
@@ -462,10 +469,6 @@ public class GameLoop implements KeyListener, Runnable {
 
 
 
-        for (Movable movable: movables){
-            movable.move();
-            movable.friction();
-        }
         for (TrigorathModel t:trigorathModels){
             t.rotate();
         }

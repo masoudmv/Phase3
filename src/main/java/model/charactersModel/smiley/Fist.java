@@ -156,16 +156,16 @@ public class Fist extends GeoShapeModel implements Collidable {
         return false;
     }
 
-    @Override
-    public Point2D[] getVertices() { //todo
-        Point2D[] vertices = new Point2D[myPolygon.npoints];
-        for (int i = 0; i < myPolygon.npoints; i++) {
-            double x = myPolygon.xpoints[i];
-            double y = myPolygon.ypoints[i];
-            vertices[i] = new Point2D.Double(x, y);
-        }
-        return vertices;
-    }
+//    @Override
+//    public Point2D[] getVertices() { //todo
+//        Point2D[] vertices = new Point2D[myPolygon.npoints];
+//        for (int i = 0; i < myPolygon.npoints; i++) {
+//            double x = myPolygon.xpoints[i];
+//            double y = myPolygon.ypoints[i];
+//            vertices[i] = new Point2D.Double(x, y);
+//        }
+//        return vertices;
+//    }
 
 //    @Override
 //    public ArrayList<Line2D> getEdges() {

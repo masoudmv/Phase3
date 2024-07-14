@@ -2,7 +2,7 @@ package model.charactersModel;
 
 import model.FinalPanelModel;
 import model.MyPolygon;
-import model.entities.Entity;
+import model.collision.entities.Entity;
 import model.movement.Direction;
 
 import java.awt.geom.Line2D;
@@ -48,6 +48,17 @@ public abstract class GeoShapeModel extends Entity {
         moveVertices(addVectors(anchor, img));
         entities.add(this);
         createPolygonalEnemyView(id, image);
+    }
+
+
+    public GeoShapeModel(Point2D anchor, BufferedImage image, MyPolygon myPolygon, boolean necropick) { // exclusive for Necropick
+        this.id = UUID.randomUUID().toString();
+        this.anchor = new Point2D.Double(anchor.getX() , anchor.getY());
+        this.myPolygon = myPolygon;
+        radius = (double) image.getHeight()/2;
+        Point2D img = new Point2D.Double((double) -image.getWidth()/2, (double) -image.getHeight()/2);
+        moveVertices(addVectors(anchor, img));
+        entities.add(this);
     }
 
     public GeoShapeModel(BufferedImage image, MyPolygon myPolygon){
@@ -113,6 +124,16 @@ public abstract class GeoShapeModel extends Entity {
             ypoints[i] = this.myPolygon.ypoints[i] + movement.getY();
         }
         myPolygon = new MyPolygon(xpoints, ypoints, myPolygon.npoints);
+    }
+
+    public Point2D[] getVertices() { //todo
+        Point2D[] vertices = new Point2D[myPolygon.npoints];
+        for (int i = 0; i < myPolygon.npoints; i++) {
+            double x = myPolygon.xpoints[i];
+            double y = myPolygon.ypoints[i];
+            vertices[i] = new Point2D.Double(x, y);
+        }
+        return vertices;
     }
 
     public void movePolygon(Point2D movement){

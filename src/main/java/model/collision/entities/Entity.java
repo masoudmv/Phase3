@@ -1,4 +1,4 @@
-package model.entities;
+package model.collision.entities;
 
 import java.util.concurrent.ConcurrentHashMap;
 

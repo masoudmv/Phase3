@@ -104,6 +104,14 @@ public class FinalPanelModel implements Collidable {
     public String getId() {
         return id;
     }
+    private void initializeEdges() {
+        edges.clear();
+        for (int i = 0; i < 4; i++) {
+            int nextIndex = (i + 1) % 4;
+            edges.add(new Line2D.Double(vertices.get(i), vertices.get(nextIndex)));
+        }
+    }
+
     private void updateEdges(){
         edges.clear();
         ArrayList<Line2D> res = new ArrayList<>();
@@ -130,7 +138,7 @@ public class FinalPanelModel implements Collidable {
         vertices.add(new Point2D.Double(x + width, y + height));
         // Bottom-left corner
         vertices.add(new Point2D.Double(x, y + height));
-        updateEdges();
+        initializeEdges();
     }
 
     public void eliminate(){
@@ -146,7 +154,6 @@ public class FinalPanelModel implements Collidable {
         array = vertices.toArray(array);
         return array;
     }
-
     @Override
     public ArrayList<Line2D> getEdges() {
         return edges;
@@ -302,14 +309,6 @@ public class FinalPanelModel implements Collidable {
         initializeEdges();
     }
 
-    private void initializeEdges() {
-        edges.clear();
-        for (int i = 0; i < 4; i++) {
-            int nextIndex = (i + 1) % 4;
-            edges.add(new Line2D.Double(vertices.get(i), vertices.get(nextIndex)));
-        }
-    }
-
     public ArrayList<Line2D> getUnTrimmedEdges() {
         ArrayList<Line2D> res = new ArrayList<>();
         for (int i = 0; i < 4; i++) {
@@ -320,7 +319,7 @@ public class FinalPanelModel implements Collidable {
     }
 
     public void adjustEdgesOnOverlap(FinalPanelModel other) {
-        this.updateVertices();
+//        this.updateVertices();
 
         ArrayList<Point2D> thisVertices = this.getArrayListVertices();
         ArrayList<Point2D> otherVertices = other.getArrayListVertices();
@@ -340,7 +339,7 @@ public class FinalPanelModel implements Collidable {
         }
 
         if (verticesInsideOtherPanel.isEmpty() && verticesInsideThisPanel.isEmpty()) {
-            initializeEdges();
+//            initializeEdges();
             return;
         }
 
@@ -366,9 +365,9 @@ public class FinalPanelModel implements Collidable {
             handleOneVertexInside(this, other, verticesInsideOtherPanel.get(0), verticesInsideThisPanel.isEmpty() ? null : verticesInsideThisPanel.get(0));
         }
 
-        if (verticesInsideThisPanel.size() == 1) {
-            handleOneVertexInside(other, this, verticesInsideThisPanel.get(0), verticesInsideOtherPanel.isEmpty() ? null : verticesInsideOtherPanel.get(0));
-        }
+//        if (verticesInsideThisPanel.size() == 1) {
+//            handleOneVertexInside(other, this, verticesInsideThisPanel.get(0), verticesInsideOtherPanel.isEmpty() ? null : verticesInsideOtherPanel.get(0));
+//        }
     }
 
     private void handleTwoVerticesInside(FinalPanelModel thisPanel, FinalPanelModel otherPanel, ArrayList<Point2D> verticesInside) {
@@ -468,7 +467,8 @@ public class FinalPanelModel implements Collidable {
 
         // Every part of the edge is removed
         if (xMinSegment <= xMinEdge && xMaxEdge <= xMaxSegment) {
-            return null;
+            result.add(new Line2D.Double(0, 0, 0, 0)); // Add a fake line
+//            return null;
         }
         // Segments do not overlap
         else if (xMaxSegment < xMinEdge || xMaxEdge < xMinSegment) {
@@ -504,23 +504,24 @@ public class FinalPanelModel implements Collidable {
 
         // Every part of the edge is removed
         if (yMinSegment <= yMinEdge && yMaxEdge <= yMaxSegment) {
-            return null;
+            result.add(new Line2D.Double(0, 0, 0, 0)); // Add a fake line. Works for now!
+//            return null;
         }
         // Segments do not overlap
-        else if (yMaxSegment < yMinEdge || yMaxEdge < yMinSegment) {
+        if (yMaxSegment < yMinEdge || yMaxEdge < yMinSegment) {
             result.add(edge);
         }
         // Segment splits the edge into two parts
-        else if (yMinEdge < yMinSegment && yMaxSegment < yMaxEdge) {
+        if (yMinEdge < yMinSegment && yMaxSegment < yMaxEdge) {
             result.add(new Line2D.Double(edge.getX1(), yMinEdge, edge.getX1(), yMinSegment));
             result.add(new Line2D.Double(edge.getX1(), yMaxSegment, edge.getX1(), yMaxEdge));
         }
         // Segment overlaps the end part of the edge
-        else if (yMaxSegment < yMaxEdge && yMinEdge < yMaxSegment) {
+        if (yMaxSegment < yMaxEdge && yMinEdge < yMaxSegment) {
             result.add(new Line2D.Double(edge.getX1(), yMaxSegment, edge.getX1(), yMaxEdge));
         }
         // Segment overlaps the start part of the edge
-        else if (yMaxEdge <= yMaxSegment && yMinSegment < yMaxEdge) {
+        if (yMaxEdge <= yMaxSegment && yMinSegment < yMaxEdge) {
             result.add(new Line2D.Double(edge.getX1(), yMinEdge, edge.getX1(), yMinSegment));
         }
 

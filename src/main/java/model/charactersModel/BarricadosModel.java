@@ -2,6 +2,7 @@ package model.charactersModel;
 
 import model.FinalPanelModel;
 import model.MyPolygon;
+import model.collision.Collidable;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,9 +12,9 @@ import java.util.ArrayList;
 
 import static model.imagetools.ToolBox.getBufferedImage;
 
-public class BarricadosModel extends GeoShapeModel{
+public class BarricadosModel extends GeoShapeModel implements Collidable {
     static BufferedImage image;
-    private final static Dimension panelSize = new Dimension(400, 400);
+    private final static Dimension panelSize = new Dimension(300, 300);
 
     public static ArrayList<BarricadosModel> barricados = new ArrayList<>();
 
@@ -23,7 +24,28 @@ public class BarricadosModel extends GeoShapeModel{
         FinalPanelModel f = new FinalPanelModel(location, panelSize);
         f.setRigid(false);
         f.setIsometric(true);
+        setMyPolygon();
         barricados.add(this);
+        collidables.add(this);
+    }
+
+
+    private void setMyPolygon(){
+        double xLeft = getAnchor().getX() - (double) image.getWidth()/2;
+        double xRight = getAnchor().getX() + (double) image.getWidth()/2;
+        double yBottom = getAnchor().getY() + (double) image.getHeight()/2;
+        double yTop = getAnchor().getX() - (double) image.getHeight()/2;
+
+        double[] xPoints = {xLeft, xRight, xRight, xLeft};
+        double[] yPoints = {yTop, yTop, yBottom, yBottom};
+
+        setMyPolygon(new MyPolygon(xPoints, yPoints, 4));
+
+    }
+
+    @Override
+    public void setMyPolygon(MyPolygon myPolygon) {
+
     }
 
 
@@ -32,14 +54,35 @@ public class BarricadosModel extends GeoShapeModel{
         BarricadosModel.image = getBufferedImage(img);
         return BarricadosModel.image;
     }
+//    @Override
+//    public void setMyPolygon(MyPolygon myPolygon) {
+//
+
+//    }
 
     @Override
-    public void setMyPolygon(MyPolygon myPolygon) {
+    public void eliminate() {
 
     }
 
     @Override
-    public void eliminate() {
+    public boolean isCircular() {
+        return false;
+    }
+
+//    public Point2D[] getVertices(){
+//        Point2D[] array = new Point2D[vertices.size()];
+//        array = vertices.toArray(array);
+//        return array;
+//    }
+
+    @Override
+    public void onCollision(Collidable other, Point2D intersection) {
+
+    }
+
+    @Override
+    public void onCollision(Collidable other) {
 
     }
 }

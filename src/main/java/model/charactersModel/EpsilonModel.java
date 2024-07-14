@@ -45,12 +45,20 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
     public ArrayList<Point2D> vertices = new ArrayList<>();
 
 
-//    public static MainPanel LocalPanel = MainPanel.getINSTANCE();
+    public static FinalPanelModel localPanel;
 
     public EpsilonModel(Point2D anchor, MyPolygon myPolygon) {
         super(anchor, image, myPolygon);
         System.out.println("epsilon");
         INSTANCE = this;
+
+        Point2D loc = new Point2D.Double(300, 300);
+        Dimension size = new Dimension(500, 500);
+        localPanel = new FinalPanelModel(loc, size);
+        localPanel.setIsometric(false);
+
+
+
 //        this.anchor = anchor;
 //        this.radius = 20; //todo
 
@@ -179,6 +187,7 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
 
     @Override
     public void move() {
+        updateLocalPanel();
         move(direction);
     }
 
@@ -284,24 +293,49 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
         INSTANCE = null;
     }
     @Override
+    public void onCollision(Collidable other) {
+
+    }
+
+    private void updateLocalPanel(){
+        if (localPanel != null) if (isInFinalPanelModel(localPanel)) return;;
+        for (FinalPanelModel panel : FinalPanelModel.finalPanelModels){
+            if (isInFinalPanelModel(panel)) {
+                localPanel = panel;
+                return;
+            }
+        } localPanel = null;
+    }
+    private boolean isInFinalPanelModel(FinalPanelModel panel) {
+        Point2D left = new Point2D.Double(getAnchor().getX() - getRadius(), getAnchor().getY());
+        Point2D right = new Point2D.Double(getAnchor().getX() + getRadius(), getAnchor().getY());
+        Point2D bottom = new Point2D.Double(getAnchor().getX(), getAnchor().getY() + getRadius());
+        Point2D top = new Point2D.Double(getAnchor().getX(), getAnchor().getY() - getRadius());
+
+        boolean leftIn = isPointInPolygon(left, panel.getVertices());
+        boolean rightIn = isPointInPolygon(right, panel.getVertices());
+        boolean bottomIn = isPointInPolygon(bottom, panel.getVertices());
+        boolean topIn = isPointInPolygon(top, panel.getVertices());
+
+        if (!leftIn || !rightIn || !bottomIn || !topIn) return false;
+        return true;
+    }
+
+    @Override
     public void onCollision(Collidable other, Point2D intersection) {
 //        System.out.println(intersection);
 //        System.out.println(getAnchor());
 //        System.out.println("================");
         if (other instanceof Smiley) impact(new CollisionState(intersection));
         if (other instanceof Fist) impact(new CollisionState(intersection));
+        if (other instanceof BarricadosModel) impact(new CollisionState(intersection));
         if (other instanceof CollectibleModel);
         if (other instanceof BulletModel);
         if (other instanceof SmileyBullet);
         if (other instanceof FinalPanelModel) {
-            System.out.println("+_+_+");
+//            System.out.println("+_+_+");
             impact(new CollisionState(intersection));
         }
-
-    }
-
-    @Override
-    public void onCollision(Collidable other) {
 
     }
 }

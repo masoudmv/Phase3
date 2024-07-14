@@ -51,6 +51,28 @@ public interface Collidable {
     }
 
 
+    private void handleCirclePolygonCollision(Collidable collidable) {
+        if (collidable instanceof FinalPanelModel) {
+            Point2D intersection = findClosestPointOnEdges(getAnchor(), collidable.getEdges());
+            if (intersection != null) { // todo find a way to remove this nonsense if statement!
+                if (intersection.distance(getAnchor()) <= getRadius()) { // todo change radius by an offset amount
+                    this.onCollision(collidable, intersection);
+                    collidable.onCollision(this, intersection);
+                }
+            }
+        }
+
+        else {
+//            System.out.println("BARICAAAAAAAAAAAA");
+            Point2D intersection = closestPointOnPolygon(getAnchor(), collidable.getVertices()); // todo this calculation most be done with edges when dealing with FinalPanel
+            if (intersection.distance(getAnchor()) <= getRadius()) { // todo change radius by an offset amount
+
+                this.onCollision(collidable, intersection);
+                collidable.onCollision(this, intersection);
+            }
+        }
+    }
+
     private static Point2D findCircleCircleIntersection(Collidable c1, Collidable c2) {
         double x1 = c1.getAnchor().getX();
         double y1 = c1.getAnchor().getY();
@@ -79,27 +101,6 @@ public interface Collidable {
         Point2D intersection2 = new Point2D.Double(x0 - rx, y0 - ry);
 
         return findMidPoint(intersection1, intersection2);
-    }
-
-    private void handleCirclePolygonCollision(Collidable collidable) {
-        if (collidable instanceof FinalPanelModel) {
-            Point2D intersection = findClosestPointOnEdges(getAnchor(), collidable.getEdges());
-            if (intersection != null) { // todo find a way to remove this nonsense if statement!
-                if (intersection.distance(getAnchor()) <= getRadius()) { // todo change radius by an offset amount
-                    this.onCollision(collidable, intersection);
-                    collidable.onCollision(this, intersection);
-                }
-            }
-        }
-
-        else {
-            Point2D intersection = closestPointOnPolygon(getAnchor(), collidable.getVertices()); // todo this calculation most be done with edges when dealing with FinalPanel
-            if (intersection.distance(getAnchor()) <= getRadius()) { // todo change radius by an offset amount
-
-                this.onCollision(collidable, intersection);
-                collidable.onCollision(this, intersection);
-            }
-        }
     }
 
     private void handleBulletImpact(Point2D intersection, Collidable collidable) {
