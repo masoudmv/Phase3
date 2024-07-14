@@ -16,8 +16,8 @@ import java.util.UUID;
 
 import static controller.constants.Constants.BULLET_RADIUS;
 import static controller.constants.Constants.BULLET_VELOCITY;
-import static controller.Controller.creatBulletView;
-import static controller.Controller.findBulletView;
+import static controller.UserInterfaceController.creatBulletView;
+import static controller.UserInterfaceController.findBulletView;
 import static controller.Utils.*;
 
 public class BulletModel implements Movable, Collidable, Impactable {

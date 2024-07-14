@@ -1,6 +1,6 @@
 package model.charactersModel.blackOrb;
 
-import controller.Controller;
+import controller.UserInterfaceController;
 import controller.Utils;
 import model.charactersModel.GeoShapeModel;
 import model.MyPolygon;
@@ -29,7 +29,7 @@ public class Laser extends GeoShapeModel {
     public static void drawLasers(Component component, Graphics g){
         for (int i = 0; i < GeoShapeModel.entities.size(); i++) {
             if (GeoShapeModel.entities.get(i).isLaser){
-                Polygon polygon = Controller.calculateEntityView(component, GeoShapeModel.entities.get(i).myPolygon);
+                Polygon polygon = UserInterfaceController.calculateEntityView(component, GeoShapeModel.entities.get(i).myPolygon);
                 g.fillPolygon(polygon);
             }
         }

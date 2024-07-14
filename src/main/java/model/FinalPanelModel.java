@@ -7,11 +7,10 @@ import model.collision.Collidable;
 import java.awt.*;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.UUID;
 
-import static controller.Controller.*;
+import static controller.UserInterfaceController.*;
 import static controller.Utils.*;
 import static controller.constants.Constants.FRAME_DIMENSION;
 import static model.PanelManager.handlePanelPanelCollision;
@@ -239,6 +238,7 @@ public class FinalPanelModel implements Collidable {
 
 
     public void panelMotion(){
+        updateVertices();
         if (isIsometric) return;
         velocity = acceleration + velocity;
         if (velocity < 4) {
@@ -365,9 +365,7 @@ public class FinalPanelModel implements Collidable {
             handleOneVertexInside(this, other, verticesInsideOtherPanel.get(0), verticesInsideThisPanel.isEmpty() ? null : verticesInsideThisPanel.get(0));
         }
 
-//        if (verticesInsideThisPanel.size() == 1) {
-//            handleOneVertexInside(other, this, verticesInsideThisPanel.get(0), verticesInsideOtherPanel.isEmpty() ? null : verticesInsideOtherPanel.get(0));
-//        }
+
     }
 
     private void handleTwoVerticesInside(FinalPanelModel thisPanel, FinalPanelModel otherPanel, ArrayList<Point2D> verticesInside) {

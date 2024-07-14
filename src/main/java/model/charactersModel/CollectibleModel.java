@@ -10,7 +10,7 @@ import java.util.LinkedList;
 import java.util.UUID;
 
 import static controller.constants.Constants.BULLET_RADIUS;
-import static controller.Controller.*;
+import static controller.UserInterfaceController.*;
 import static controller.Game.ELAPSED_TIME;
 import static controller.Utils.*;
 import static controller.Utils.addVectors;

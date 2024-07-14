@@ -53,7 +53,7 @@ public class Main {
         BufferedImage b = EpsilonModel.loadImage();
         GraphicalObject bows = new GraphicalObject(b);
         MyPolygon pol = bows.myBoundingPolygon;
-        String id = new EpsilonModel(new Point2D.Double(400, 400), pol).getId();
+        String id = new EpsilonModel(new Point2D.Double(900, 400), pol).getId();
 
 
 
@@ -65,10 +65,10 @@ public class Main {
 
 //        I am talking about this part: // uncoment this part todo
 //        BufferedImage bImg = OmenoctModel.loadImage();
-//        GraphicalObject bowser = new GraphicalObject(bImg);
+//        GraphicalObject bowser = new GraphicalObject(bImg);ds
 //        MyPolygon p = bowser.myBoundingPolygon;
 //        new OmenoctModel(new Point2D.Double(300, 400), p);
-//
+
 //        BufferedImage bg = BarricadosModel.loadImage();
 //        GraphicalObject ber = new GraphicalObject(bg);
 //        MyPolygon pl = ber.myBoundingPolygon;
@@ -89,18 +89,20 @@ public class Main {
 
 
 
-        BufferedImage bq = NecropickModel.loadImage();
-        GraphicalObject boww = new GraphicalObject(bq);
-        MyPolygon polll = boww.myBoundingPolygon;
-        new NecropickModel(new Point2D.Double(-200, -200), polll);
+//        BufferedImage bq = NecropickModel.loadImage();
+//        GraphicalObject boww = new GraphicalObject(bq);
+//        MyPolygon polll = boww.myBoundingPolygon;
+//        new NecropickModel(new Point2D.Double(-200, -200), polll);
+
+
 
 //        new FinalPanelModel();
 //todo---
 
-//        BufferedImage b = Hand.loadImage();
-//        GraphicalObject bows = new GraphicalObject(b);
-//        MyPolygon pol = bows.myBoundingPolygon;
-//        new Hand(new Point2D.Double(400, 400), pol);
+//        BufferedImage bq = Hand.loadImage();
+//        GraphicalObject bb = new GraphicalObject(bq);
+//        MyPolygon pool = bb.myBoundingPolygon;
+//        new Hand(new Point2D.Double(600, 500), pool);
 //todo---
 //
 //      SmileyBullet.rapidFire(10, 180);
@@ -125,11 +127,11 @@ public class Main {
 //        new FinalPanelModel(loc, size).setIsometric(false);
 
 
-        Point2D l = new Point2D.Double(700, 100);
-        Dimension s = new Dimension(700, 600);
-        FinalPanelModel f = new FinalPanelModel(l, s);
-        f.setRigid(false);
-        f.setIsometric(false);
+//        Point2D l = new Point2D.Double(699, 100);
+//        Dimension s = new Dimension(700, 600);
+//        FinalPanelModel f = new FinalPanelModel(l, s);
+//        f.setRigid(false);
+//        f.setIsometric(false);
 
 
 
@@ -167,10 +169,10 @@ public class Main {
 //        new SmileyBullet(new Point2D.Double(500, 500), pl).rapidFire(8, 180);
 
 
-//        BufferedImage ba = Fist.loadImage();
-//        GraphicalObject bos = new GraphicalObject(ba);
-//        MyPolygon pl = bos.myBoundingPolygon;
-//        new Fist(new Point2D.Double(500, 500), pl);
+        BufferedImage ba = Fist.loadImage();
+        GraphicalObject bos = new GraphicalObject(ba);
+        MyPolygon pl = bos.myBoundingPolygon;
+        new Fist(new Point2D.Double(500, 500), pl);
 
 
 

@@ -13,7 +13,7 @@ import java.util.Random;
 import java.util.UUID;
 
 import static controller.constants.Constants.*;
-import static controller.Controller.*;
+import static controller.UserInterfaceController.*;
 import static controller.Sound.playBubble;
 import static controller.Sound.playDeathSound;
 import static controller.GameLoop.aliveEnemies;

@@ -52,7 +52,7 @@ public class Fist extends GeoShapeModel implements Collidable {
         angle = -90;
         rotate(180);
 
-        Point2D loc = new Point2D.Double(anchor.getX()-35, anchor.getY()-35);
+        Point2D loc = new Point2D.Double(anchor.getX()-90, anchor.getY()-90);
         Dimension size = new Dimension(200, 200);
         finalPanelModel = new FinalPanelModel(loc, size);
 

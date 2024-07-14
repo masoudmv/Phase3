@@ -1,6 +1,6 @@
 package view;
 
-import controller.Controller;
+import controller.UserInterfaceController;
 import model.charactersModel.GeoShapeModel;
 import view.charactersView.*;
 
@@ -9,8 +9,8 @@ import java.awt.*;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
-import static controller.Controller.*;
-import static controller.Controller.calculateViewLocationBullet;
+import static controller.UserInterfaceController.*;
+import static controller.UserInterfaceController.calculateViewLocationBullet;
 import static controller.Utils.addVectors;
 import static view.charactersView.BulletView.bulletViews;
 import static view.charactersView.Drawable.drawables;
@@ -80,7 +80,7 @@ public class FinalPanelView extends JPanel {
 
         for (int i = 0; i < GeoShapeModel.entities.size(); i++) {
             if (GeoShapeModel.entities.get(i).isLaser){
-                Polygon polygon = Controller.calculateEntityView(this, GeoShapeModel.entities.get(i).myPolygon);
+                Polygon polygon = UserInterfaceController.calculateEntityView(this, GeoShapeModel.entities.get(i).myPolygon);
                 g.fillPolygon(polygon);
             }
         }

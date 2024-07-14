@@ -2,6 +2,7 @@ package model.charactersModel;
 
 import model.FinalPanelModel;
 import model.MyPolygon;
+import model.collision.Collidable;
 import model.movement.Direction;
 //import view.MainPanel;
 
@@ -17,7 +18,7 @@ import static controller.constants.EntityConstants.OMENOCT_PANEL_SPEED;
 import static controller.Utils.*;
 import static model.imagetools.ToolBox.getBufferedImage;
 
-public class OmenoctModel extends GeoShapeModel {
+public class OmenoctModel extends GeoShapeModel implements Collidable {
     public boolean isOnEpsilonPanel = false;
     static BufferedImage image;
     private int omenoctEdgeIndex = -1;
@@ -27,6 +28,7 @@ public class OmenoctModel extends GeoShapeModel {
     public OmenoctModel(Point2D anchor, MyPolygon polygon) {
         super(anchor, image, polygon);
         omenoctModels.add(this);
+        collidables.add(this);
     }
 
     @Override
@@ -224,5 +226,20 @@ public class OmenoctModel extends GeoShapeModel {
 
     private double sideDistance(Point2D point, Point2D nextPoint) {
         return distance(point, nextPoint);
+    }
+
+    @Override
+    public boolean isCircular() {
+        return false;
+    }
+
+    @Override
+    public void onCollision(Collidable other, Point2D intersection) {
+
+    }
+
+    @Override
+    public void onCollision(Collidable other) {
+
     }
 }

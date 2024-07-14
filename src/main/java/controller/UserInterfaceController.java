@@ -5,6 +5,7 @@ import model.MyPolygon;
 import model.charactersModel.BulletModel;
 import model.charactersModel.CollectibleModel;
 import model.charactersModel.*;
+import model.entities.Skill;
 import view.FinalPanelView;
 import view.charactersView.BulletView;
 import view.charactersView.CollectibleView;
@@ -26,7 +27,7 @@ import static view.charactersView.NecropickView.necropickViews;
 import static view.charactersView.SquarantineView.squarantineViews;
 import static view.charactersView.TrigorathView.trigorathViews;
 
-public abstract class Controller {
+public abstract class UserInterfaceController {
 
 
 
@@ -39,7 +40,7 @@ public abstract class Controller {
         new SquarantineView(id);
     }
     public static void createTrigorathView(String id){ new TrigorathView(id); }
-    public static void createOmenoctView(String id){ new OmenoctView(id); }
+
     public static void creatBulletView(String id){ new BulletView(id); }
     public static void createCollectibleView(String id){ new CollectibleView(id); }
 
@@ -377,6 +378,28 @@ public abstract class Controller {
             if (f.getId().equals(id)) return f;
         }
         return null;
+    }
+
+
+    public static Skill findSkill(String name) {
+        for (Skill.SkillType type : Skill.SkillType.values()) {
+            for (Skill skill : Skill.values()) {
+                if (skill.getType().equals(type) && skill.getName().equals(name)) return skill;
+            }
+        }
+        return null;
+    }
+
+    public static void fireSkill() {
+        if (Skill.activeSkill != null) Skill.activeSkill.fire();
+    }
+
+    public static boolean isGameRunning() {
+        return GameLoop.getINSTANCE().isRunning();
+    }
+
+    public static boolean isGameOn() {
+        return GameLoop.getINSTANCE().isOn();
     }
 
 }

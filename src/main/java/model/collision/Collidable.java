@@ -3,6 +3,7 @@ package model.collision;
 import controller.Game;
 import model.FinalPanelModel;
 import model.charactersModel.*;
+import model.movement.Direction;
 //import view.MainPanel;
 //import view.Panel;
 
@@ -10,6 +11,7 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static controller.GameLoop.EPSILON_MELEE_DAMAGE;
 import static controller.GameLoop.EPSILON_RANGED_DAMAGE;
@@ -280,6 +282,9 @@ public interface Collidable {
             return findMidPoint(point2.collision, vertices[point1.edge]);
         }
     }
+
+
+
 
     record Intersection(Point2D collision, int edge, Collidable collidable) {}
     void onCollision(Collidable other, Point2D intersection);

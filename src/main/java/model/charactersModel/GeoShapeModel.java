@@ -11,7 +11,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.UUID;
 
-import static controller.Controller.createPolygonalEnemyView;
+import static controller.UserInterfaceController.createPolygonalEnemyView;
 import static controller.Utils.*;
 
 
@@ -39,7 +39,7 @@ public abstract class GeoShapeModel extends Entity {
                 anchor.getX() , anchor.getY()
         );
         this.myPolygon = myPolygon;
-        radius = image.getHeight()/2;
+        radius = (double) image.getWidth()/2;
         // following line is extra??
 //        this.myPolygon.npoints = myPolygon.npoints;
         Point2D img = new Point2D.Double(-image.getWidth()/2, -image.getHeight()/2);

@@ -10,7 +10,6 @@ import model.collision.CollisionState;
 import model.collision.Impactable;
 import model.movement.Direction;
 import model.movement.Movable;
-import view.MainFrame;
 //import view.MainPanel;
 //import view.MainPanel;
 
@@ -20,10 +19,9 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import java.util.UUID;
 
 import static controller.constants.Constants.*;
-import static controller.Controller.createEpsilonView;
+import static controller.UserInterfaceController.createEpsilonView;
 import static controller.Utils.*;
 import static controller.Utils.normalizeVector;
 import static model.imagetools.ToolBox.getBufferedImage;
@@ -49,33 +47,21 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
 
     public EpsilonModel(Point2D anchor, MyPolygon myPolygon) {
         super(anchor, image, myPolygon);
-        System.out.println("epsilon");
         INSTANCE = this;
-
-        Point2D loc = new Point2D.Double(300, 300);
+        Point2D loc = new Point2D.Double(getAnchor().getX() - 100, getAnchor().getY()- 100); // todo spawn epsilon in the middle of screen
         Dimension size = new Dimension(500, 500);
         localPanel = new FinalPanelModel(loc, size);
         localPanel.setIsometric(false);
-
-
-
 //        this.anchor = anchor;
 //        this.radius = 20; //todo
-
 //        this.id= UUID.randomUUID().toString();
         Point vector = new Point(0,0); //todo shitty design
         this.direction=new Direction(vector);
-
         epsilonModels.add(this);
         collidables.add(this);
         movables.add(this);
 //        impactables.add(this);
-
-
-
-
         createEpsilonView(id);
-
     }
 
     public static EpsilonModel getINSTANCE() {
@@ -329,6 +315,8 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
         if (other instanceof Smiley) impact(new CollisionState(intersection));
         if (other instanceof Fist) impact(new CollisionState(intersection));
         if (other instanceof BarricadosModel) impact(new CollisionState(intersection));
+        if (other instanceof OmenoctModel) impact(new CollisionState(intersection));
+        if (other instanceof NecropickModel) if (!((NecropickModel) other).isHovering()) impact(new CollisionState(intersection)); // :)
         if (other instanceof CollectibleModel);
         if (other instanceof BulletModel);
         if (other instanceof SmileyBullet);

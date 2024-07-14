@@ -1,9 +1,9 @@
 package model.charactersModel;
 
 import controller.Game;
-import controller.Utils;
 import model.MyPolygon;
 //import view.MainPanel;
+import model.collision.Collidable;
 import view.charactersView.NecropickView;
 
 import javax.swing.*;
@@ -13,12 +13,12 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Random;
 
-import static controller.Controller.createNecropickView;
-import static controller.Controller.findNecropickView;
+import static controller.UserInterfaceController.createNecropickView;
+import static controller.UserInterfaceController.findNecropickView;
 import static controller.constants.EntityConstants.*;
 import static model.imagetools.ToolBox.getBufferedImage;
 
-public class NecropickModel extends GeoShapeModel{
+public class NecropickModel extends GeoShapeModel implements Collidable {
     static BufferedImage image;
     public static ArrayList<NecropickModel> necropickModels = new ArrayList<>();
 //    public Polygon polygon;
@@ -34,6 +34,7 @@ public class NecropickModel extends GeoShapeModel{
         stateChangeTime = Game.ELAPSED_TIME; // Initialize state change time
         isHovering = true; // Start in hovering state
         createNecropickView(id, image);
+        collidables.add(this);
     }
 
     public static BufferedImage loadImage() {
@@ -42,6 +43,9 @@ public class NecropickModel extends GeoShapeModel{
         return NecropickModel.image;
     }
 
+    public boolean isHovering() {
+        return isHovering;
+    }
 
     private void hideUnderGround(){
         isNextLocationCalculated = false;
@@ -135,5 +139,20 @@ public class NecropickModel extends GeoShapeModel{
         } else {
             n.showNextLocation = false;
         }
+    }
+
+    @Override
+    public boolean isCircular() {
+        return false;
+    }
+
+    @Override
+    public void onCollision(Collidable other, Point2D intersection) {
+
+    }
+
+    @Override
+    public void onCollision(Collidable other) {
+
     }
 }

@@ -1,6 +1,5 @@
 package controller;
 
-import model.FinalPanelModel;
 import model.charactersModel.BulletModel;
 import model.charactersModel.CollectibleModel;
 import model.charactersModel.*;
@@ -11,9 +10,6 @@ import model.collision.Impactable;
 import model.movement.Direction;
 import model.movement.Movable;
 import view.*;
-import view.charactersView.CollectibleView;
-import view.charactersView.SquarantineView;
-import view.charactersView.TrigorathView;
 import view.junks.GameOverPanel;
 import view.junks.KeyBindingMenu;
 import view.junks.ShopPanel;
@@ -32,7 +28,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static controller.constants.Constants.*;
-import static controller.Controller.*;
+import static controller.UserInterfaceController.*;
 import static controller.Game.*;
 import static controller.Game.SkillTreeAbility.*;
 import static controller.MouseController.*;
@@ -53,13 +49,12 @@ import static model.collision.Collidable.collidables;
 import static model.collision.Impactable.impactables;
 import static model.movement.Movable.movables;
 import static org.example.Main.sensitivity;
-import static view.charactersView.CollectibleView.collectibleViews;
 //import static view.Panel.panels;
-import static view.charactersView.SquarantineView.squarantineViews;
-import static view.charactersView.TrigorathView.trigorathViews;
 
-public class GameLoop implements KeyListener, Runnable {
-    private static GameLoop INSTANCE = null;
+
+public class GameLoop implements Runnable {
+
+    public static GameLoop INSTANCE;
     private final AtomicBoolean running = new AtomicBoolean(false);
     private final AtomicBoolean exit = new AtomicBoolean(false);
     private long updateTimeDiffCapture = 0;
@@ -70,35 +65,19 @@ public class GameLoop implements KeyListener, Runnable {
     private long timeSaveDiffCapture = 0;
     private long timeSave;
     private volatile String FPS_UPS = "";
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     private long lastTickTime = System.currentTimeMillis();
-
-    // Add FPS tracking variables
-//    private long lastUpdateTime = System.currentTimeMillis();
     private int frameCount = 0;
     private long lastUpdateTimeUPS = System.currentTimeMillis();
+
+
     private int updateCount = 0;
-    private Set<Integer> keysPressed = new HashSet<>();
+//    private Set<Integer> keysPressed = new HashSet<>();
     public static boolean movementInProgress = false;
     private final int MOVEMENT_DELAY = 10; // Delay in milliseconds
     private Timer movementTimer;
     private Timer gameLoop;
     private ShopPanel shopPanel=null;
     private int extraBullet=0;
-    private boolean acesoInProgress=false;
     public static int EPSILON_MELEE_DAMAGE =10;
     public static int EPSILON_RANGED_DAMAGE =5;
     double lastHpRegainTime=-1;
@@ -114,8 +93,9 @@ public class GameLoop implements KeyListener, Runnable {
     public static int aliveEnemies;
 
 
+    private boolean acesoInProgress=false;
 
-    public GameLoop() {
+    private GameLoop() {
         decreaseVelocities=false;
         decrementRation=1;
         lastShot = 0;
@@ -129,7 +109,7 @@ public class GameLoop implements KeyListener, Runnable {
         playThemeSound();
 
 
-        MainFrame.getINSTANCE().addKeyListener(this);
+//        MainFrame.getINSTANCE().addKeyListener(this);
 
 
         int delay = 10; //milliseconds
@@ -150,62 +130,62 @@ public class GameLoop implements KeyListener, Runnable {
         gameLoop.start();
 
     }
+    public void start(){
+        this.start();
+    }
+    public void stop(){
+        this.stop();
+    }
 
 
     private void startMovementTimer() {}
 
-    private void stopMovementTimer() {
-        if (movementTimer != null) {
-            movementTimer.stop();
-            movementTimer = null;
+//    public void stopMovementTimer() {
+//        if (movementTimer != null) {
+//            movementTimer.stop();
+//            movementTimer = null;
+//
+//        }
+//    }
 
-        }
-    }
-
-    private void updateMovement() {
-
-        double deltaX=0;
-        double deltaY=0;
-
-        Map<String, Integer> keyBindings = KeyBindingMenu.getINSTANCE().getKeyBindings();
-
-        if (sensitivity<50) EPSILON_MAX_SPEED=3;
-        if (50<=sensitivity && sensitivity<60) EPSILON_MAX_SPEED=3.5;
-        if (60<sensitivity && sensitivity<70) EPSILON_MAX_SPEED=4;
-        if (70<sensitivity && sensitivity<80) EPSILON_MAX_SPEED=4.5;
-        if (80<sensitivity && sensitivity<90) EPSILON_MAX_SPEED=5;
-        if (90<sensitivity && sensitivity<=100) EPSILON_MAX_SPEED=5.5;
-
-
-
-
-        if (keysPressed.contains(keyBindings.get("Move Right"))) {
-            deltaX += 0.7;
-        }
-        if (keysPressed.contains(keyBindings.get("Move Left"))) {
-            deltaX -= 0.7;
-        }
-        if (keysPressed.contains(keyBindings.get("Move Up"))) {
-            deltaY -= 0.7;
-        }
-        if (keysPressed.contains(keyBindings.get("Move Down"))) {
-            deltaY += 0.7;
-        }
-
-
-        Point2D.Double vector = new Point2D.Double(deltaX, deltaY);
-        Point2D point = multiplyVector(EpsilonModel.getINSTANCE().getDirection().getNormalizedDirectionVector(),
-                EpsilonModel.getINSTANCE().getDirection().getMagnitude());
-        Direction direction = new Direction(addVectors(point, vector));
-        direction.adjustEpsilonDirectionMagnitude();
-        EpsilonModel.getINSTANCE().setDirection(direction);
-
-
-
-
-
-
-    }
+//    private void updateMovement() {
+//
+//        double deltaX=0;
+//        double deltaY=0;
+//
+//        Map<String, Integer> keyBindings = KeyBindingMenu.getINSTANCE().getKeyBindings();
+//
+//        if (sensitivity<50) EPSILON_MAX_SPEED=3;
+//        if (50<=sensitivity && sensitivity<60) EPSILON_MAX_SPEED=3.5;
+//        if (60<sensitivity && sensitivity<70) EPSILON_MAX_SPEED=4;
+//        if (70<sensitivity && sensitivity<80) EPSILON_MAX_SPEED=4.5;
+//        if (80<sensitivity && sensitivity<90) EPSILON_MAX_SPEED=5;
+//        if (90<sensitivity && sensitivity<=100) EPSILON_MAX_SPEED=5.5;
+//
+//
+//
+//
+//        if (keysPressed.contains(keyBindings.get("Move Right"))) {
+//            deltaX += 0.7;
+//        }
+//        if (keysPressed.contains(keyBindings.get("Move Left"))) {
+//            deltaX -= 0.7;
+//        }
+//        if (keysPressed.contains(keyBindings.get("Move Up"))) {
+//            deltaY -= 0.7;
+//        }
+//        if (keysPressed.contains(keyBindings.get("Move Down"))) {
+//            deltaY += 0.7;
+//        }
+//
+//        Point2D.Double vector = new Point2D.Double(deltaX, deltaY);
+//        Point2D point = multiplyVector(EpsilonModel.getINSTANCE().getDirection().getNormalizedDirectionVector(),
+//                EpsilonModel.getINSTANCE().getDirection().getMagnitude());
+//        Direction direction = new Direction(addVectors(point, vector));
+//        direction.adjustEpsilonDirectionMagnitude();
+//        EpsilonModel.getINSTANCE().setDirection(direction);
+//
+//    }
 
     public void updateView() {
 
@@ -220,7 +200,8 @@ public class GameLoop implements KeyListener, Runnable {
 
         ELAPSED_TIME += (double) interval / 1000;
 
-        if (!EpsilonModel.getINSTANCE().isImpactInProgress()) updateMovement();
+//        if (!EpsilonModel.getINSTANCE().isImpactInProgress()) updateMovement(); // Single REsponsibility
+        if (!EpsilonModel.getINSTANCE().isImpactInProgress()) UserInputHandler.updateMovement();
 
 
         // Increment frame count every time updateView is called
@@ -237,10 +218,12 @@ public class GameLoop implements KeyListener, Runnable {
         }
 
         for (Fist f : fists){
-//            f.move();
+            f.move();
         }
 
+
         for (Hand h : hands){
+            h.rot();
 //            h.move();
 //            h.mySlapAttack();
 //            h.rotateTowardsTarget();
@@ -250,28 +233,6 @@ public class GameLoop implements KeyListener, Runnable {
         for (SmileyBullet b : smileyBullets){
             b.move();
         }
-
-
-
-
-
-// todo ======================
-
-//        for (EpsilonView epsilonView: EpsilonView.epsilonViews){
-//
-//
-//            epsilonView.setCurrentLocation(
-//                    calculateViewLocationEpsilon(MainPanel.getINSTANCE(), epsilonView.getId())
-//            );
-//
-//
-//            epsilonView.setVertices(
-//                    calculateViewLocationOfEpsilonVertices(MainPanel.getINSTANCE(), epsilonView.getId())
-//            );
-//
-//        }
-
-// todo ======================
 
 
 
@@ -306,31 +267,25 @@ public class GameLoop implements KeyListener, Runnable {
         MainFrame.getINSTANCE().repaint();
     }
 
-    public void updateModel(){
+    public void updateModel() {
 
 
         for (int i = 0; i < finalPanelModels.size(); i++) {
             finalPanelModels.get(i).panelMotion();  // todo
         }
 
-//        for (int i = 0; i < nonRigids.size(); i++) {
-//            for (int j = i+1; j < nonRigids.size(); j++) {
-//                nonRigids.get(i).adjustEdgesOnOverlap(nonRigids.get(j));
-//            }
-//        }
 
         for (int i = 0; i < finalPanelModels.size(); i++) {
-            for (int j = i+1; j < finalPanelModels.size(); j++) {
+            for (int j = i + 1; j < finalPanelModels.size(); j++) {
                 handlePanelPanelCollision(finalPanelModels.get(i), finalPanelModels.get(j));
             }
         }
 
-        for (int i = 0; i < collidables.size(); i++){
-            for (int j = i+1; j< collidables.size(); j++){
+        for (int i = 0; i < collidables.size(); i++) {
+            for (int j = i + 1; j < collidables.size(); j++) {
                 collidables.get(i).checkCollision(collidables.get(j));
             }
         }
-
 
 
 //        MainPanel panel = MainPanel.getINSTANCE();
@@ -339,46 +294,26 @@ public class GameLoop implements KeyListener, Runnable {
         if (ELAPSED_TIME > 2 && ELAPSED_TIME < 10) {
 //            panel.expansion();
         }
-//        if (ELAPSED_TIME > 10) panel.panelMotion();
 
 
-
-
-//        for (int i = 0; i < panels.size(); i++) {
-//            panels.get(i).obj.setVertices(new ArrayList<>(Arrays.asList(panels.get(i).getVertices())));
-//        }
-//        MainPanel.getINSTANCE().obj.setVertices(new ArrayList<>(Arrays.asList(MainPanel.getINSTANCE().getVertices())));
-
-
-
-
-
-
-
-        for (Movable movable: movables){
+        for (Movable movable : movables) {
             movable.move();
             movable.friction();
         }
 
 
-
-
-
-
-        for (OmenoctModel omenoctModel : OmenoctModel.omenoctModels){
+        for (OmenoctModel omenoctModel : OmenoctModel.omenoctModels) {
             omenoctModel.setOnEpsilonPanel(EpsilonModel.localPanel);
             omenoctModel.updateDirection();
         }
 
 
-        for (NecropickModel n : necropickModels){   // todo revert
+        for (NecropickModel n : necropickModels) {   // todo revert
             n.update();
         }
 
 
-
-
-        for (ArchmireModel archmireModel : ArchmireModel.archmireModels){
+        for (ArchmireModel archmireModel : ArchmireModel.archmireModels) {
             archmireModel.move();
             archmireModel.updateLocation();
             ArrayList<Polygon> polygons = new ArrayList<>();
@@ -389,16 +324,12 @@ public class GameLoop implements KeyListener, Runnable {
         }
 
 
-
-
-
-
         for (int i = 0; i < collectibleModels.size(); i++) {
-            double age = ELAPSED_TIME -collectibleModels.get(i).birthTime;
-            if (age>=10) collectibleModels.get(i).remove();
+            double age = ELAPSED_TIME - collectibleModels.get(i).birthTime;
+            if (age >= 10) collectibleModels.get(i).remove();
         }
 
-        if (EpsilonModel.getINSTANCE().getHp() <= 0){
+        if (EpsilonModel.getINSTANCE().getHp() <= 0) {
 //            MainFrame.getINSTANCE().remove(MainPanel.getINSTANCE());
             MainFrame.getINSTANCE().repaint();
             MainFrame.getINSTANCE().remove(MainFrame.label);
@@ -406,14 +337,14 @@ public class GameLoop implements KeyListener, Runnable {
             new GameOverPanel();
 
         }
-        if (wave > 3){
-            MainFrame.getINSTANCE().removeKeyListener(this);
+        if (wave > 3) {
+//            MainFrame.getINSTANCE().removeKeyListener(this);
 //            MainFrame.getINSTANCE().removeMouseListener(MainPanel.getINSTANCE().getMouseController());
             if (theme.isRunning()) stopThemeSound();
             playVictorySound();
             RADIUS += 1;
         }
-        if (RADIUS>500){
+        if (RADIUS > 500) {
 //            MainFrame.getINSTANCE().remove(MainPanel.getINSTANCE());
             MainFrame.getINSTANCE().repaint();
             MainFrame.getINSTANCE().remove(MainFrame.label);
@@ -423,9 +354,9 @@ public class GameLoop implements KeyListener, Runnable {
         }
         updateCount++;
         for (int i = 0; i < squarantineModels.size(); i++) {
-            if (squarantineModels.get(i).isImpactInProgress()){
+            if (squarantineModels.get(i).isImpactInProgress()) {
                 squarantineModels.get(i).getDirection().accelerateDirection(squarantineModels.get(i).impactMaxVelocity);
-                if (squarantineModels.get(i).getDirection().getMagnitude() > squarantineModels.get(i).impactMaxVelocity){
+                if (squarantineModels.get(i).getDirection().getMagnitude() > squarantineModels.get(i).impactMaxVelocity) {
                     squarantineModels.get(i).setImpactInProgress(false);
                 }
             }
@@ -433,26 +364,26 @@ public class GameLoop implements KeyListener, Runnable {
 
         }
         for (int i = 0; i < trigorathModels.size(); i++) {
-            if (trigorathModels.get(i).isImpactInProgress()){
+            if (trigorathModels.get(i).isImpactInProgress()) {
                 trigorathModels.get(i).getDirection().accelerateDirection(trigorathModels.get(i).impactMaxVelocity);
                 if (trigorathModels.get(i).getDirection().getMagnitude() > trigorathModels.get(i).impactMaxVelocity) {
                     trigorathModels.get(i).setImpactInProgress(false);
                 }
             }
-            if (trigorathModels.get(i).getHp() <= 0 ) trigorathModels.get(i).remove();
+            if (trigorathModels.get(i).getHp() <= 0) trigorathModels.get(i).remove();
 
         }
         EpsilonModel epsilonModel = EpsilonModel.getINSTANCE();
-        if (epsilonModel.isImpactInProgress()){
+        if (epsilonModel.isImpactInProgress()) {
             epsilonModel.getDirection().accelerateDirection(6);
-            if (epsilonModel.getDirection().getMagnitude() > 4){
+            if (epsilonModel.getDirection().getMagnitude() > 4) {
                 epsilonModel.setImpactInProgress(false);
             }
         }
-        for (CollectibleModel collectibleModel: collectibleModels){
-            if (collectibleModel.impactInProgress){
+        for (CollectibleModel collectibleModel : collectibleModels) {
+            if (collectibleModel.impactInProgress) {
                 collectibleModel.getDirection().accelerateDirection(collectibleModel.impactMaxVel);
-                if (collectibleModel.getDirection().getMagnitude() > collectibleModel.impactMaxVel){
+                if (collectibleModel.getDirection().getMagnitude() > collectibleModel.impactMaxVel) {
                     collectibleModel.impactInProgress = false;
                 }
             }
@@ -467,136 +398,42 @@ public class GameLoop implements KeyListener, Runnable {
         }
 
 
-
-
-        for (TrigorathModel t:trigorathModels){
+        for (TrigorathModel t : trigorathModels) {
             t.rotate();
         }
-        for (SquarantineModel s:squarantineModels){
+        for (SquarantineModel s : squarantineModels) {
             s.rotate();
         }
 
-
-
-
-//        for (int i=0;i<colls.size();i++){
-//            for (int j=i+1;j<colls.size();j++){
-//                colls.get(i).onCollision(colls.get(j));
-//            }
-//        }
-
-
-
-
-
-
-
-
-
-
-        if (ELAPSED_TIME > empowerEndTime){
-            empowerIsOn=false;
-            extraBullet =0;
-            tripleShot=false;
+        if (ELAPSED_TIME > empowerEndTime) {
+            empowerIsOn = false;
+            extraBullet = 0;
+            tripleShot = false;
         }
-        if (empowerIsOn && tripleShot && mousePosition!=null && extraBullet<2 && lastShot > empowerStartTime){
-            if (ELAPSED_TIME -lastShot>0.05){
+        if (empowerIsOn && tripleShot && mousePosition != null && extraBullet < 2 && lastShot > empowerStartTime) {
+            if (ELAPSED_TIME - lastShot > 0.05) {
                 new BulletModel(EpsilonModel.getINSTANCE().getAnchor(), lastBullet.getDirection());
                 extraBullet++;
-                lastShot= ELAPSED_TIME;
+                lastShot = ELAPSED_TIME;
             }
 
         }
-        if (extraBullet==2) {
-            extraBullet =0;
-            tripleShot=false;
+        if (extraBullet == 2) {
+            extraBullet = 0;
+            tripleShot = false;
         }
 
-        if (acesoInProgress){
+        if (acesoInProgress) {
             EpsilonModel epsilon = EpsilonModel.getINSTANCE();
-            if (lastHpRegainTime==-1) {
+            if (lastHpRegainTime == -1) {
                 epsilon.sumHpWith(1);
                 lastHpRegainTime = ELAPSED_TIME;
-            } else if (ELAPSED_TIME - lastHpRegainTime > hpRegainRate){
+            } else if (ELAPSED_TIME - lastHpRegainTime > hpRegainRate) {
                 epsilon.sumHpWith(1);
                 lastHpRegainTime = ELAPSED_TIME;
             }
         }
 
-
-
-
-//        MainPanel.getINSTANCE().repaint();
-//        MainFrame.getINSTANCE().repaint();
-//        for (int i = 0; i < Panel.panels.size(); i++) {
-//            panels.get(i).repaint();
-//        }
-    }
-
-
-    @Override
-    public void keyTyped(KeyEvent e) {}
-
-    @Override
-    public void keyPressed(KeyEvent e) {
-
-        Map<String, Integer> keyBindings = KeyBindingMenu.getINSTANCE().getKeyBindings();
-
-        if (e.getKeyCode() == keyBindings.get("Open Shop")){
-
-            if (gameLoop.isRunning()) {
-                shopPanel = new ShopPanel();
-//                MainFrame.getINSTANCE().removeMouseListener(MainPanel.getINSTANCE().getMouseController());
-                MainFrame.getINSTANCE().repaint();
-                MainFrame.getINSTANCE().addMouseListener(shopPanel);
-                gameLoop.stop();
-            }
-            else {
-//                MainFrame.getINSTANCE().addMouseListener(MainPanel.getINSTANCE().getMouseController());
-                MainFrame.getINSTANCE().remove(shopPanel);
-                MainFrame.getINSTANCE().removeMouseListener(shopPanel);
-                gameLoop.start();
-            }
-
-        }
-
-        if (gameLoop.isRunning()) {
-            if (e.getKeyCode() == keyBindings.get("Activate Skill Tree Ability")){
-                if (activeAbility == ares) ares();
-                if (activeAbility == aceso) aceso();
-                if (activeAbility == proteus)  proteus();
-            }
-        }
-
-        if (gameLoop.isRunning()) {
-            if (e.getKeyCode() == keyBindings.get("Activate Shop Ability")){
-//                ShopAbility ability = Game.shopAbility;
-                if (shopAbility == ShopAbility.heal) {
-                    heal();
-                } else if (shopAbility == ShopAbility.empower){
-                    empower();
-                } else if (shopAbility == ShopAbility.banish){
-                    banish();
-                }
-
-            }
-        }
-        keysPressed.add(e.getKeyCode());
-        if (!movementInProgress) {
-            startMovementTimer();
-            movementInProgress = true;
-        }
-    }
-
-    @Override
-    public void keyReleased(KeyEvent e) {
-
-
-        keysPressed.remove(e.getKeyCode());
-        if (keysPressed.isEmpty()) {
-            stopMovementTimer();
-            movementInProgress = false;
-        }
     }
 
     public Timer getGameLoop() {
@@ -607,76 +444,7 @@ public class GameLoop implements KeyListener, Runnable {
         this.gameLoop = gameLoop;
     }
 
-    public void ares(){
-        if (inGameXP >= 100) {
-            if (skillAbilityActivateTime == -1) {
-                skillAbilityActivateTime = ELAPSED_TIME;
-                EPSILON_MELEE_DAMAGE += 2;
-                EPSILON_RANGED_DAMAGE += 2;
-                inGameXP -= 100;
-            } else if (ELAPSED_TIME - skillAbilityActivateTime > 300) {
-                skillAbilityActivateTime = ELAPSED_TIME;
-                EPSILON_MELEE_DAMAGE += 2;
-                EPSILON_RANGED_DAMAGE += 2;
-                inGameXP -= 100;
-            }
-        }
 
-    }
-
-    public void aceso(){
-        if (inGameXP >= 100){
-            if (skillAbilityActivateTime==-1) {
-                skillAbilityActivateTime = ELAPSED_TIME;
-                acesoInProgress = true;
-                if (hpRegainRate>1) hpRegainRate=1;
-                else hpRegainRate /= 2;
-                inGameXP -= 100;
-            }
-            else if (ELAPSED_TIME -skillAbilityActivateTime>300){
-                skillAbilityActivateTime = ELAPSED_TIME;
-                acesoInProgress = true;
-                if (hpRegainRate>1) hpRegainRate=1;
-                else hpRegainRate /= 2;
-                inGameXP -= 100;
-            }
-        }
-    }
-
-    public void proteus(){
-        if (inGameXP >= 100){
-            if (skillAbilityActivateTime == -1){
-                skillAbilityActivateTime = ELAPSED_TIME;
-                EpsilonModel.getINSTANCE().addVertex();
-                inGameXP -=100;
-            }
-            else if (ELAPSED_TIME - skillAbilityActivateTime > 300){
-                skillAbilityActivateTime = ELAPSED_TIME;
-                EpsilonModel.getINSTANCE().addVertex();
-                inGameXP -=100;
-            }
-        }
-    }
-
-    public void heal(){
-        EpsilonModel.getINSTANCE().sumHpWith(10);
-        shopAbility = null;
-    }
-
-    public void empower(){
-            empowerStartTime = ELAPSED_TIME;
-            empowerEndTime = ELAPSED_TIME + 10;
-            empowerIsOn = true;
-//            TODO move null maker
-            shopAbility = null;
-    }
-    public void banish(){
-        for (Impactable impactable : impactables) {
-            impactable.banish();
-        }
-        shopAbility = null;
-
-    }
 
 
     // deprecated!
@@ -744,7 +512,7 @@ public class GameLoop implements KeyListener, Runnable {
         decreaseVelocities=false;
         decrementRation=1;
         lastShot = 0;
-        shopAbility=null;
+//        shopAbility=null;
         EPSILON_MELEE_DAMAGE =10;
         EPSILON_RANGED_DAMAGE =5;
         movementInProgress = false;
@@ -753,7 +521,7 @@ public class GameLoop implements KeyListener, Runnable {
         aliveEnemies=0;
         playThemeSound();
 
-        MainFrame.getINSTANCE().addKeyListener(this);
+//        MainFrame.getINSTANCE().addKeyListener(this);
 
 
         int delay = 10; //milliseconds
@@ -841,6 +609,19 @@ public class GameLoop implements KeyListener, Runnable {
                 }
             }
         }
+    }
+
+    public static GameLoop getINSTANCE() {
+        if (INSTANCE == null) INSTANCE = new GameLoop();
+        return INSTANCE;
+    }
+
+    public boolean isRunning() {
+        return running.get();
+    }
+
+    public boolean isOn() {
+        return !exit.get();
     }
 
     public enum ShopAbility{

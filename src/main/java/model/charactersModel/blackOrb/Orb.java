@@ -1,6 +1,6 @@
 package model.charactersModel.blackOrb;
 
-import controller.Controller;
+import controller.UserInterfaceController;
 import javafx.scene.shape.Circle;
 import model.charactersModel.GeoShapeModel;
 import model.MyPolygon;
@@ -24,7 +24,7 @@ public class Orb extends GeoShapeModel implements Collidable {
 
     public static void drawOrbs(Component component, Graphics g){
         for (int i = 0; i < orbs.size(); i++) {
-            Point anc = Controller.calculateEntityView(component, orbs.get(i).getAnchor());
+            Point anc = UserInterfaceController.calculateEntityView(component, orbs.get(i).getAnchor());
             g.fillOval(anc.x-50,anc.y-50,100,100);
         }
     }

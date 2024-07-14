@@ -57,6 +57,7 @@ public class Hand extends GeoShapeModel {
 
         Point2D dir = relativeLocation(EpsilonModel.getINSTANCE().getAnchor(), getAnchor());
         direction = new Direction(dir);
+        angle = 90; //
 
 
         distance = findDistance(getAnchor(), EpsilonModel.getINSTANCE().getAnchor());
@@ -147,7 +148,7 @@ public class Hand extends GeoShapeModel {
 
     public void rot() {
 
-        creatBulletFromPointingVertex();
+//        creatBulletFromPointingVertex();
 
         // Normal movement logic (circular motion)
         angleToEpsilon += angularSpeed;

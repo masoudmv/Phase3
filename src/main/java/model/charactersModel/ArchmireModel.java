@@ -1,6 +1,5 @@
 package model.charactersModel;
 
-import controller.Controller;
 import controller.Game;
 import model.MyPolygon;
 import model.TimedLocation;
@@ -16,7 +15,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.concurrent.TimeUnit;
 
-import static controller.Controller.calculateEntityView;
+import static controller.UserInterfaceController.calculateEntityView;
 import static controller.constants.EntityConstants.ARCHMIRE_SPEED;
 import static controller.Utils.*;
 import static model.imagetools.ToolBox.getBufferedImage;

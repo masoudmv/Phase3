@@ -3,6 +3,7 @@ package controller;
 import controller.constants.Constants;
 import model.charactersModel.EpsilonModel;
 //import view.MainPanel;
+import org.example.Main;
 import view.MainFrame;
 //import view.MainPanel;
 
@@ -49,7 +50,9 @@ public class Game {
             MainFrame.getINSTANCE().add(label);
 
 //            MainPanel.getINSTANCE();
-            gameLoop = new GameLoop();
+//            gameLoop = new GameLoop();
+            MainFrame.getINSTANCE().addKeyListener(UserInputHandler.getINSTANCE());
+            GameLoop.getINSTANCE();
 //            gameLoop.run(); // todo change the logic of game loop
 
         });
@@ -85,7 +88,7 @@ public class Game {
 
     public static void nullifyGameInstance() {
         INSTANCE = null;
-        MainFrame.getINSTANCE().removeKeyListener(gameLoop);
+//        MainFrame.getINSTANCE().removeKeyListener(gameLoop); // todo: now the gameLoop doesnt contain KeyLister
         gameLoop =null;
     }
 }
