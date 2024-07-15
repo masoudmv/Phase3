@@ -13,6 +13,8 @@ public enum EntityConstants {
 
     public static final int HOVER_DURATION = 4; // 4 seconds in milliseconds
     public static final int NON_HOVER_DURATION = 4; // 8 seconds in milliseconds
+    public static final int OMENOCT_SHOT_DELAY = 1; // 8 seconds in milliseconds
+    public static final int ORB_PANEL_CREATION_DELAY = 1; // 8 seconds in milliseconds
 
 
 

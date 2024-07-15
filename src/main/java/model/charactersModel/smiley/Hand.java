@@ -5,6 +5,7 @@ import model.FinalPanelModel;
 import model.MyPolygon;
 import model.charactersModel.EpsilonModel;
 import model.charactersModel.GeoShapeModel;
+import model.charactersModel.SmileyBullet;
 import model.movement.Direction;
 import org.example.GraphicalObject;
 

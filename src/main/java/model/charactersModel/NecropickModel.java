@@ -107,8 +107,8 @@ public class NecropickModel extends GeoShapeModel implements Collidable {
         double[] xpoints = new double[myPolygon.npoints];
         double[] ypoints = new double[myPolygon.npoints];
         for (int i = 0; i < myPolygon.npoints; i++) {
-            xpoints[i] = this.myPolygon.xpoints[i] + movement.getX() - EpsilonModel.localPanel.getLocation().getX();
-            ypoints[i] = this.myPolygon.ypoints[i] + movement.getY() - EpsilonModel.localPanel.getLocation().getY();
+            xpoints[i] = this.myPolygon.xpoints[i] + movement.getX() - EpsilonModel.getINSTANCE().localPanel.getLocation().getX();
+            ypoints[i] = this.myPolygon.ypoints[i] + movement.getY() - EpsilonModel.getINSTANCE().localPanel.getLocation().getY();
         }
         return new MyPolygon(xpoints, ypoints, myPolygon.npoints);
     }

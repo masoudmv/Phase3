@@ -1,17 +1,17 @@
 package model.charactersModel;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 import model.FinalPanelModel;
 import model.MyPolygon;
+import model.charactersModel.blackOrb.Orb;
 import model.charactersModel.smiley.Fist;
 import model.charactersModel.smiley.Smiley;
-import model.charactersModel.smiley.SmileyBullet;
 import model.collision.Collidable;
 import model.collision.CollisionState;
 import model.collision.Impactable;
 import model.movement.Direction;
 import model.movement.Movable;
-//import view.MainPanel;
-//import view.MainPanel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -27,46 +27,45 @@ import static controller.Utils.normalizeVector;
 import static model.imagetools.ToolBox.getBufferedImage;
 
 public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, Impactable {
-    static BufferedImage image;
-    private static EpsilonModel INSTANCE;
+    static transient BufferedImage image; // transient to avoid serialization
+    private static transient EpsilonModel INSTANCE;
+
+    @SerializedName("hp")
+    @Expose
     private int hp = 100;
-//    Point2D anchor;
-//    double radius;
+
+    @SerializedName("impactInProgress")
+    @Expose
     private boolean impactInProgress = false;
-//    String id;
-//    Direction direction;
-    public static ArrayList<EpsilonModel> epsilonModels = new ArrayList<>();
 
+    @SerializedName("numberOfVertices")
+    @Expose
     public int numberOfVertices = 0;
-//    private double angle=0;
 
+    @SerializedName("vertices")
+    @Expose
     public ArrayList<Point2D> vertices = new ArrayList<>();
 
-
-    public static FinalPanelModel localPanel;
+//    @SerializedName("localPanel")
+//    @Expose
+//    public static FinalPanelModel localPanel;
 
     public EpsilonModel(Point2D anchor, MyPolygon myPolygon) {
         super(anchor, image, myPolygon);
         INSTANCE = this;
-        Point2D loc = new Point2D.Double(getAnchor().getX() - 100, getAnchor().getY()- 100); // todo spawn epsilon in the middle of screen
+        Point2D loc = new Point2D.Double(getAnchor().getX() - 100, getAnchor().getY() - 100); // todo spawn epsilon in the middle of screen
         Dimension size = new Dimension(500, 500);
         localPanel = new FinalPanelModel(loc, size);
         localPanel.setIsometric(false);
-//        this.anchor = anchor;
-//        this.radius = 20; //todo
-//        this.id= UUID.randomUUID().toString();
-        Point vector = new Point(0,0); //todo shitty design
-        this.direction=new Direction(vector);
-        epsilonModels.add(this);
+        Point vector = new Point(0, 0); //todo shitty design
+        this.direction = new Direction(vector);
+//        epsilonModels.add(this);
         collidables.add(this);
         movables.add(this);
-//        impactables.add(this);
         createEpsilonView(id);
     }
 
     public static EpsilonModel getINSTANCE() {
-//        if (INSTANCE == null) INSTANCE = new EpsilonModel(
-//                new Point2D.Double(600, 600)); // todo revert
         return INSTANCE;
     }
 
@@ -90,7 +89,9 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
     }
 
     @Override
-    public void bulletImpact(BulletModel bulletModel, Point2D collisionPoint){}
+    public void bulletImpact(BulletModel bulletModel, Point2D collisionPoint) {
+    }
+
     @Override
     public Direction getDirection() {
         return direction;
@@ -107,22 +108,20 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
         Point2D collisionRelativeVector = relativeLocation(this.getAnchor(), collisionPoint);
         double impactCoefficient = getImpactCoefficient(collisionRelativeVector);
         Point2D impactVector = normalizeVector(collisionRelativeVector);
-        impactVector = multiplyVector(impactVector ,impactCoefficient);
+        impactVector = multiplyVector(impactVector, impactCoefficient);
         Point2D r2 = addVectors(this.getDirection().getNormalizedDirectionVector(), impactVector);
         Direction direction = new Direction((r2));
         if (impactCoefficient != 0) this.setDirection(direction);
     }
 
-
     @Override
     public void impact(Point2D normalVector, Point2D collisionPoint, Collidable polygon) {
         double impactCoefficient = getImpactCoefficient(normalVector);
         Point2D impactVector = reflect(relativeLocation(getAnchor(), collisionPoint));
-        impactVector = multiplyVector(impactVector ,impactCoefficient);
-        if (this.getDirection().getMagnitude() < 2){
+        impactVector = multiplyVector(impactVector, impactCoefficient);
+        if (this.getDirection().getMagnitude() < 2) {
             setDirection(new Direction(normalizeVector(relativeLocation(getAnchor(), collisionPoint))));
-        }
-        else {
+        } else {
             setDirection(new Direction(normalizeVector(impactVector)));
         }
     }
@@ -139,7 +138,7 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
             impactCoefficient = 0;
         } else {
             setImpactInProgress(true);
-            double coefficient = 1-(distance- 50)/(150 - 50);
+            double coefficient = 1 - (distance - 50) / (150 - 50);
             impactCoefficient = coefficient * 4;
         }
         return impactCoefficient;
@@ -147,7 +146,6 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
 
     @Override
     public void banish() {
-
     }
 
     @Override
@@ -167,8 +165,6 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
         for (int i = 0; i < numberOfVertices; i++) {
             vertices.set(i, addVectors(vertices.get(i), movement));
         }
-//        movePolygon(movement);
-
     }
 
     @Override
@@ -189,54 +185,44 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
 
     @Override
     public void eliminate() {
-
     }
 
     @Override
-    public void friction(){
-
-
-        if (isImpactInProgress()){
-//            direction.setMagnitude(direction.getMagnitude() * FRICTION);
-            if (direction.getMagnitude() < 1){
-//                direction.setMagnitude(0);
+    public void friction() {
+        if (isImpactInProgress()) {
+            if (direction.getMagnitude() < 1) {
                 setImpactInProgress(false);
             }
         } else {
             direction.setMagnitude(direction.getMagnitude() * 0.93);
-            if (direction.getMagnitude() < 0.5){
+            if (direction.getMagnitude() < 0.5) {
                 direction.setMagnitude(0);
             }
         }
-
     }
 
-    public Point2D reflect(Point2D normalVector){
-
+    public Point2D reflect(Point2D normalVector) {
         double dotProduct = dotVectors(getDirection().getDirectionVector(), normalVector);
         Point2D reflection = addVectors(
                 getDirection().getDirectionVector(),
-                multiplyVector(normalVector,-2*dotProduct
-                ));
+                multiplyVector(normalVector, -2 * dotProduct)
+        );
         return normalizeVector(reflection);
     }
 
-
-    // Writ of Proteus:
-
-    public void addVertex(){
+    public void addVertex() {
         numberOfVertices++;
         vertices.clear();
-
         for (int i = 0; i < numberOfVertices; i++) {
-            double alpha = 2*PI*i/numberOfVertices;
-            vertices.add(new Point2D.Double(getAnchor().getX()+RADIUS*Math.cos(alpha), getAnchor().getY()+RADIUS*Math.sin(alpha)));
+            double alpha = 2 * PI * i / numberOfVertices;
+            vertices.add(new Point2D.Double(getAnchor().getX() + RADIUS * Math.cos(alpha), getAnchor().getY() + RADIUS * Math.sin(alpha)));
         }
     }
-    public void updateVertices(){
+
+    public void updateVertices() {
         for (int i = 0; i < numberOfVertices; i++) {
-            double alpha = 2*PI*i/numberOfVertices+angle;
-            vertices.set(i, new Point2D.Double(getAnchor().getX()+RADIUS*Math.cos(alpha), getAnchor().getY()+RADIUS*Math.sin(alpha)));
+            double alpha = 2 * PI * i / numberOfVertices + angle;
+            vertices.set(i, new Point2D.Double(getAnchor().getX() + RADIUS * Math.cos(alpha), getAnchor().getY() + RADIUS * Math.sin(alpha)));
         }
     }
 
@@ -244,24 +230,25 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
         this.hp = hp;
     }
 
-    public void sumHpWith(int hp){
+    public void sumHpWith(int hp) {
         this.hp += hp;
-        if (this.hp >100) this.hp=100;
+        if (this.hp > 100) this.hp = 100;
     }
 
     public int getHp() {
         return hp;
     }
-    public void damage(int damage){
+
+    public void damage(int damage) {
         this.hp -= damage;
     }
+
     public double getAngle() {
         return angle;
     }
 
     @Override
     public void setMyPolygon(MyPolygon myPolygon) {
-
     }
 
     public static BufferedImage loadImage() {
@@ -270,28 +257,29 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
         return EpsilonModel.image;
     }
 
-
     public void setAngle(double angle) {
         this.angle = angle;
     }
 
-    public static void nullifyEpsilon(){
+    public static void nullifyEpsilon() {
         INSTANCE = null;
     }
+
     @Override
     public void onCollision(Collidable other) {
-
     }
 
-    private void updateLocalPanel(){
-        if (localPanel != null) if (isInFinalPanelModel(localPanel)) return;;
-        for (FinalPanelModel panel : FinalPanelModel.finalPanelModels){
+    private void updateLocalPanel() {
+        if (localPanel != null) if (isInFinalPanelModel(localPanel)) return;
+        for (FinalPanelModel panel : FinalPanelModel.finalPanelModels) {
             if (isInFinalPanelModel(panel)) {
                 localPanel = panel;
                 return;
             }
-        } localPanel = null;
+        }
+        localPanel = null;
     }
+
     private boolean isInFinalPanelModel(FinalPanelModel panel) {
         Point2D left = new Point2D.Double(getAnchor().getX() - getRadius(), getAnchor().getY());
         Point2D right = new Point2D.Double(getAnchor().getX() + getRadius(), getAnchor().getY());
@@ -309,21 +297,17 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
 
     @Override
     public void onCollision(Collidable other, Point2D intersection) {
-//        System.out.println(intersection);
-//        System.out.println(getAnchor());
-//        System.out.println("================");
         if (other instanceof Smiley) impact(new CollisionState(intersection));
         if (other instanceof Fist) impact(new CollisionState(intersection));
         if (other instanceof BarricadosModel) impact(new CollisionState(intersection));
         if (other instanceof OmenoctModel) impact(new CollisionState(intersection));
+        if (other instanceof Orb) impact(new CollisionState(intersection));
         if (other instanceof NecropickModel) if (!((NecropickModel) other).isHovering()) impact(new CollisionState(intersection)); // :)
-        if (other instanceof CollectibleModel);
-        if (other instanceof BulletModel);
-        if (other instanceof SmileyBullet);
+        if (other instanceof CollectibleModel) ;
+        if (other instanceof BulletModel) ;
+        if (other instanceof SmileyBullet) ;
         if (other instanceof FinalPanelModel) {
-//            System.out.println("+_+_+");
             impact(new CollisionState(intersection));
         }
-
     }
 }

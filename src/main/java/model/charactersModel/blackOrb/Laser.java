@@ -62,7 +62,7 @@ public class Laser extends GeoShapeModel {
             xAvg += myPolygon.xpoints[i];
             yAvg += myPolygon.ypoints[i];
         }
-        super.setAnchor(new Point2D.Double(xAvg, yAvg));
+        anchor = new Point2D.Double(xAvg, yAvg);
     }
 
 

@@ -3,15 +3,13 @@ package controller;
 import model.charactersModel.BulletModel;
 import model.charactersModel.CollectibleModel;
 import model.charactersModel.*;
+import model.charactersModel.blackOrb.BlackOrb;
 import model.charactersModel.smiley.Fist;
 import model.charactersModel.smiley.Hand;
-import model.charactersModel.smiley.SmileyBullet;
-import model.collision.Impactable;
-import model.movement.Direction;
+import model.charactersModel.SmileyBullet;
 import model.movement.Movable;
 import view.*;
 import view.junks.GameOverPanel;
-import view.junks.KeyBindingMenu;
 import view.junks.ShopPanel;
 import view.junks.VictoryPanel;
 
@@ -20,9 +18,6 @@ import javax.swing.Timer;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.geom.Point2D;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -30,10 +25,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import static controller.constants.Constants.*;
 import static controller.UserInterfaceController.*;
 import static controller.Game.*;
-import static controller.Game.SkillTreeAbility.*;
 import static controller.MouseController.*;
 import static controller.Sound.*;
-import static controller.Utils.*;
 import static model.FinalPanelModel.finalPanelModels;
 import static model.PanelManager.handlePanelPanelCollision;
 import static model.charactersModel.CollectibleModel.collectibleModels;
@@ -43,12 +36,10 @@ import static model.charactersModel.SquarantineModel.squarantineModels;
 import static model.charactersModel.TrigorathModel.trigorathModels;
 import static model.charactersModel.smiley.Fist.fists;
 import static model.charactersModel.smiley.Hand.hands;
-import static model.charactersModel.smiley.SmileyBullet.smileyBullets;
+import static model.charactersModel.SmileyBullet.smileyBullets;
 //import static model.collision.Coll.colls;
 import static model.collision.Collidable.collidables;
-import static model.collision.Impactable.impactables;
 import static model.movement.Movable.movables;
-import static org.example.Main.sensitivity;
 //import static view.Panel.panels;
 
 
@@ -269,6 +260,11 @@ public class GameLoop implements Runnable {
 
     public void updateModel() {
 
+//        for (int i = 0; i < finalPanelModels.size(); i++) {
+//            finalPanelModels.get(i).updateVertices();  // todo
+//        }
+
+
 
         for (int i = 0; i < finalPanelModels.size(); i++) {
             finalPanelModels.get(i).panelMotion();  // todo
@@ -288,6 +284,10 @@ public class GameLoop implements Runnable {
         }
 
 
+        for (int i = 0; i < BlackOrb.blackOrbs.size(); i++) {
+            BlackOrb.blackOrbs.get(i).initiateBlackOrb();
+        }
+
 //        MainPanel panel = MainPanel.getINSTANCE();
 //        if (ELAPSED_TIME < 2) panel.verticalShrink(2);
 //        if (ELAPSED_TIME < 2) panel.horizontalShrink(2);
@@ -303,7 +303,7 @@ public class GameLoop implements Runnable {
 
 
         for (OmenoctModel omenoctModel : OmenoctModel.omenoctModels) {
-            omenoctModel.setOnEpsilonPanel(EpsilonModel.localPanel);
+            omenoctModel.setOnEpsilonPanel(EpsilonModel.getINSTANCE().localPanel);
             omenoctModel.updateDirection();
         }
 

@@ -280,10 +280,7 @@ public abstract class UserInterfaceController {
 //    }
 
     public static EpsilonModel findModel(String id){
-        for (EpsilonModel epsilonModel: EpsilonModel.epsilonModels){
-            if (epsilonModel.getId().equals(id)) return epsilonModel;
-        }
-        return null;
+        return EpsilonModel.getINSTANCE();
     }
     public static SquarantineModel findSquarantineModel(String id){
         for (SquarantineModel squarantineModel: squarantineModels){

@@ -1,9 +1,11 @@
 package model.charactersModel;
 
+import controller.Game;
 import model.FinalPanelModel;
 import model.MyPolygon;
 import model.collision.Collidable;
 import model.movement.Direction;
+import org.example.GraphicalObject;
 //import view.MainPanel;
 
 import javax.swing.*;
@@ -16,6 +18,8 @@ import java.util.HashMap;
 import static controller.constants.Constants.SPEED;
 import static controller.constants.EntityConstants.OMENOCT_PANEL_SPEED;
 import static controller.Utils.*;
+import static controller.constants.EntityConstants.OMENOCT_SHOT_DELAY;
+import static controller.constants.SmileyConstants.BULLET_SPEED;
 import static model.imagetools.ToolBox.getBufferedImage;
 
 public class OmenoctModel extends GeoShapeModel implements Collidable {
@@ -24,11 +28,31 @@ public class OmenoctModel extends GeoShapeModel implements Collidable {
     private int omenoctEdgeIndex = -1;
     private int destinationEdgeIndex = -1;
     public static ArrayList<OmenoctModel> omenoctModels = new ArrayList<>();
+    private double lastShotBullet = 0;
 
     public OmenoctModel(Point2D anchor, MyPolygon polygon) {
         super(anchor, image, polygon);
         omenoctModels.add(this);
         collidables.add(this);
+    }
+
+    private void shootNonRigidBullet(){
+        double now = Game.ELAPSED_TIME;
+        if (now - lastShotBullet < OMENOCT_SHOT_DELAY) return;
+        BufferedImage ba = SmileyBullet.loadImage();
+        GraphicalObject bos = new GraphicalObject(ba);
+        MyPolygon pl = bos.getMyBoundingPolygon();
+        Point2D startPos = getAnchor();
+        new SmileyBullet(startPos, pl).setDirection(findBulletDirection(startPos));
+        lastShotBullet = now;
+    }
+
+    private Direction findBulletDirection(Point2D startPos){
+        Point2D dest = EpsilonModel.getINSTANCE().getAnchor();
+        Point2D vec = relativeLocation(dest, startPos);
+        Direction direction = new Direction(vec);
+        direction.setMagnitude(BULLET_SPEED);
+        return direction;
     }
 
     @Override
@@ -47,6 +71,7 @@ public class OmenoctModel extends GeoShapeModel implements Collidable {
     }
 
     void move(Direction direction) {
+        shootNonRigidBullet();
         Point2D movement = multiplyVector(direction.getNormalizedDirectionVector(), direction.getMagnitude());
         movePolygon(movement);
     }
@@ -56,9 +81,9 @@ public class OmenoctModel extends GeoShapeModel implements Collidable {
     }
 
     public void updateDirection() { // todo fix shaking with panel shrinkage
-        if (EpsilonModel.localPanel == null) return;
+        if (EpsilonModel.getINSTANCE().localPanel == null) return;
         if (!isOnEpsilonPanel) {
-            HashMap<Integer, Point2D> res = closestPointOnEdges(anchor, EpsilonModel.localPanel.getEdges());
+            HashMap<Integer, Point2D> res = closestPointOnEdges(anchor, EpsilonModel.getINSTANCE().localPanel.getEdges());
             int edgeIndex = res.entrySet().iterator().next().getKey();
             Point2D closest = res.get(edgeIndex);
 
@@ -163,12 +188,12 @@ public class OmenoctModel extends GeoShapeModel implements Collidable {
     }
 
     public String getRotationDirection() {
-        if (EpsilonModel.localPanel == null) return "";
-        Point2D[] corners = EpsilonModel.localPanel.getVertices();
+        if (EpsilonModel.getINSTANCE().localPanel == null) return "";
+        Point2D[] corners = EpsilonModel.getINSTANCE().localPanel.getVertices();
 
 //        Point2D start = findClosestPointOnPanel(MainPanel.getINSTANCE());
-        Point2D start = findClosestPointOnEdges(getAnchor(), EpsilonModel.localPanel.getEdges());
-        Point2D destination = findClosestPointToEpsilon(EpsilonModel.getINSTANCE(), EpsilonModel.localPanel);
+        Point2D start = findClosestPointOnEdges(getAnchor(), EpsilonModel.getINSTANCE().localPanel.getEdges());
+        Point2D destination = findClosestPointToEpsilon(EpsilonModel.getINSTANCE(), EpsilonModel.getINSTANCE().localPanel);
 
         int startSide = omenoctEdgeIndex;
         int destSide = destinationEdgeIndex;

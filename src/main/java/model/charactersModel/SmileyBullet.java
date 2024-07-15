@@ -1,20 +1,21 @@
-package model.charactersModel.smiley;
+package model.charactersModel;
 
-import controller.Utils;
 import model.FinalPanelModel;
 import model.MyPolygon;
-import model.charactersModel.GeoShapeModel;
+import model.collision.Collidable;
 import model.movement.Direction;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.util.concurrent.CopyOnWriteArrayList;
+
+import static controller.UserInterfaceController.findBulletView;
 import static controller.Utils.adjustVectorMagnitude;
 import static controller.Utils.multiplyVector;
 import static model.imagetools.ToolBox.getBufferedImage;
 
-public class SmileyBullet extends GeoShapeModel {
+public class SmileyBullet extends GeoShapeModel implements Collidable {
 
 
     static BufferedImage image;
@@ -27,6 +28,7 @@ public class SmileyBullet extends GeoShapeModel {
     public SmileyBullet(Point2D anchor, MyPolygon myPolygon) {
         super(anchor, image, myPolygon);
         smileyBullets.add(this);
+        collidables.add(this);
 
 
 
@@ -83,6 +85,26 @@ public class SmileyBullet extends GeoShapeModel {
 
     @Override
     public void eliminate() {
+//        collidables.remove(this);
+//        smileyBullets.remove(this);
+//        findBulletView((this).getId()).remove(); //todo
+
+    }
+
+    @Override
+    public boolean isCircular() {
+        return true;
+    }
+
+    @Override
+    public void onCollision(Collidable other, Point2D intersection) {
+        if (other instanceof FinalPanelModel) return;
+        eliminate();
+
+    }
+
+    @Override
+    public void onCollision(Collidable other) {
 
     }
 }

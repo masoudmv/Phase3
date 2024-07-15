@@ -30,19 +30,10 @@ public class Fist extends GeoShapeModel implements Collidable {
     public static ArrayList<Fist> fists = new ArrayList<>();
     private FinalPanelModel finalPanelModel;
     private Point2D bottomVertex;
-
-
-
-
-
-
-
     private double elapsedTime = 0; // Elapsed time
     private double ySpeed = 0; // Initial y-speed
     private boolean movingDown = true; // Direction of motion
     private double currentHeight = 0; // Current height of the fist
-
-
 
     private boolean quakeInProgress = false;
 
@@ -113,7 +104,7 @@ public class Fist extends GeoShapeModel implements Collidable {
                 movingDown = true; // Change direction
                 elapsedTime = 0; // Reset elapsed time
                 ySpeed = 0; // Reset speed to start falling again
-//                quakeInProgress = false;
+                quakeInProgress = false;
             }
         }
 

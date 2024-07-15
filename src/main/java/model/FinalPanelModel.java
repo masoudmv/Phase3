@@ -1,5 +1,7 @@
 package model;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 import controller.Utils;
 import model.charactersModel.BulletModel;
 import model.collision.Collidable;
@@ -7,6 +9,7 @@ import model.collision.Collidable;
 import java.awt.*;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -15,24 +18,51 @@ import static controller.Utils.*;
 import static controller.constants.Constants.FRAME_DIMENSION;
 import static model.PanelManager.handlePanelPanelCollision;
 
-public class FinalPanelModel implements Collidable {
+public class FinalPanelModel implements Collidable, Serializable {
+    @SerializedName("id")
+    @Expose
     private String id;
+
+    @SerializedName("vertices")
+    @Expose
     private ArrayList<Point2D> vertices;
-    private ArrayList<Line2D> edges = new ArrayList<>();
 
+    private transient ArrayList<Line2D> edges = new ArrayList<>();
+
+    @SerializedName("size")
+    @Expose
     protected Dimension size;
-    protected Point2D location;
-    public static ArrayList<FinalPanelModel> finalPanelModels = new ArrayList<>();
-    private boolean isIsometric;
-    private boolean isRigid;
-    private boolean isStatic;
-    private boolean moveUp = false;
-    private boolean moveRight = false;
-    private boolean moveDown = false;
-    private boolean moveLeft = false;
-    private double acceleration; private double velocity;
 
-//    private double acceleration = 0.45; private  double velocity = 0.1;
+    @SerializedName("location")
+    @Expose
+    protected Point2D location;
+
+    public static transient ArrayList<FinalPanelModel> finalPanelModels = new ArrayList<>();
+
+    @SerializedName("isIsometric")
+    @Expose
+    private boolean isIsometric;
+
+    @SerializedName("isRigid")
+    @Expose
+    private boolean isRigid;
+
+    @SerializedName("isStatic")
+    @Expose
+    private boolean isStatic;
+
+    private transient boolean moveUp = false;
+    private transient boolean moveRight = false;
+    private transient boolean moveDown = false;
+    private transient boolean moveLeft = false;
+
+    @SerializedName("acceleration")
+    @Expose
+    private double acceleration;
+
+    @SerializedName("velocity")
+    @Expose
+    private double velocity;
     public FinalPanelModel(Point2D location, Dimension size) {
         this.id = UUID.randomUUID().toString();
         this.location = location;
@@ -122,7 +152,7 @@ public class FinalPanelModel implements Collidable {
         edges = res;
     }
 
-    private void updateVertices() {
+    public void updateVertices() {
         vertices.clear();
         double x = location.getX();
         double y = location.getY();
@@ -137,7 +167,7 @@ public class FinalPanelModel implements Collidable {
         vertices.add(new Point2D.Double(x + width, y + height));
         // Bottom-left corner
         vertices.add(new Point2D.Double(x, y + height));
-        initializeEdges();
+        updateEdges();
     }
 
     public void eliminate(){
@@ -354,15 +384,18 @@ public class FinalPanelModel implements Collidable {
         }
 
         if (verticesInsideOtherPanel.size() == 2) {
-            handleTwoVerticesInside(this, other, verticesInsideOtherPanel);
+            handleTwoVerticesInside(other, this, verticesInsideOtherPanel);
         }
 
         if (verticesInsideThisPanel.size() == 2) {
-            handleTwoVerticesInside(this, other, verticesInsideThisPanel);
+            handleTwoVerticesInside(other, this, verticesInsideThisPanel);
         }
 
         if (verticesInsideOtherPanel.size() == 1) {
             handleOneVertexInside(this, other, verticesInsideOtherPanel.get(0), verticesInsideThisPanel.isEmpty() ? null : verticesInsideThisPanel.get(0));
+        }
+        if (verticesInsideThisPanel.size() == 1) {
+            handleOneVertexInside(other, this, verticesInsideThisPanel.get(0), verticesInsideOtherPanel.isEmpty() ? null : verticesInsideOtherPanel.get(0));
         }
 
 

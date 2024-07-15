@@ -1,14 +1,12 @@
 package org.example;
 
 import controller.Game;
-import model.FinalPanelModel;
 import model.MyPolygon;
 import model.Profile;
 import model.charactersModel.*;
+import model.charactersModel.blackOrb.BlackOrb;
+import model.charactersModel.blackOrb.Orb;
 import model.charactersModel.smiley.Fist;
-import model.charactersModel.smiley.Hand;
-import model.charactersModel.smiley.Smiley;
-import model.charactersModel.smiley.SmileyBullet;
 import view.*;
 
 import javax.imageio.ImageIO;
@@ -53,7 +51,7 @@ public class Main {
         BufferedImage b = EpsilonModel.loadImage();
         GraphicalObject bows = new GraphicalObject(b);
         MyPolygon pol = bows.myBoundingPolygon;
-        String id = new EpsilonModel(new Point2D.Double(900, 400), pol).getId();
+        String id = new EpsilonModel(new Point2D.Double(1400, 400), pol).getId();
 
 
 
@@ -65,7 +63,7 @@ public class Main {
 
 //        I am talking about this part: // uncoment this part todo
 //        BufferedImage bImg = OmenoctModel.loadImage();
-//        GraphicalObject bowser = new GraphicalObject(bImg);ds
+//        GraphicalObject bowser = new GraphicalObject(bImg);
 //        MyPolygon p = bowser.myBoundingPolygon;
 //        new OmenoctModel(new Point2D.Double(300, 400), p);
 
@@ -73,6 +71,11 @@ public class Main {
 //        GraphicalObject ber = new GraphicalObject(bg);
 //        MyPolygon pl = ber.myBoundingPolygon;
 //        new BarricadosModel(new Point2D.Double(900, 400), pl);
+
+        Orb.loadImage();
+
+
+        new BlackOrb();
 
 
 
@@ -157,7 +160,7 @@ public class Main {
 
 
 
-        System.out.println(id);
+
 
 //        new TrigorathModel(new Point2D.Double(500, 500));
 //
@@ -169,10 +172,10 @@ public class Main {
 //        new SmileyBullet(new Point2D.Double(500, 500), pl).rapidFire(8, 180);
 
 
-        BufferedImage ba = Fist.loadImage();
-        GraphicalObject bos = new GraphicalObject(ba);
-        MyPolygon pl = bos.myBoundingPolygon;
-        new Fist(new Point2D.Double(500, 500), pl);
+//        BufferedImage ba = Fist.loadImage();
+//        GraphicalObject bos = new GraphicalObject(ba);
+//        MyPolygon pl = bos.myBoundingPolygon;
+//        new Fist(new Point2D.Double(500, 500), pl);
 
 
 

@@ -19,20 +19,15 @@ import static controller.Utils.*;
 
 public abstract class GeoShapeModel extends Entity {
     String id;
-    Point2D anchor;
+    protected Point2D anchor;
     public MyPolygon myPolygon;
     protected Direction direction;
     public boolean isLaser = false;
     public static ArrayList<GeoShapeModel> entities = new ArrayList<>();
-    private double radius;
-
-
-
-
-    private FinalPanelModel localFrame;
+    protected double radius;
+    public FinalPanelModel localPanel;
     protected double angle;
-    private double angularVelocity;
-    private double angularAcceleration;
+
     public GeoShapeModel(Point2D anchor, BufferedImage image, MyPolygon myPolygon) {
         this.id = UUID.randomUUID().toString(); //todo swap image and anchor set logic
         this.anchor = new Point2D.Double(
@@ -42,7 +37,7 @@ public abstract class GeoShapeModel extends Entity {
         radius = (double) image.getWidth()/2;
         // following line is extra??
 //        this.myPolygon.npoints = myPolygon.npoints;
-        Point2D img = new Point2D.Double(-image.getWidth()/2, -image.getHeight()/2);
+        Point2D img = new Point2D.Double((double) -image.getWidth()/2, (double) -image.getHeight()/2);
 
 
         moveVertices(addVectors(anchor, img));
@@ -74,7 +69,7 @@ public abstract class GeoShapeModel extends Entity {
         this.anchor = new Point2D.Double(
                 anchor.getX() , anchor.getY()
         );
-        radius = image.getHeight()/2;
+        radius = (double) image.getHeight()/2;
 //        moveVertices(anchor);
         entities.add(this);
         createPolygonalEnemyView(id, image);
