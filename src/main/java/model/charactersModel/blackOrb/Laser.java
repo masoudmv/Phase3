@@ -7,33 +7,39 @@ import model.MyPolygon;
 import java.awt.*;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
+import java.util.ArrayList;
 
+import static controller.UserInterfaceController.createLaserView;
 import static controller.Utils.*;
 import static controller.Utils.moveLine;
+import static model.charactersModel.blackOrb.BlackOrb.lasers;
 
 public class Laser extends GeoShapeModel {
-    private double laserThickness = 45;
-    Orb[] OrbsOfALaser = new Orb[2];
+    private double laserThickness = 60;
+    private Orb[] OrbsOfALaser = new Orb[2];
+//    public static ArrayList<Laser> lasers = new ArrayList<>();
 
     public Laser(Orb orb1, Orb orb2) {
         super();
+        OrbsOfALaser[0] = orb1; OrbsOfALaser[1] = orb2;
         Point2D o1 = new Point2D.Double(orb1.getCircle().getCenterX(), orb1.getCircle().getCenterY());
         Point2D o2 = new Point2D.Double(orb2.getCircle().getCenterX(), orb2.getCircle().getCenterY());
         Line2D laserCenterLine = new Line2D.Double(o1, o2);
         findLaserBoundary(laserCenterLine);
-        OrbsOfALaser[0] = orb1; OrbsOfALaser[1] = orb2;
         setAnchor();
-        super.isLaser = true;
+//        isLaser = true;
+        lasers.add(this);
+        createLaserView(id);
     }
 
-    public static void drawLasers(Component component, Graphics g){
-        for (int i = 0; i < GeoShapeModel.entities.size(); i++) {
-            if (GeoShapeModel.entities.get(i).isLaser){
-                Polygon polygon = UserInterfaceController.calculateEntityView(component, GeoShapeModel.entities.get(i).myPolygon);
-                g.fillPolygon(polygon);
-            }
-        }
-    }
+//    public static void drawLasers(Component component, Graphics g){
+//        for (int i = 0; i < GeoShapeModel.entities.size(); i++) {
+//            if (GeoShapeModel.entities.get(i).isLaser){
+//                Polygon polygon = UserInterfaceController.calculateEntityView(component, GeoShapeModel.entities.get(i).myPolygon);
+//                g.fillPolygon(polygon);
+//            }
+//        }
+//    }
 
     private void findLaserBoundary(Line2D laserCenterLine){
         Point2D vector = relativeLocation(laserCenterLine.getP2(), laserCenterLine.getP1());
@@ -65,7 +71,9 @@ public class Laser extends GeoShapeModel {
         anchor = new Point2D.Double(xAvg, yAvg);
     }
 
-
+    public Orb[] getOrbsOfALaser() {
+        return OrbsOfALaser;
+    }
 
     @Override
     public void setMyPolygon(MyPolygon myPolygon) {
@@ -74,6 +82,9 @@ public class Laser extends GeoShapeModel {
 
     @Override
     public void eliminate() {
+        super.eliminate();
+//        lasers.remove(this);
 
+//        Laser laser =
     }
 }

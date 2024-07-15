@@ -5,6 +5,7 @@ import model.MyPolygon;
 import model.charactersModel.BulletModel;
 import model.charactersModel.CollectibleModel;
 import model.charactersModel.*;
+import model.charactersModel.blackOrb.Laser;
 import model.entities.Skill;
 import view.FinalPanelView;
 import view.charactersView.BulletView;
@@ -61,6 +62,15 @@ public abstract class UserInterfaceController {
     public static void createNecropickView(String id, Image image){
         new NecropickView(id, image);
     }
+
+    public static void createArchmireView(String id, Image image){
+        new ArchmireView(id, image);
+    }
+
+    public static void createLaserView(String id){
+        new LaserView(id);
+    }
+
     public static void createPolygonalEnemyView(String id){ new GeoShapeView(id); }
 
     public static Point2D calculateViewLocationPolygonalEnemy(Component component, String id){
@@ -133,7 +143,7 @@ public abstract class UserInterfaceController {
         return null;
     }
 
-    public static GeoShapeView findPolygonalEnemyView(String id){
+    public static GeoShapeView findGeoShapeView(String id){
         for (GeoShapeView geoShapeView : GeoShapeView.geoShapeViews){
             if (geoShapeView.getId().equals(id)) return geoShapeView;
         }

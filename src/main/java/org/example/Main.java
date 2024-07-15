@@ -72,19 +72,23 @@ public class Main {
 //        MyPolygon pl = ber.myBoundingPolygon;
 //        new BarricadosModel(new Point2D.Double(900, 400), pl);
 
-        Orb.loadImage();
-
-
-        new BlackOrb();
+//        Orb.loadImage();
+//        new BlackOrb();
 
 
 
 
-//        BufferedImage b = ArchmireModel.loadImage();
-//        GraphicalObject bows = new GraphicalObject(b);
-//        MyPolygon pol = bows.myBoundingPolygon;
+//        BufferedImage bx = ArchmireModel.loadImage();
+//        GraphicalObject bv = new GraphicalObject(bx);
+//        MyPolygon pp = bv.myBoundingPolygon;
 ////        until hear
-//        new ArchmireModel(new Point2D.Double(300, 400), pol);
+        ArchmireModel.loadImage();
+        new ArchmireModel(new Point2D.Double(300, 400));
+
+
+
+        BabyArchmire.loadImage();
+        new BabyArchmire(new Point2D.Double(300, 800));
 //        new ArchmireModel(new Point2D.Double(300, 500), pol);
 //        new ArchmireModel(new Point2D.Double(300, 600), pol);
 //        new ArchmireModel(new Point2D.Double(300, 700), pol);

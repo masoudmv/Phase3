@@ -78,12 +78,12 @@ public class FinalPanelView extends JPanel {
 
 
 
-        for (int i = 0; i < GeoShapeModel.entities.size(); i++) {
-            if (GeoShapeModel.entities.get(i).isLaser){
-                Polygon polygon = UserInterfaceController.calculateEntityView(this, GeoShapeModel.entities.get(i).myPolygon);
-                g.fillPolygon(polygon);
-            }
-        }
+//        for (int i = 0; i < GeoShapeModel.entities.size(); i++) {
+//            if (GeoShapeModel.entities.get(i).isLaser){
+//                Polygon polygon = UserInterfaceController.calculateEntityView(this, GeoShapeModel.entities.get(i).myPolygon);
+//                g.fillPolygon(polygon);
+//            }
+//        }
 
         updateEntitiesLocations(this);
 

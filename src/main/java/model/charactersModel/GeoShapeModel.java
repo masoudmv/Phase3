@@ -11,18 +11,18 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.UUID;
 
-import static controller.UserInterfaceController.createPolygonalEnemyView;
+import static controller.UserInterfaceController.*;
 import static controller.Utils.*;
 
 
 //todo extend mypolygon
 
 public abstract class GeoShapeModel extends Entity {
-    String id;
+    protected String id;
     protected Point2D anchor;
     public MyPolygon myPolygon;
     protected Direction direction;
-    public boolean isLaser = false;
+//    public boolean isLaser = false; // WTF
     public static ArrayList<GeoShapeModel> entities = new ArrayList<>();
     protected double radius;
     public FinalPanelModel localPanel;
@@ -88,7 +88,7 @@ public abstract class GeoShapeModel extends Entity {
     public GeoShapeModel(){
         this.id = UUID.randomUUID().toString();
         entities.add(this);
-        createPolygonalEnemyView(id);
+//        createPolygonalEnemyView(id);
     }
 
 
@@ -146,7 +146,10 @@ public abstract class GeoShapeModel extends Entity {
         this.radius = radius;
     }
 
-    public abstract void eliminate();
+    public void eliminate(){
+        entities.remove(this);
+        findGeoShapeView(id).eliminate();
+    }
 
     public void setDirection(Direction direction) {
         this.direction = direction;

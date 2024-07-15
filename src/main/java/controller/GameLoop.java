@@ -4,6 +4,7 @@ import model.charactersModel.BulletModel;
 import model.charactersModel.CollectibleModel;
 import model.charactersModel.*;
 import model.charactersModel.blackOrb.BlackOrb;
+import model.charactersModel.blackOrb.Laser;
 import model.charactersModel.smiley.Fist;
 import model.charactersModel.smiley.Hand;
 import model.charactersModel.SmileyBullet;
@@ -34,6 +35,7 @@ import static model.charactersModel.CollectibleModel.collectibleModels;
 import static model.charactersModel.NecropickModel.necropickModels;
 import static model.charactersModel.SquarantineModel.squarantineModels;
 import static model.charactersModel.TrigorathModel.trigorathModels;
+import static model.charactersModel.blackOrb.BlackOrb.lasers;
 import static model.charactersModel.smiley.Fist.fists;
 import static model.charactersModel.smiley.Hand.hands;
 import static model.charactersModel.SmileyBullet.smileyBullets;
@@ -259,12 +261,6 @@ public class GameLoop implements Runnable {
     }
 
     public void updateModel() {
-
-//        for (int i = 0; i < finalPanelModels.size(); i++) {
-//            finalPanelModels.get(i).updateVertices();  // todo
-//        }
-
-
 
         for (int i = 0; i < finalPanelModels.size(); i++) {
             finalPanelModels.get(i).panelMotion();  // todo

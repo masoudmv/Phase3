@@ -58,7 +58,7 @@ public class BlackOrb { // todo panels should be created with delay?
     }
 
     private void initializedOrbs(){
-        for (int i = 0; i < vertices.length; i++) {
+        for (int i = 0; i < 5; i++) {
             orbs[i] = new Orb(addVectors(vertices[i], movePanelLocation));
         }
         setLasers();
@@ -70,14 +70,14 @@ public class BlackOrb { // todo panels should be created with delay?
 
     private void setLasers() {
         for (int i = 0; i < 5; i++) {
-            for (int j = i + 1; j < 5; j++) {
-                lasers.add(new Laser(orbs[i], orbs[j]));
+            for (int j = i+1; j < 5; j++) {
+                new Laser(orbs[i], orbs[j]);
             }
         }
     }
 
-    public static void drawBlackOrb(Component component, Graphics g) {
-        Orb.drawOrbs(component, g);
-        Laser.drawLasers(component, g);
-    }
+//    public static void drawBlackOrb(Component component, Graphics g) {
+//        Orb.drawOrbs(component, g);
+//        Laser.drawLasers(component, g);
+//    }
 }

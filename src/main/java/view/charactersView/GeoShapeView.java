@@ -32,6 +32,7 @@ public class GeoShapeView {
 
     public GeoShapeView(String id) {
         this.id = id;
+        geoShapeViews.add(this);
     }
 
     public void setCurrentLocation(Point2D currentLocation) {
@@ -53,6 +54,9 @@ public class GeoShapeView {
 
     public void setAngle(double angle) {
         this.angle = angle;
+    }
+    public void eliminate(){
+        geoShapeViews.remove(this);
     }
 
     //    public static void drawAll(Graphics ){
@@ -94,7 +98,7 @@ public class GeoShapeView {
 //        g2d.drawOval((int) getCurrentLocation().getX(), (int) getCurrentLocation().getY(), (int) (2), (int) (2));
         g2d.setColor(Color.white);
 
-//        g2d.drawPolygon(xpoints, ypoints, myPolygon.npoints);
+        g2d.drawPolygon(xpoints, ypoints, myPolygon.npoints);
     }
 
 }

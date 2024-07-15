@@ -2,6 +2,7 @@ package model.charactersModel;
 //import controller.SoundHandler;
 import model.FinalPanelModel;
 
+import model.charactersModel.blackOrb.Orb;
 import model.collision.Collidable;
 import model.collision.CollisionState;
 import model.collision.Impactable;
@@ -172,7 +173,9 @@ public class BulletModel implements Movable, Collidable, Impactable {
 
     @Override
     public void onCollision(Collidable other, Point2D intersection) {
+//        return;
         if (other instanceof FinalPanelModel) remove();
+        if (other instanceof Orb) remove();
     }
 
     @Override

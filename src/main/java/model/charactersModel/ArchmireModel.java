@@ -4,6 +4,7 @@ import controller.Game;
 import model.MyPolygon;
 import model.TimedLocation;
 import model.movement.Direction;
+import org.example.GraphicalObject;
 import util.ThreadPoolManager;
 //import view.MainPanel;
 
@@ -26,6 +27,18 @@ public class ArchmireModel extends GeoShapeModel {
     public LinkedList<TimedLocation> locationHistory = new LinkedList<>();
 //    public LinkedList<MyPolygon> recentLocations = new LinkedList<>();
     public Polygon polygon;
+    protected static MyPolygon pol;
+
+    public ArchmireModel(Point2D anchor) {
+        super(anchor, image, pol, true);
+//        super(anchor, image, pol);
+        archmireModels.add(this);
+        updateDirection();
+
+        // Schedule heavy calculations to run 60 times per second
+        ThreadPoolManager.getInstance().scheduleTask(this::performHeavyCalculations, 0, 17, TimeUnit.MILLISECONDS);
+    }
+
 
     public ArchmireModel(Point2D anchor, MyPolygon myPolygon) {
         super(anchor, image, myPolygon);
@@ -46,6 +59,11 @@ public class ArchmireModel extends GeoShapeModel {
     public static BufferedImage loadImage() {
         Image img = new ImageIcon("./src/archmire.png").getImage();
         ArchmireModel.image = getBufferedImage(img);
+
+        GraphicalObject bowser = new GraphicalObject(image);
+        pol = bowser.getMyBoundingPolygon();
+
+
         return ArchmireModel.image;
     }
 

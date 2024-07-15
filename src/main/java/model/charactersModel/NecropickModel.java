@@ -33,8 +33,8 @@ public class NecropickModel extends GeoShapeModel implements Collidable {
         necropickModels.add(this);
         stateChangeTime = Game.ELAPSED_TIME; // Initialize state change time
         isHovering = true; // Start in hovering state
-        createNecropickView(id, image);
         collidables.add(this);
+        createNecropickView(id, image);
     }
 
     public static BufferedImage loadImage() {
