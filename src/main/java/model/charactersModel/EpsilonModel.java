@@ -6,6 +6,7 @@ import model.FinalPanelModel;
 import model.MyPolygon;
 import model.charactersModel.blackOrb.Orb;
 import model.charactersModel.smiley.Fist;
+import model.charactersModel.smiley.Hand;
 import model.charactersModel.smiley.Smiley;
 import model.collision.Collidable;
 import model.collision.CollisionState;
@@ -299,6 +300,7 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
     public void onCollision(Collidable other, Point2D intersection) {
         if (other instanceof Smiley) impact(new CollisionState(intersection));
         if (other instanceof Fist) impact(new CollisionState(intersection));
+        if (other instanceof Hand) impact(new CollisionState(intersection));
         if (other instanceof BarricadosModel) impact(new CollisionState(intersection));
         if (other instanceof OmenoctModel) impact(new CollisionState(intersection));
         if (other instanceof Orb) impact(new CollisionState(intersection));

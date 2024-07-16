@@ -3,51 +3,47 @@ package model.charactersModel;
 import controller.Game;
 import model.MyPolygon;
 import model.TimedLocation;
+import model.collision.Collidable;
 import model.movement.Direction;
 import org.example.GraphicalObject;
-import util.ThreadPoolManager;
-//import view.MainPanel;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.concurrent.TimeUnit;
-
-import static controller.UserInterfaceController.calculateEntityView;
+import static controller.UserInterfaceController.createArchmireView;
 import static controller.constants.EntityConstants.ARCHMIRE_SPEED;
 import static controller.Utils.*;
 import static model.imagetools.ToolBox.getBufferedImage;
 
-public class ArchmireModel extends GeoShapeModel {
+public class ArchmireModel extends GeoShapeModel implements Collidable {
     static BufferedImage image;
     public static ArrayList<ArchmireModel> archmireModels = new ArrayList<>();
-    public LinkedList<TimedLocation> locationHistory = new LinkedList<>();
-//    public LinkedList<MyPolygon> recentLocations = new LinkedList<>();
+    private LinkedList<TimedLocation> locationHistory = new LinkedList<>();
+    private double lastUpdatedLocation = 0;
     public Polygon polygon;
     protected static MyPolygon pol;
 
     public ArchmireModel(Point2D anchor) {
         super(anchor, image, pol, true);
-//        super(anchor, image, pol);
         archmireModels.add(this);
         updateDirection();
+        createArchmireView(id, ArchmireModel.image);
+        collidables.add(this);
 
-        // Schedule heavy calculations to run 60 times per second
-        ThreadPoolManager.getInstance().scheduleTask(this::performHeavyCalculations, 0, 17, TimeUnit.MILLISECONDS);
     }
 
-
+    // BabyArchmire:
     public ArchmireModel(Point2D anchor, MyPolygon myPolygon) {
-        super(anchor, image, myPolygon);
+        super(anchor, BabyArchmire.image, myPolygon, true);
         archmireModels.add(this);
         updateDirection();
+        createArchmireView(id, BabyArchmire.image);
 
-        // Schedule heavy calculations to run 60 times per second
-        ThreadPoolManager.getInstance().scheduleTask(this::performHeavyCalculations, 0, 17, TimeUnit.MILLISECONDS);
     }
+
+
 
     private void updateDirection(){
         Point2D destination = EpsilonModel.getINSTANCE().getAnchor();
@@ -74,46 +70,38 @@ public class ArchmireModel extends GeoShapeModel {
 
     @Override
     public void eliminate() {
-        // Implementation needed
+        super.eliminate();
+        collidables.remove(this);
+        archmireModels.remove(this);
+
+        // TODO: You can do better than this!
+        new BabyArchmire(new Point2D.Double(anchor.getX(), anchor.getY()+40));
+        new BabyArchmire(new Point2D.Double(anchor.getX(), anchor.getY()-40));
+
+        // TODO: REAL ELIMINATE
+
     }
 
     public void updateLocation() {
-//        System.out.println(SwingUtilities.isEventDispatchThread());
+        double now = Game.ELAPSED_TIME;
         updateDirection();
-        double currentTime = Game.ELAPSED_TIME;
-        locationHistory.addLast(new TimedLocation(myPolygon, currentTime));
-//        MainPanel.getINSTANCE().locationHistory.addLast(new TimedLocation(Controller.calculateEntityView(MainPanel.getINSTANCE(), myPolygon), currentTime));
-        removeOldLocations(currentTime);
+        if (now - lastUpdatedLocation > 0.5){
+            locationHistory.addLast(new TimedLocation(myPolygon, now));
+            lastUpdatedLocation = now;
+        }
+        removeOldLocations(now);
     }
 
     private void removeOldLocations(double currentTime) {
         while (!locationHistory.isEmpty() && (currentTime - locationHistory.getFirst().getTimestamp() > 5)) {
             locationHistory.removeFirst();
-//            MainPanel.getINSTANCE().locationHistory.removeFirst();
         }
     }
 
-    public LinkedList<MyPolygon> getLocationHistory() {
-        LinkedList<MyPolygon> recentLocations = new LinkedList<>();
-        for (TimedLocation timedLocation : locationHistory) {
-            recentLocations.add(timedLocation.getMyPolygon());
-        }
-        return recentLocations;
+    public LinkedList<TimedLocation> getLocationHistory() {
+        return locationHistory;
     }
 
-    public void performHeavyCalculations() {
-//        System.out.println(SwingUtilities.isEventDispatchThread());
-
-//        updateLocation();
-//        for (MyPolygon p : getLocationHistory()){
-//            MainPanel.recentLocations.add(calculatePolygonOfPolygonalEnemy(MainPanel.getINSTANCE(), p));
-//        }
-
-//        SwingUtilities.invokeLater(() -> {
-//            updateGUI();
-//
-//        });
-    }
 
     void move(Direction direction) {
         Point2D movement = multiplyVector(direction.getNormalizedDirectionVector(), direction.getMagnitude());
@@ -124,15 +112,19 @@ public class ArchmireModel extends GeoShapeModel {
         move(direction);
     }
 
-    private void updateGUI() {
-        // Update the Archmire position or other UI components based on the calculation result
-        // Example: Move the Archmire to the new calculated position
-//        this.anchor.setLocation(newResultPosition);
-//        updateLocation();
-        // Repaint or refresh the UI components if needed
-//        MainPanel mainPanel = MainPanel.getINSTANCE();
-//        mainPanel.repaint();
+    @Override
+    public boolean isCircular() {
+        return false;
     }
 
+    @Override
+    public void onCollision(Collidable other, Point2D intersection) {
+        if (other instanceof BulletModel) eliminate();
+    }
+
+    @Override
+    public void onCollision(Collidable other) {
+
+    }
 }
 

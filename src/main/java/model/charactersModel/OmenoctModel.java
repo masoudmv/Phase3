@@ -43,7 +43,7 @@ public class OmenoctModel extends GeoShapeModel implements Collidable {
         GraphicalObject bos = new GraphicalObject(ba);
         MyPolygon pl = bos.getMyBoundingPolygon();
         Point2D startPos = getAnchor();
-        new SmileyBullet(startPos, pl).setDirection(findBulletDirection(startPos));
+//        new SmileyBullet(startPos).setDirection(findBulletDirection(startPos));
         lastShotBullet = now;
     }
 

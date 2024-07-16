@@ -8,6 +8,7 @@ import model.charactersModel.blackOrb.Laser;
 import model.charactersModel.smiley.Fist;
 import model.charactersModel.smiley.Hand;
 import model.charactersModel.SmileyBullet;
+import model.charactersModel.smiley.Smiley;
 import model.movement.Movable;
 import view.*;
 import view.junks.GameOverPanel;
@@ -214,10 +215,14 @@ public class GameLoop implements Runnable {
             f.move();
         }
 
+        for (Smiley smiley : Smiley.smilies){
+            smiley.move();
+        }
+
 
         for (Hand h : hands){
-            h.rot();
-//            h.move();
+//            h.rot();
+            h.move();
 //            h.mySlapAttack();
 //            h.rotateTowardsTarget();
 //            if (ELAPSED_TIME > 3) h.rot();

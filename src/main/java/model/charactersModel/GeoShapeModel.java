@@ -35,14 +35,12 @@ public abstract class GeoShapeModel extends Entity {
         );
         this.myPolygon = myPolygon;
         radius = (double) image.getWidth()/2;
-        // following line is extra??
-//        this.myPolygon.npoints = myPolygon.npoints;
         Point2D img = new Point2D.Double((double) -image.getWidth()/2, (double) -image.getHeight()/2);
 
 
         moveVertices(addVectors(anchor, img));
         entities.add(this);
-        createPolygonalEnemyView(id, image);
+        createGeoShapeView(id, image);
     }
 
 
@@ -60,7 +58,7 @@ public abstract class GeoShapeModel extends Entity {
         this.id = UUID.randomUUID().toString(); //todo swap image and anchor set logic
         this.myPolygon = myPolygon;
         entities.add(this);
-        createPolygonalEnemyView(id, image);
+        createGeoShapeView(id, image);
     }
 
     public GeoShapeModel(Point2D anchor, BufferedImage image){
@@ -72,7 +70,7 @@ public abstract class GeoShapeModel extends Entity {
         radius = (double) image.getHeight()/2;
 //        moveVertices(anchor);
         entities.add(this);
-        createPolygonalEnemyView(id, image);
+        createGeoShapeView(id, image);
     }
 
 
@@ -82,7 +80,7 @@ public abstract class GeoShapeModel extends Entity {
         this.anchor = anchor;
         this.id = UUID.randomUUID().toString();
         entities.add(this);
-        createPolygonalEnemyView(id);
+        createGeoShapeView(id);
     }
 
     public GeoShapeModel(){
@@ -135,8 +133,6 @@ public abstract class GeoShapeModel extends Entity {
         anchor = addVectors(anchor, movement);
         moveVertices(movement);
     }
-
-//    public void updateEntityLocation(Component component, )
 
     public double getRadius() {
         return radius;

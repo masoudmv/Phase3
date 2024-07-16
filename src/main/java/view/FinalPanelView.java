@@ -1,7 +1,5 @@
 package view;
 
-import controller.UserInterfaceController;
-import model.charactersModel.GeoShapeModel;
 import view.charactersView.*;
 
 import javax.swing.*;
@@ -73,37 +71,8 @@ public class FinalPanelView extends JPanel {
     @Override
     protected void paintComponent(Graphics g) { // todo layared painting
         super.paintComponent(g);
-//        g.setColor(Color.gray);
-//        BlackOrb.drawBlackOrb(this, g);
 
-
-
-//        for (int i = 0; i < GeoShapeModel.entities.size(); i++) {
-//            if (GeoShapeModel.entities.get(i).isLaser){
-//                Polygon polygon = UserInterfaceController.calculateEntityView(this, GeoShapeModel.entities.get(i).myPolygon);
-//                g.fillPolygon(polygon);
-//            }
-//        }
-
-        updateEntitiesLocations(this);
-
-        for (GeoShapeView geoShapeView : GeoShapeView.geoShapeViews) {
-            geoShapeView.draw(g); // This should call the appropriate overridden method
-        }
-
-
-//        for (NecropickView necropickView:NecropickView.necropickViews){
-////            g.setColor(Color.blue);
-////            if (geoShapeView instanceof NecropickView)
-////                necropickView.drawNecropick(g);
-////            else geoShapeView.draw(g);
-//        }
-
-
-
-
-
-
+        updateGeoShapeViewsLocations(this);
         for (EpsilonView epsilonView: EpsilonView.epsilonViews){
             epsilonView.setCurrentLocation(
                     calculateViewLocationEpsilon(this, epsilonView.getId())
@@ -113,17 +82,17 @@ public class FinalPanelView extends JPanel {
             );
         }
 
-//        updateEntitiesLocations(this);
-
-
         for (BulletView bulletView : bulletViews){
             bulletView.setCurrentLocation(calculateViewLocationBullet(this, bulletView.getId()));
         }
 
-
+        // Deprecated
         for(Drawable obj: drawables){
             obj.draw(g);
         }
 
+        for (GeoShapeView geoShapeView : GeoShapeView.geoShapeViews) {
+            geoShapeView.draw(g); // This should call the appropriate overridden method
+        }
     }
 }

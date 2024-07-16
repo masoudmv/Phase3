@@ -7,6 +7,8 @@ import model.charactersModel.*;
 import model.charactersModel.blackOrb.BlackOrb;
 import model.charactersModel.blackOrb.Orb;
 import model.charactersModel.smiley.Fist;
+import model.charactersModel.smiley.Hand;
+import model.charactersModel.smiley.Smiley;
 import view.*;
 
 import javax.imageio.ImageIO;
@@ -47,11 +49,15 @@ public class Main {
 //        String id = ((GeoShapeModel) EpsilonModel.getINSTANCE()).getId();
 //        System.out.println(id);
 
+        SmileyBullet.loadImage();
+
+//        new SmileyBullet(new Point2D.Double(300, 300)).rapidFire(10, 180);
+
 
         BufferedImage b = EpsilonModel.loadImage();
         GraphicalObject bows = new GraphicalObject(b);
         MyPolygon pol = bows.myBoundingPolygon;
-        String id = new EpsilonModel(new Point2D.Double(1400, 400), pol).getId();
+        String id = new EpsilonModel(new Point2D.Double(100, 400), pol).getId();
 
 
 
@@ -65,6 +71,19 @@ public class Main {
 //        BufferedImage bImg = OmenoctModel.loadImage();
 //        GraphicalObject bowser = new GraphicalObject(bImg);
 //        MyPolygon p = bowser.myBoundingPolygon;
+//        new OmenoctModel(new Point2D.Double(300, 400), p);
+//        new OmenoctModel(new Point2D.Double(300, 400), p);
+//        new OmenoctModel(new Point2D.Double(300, 400), p);
+//        new OmenoctModel(new Point2D.Double(300, 400), p);
+//        new OmenoctModel(new Point2D.Double(300, 400), p);
+//        new OmenoctModel(new Point2D.Double(300, 400), p);
+//        new OmenoctModel(new Point2D.Double(300, 400), p);
+//        new OmenoctModel(new Point2D.Double(300, 400), p);
+//        new OmenoctModel(new Point2D.Double(300, 400), p);
+//        new OmenoctModel(new Point2D.Double(300, 400), p);
+//        new OmenoctModel(new Point2D.Double(300, 400), p);
+//        new OmenoctModel(new Point2D.Double(300, 400), p);
+//        new OmenoctModel(new Point2D.Double(300, 400), p);
 //        new OmenoctModel(new Point2D.Double(300, 400), p);
 
 //        BufferedImage bg = BarricadosModel.loadImage();
@@ -83,12 +102,18 @@ public class Main {
 //        MyPolygon pp = bv.myBoundingPolygon;
 ////        until hear
         ArchmireModel.loadImage();
-        new ArchmireModel(new Point2D.Double(300, 400));
-
-
-
+//        new ArchmireModel(new Point2D.Double(300, 400));
+//        new ArchmireModel(new Point2D.Double(300, 400));
+//        new ArchmireModel(new Point2D.Double(300, 400));
+//        new ArchmireModel(new Point2D.Double(300, 400));
+//        new ArchmireModel(new Point2D.Double(300, 400));
+//        new ArchmireModel(new Point2D.Double(300, 400));
+//        new ArchmireModel(new Point2D.Double(300, 400));
         BabyArchmire.loadImage();
-        new BabyArchmire(new Point2D.Double(300, 800));
+//
+//
+
+//        new BabyArchmire(new Point2D.Double(300, 800));
 //        new ArchmireModel(new Point2D.Double(300, 500), pol);
 //        new ArchmireModel(new Point2D.Double(300, 600), pol);
 //        new ArchmireModel(new Point2D.Double(300, 700), pol);
@@ -140,28 +165,28 @@ public class Main {
 //        f.setRigid(false);
 //        f.setIsometric(false);
 
-
+        Smiley.loadImage();
 
 //        BufferedImage baf = Smiley.loadImage();
 //        GraphicalObject a = new GraphicalObject(baf);
 //        MyPolygon l = a.myBoundingPolygon;
-//        new Smiley(new Point2D.Double(200, 200), l);
+//        new Smiley(new Point2D.Double(400, 400));
 
 
+        Fist.loadImage();
+        Hand.loadImage();
+        ArchmireModel.loadImage();
 
+//        new Fist(new Point2D.Double(200, 200));
+        new Hand(new Point2D.Double(1400, 200));
 
-
-
-
-
-
-
-
-
-
-
-
-
+//        new ArchmireModel(new Point2D.Double(100, 500));
+//        new ArchmireModel(new Point2D.Double(100, 500));
+//        new ArchmireModel(new Point2D.Double(100, 500));
+//        new ArchmireModel(new Point2D.Double(100, 500));
+//        new ArchmireModel(new Point2D.Double(100, 500));
+//        new ArchmireModel(new Point2D.Double(100, 500));
+//        new ArchmireModel(new Point2D.Double(100, 500));
 
 
 

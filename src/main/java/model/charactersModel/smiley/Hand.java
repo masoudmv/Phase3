@@ -1,11 +1,13 @@
 package model.charactersModel.smiley;
 
 import controller.Utils;
+import javafx.scene.shape.MoveTo;
 import model.FinalPanelModel;
 import model.MyPolygon;
 import model.charactersModel.EpsilonModel;
 import model.charactersModel.GeoShapeModel;
 import model.charactersModel.SmileyBullet;
+import model.collision.Collidable;
 import model.movement.Direction;
 import org.example.GraphicalObject;
 
@@ -20,15 +22,15 @@ import static controller.constants.SmileyConstants.BULLET_SPEED;
 import static controller.constants.SmileyConstants.MAX_SPEED;
 import static model.imagetools.ToolBox.getBufferedImage;
 
-public class Hand extends GeoShapeModel {
-
+public class Hand extends GeoShapeModel implements Collidable {
     static BufferedImage image;
+
     public static ArrayList<Hand> hands = new ArrayList<>();
     private FinalPanelModel finalPanelModel;
     private double angularSpeed = 1.5;
     double angleToEpsilon;
     private boolean isMovingToDestination;
-    private Point2D destination = EpsilonModel.getINSTANCE().getAnchor();
+    private Point2D destination;
     private Point2D startPosition = getAnchor();
     private double speed = 0;
     private double acceleration;
@@ -41,36 +43,54 @@ public class Hand extends GeoShapeModel {
     private double halfwayDistance;
     private Point2D projectileCenter = EpsilonModel.getINSTANCE().getAnchor();
 
-
     private int pointerVertexIndex;
 
+    protected static MyPolygon pol;
 
 
 
 
-    public Hand(Point2D anchor, MyPolygon myPolygon) {
-        super(anchor, image, myPolygon);
+
+    public Hand(Point2D anchor) {
+        super(anchor, image, pol);
         hands.add(this);
 
         angleToEpsilon = findAngleToEpsilon();
 
         setFinalPanelModel();
 
-        Point2D dir = relativeLocation(EpsilonModel.getINSTANCE().getAnchor(), getAnchor());
-        direction = new Direction(dir);
+
         angle = 90; //
 
 
-        distance = findDistance(getAnchor(), EpsilonModel.getINSTANCE().getAnchor());
+
+
+        setPointerVertex();
+//        creatBulletFromPointingVertex();
+        moveTo(EpsilonModel.getINSTANCE().getAnchor());
+        collidables.add(this);
+
+    }
+
+    public void moveTo(Point2D destination) {
+        this.destination = destination;
+        this.startPosition = getAnchor();
+        this.isMovingToDestination = true;
+        this.isDecelerating = false;
+        this.speed = 0; // Reset speed at the start of the movement
+
+        // Calculate the total distance to the destination
+        distance = findDistance(getAnchor(), destination);
         halfwayDistance = distance / 2;
+
         double t = 15; // Total time in frames (assuming 4 seconds at 60 FPS)
         acceleration = 4 * distance / (t * t);
         deceleration = -acceleration;
         MAX_SPEED = acceleration * t / 2;
 
-        setPointerVertex();
-        creatBulletFromPointingVertex();
-
+        Point2D dir = relativeLocation(destination, getAnchor());
+        direction = new Direction(dir);
+        direction.setMagnitude(speed);
     }
 
     private void setFinalPanelModel(){
@@ -103,7 +123,7 @@ public class Hand extends GeoShapeModel {
         GraphicalObject bos = new GraphicalObject(ba);
         MyPolygon pl = bos.getMyBoundingPolygon();
         Point2D startPos = getPointingVertexPoint2D();
-        new SmileyBullet(startPos, pl).setDirection(findBulletDirection(startPos));
+        new SmileyBullet(startPos).setDirection(findBulletDirection(startPos));
     }
 
     private Direction findBulletDirection(Point2D startPos){
@@ -128,23 +148,32 @@ public class Hand extends GeoShapeModel {
     }
 
     public void updateDirection() {
+        if (!isMovingToDestination) {
+            return;
+        }
+
+        double currentDistance = findDistance(getAnchor(), destination);
+
         if (!isDecelerating) {
             speed += acceleration * dt;
             if (speed > MAX_SPEED) {
                 speed = MAX_SPEED;
             }
-            if (findDistance(getAnchor(), startPosition) >= halfwayDistance) {
+            if (currentDistance <= halfwayDistance) {
                 isDecelerating = true;
             }
         } else {
             speed += deceleration * dt;
-            if (speed < 0) {
+            if (speed < 0 || currentDistance <= 0) {
                 speed = 0;
-                isMovingToDestination = false; // Stop moving when speed is 0
+                isMovingToDestination = false; // Stop moving when speed is 0 or destination is reached
+//                setAnchor(destination); // Ensure the object is exactly at the destination
             }
         }
+
         direction.setMagnitude(speed);
     }
+
 
 
     public void rot() {
@@ -176,11 +205,10 @@ public class Hand extends GeoShapeModel {
         // Rotate the polygon to face the center
         angle += 1.5;
 //        System.out.println(angularSpeed);
-        rotate(angularSpeed
-        );
+        rotate(angularSpeed);
     }
-
     // Method to calculate the angle so that the same face of the object points towards the center
+
     public static double getAngleTowardsCenter(Point2D center, Point2D objectPosition) {
         // Calculate the vector from center to object
         double dx = objectPosition.getX() - center.getX();
@@ -201,6 +229,8 @@ public class Hand extends GeoShapeModel {
     public static BufferedImage loadImage() {
         Image img = new ImageIcon("./src/hand.png").getImage();
         Hand.image = getBufferedImage(img);
+        GraphicalObject bowser = new GraphicalObject(image);
+        pol = bowser.getMyBoundingPolygon();
         return Hand.image;
     }
 
@@ -214,13 +244,6 @@ public class Hand extends GeoShapeModel {
 
     }
 
-    public void moveTo(Point2D destination) {
-        this.destination = destination;
-        this.startPosition = getAnchor();
-        this.isMovingToDestination = true;
-        this.isDecelerating = false;
-        this.speed = 0; // Reset speed at the start of the movement
-    }
 
     private void setPointerVertex(){
         double yMin = Double.MAX_VALUE;
@@ -232,5 +255,20 @@ public class Hand extends GeoShapeModel {
             }
         }
         pointerVertexIndex = index;
+    }
+
+    @Override
+    public boolean isCircular() {
+        return false;
+    }
+
+    @Override
+    public void onCollision(Collidable other, Point2D intersection) {
+//        if (other instanceof )
+    }
+
+    @Override
+    public void onCollision(Collidable other) {
+
     }
 }

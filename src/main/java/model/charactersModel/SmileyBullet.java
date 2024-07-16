@@ -2,8 +2,11 @@ package model.charactersModel;
 
 import model.FinalPanelModel;
 import model.MyPolygon;
+import model.charactersModel.smiley.Smiley;
 import model.collision.Collidable;
 import model.movement.Direction;
+import org.example.GraphicalObject;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.Point2D;
@@ -21,12 +24,14 @@ public class SmileyBullet extends GeoShapeModel implements Collidable {
     static BufferedImage image;
     public static CopyOnWriteArrayList<SmileyBullet> smileyBullets = new CopyOnWriteArrayList<>();
     private FinalPanelModel finalPanelModel;
+    protected static MyPolygon pol;
+
 //    private double angularSpeed = 1.5;
 //    double angleToEpsilon;
 
 
-    public SmileyBullet(Point2D anchor, MyPolygon myPolygon) {
-        super(anchor, image, myPolygon);
+    public SmileyBullet(Point2D anchor) {
+        super(anchor, image, pol);
         smileyBullets.add(this);
         collidables.add(this);
 
@@ -63,7 +68,7 @@ public class SmileyBullet extends GeoShapeModel implements Collidable {
 
             Point2D firingPoint = new Point2D.Double(130, 130); //todo edit
 
-            SmileyBullet b = new SmileyBullet(firingPoint, myPolygon);
+            SmileyBullet b = new SmileyBullet(firingPoint);
 
             direction = adjustVectorMagnitude(direction, 5);
             b.setDirection(new Direction(direction));
@@ -73,7 +78,14 @@ public class SmileyBullet extends GeoShapeModel implements Collidable {
 
     public static BufferedImage loadImage() {
         Image img = new ImageIcon("./src/bullet.png").getImage();
+//        SmileyBullet.image = getBufferedImage(img);
+
         SmileyBullet.image = getBufferedImage(img);
+
+        GraphicalObject bowser = new GraphicalObject(image);
+        pol = bowser.getMyBoundingPolygon();
+
+
         return SmileyBullet.image;
     }
 

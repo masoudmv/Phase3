@@ -51,6 +51,7 @@ public class UserInputHandler implements KeyListener {
                 EpsilonModel.getINSTANCE().getDirection().getMagnitude());
         Direction direction = new Direction(addVectors(point, vector));
         direction.adjustEpsilonDirectionMagnitude();
+
         EpsilonModel.getINSTANCE().setDirection(direction);
 
     }

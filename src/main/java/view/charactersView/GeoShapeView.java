@@ -1,11 +1,13 @@
 package view.charactersView;
 
 import model.MyPolygon;
+import model.TimedLocation;
 
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 import static model.imagetools.ToolBox.getBufferedImage;
 import static model.imagetools.ToolBox.rotateImage;
@@ -19,7 +21,7 @@ public class GeoShapeView {
     protected MyPolygon myPolygon;
     public static ArrayList<GeoShapeView> geoShapeViews = new ArrayList<>();
     private Point2D slapTarget;
-    private double angle;
+    protected double angle;
 
 
     public GeoShapeView(String id, Image image) {
@@ -58,6 +60,9 @@ public class GeoShapeView {
     public void eliminate(){
         geoShapeViews.remove(this);
     }
+    public void setLocationHistory(LinkedList<TimedLocation> timedLocations){
+
+    }
 
     //    public static void drawAll(Graphics ){
 //        for (int i = 0; i < GeoShapeModel.entities.size(); i++) {
@@ -67,6 +72,8 @@ public class GeoShapeView {
 //            }
 //        }
 //    }
+
+
 
 
     protected void drawPolygon(){
@@ -96,7 +103,7 @@ public class GeoShapeView {
 //        double radius = imageHeight/2;
 //        g2d.drawOval((int) getCurrentLocation().getX(), (int) getCurrentLocation().getY(), (int) (2*radius), (int) (2*radius));
 //        g2d.drawOval((int) getCurrentLocation().getX(), (int) getCurrentLocation().getY(), (int) (2), (int) (2));
-        g2d.setColor(Color.white);
+        g2d.setColor(Color.red);
 
         g2d.drawPolygon(xpoints, ypoints, myPolygon.npoints);
     }

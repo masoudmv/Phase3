@@ -21,7 +21,7 @@ import static model.imagetools.ToolBox.getBufferedImage;
 public class Orb extends GeoShapeModel implements Collidable {
     static BufferedImage image; // transient to avoid serialization
     private Circle circle;
-    public static ArrayList<Orb> orbs = new ArrayList<>();
+//    public static ArrayList<Orb> orbs = new ArrayList<>();
 
     public Orb(Point2D anchor) {
         super(anchor, image);
@@ -32,7 +32,7 @@ public class Orb extends GeoShapeModel implements Collidable {
     }
 
     public static BufferedImage loadImage() {
-        Image img = new ImageIcon("./src/epsilon.png").getImage();
+        Image img = new ImageIcon("./src/orb.png").getImage();
         Orb.image = getBufferedImage(img);
         return Orb.image;
     }

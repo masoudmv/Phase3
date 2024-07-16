@@ -1,13 +1,17 @@
 package model.charactersModel.smiley;
 
+import controller.Game;
 import controller.Utils;
 import model.FinalPanelModel;
 import model.MyPolygon;
+import model.charactersModel.ArchmireModel;
 import model.charactersModel.EpsilonModel;
 import model.charactersModel.GeoShapeModel;
 //import model.collision.Coll;
+import model.charactersModel.SmileyBullet;
 import model.collision.Collidable;
 import model.movement.Direction;
+import org.example.GraphicalObject;
 import view.MainFrame;
 
 import javax.swing.*;
@@ -18,20 +22,24 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 import static controller.Utils.*;
+import static model.charactersModel.SmileyBullet.smileyBullets;
 import static model.imagetools.ToolBox.getBufferedImage;
 
 public class Smiley extends GeoShapeModel implements Collidable {
 
 
     static BufferedImage image;
-    public static ArrayList<Hand> hands = new ArrayList<>();
+    public static ArrayList<Smiley> smilies = new ArrayList<>();
     private FinalPanelModel finalPanelModel;
+    protected static MyPolygon pol;
+    private double last = 0;
+
 //    private double angularSpeed = 1.5;
 //    double angleToEpsilon;
 
 
-    public Smiley(Point2D anchor, MyPolygon myPolygon) {
-        super(anchor, image, myPolygon);
+    public Smiley(Point2D anchor) {
+        super(anchor, image, pol);
 //        hands.add(this);
 
 
@@ -44,6 +52,7 @@ public class Smiley extends GeoShapeModel implements Collidable {
         finalPanelModel = new FinalPanelModel(loc, size);
 
         collidables.add(this);
+        smilies.add(this);
 
     }
 
@@ -64,6 +73,17 @@ public class Smiley extends GeoShapeModel implements Collidable {
 
 
     public void move() {
+
+        double now = Game.ELAPSED_TIME;
+        if (now - last > 5) {
+            last = now;
+            rapidFire(10, 180);
+        }
+
+
+
+
+
         // Update the angle for circular motion
 //        angleToEpsilon += angularSpeed;
 //        if (angleToEpsilon >= 360) angleToEpsilon -= 360; // Keep angle within 0-359 degrees
@@ -93,6 +113,27 @@ public class Smiley extends GeoShapeModel implements Collidable {
     }
 
 
+    public void rapidFire(int numBullets, double arcAngle) {
+
+        double startAngle = 0;
+        double angleStep = arcAngle / (numBullets - 1);
+
+        for (int i = 0; i < numBullets; i++) {
+            double angle = startAngle + i * angleStep;
+            double radians = Math.toRadians(angle);
+            Point2D direction = new Point2D.Double(Math.cos(radians), Math.sin(radians));
+
+
+            Point2D firingPoint = new Point2D.Double(anchor.getX(), anchor.getY()); //todo edit
+
+            SmileyBullet b = new SmileyBullet(firingPoint);
+
+            direction = adjustVectorMagnitude(direction, 5);
+            b.setDirection(new Direction(direction));
+        }
+    }
+
+
 
 
 
@@ -118,7 +159,16 @@ public class Smiley extends GeoShapeModel implements Collidable {
 
     public static BufferedImage loadImage() {
         Image img = new ImageIcon("./src/smiley.png").getImage();
+//        Smiley.image = getBufferedImage(img);
+
         Smiley.image = getBufferedImage(img);
+
+        GraphicalObject bowser = new GraphicalObject(image);
+        pol = bowser.getMyBoundingPolygon();
+
+
+
+
         return Smiley.image;
     }
 

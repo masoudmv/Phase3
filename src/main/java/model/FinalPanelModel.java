@@ -245,10 +245,42 @@ public class FinalPanelModel implements Collidable, Serializable {
         }  if (velocity<0) moveUp = false;
     }
 
+    public void topShrink(double contraction){
+        if (size.getHeight() > 300){
+            size.height -= (int) (contraction);
+            Point2D movement = new Point2D.Double(0, contraction);
+            moveLocation(movement);
+            updateVertices();
+        }
+    }
+
+    public void bottomShrink(double contraction){
+        if (size.getHeight() > 300){
+            size.height -= (int) (contraction);
+            updateVertices();
+        }
+    }
+
+    public void rightShrink(double contraction){
+        if (size.getWidth() > 300){
+            size.width -= (int) (contraction);
+            updateVertices();
+        }
+    }
+
+    public void leftShrink(double contraction){
+        if (size.getWidth() > 300){
+            size.width -= (int) (contraction);
+            Point2D movement = new Point2D.Double(contraction, 0);
+            moveLocation(movement);
+            updateVertices();
+        }
+    }
+
 
     public void verticalShrink(double contraction){
         if (size.getHeight() > 300){
-            size.height -= contraction * 2;
+            size.height -= (int) (contraction * 2);
             Point2D movement = new Point2D.Double(0, contraction);
             moveLocation(movement);
             updateVertices();
@@ -280,6 +312,7 @@ public class FinalPanelModel implements Collidable, Serializable {
         if (velocity > 4){
             acceleration = -0.45;
         }
+
     }
 
 

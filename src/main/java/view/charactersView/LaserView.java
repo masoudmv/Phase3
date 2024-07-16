@@ -60,7 +60,7 @@ public class LaserView extends GeoShapeView {
                 xpoints[i] = (int) myPolygon.xpoints[i];
                 ypoints[i] = (int) myPolygon.ypoints[i];
             }
-            g2d.fillPolygon(xpoints, ypoints, myPolygon.npoints);
+            g2d.drawPolygon(xpoints, ypoints, myPolygon.npoints);
 //        } else {
 //            g2d.drawImage(image, (int) currentLocation.getX(), (int) currentLocation.getY(), null);
 //        }

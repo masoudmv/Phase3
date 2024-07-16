@@ -2,10 +2,10 @@ package controller;
 
 import model.FinalPanelModel;
 import model.MyPolygon;
+import model.TimedLocation;
 import model.charactersModel.BulletModel;
 import model.charactersModel.CollectibleModel;
 import model.charactersModel.*;
-import model.charactersModel.blackOrb.Laser;
 import model.entities.Skill;
 import view.FinalPanelView;
 import view.charactersView.BulletView;
@@ -16,6 +16,7 @@ import view.charactersView.*;
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 import static controller.Utils.relativeLocation;
 import static model.charactersModel.CollectibleModel.collectibleModels;
@@ -58,7 +59,7 @@ public abstract class UserInterfaceController {
 
 
 
-    public static void createPolygonalEnemyView(String id, Image image){ new GeoShapeView(id, image); }
+    public static void createGeoShapeView(String id, Image image){ new GeoShapeView(id, image); }
     public static void createNecropickView(String id, Image image){
         new NecropickView(id, image);
     }
@@ -71,7 +72,7 @@ public abstract class UserInterfaceController {
         new LaserView(id);
     }
 
-    public static void createPolygonalEnemyView(String id){ new GeoShapeView(id); }
+    public static void createGeoShapeView(String id){ new GeoShapeView(id); }
 
     public static Point2D calculateViewLocationPolygonalEnemy(Component component, String id){
         GeoShapeModel geoShapeModel = findGeoShapeModel(id);
@@ -151,7 +152,7 @@ public abstract class UserInterfaceController {
     }
 
 
-    public static void updateEntitiesLocations(Component component){
+    public static void updateGeoShapeViewsLocations(Component component){
         for (GeoShapeView geoShapeView : GeoShapeView.geoShapeViews){
             geoShapeView.setCurrentLocation(
                     calculateViewLocationPolygonalEnemy(component, geoShapeView.getId())
@@ -159,8 +160,36 @@ public abstract class UserInterfaceController {
 
             geoShapeView.setMyPolygon(calculateEntityView(component, geoShapeView.getId()));
             geoShapeView.setAngle(calculateGeoShapeViewAngle(geoShapeView.getId()));
+            geoShapeView.setLocationHistory(calculateLocationHistory(component, geoShapeView.getId())); //archmire
         }
     }
+
+    private static LinkedList<TimedLocation> calculateLocationHistory(Component component, String id){
+        GeoShapeModel geoShapeModel = findGeoShapeModel(id);
+        if (!(geoShapeModel instanceof ArchmireModel)) return null;
+        LinkedList<TimedLocation> timedLocations = ((ArchmireModel) geoShapeModel).getLocationHistory();
+        LinkedList<TimedLocation> result = new LinkedList<>();
+        for (TimedLocation timedLocation : timedLocations){
+            double timeStamp = timedLocation.getTimestamp();
+            MyPolygon pol = timedLocation.getMyPolygon();
+
+            int[] xPoints = new int[pol.npoints];
+            int[] yPoints = new int[pol.npoints];
+
+            for (int i = 0; i < pol.npoints; i++) {
+                xPoints[i] = (int) (pol.xpoints[i] - component.getX());
+                yPoints[i] = (int) (pol.ypoints[i] - component.getY());
+            }
+
+            TimedLocation t = new TimedLocation(new Polygon(xPoints, yPoints, pol.npoints), timeStamp);
+            result.add(t);
+        }
+        return result;
+    }
+
+
+
+
 
 
 

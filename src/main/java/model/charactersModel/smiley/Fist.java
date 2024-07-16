@@ -8,6 +8,7 @@ import model.charactersModel.GeoShapeModel;
 //import model.collision.Coll;
 import model.collision.Collidable;
 import model.movement.Direction;
+import org.example.GraphicalObject;
 import util.ThreadPoolManager;
 import view.MainFrame;
 import view.charactersView.GeoShapeView;
@@ -36,9 +37,11 @@ public class Fist extends GeoShapeModel implements Collidable {
     private double currentHeight = 0; // Current height of the fist
 
     private boolean quakeInProgress = false;
+    protected static MyPolygon pol;
 
-    public Fist(Point2D anchor, MyPolygon myPolygon) {
-        super(anchor, image, myPolygon);
+
+    public Fist(Point2D anchor) {
+        super(anchor, image, pol);
         fists.add(this);
         angle = -90;
         rotate(180);
@@ -49,7 +52,7 @@ public class Fist extends GeoShapeModel implements Collidable {
 
         collidables.add(this);
         
-        quake();
+//        quake();
     }
 
 
@@ -121,6 +124,8 @@ public class Fist extends GeoShapeModel implements Collidable {
     public static BufferedImage loadImage() {
         Image img = new ImageIcon("./src/fist.png").getImage();
         Fist.image = getBufferedImage(img);
+        GraphicalObject bowser = new GraphicalObject(image);
+        pol = bowser.getMyBoundingPolygon();
         return Fist.image;
     }
 

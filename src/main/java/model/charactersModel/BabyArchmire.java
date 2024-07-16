@@ -12,18 +12,21 @@ import java.awt.image.BufferedImage;
 import static model.imagetools.ToolBox.getBufferedImage;
 
 public class BabyArchmire extends ArchmireModel {
+
+    static BufferedImage image;
+
     public BabyArchmire(Point2D anchor) {
         super(anchor, pol);
     }
 
     public static BufferedImage loadImage() {
         Image img = new ImageIcon("./src/babyArchmire.png").getImage();
-        ArchmireModel.image = getBufferedImage(img);
+        BabyArchmire.image = getBufferedImage(img);
 
         GraphicalObject bowser = new GraphicalObject(image);
         pol = bowser.getMyBoundingPolygon();
 
 
-        return ArchmireModel.image;
+        return BabyArchmire.image;
     }
 }
