@@ -93,6 +93,7 @@ public class FinalPanelModel implements Collidable, Serializable {
 
     public void moveLocation(Point2D movement){
         this.location = addVectors(location, movement);
+        updateVertices();
     }
 
 
@@ -339,7 +340,7 @@ public class FinalPanelModel implements Collidable, Serializable {
 
     public void trimLeft(double shrinkage){
         size.width -= shrinkage;
-        Point2D movement = new Point2D.Double(0, shrinkage);
+        Point2D movement = new Point2D.Double(shrinkage, 0);
         moveLocation(movement);
         updateVertices();
     }

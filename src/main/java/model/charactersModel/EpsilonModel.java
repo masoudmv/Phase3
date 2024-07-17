@@ -54,7 +54,7 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
     public EpsilonModel(Point2D anchor, MyPolygon myPolygon) {
         super(anchor, image, myPolygon);
         INSTANCE = this;
-        Point2D loc = new Point2D.Double(getAnchor().getX() - 100, getAnchor().getY() - 100); // todo spawn epsilon in the middle of screen
+        Point2D loc = new Point2D.Double(getAnchor().getX() - 250, getAnchor().getY() - 250); // todo spawn epsilon in the middle of screen
         Dimension size = new Dimension(500, 500);
         localPanel = new FinalPanelModel(loc, size);
         localPanel.setIsometric(false);

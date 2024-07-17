@@ -33,9 +33,38 @@ public class Smiley extends GeoShapeModel implements Collidable {
     private FinalPanelModel finalPanelModel;
     protected static MyPolygon pol;
     private double last = 0;
+    private double squeezeStartTime = 0;
+
+
+    private Hand leftHand;
+    private Hand rightHand;
+
+
 
 //    private double angularSpeed = 1.5;
 //    double angleToEpsilon;
+
+    public Smiley(Point2D anchor, Hand leftHand, Hand rightHand) {
+        super(anchor, image, pol);
+        this.leftHand = leftHand;
+//        hands.add(this);
+
+
+//        angleToEpsilon = findAngleToEpsilon();
+//        rotate(90);
+
+
+        Point2D loc = new Point2D.Double(getAnchor().getX() - 150, getAnchor().getY() - 150);
+        Dimension size = new Dimension(300, 300);
+        finalPanelModel = new FinalPanelModel(loc, size);
+
+//        finalPanelModel.setRigid(true);
+        collidables.add(this);
+        smilies.add(this);
+
+        this.rightHand = rightHand;
+        initiateSqueeze();
+    }
 
 
     public Smiley(Point2D anchor) {
@@ -47,13 +76,35 @@ public class Smiley extends GeoShapeModel implements Collidable {
 //        rotate(90);
 
 
-        Point2D loc = new Point2D.Double(getAnchor().getX() - 110, getAnchor().getY() - 110);
-        Dimension size = new Dimension(1000, 1000);
+        Point2D loc = new Point2D.Double(getAnchor().getX() - 150, getAnchor().getY() - 150);
+        Dimension size = new Dimension(300, 300);
         finalPanelModel = new FinalPanelModel(loc, size);
 
         collidables.add(this);
         smilies.add(this);
 
+    }
+
+
+    private void initiateSqueeze(){
+        if (!leftHand.isAlive() || !rightHand.isAlive()) return;
+        FinalPanelModel leftPanel = leftHand.getFinalPanelModel();
+        FinalPanelModel rightPanel = rightHand.getFinalPanelModel();
+        FinalPanelModel epsilonPanel = EpsilonModel.getINSTANCE().localPanel;
+
+        boolean left = leftPanel.getLocation().getX() + leftPanel.getSize().getWidth() < epsilonPanel.getLocation().getX();
+        boolean right = rightPanel.getLocation().getX() > epsilonPanel.getLocation().getX() + epsilonPanel.getSize().getWidth();
+        boolean top  = epsilonPanel.getLocation().getY() > finalPanelModel.getLocation().getY() + finalPanelModel.getSize().getHeight();
+        System.out.println(left);
+        System.out.println(right);
+        System.out.println(top);
+
+
+        if (right && left && top) {
+//            System.out.println("AAAAAAAA");
+            leftHand.squeeze();
+            rightHand.squeeze();
+        }
     }
 
 

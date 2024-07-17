@@ -6,6 +6,7 @@ import model.charactersModel.smiley.Smiley;
 import model.collision.Collidable;
 import model.movement.Direction;
 import org.example.GraphicalObject;
+import view.MainFrame;
 
 import javax.swing.*;
 import java.awt.*;
@@ -51,6 +52,7 @@ public class SmileyBullet extends GeoShapeModel implements Collidable {
     public void move() {
         if (direction == null) return;
         move(direction);
+        if (isOutSide()) eliminate();
     }
 
 
@@ -89,6 +91,17 @@ public class SmileyBullet extends GeoShapeModel implements Collidable {
         return SmileyBullet.image;
     }
 
+    private boolean isOutSide(){
+        boolean top = getAnchor().getY() + getRadius() < 0;
+        boolean bottom = getAnchor().getY() - getRadius() > MainFrame.getINSTANCE().getHeight();
+        boolean right = getAnchor().getX() + getRadius() < 0;
+        boolean left = getAnchor().getX() - getRadius() > MainFrame.getINSTANCE().getWidth();
+
+
+         if (top || bottom || right || left) return true;
+         return false;
+    }
+
 
     @Override
     public void setMyPolygon(MyPolygon myPolygon) {
@@ -97,8 +110,9 @@ public class SmileyBullet extends GeoShapeModel implements Collidable {
 
     @Override
     public void eliminate() {
-//        collidables.remove(this);
-//        smileyBullets.remove(this);
+        super.eliminate();
+        collidables.remove(this);
+        smileyBullets.remove(this);
 //        findBulletView((this).getId()).remove(); //todo
 
     }
@@ -111,7 +125,7 @@ public class SmileyBullet extends GeoShapeModel implements Collidable {
     @Override
     public void onCollision(Collidable other, Point2D intersection) {
         if (other instanceof FinalPanelModel) return;
-        eliminate();
+//        eliminate();
 
     }
 

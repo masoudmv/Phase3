@@ -14,6 +14,7 @@ public class SmileyConstants {
     public static final double restitution = 1; // Coefficient of restitution (bounciness)
     public static final double bounceHeightFactor = 0.3; // Factor of the height to bounce back up
     public static final double BULLET_SPEED = 3; // Factor of the height to bounce back up
+    public static final double SQUEEZE_DURATION = 5; // Factor of the height to bounce back up
     public static double MAX_SPEED;
 
 }

@@ -48,7 +48,7 @@ public class PanelManager {
     }
 
     public static void trimPanel(FinalPanelModel th, FinalPanelModel other, String side, double overlap) {
-        double offset = 0;
+        double offset = 1.5;
 
         if (side.equals("left")) {
             if (th.isRigid()) other.trimRight(overlap + offset);

@@ -8,6 +8,7 @@ import model.charactersModel.blackOrb.BlackOrb;
 import model.charactersModel.blackOrb.Orb;
 import model.charactersModel.smiley.Fist;
 import model.charactersModel.smiley.Hand;
+import model.charactersModel.smiley.LeftHand;
 import model.charactersModel.smiley.Smiley;
 import view.*;
 
@@ -57,7 +58,7 @@ public class Main {
         BufferedImage b = EpsilonModel.loadImage();
         GraphicalObject bows = new GraphicalObject(b);
         MyPolygon pol = bows.myBoundingPolygon;
-        String id = new EpsilonModel(new Point2D.Double(100, 400), pol).getId();
+        String id = new EpsilonModel(new Point2D.Double(1000, 700), pol).getId();
 
 
 
@@ -145,8 +146,8 @@ public class Main {
 //        new EpsilonModel(new Point2D.Double(200, 200));
 
 
-
-
+//        LeftHand.loadImage();
+//        new LeftHand(new Point2D.Double(200, 300));
 
 //        new Hand(new Point2D.Double(1300, 500), pol);
 //        new FinalPanelView()
@@ -174,11 +175,25 @@ public class Main {
 
 
         Fist.loadImage();
-        Hand.loadImage();
         ArchmireModel.loadImage();
 
 //        new Fist(new Point2D.Double(200, 200));
-        new Hand(new Point2D.Double(1400, 200));
+        Hand.loadImage();
+        LeftHand.loadImage();
+
+
+        Hand l = new LeftHand(new Point2D.Double(500, 401));
+        Hand r = new Hand(new Point2D.Double(1500, 400));
+
+
+        new Smiley(new Point2D.Double(1000, 200), l , r);
+
+
+
+
+
+
+
 
 //        new ArchmireModel(new Point2D.Double(100, 500));
 //        new ArchmireModel(new Point2D.Double(100, 500));

@@ -272,6 +272,7 @@ public class GameLoop implements Runnable {
         }
 
 
+
         for (int i = 0; i < finalPanelModels.size(); i++) {
             for (int j = i + 1; j < finalPanelModels.size(); j++) {
                 handlePanelPanelCollision(finalPanelModels.get(i), finalPanelModels.get(j));
