@@ -1,0 +1,89 @@
+[33mcommit 6d9ecd3060d9e23eaed4a508939d093559dace6a[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m)[m
+Author: masoud <masoudmozafari1381@gmail.com>
+Date:   Thu Jul 18 11:08:46 2024 +0430
+
+    fix: hands return to their exact start position now
+
+[33mcommit ea467b0c61c5338b366a7fa7c5d75cd7ebfbde78[m[33m ([m[1;31morigin/master[m[33m)[m
+Author: masoud <masoudmozafari1381@gmail.com>
+Date:   Wed Jul 17 14:48:13 2024 +0430
+
+    Added squeeze
+
+[33mcommit 35a8c34ca90bccd747ebce065437f6f01a6d67bd[m
+Author: masoud <masoudmozafari1381@gmail.com>
+Date:   Wed Jul 17 01:14:16 2024 +0430
+
+    Added transparenct to archmire aoe
+
+[33mcommit 7cd23af37620c42e39dc04b771395d1b880d8614[m
+Author: masoud <masoudmozafari1381@gmail.com>
+Date:   Mon Jul 15 16:12:10 2024 +0430
+
+    fix: Laser and blackOrb are debugged the eliminate properly
+
+[33mcommit 85b272c7c7a2db683442e64704e5d76f85b971cc[m
+Author: masoud <masoudmozafari1381@gmail.com>
+Date:   Mon Jul 15 12:27:33 2024 +0430
+
+    fix: Added physics and timeCreation to BlackOrb and fixed a bug in FinalePanelmodel
+
+[33mcommit 0086a7e40a7318e2ccc154dc00fb5aca0ed06639[m
+Author: masoud <masoudmozafari1381@gmail.com>
+Date:   Sun Jul 14 22:17:33 2024 +0430
+
+    Added some classes to obey single responsibility principle
+
+[33mcommit aad958d8cf912c60e2171b78886e0dd5f1d62bd2[m
+Author: masoud <masoudmozafari1381@gmail.com>
+Date:   Sun Jul 14 15:01:42 2024 +0430
+
+    fix: Nonerigid panel overlap and necropickView are debugged
+
+[33mcommit 2e450fa8ef7fb7a072cf85bfe77151cdb6461702[m
+Author: masoud <masoudmozafari1381@gmail.com>
+Date:   Sun Jul 14 01:37:09 2024 +0430
+
+    Added nonRigid and Rigid frame manager
+
+[33mcommit 0e96d74d642b68d72fd84a6bbabe86af77e98bf4[m
+Author: masoud <masoudmozafari1381@gmail.com>
+Date:   Sat Jul 13 17:43:18 2024 +0430
+
+    Added Necropick and Omenoct Enemies
+
+[33mcommit 69ec76da1b249864dbe44e9567a23077228caeaf[m
+Author: masoud <masoudmozafari1381@gmail.com>
+Date:   Thu Jul 11 23:42:56 2024 +0430
+
+    Added FinalPanelModel/View Which will replace MainPanel
+
+[33mcommit 17c779f9885749f51c6b84bb4bd19f892dcb764f[m
+Author: masoud <masoudmozafari1381@gmail.com>
+Date:   Thu Jul 11 16:46:31 2024 +0430
+
+    Started smiley boss fight
+
+[33mcommit b3137c9fb361d326eec249d9fd7f0603c685bc79[m
+Author: masoud <masoudmozafari1381@gmail.com>
+Date:   Thu Jul 11 13:08:34 2024 +0430
+
+    Added GeoShapemodel as a parent to almost all entities
+
+[33mcommit fd5bf0f48b620bf94adda171cbbec919b8c511af[m
+Author: masoud <masoudmozafari1381@gmail.com>
+Date:   Wed Jul 10 00:24:47 2024 +0430
+
+    Added NonRigid class too handle panel overlap
+
+[33mcommit e449c99ed5339026c2b5e9c105bc4cbc08d0b6d4[m
+Author: masoud <masoudmozafari1381@gmail.com>
+Date:   Tue Jul 9 12:36:18 2024 +0430
+
+    Added PCA
+
+[33mcommit 3e4c66b383a1a5d4ca91869608da984dbd3beb1a[m[33m ([m[1;32mPhase2[m[33m)[m
+Author: masoud <masoudmozafari1381@gmail.com>
+Date:   Tue Jul 9 12:19:28 2024 +0430
+
+    first commit

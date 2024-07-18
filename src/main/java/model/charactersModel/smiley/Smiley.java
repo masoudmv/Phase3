@@ -20,6 +20,7 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Random;
 
 import static controller.Utils.*;
 import static model.charactersModel.SmileyBullet.smileyBullets;
@@ -51,7 +52,9 @@ public class Smiley extends GeoShapeModel implements Collidable {
         smilies.add(this);
 
         this.rightHand = rightHand;
-        initiateSqueeze();
+//        this.vomit();
+
+//        initiateSqueeze();
     }
 
 
@@ -67,7 +70,9 @@ public class Smiley extends GeoShapeModel implements Collidable {
     }
 
 
-
+    private void vomit(){
+        SmileyAOE.createVomitAOEs();
+    }
 
 
     private void initiateSqueeze(){
@@ -79,9 +84,7 @@ public class Smiley extends GeoShapeModel implements Collidable {
         boolean left = leftPanel.getLocation().getX() + leftPanel.getSize().getWidth() < epsilonPanel.getLocation().getX();
         boolean right = rightPanel.getLocation().getX() > epsilonPanel.getLocation().getX() + epsilonPanel.getSize().getWidth();
         boolean top  = epsilonPanel.getLocation().getY() > finalPanelModel.getLocation().getY() + finalPanelModel.getSize().getHeight();
-        System.out.println(left);
-        System.out.println(right);
-        System.out.println(top);
+
 
 
         if (right && left && top) {
@@ -96,11 +99,16 @@ public class Smiley extends GeoShapeModel implements Collidable {
 
     public void move() {
 
+
         double now = Game.ELAPSED_TIME;
         if (now - last > 5) {
             last = now;
             rapidFire(10, 180);
         }
+
+
+        SmileyAOE.updateAll();
+//        if (now > 10) vomit();
 
 
     }

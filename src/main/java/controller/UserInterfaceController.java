@@ -46,6 +46,7 @@ public abstract class UserInterfaceController {
     public static void creatBulletView(String id){ new BulletView(id); }
     public static void createCollectibleView(String id){ new CollectibleView(id); }
     public static void createBabyEpsilon(String id){ new BabyEpsilonView(id); }
+    public static void createSmileyAOEView(String id){ new SmileyAOE(id); }
 
 
 

@@ -1,6 +1,5 @@
 package model.charactersModel.smiley;
 
-import controller.Utils;
 import model.charactersModel.EpsilonModel;
 
 import java.awt.geom.Point2D;

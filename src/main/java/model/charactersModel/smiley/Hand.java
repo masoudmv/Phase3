@@ -38,6 +38,7 @@ public class Hand extends GeoShapeModel implements Collidable {
     public Hand(Point2D anchor) {
         super(anchor, image, Hand.pol);
         init();
+        initializeProjectile();
     }
 
     public Hand(Point2D anchor, MyPolygon pol) {
@@ -50,7 +51,6 @@ public class Hand extends GeoShapeModel implements Collidable {
         setFinalPanelModel();
         setPointerVertex();
         collidables.add(this);
-        finalPanelModel.setRigid(true);
         finalPanelModel.setIsometric(true);
         movementState = new MovementState();
         rotationState = new RotationState();
@@ -141,12 +141,15 @@ public class Hand extends GeoShapeModel implements Collidable {
     }
 
     private void initializeProjectile() {
+        rotationState.startRotation(pointToEpsilon());
         projectileState.start();
     }
 
     public void projectile() {
+
         creatBulletFromPointingVertex();
         if (projectileState.updateRotation()) {
+
             Point2D center = projectileState.getCenter();
             double radius = findDistance(getAnchor(), center);
             double radians = Math.toRadians(projectileState.getAngleToEpsilon());
@@ -248,6 +251,7 @@ public class Hand extends GeoShapeModel implements Collidable {
     public void rotate(double angle) {
         // Implementation for rotating the hand by the given angle
         // This can be specific to how the rotation should affect the hand's state
+        this.angle += angle;
         setMyPolygon(Utils.rotateMyPolygon(myPolygon, angle, getAnchor()));
 
     }
@@ -321,10 +325,10 @@ public class Hand extends GeoShapeModel implements Collidable {
         }
 
         public void updateRotation() {
-            if (Math.abs(angle - targetAngle) > 0.001) {
+            if (Math.abs(angle - targetAngle) > 0.1) {
                 double angleDifference = (targetAngle - angle) % 360;
                 double rotationStep = Math.min(Math.abs(angleDifference), angularSpeed) * Math.signum(angleDifference);
-                angle += rotationStep;
+//                angle += rotationStep;
                 rotate(rotationStep);
             } else {
                 rotating = false;
@@ -343,15 +347,30 @@ public class Hand extends GeoShapeModel implements Collidable {
     private class ProjectileState {
         private boolean isProjecting;
         private double totalRotationAngle;
-        private double angularSpeed = 5;
+        private double angularSpeed = 1.5;
         private double angleToEpsilon;
         private double lastShotBulletTime = 0;
         private Point2D center = EpsilonModel.getINSTANCE().getAnchor();
 
         public void start() {
+            setAngleToEpsilon();
             totalRotationAngle = 0;
             isProjecting = true;
         }
+
+        public void setAngleToEpsilon(){
+            center = EpsilonModel.getINSTANCE().getAnchor();
+            Point2D rightVec = new Point2D.Double(1, 0);
+            Point2D handVec = relativeLocation(getAnchor(), center);
+            double angle = findAngleBetweenTwoVectors(rightVec, handVec);
+//            angleToEpsilon = angle;
+
+            if (handVec.getX() > 0) angleToEpsilon = Math.toDegrees(angle);
+            else angleToEpsilon = Math.toDegrees(angle) + 180;
+
+        }
+
+
 
         public boolean updateRotation() {
             angleToEpsilon += angularSpeed;

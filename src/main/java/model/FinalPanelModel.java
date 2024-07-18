@@ -302,11 +302,7 @@ public class FinalPanelModel implements Collidable, Serializable {
         updateVertices();
         if (isIsometric) return;
         velocity = acceleration + velocity;
-        System.out.println("========");
-        System.out.println(moveRight);
-        System.out.println(moveDown);
-        System.out.println(moveLeft);
-        System.out.println(moveUp);
+
         if (velocity < 4) {
             if (moveRight) moveRight();
             if (moveDown) moveDown();
@@ -441,6 +437,8 @@ public class FinalPanelModel implements Collidable, Serializable {
 
     private void handleTwoVerticesInside(FinalPanelModel thisPanel, FinalPanelModel otherPanel, ArrayList<Point2D> verticesInside) {
         ArrayList<Point2D> intersections = findIntersections(thisPanel, otherPanel);
+        if (intersections == null) return;
+
 
         if (intersections.size() != 2) {
             return;
@@ -486,6 +484,7 @@ public class FinalPanelModel implements Collidable, Serializable {
 
     private void handleOneVertexInside(FinalPanelModel thisPanel, FinalPanelModel otherPanel, Point2D thisVertex, Point2D otherVertex) {
         ArrayList<Point2D> intersections = findIntersections(thisPanel, otherPanel);
+        if (intersections == null) return;
 
         if (intersections.size() != 2) {
             return;
