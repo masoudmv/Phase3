@@ -40,14 +40,14 @@
 //        }
 //    }
 //
-//    public void eliminate() {
-//        if (this instanceof GeoShapeModel) {
-//            bulkCreateCollectibles((GeoShapeModel) this);
-//            allShapeModelsList.remove(this);
-//            collidables.remove(this);
-//            eliminateView(getModelId(), getMotionPanelId());
-//        }
-//    }
+////    public void eliminate() {
+////        if (this instanceof GeoShapeModel) {
+////            bulkCreateCollectibles((GeoShapeModel) this);
+////            allShapeModelsList.remove(this);
+////            collidables.remove(this);
+////            eliminateView(getModelId(), getMotionPanelId());
+////        }
+////    }
 //
 //    public void addHealth(int units) {
 //        this.health = Math.min(fullHealth, health + units);

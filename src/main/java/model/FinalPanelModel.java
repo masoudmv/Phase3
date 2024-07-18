@@ -5,8 +5,10 @@ import com.google.gson.annotations.SerializedName;
 import controller.Utils;
 import model.charactersModel.BulletModel;
 import model.collision.Collidable;
+import model.entities.Profile;
 
 import java.awt.*;
+import java.awt.geom.Dimension2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.io.Serializable;
@@ -31,7 +33,7 @@ public class FinalPanelModel implements Collidable, Serializable {
 
     @SerializedName("size")
     @Expose
-    protected Dimension size;
+    protected Dimension2D size;
 
     @SerializedName("location")
     @Expose
@@ -63,7 +65,8 @@ public class FinalPanelModel implements Collidable, Serializable {
     @SerializedName("velocity")
     @Expose
     private double velocity;
-    public FinalPanelModel(Point2D location, Dimension size) {
+
+    public FinalPanelModel(Point2D location, Dimension2D size) {
         this.id = UUID.randomUUID().toString();
         this.location = location;
         this.size = size;
@@ -71,7 +74,8 @@ public class FinalPanelModel implements Collidable, Serializable {
 
         updateVertices();
         finalPanelModels.add(this);
-        createFinalPanelView(id, location, size);
+
+        createFinalPanelView(id, location, new Dimension((int) size.getWidth(), (int) size.getHeight()));
         collidables.add(this);
     }
 
@@ -96,34 +100,31 @@ public class FinalPanelModel implements Collidable, Serializable {
         updateVertices();
     }
 
-
     private void moveTopEdge(double shrinkCoefficient){
         Point2D movement = new Point2D.Double(0, shrinkCoefficient);
         this.location = addVectors(location, movement);
-        this.size = new Dimension((int) size.getWidth(), (int) (size.getHeight() - shrinkCoefficient));
+        this.size.setSize(size.getWidth(), size.getHeight() - shrinkCoefficient);
         updateVertices();
     }
 
     private void moveBottomEdge(double shrinkCoefficient){
-        this.size = new Dimension((int) size.getWidth(), (int) (size.getHeight() - shrinkCoefficient));
+        this.size.setSize(size.getWidth(), size.getHeight() - shrinkCoefficient);
         updateVertices();
     }
 
     private void moveLeftEdge(double shrinkCoefficient){
         Point2D movement = new Point2D.Double(shrinkCoefficient, 0);
         this.location = addVectors(location, movement);
-        this.size = new Dimension((int) (size.getWidth() - shrinkCoefficient), (int) size.getHeight());
+        this.size.setSize(size.getWidth() - shrinkCoefficient, size.getHeight());
         updateVertices();
-
     }
 
     private void moveRightEdge(double shrinkCoefficient){
-        this.size = new Dimension((int) (size.getWidth() - shrinkCoefficient), (int) size.getHeight());
+        this.size.setSize(size.getWidth() - shrinkCoefficient, size.getHeight());
         updateVertices();
-
     }
 
-    public Dimension getSize() {
+    public Dimension2D getSize() {
         return size;
     }
 
@@ -134,6 +135,7 @@ public class FinalPanelModel implements Collidable, Serializable {
     public String getId() {
         return id;
     }
+
     private void initializeEdges() {
         edges.clear();
         for (int i = 0; i < 4; i++) {
@@ -184,11 +186,11 @@ public class FinalPanelModel implements Collidable, Serializable {
         array = vertices.toArray(array);
         return array;
     }
+
     @Override
     public ArrayList<Line2D> getEdges() {
         return edges;
     }
-
 
     private void handleCollisionWithBullet(Point2D intersection){
         int index = Utils.findPanelEdgeIndex(getArrayListVertices(), intersection);
@@ -211,7 +213,7 @@ public class FinalPanelModel implements Collidable, Serializable {
 
     public void moveRight(){
         if (vertices.get(1).getX() + 1 < FRAME_DIMENSION.getWidth()) {
-            size.width += 3 * velocity / 4;
+            size.setSize(size.getWidth() + 3 * velocity / 4, size.getHeight());
             Point2D movement = new Point2D.Double(velocity/4, 0);
             updateVertices();
             moveLocation(movement);
@@ -220,7 +222,7 @@ public class FinalPanelModel implements Collidable, Serializable {
 
     public void moveDown(){
         if (vertices.get(2).getY() < FRAME_DIMENSION.getHeight()) {
-            size.height += 3 * velocity / 4;
+            size.setSize(size.getWidth(), size.getHeight() + 3 * velocity / 4);
             Point2D movement = new Point2D.Double(0, velocity/4);
             moveLocation(movement);
             updateVertices();
@@ -230,7 +232,7 @@ public class FinalPanelModel implements Collidable, Serializable {
 
     public void moveLeft(){
         if (vertices.get(0).getX() > 0) {
-            size.width += 3 * velocity / 4;
+            size.setSize(size.getWidth() + 3 * velocity / 4, size.getHeight());
             Point2D movement = new Point2D.Double(-velocity, 0);
             moveLocation(movement);
             updateVertices();
@@ -239,7 +241,7 @@ public class FinalPanelModel implements Collidable, Serializable {
 
     public void moveUp(){
         if (vertices.get(0).getY() > 0) {
-            size.height += 3*velocity/4;
+            size.setSize(size.getWidth(), size.getHeight() + 3 * velocity / 4);
             Point2D movement = new Point2D.Double(0, -velocity);
             moveLocation(movement);
             updateVertices();
@@ -247,8 +249,8 @@ public class FinalPanelModel implements Collidable, Serializable {
     }
 
     public void topShrink(double contraction){
-        if (size.getHeight() > 300){
-            size.height -= (int) (contraction);
+        if (size.getHeight() > 400){
+            size.setSize(size.getWidth(), size.getHeight() - contraction);
             Point2D movement = new Point2D.Double(0, contraction);
             moveLocation(movement);
             updateVertices();
@@ -256,54 +258,55 @@ public class FinalPanelModel implements Collidable, Serializable {
     }
 
     public void bottomShrink(double contraction){
-        if (size.getHeight() > 300){
-            size.height -= (int) (contraction);
+        if (size.getHeight() > 400){
+            size.setSize(size.getWidth(), size.getHeight() - contraction);
             updateVertices();
         }
     }
 
     public void rightShrink(double contraction){
-        if (size.getWidth() > 300){
-            size.width -= (int) (contraction);
+        if (size.getWidth() > 400){
+            size.setSize(size.getWidth() - contraction, size.getHeight());
             updateVertices();
         }
     }
 
     public void leftShrink(double contraction){
-        if (size.getWidth() > 300){
-            size.width -= (int) (contraction);
+        if (size.getWidth() > 400){
+            size.setSize(size.getWidth() - contraction, size.getHeight());
             Point2D movement = new Point2D.Double(contraction, 0);
             moveLocation(movement);
             updateVertices();
         }
     }
 
-
     public void verticalShrink(double contraction){
-        if (size.getHeight() > 300){
-            size.height -= (int) (contraction * 2);
+        if (size.getHeight() > 400){
+            size.setSize(size.getWidth(), size.getHeight() - contraction * 2);
             Point2D movement = new Point2D.Double(0, contraction);
             moveLocation(movement);
             updateVertices();
-//            updateEdges();
         }
     }
 
     public void horizontalShrink(double contraction){
-        if (size.getWidth() > 300){
-            size.width -= contraction * 2;
+        if (size.getWidth() > 400){
+            size.setSize(size.getWidth() - contraction * 2, size.getHeight());
             Point2D movement = new Point2D.Double(contraction, 0);
             moveLocation(movement);
             updateVertices();
-//            adjustLocation(); todo?
         }
     }
-
 
     public void panelMotion(){
         updateVertices();
         if (isIsometric) return;
         velocity = acceleration + velocity;
+        System.out.println("========");
+        System.out.println(moveRight);
+        System.out.println(moveDown);
+        System.out.println(moveLeft);
+        System.out.println(moveUp);
         if (velocity < 4) {
             if (moveRight) moveRight();
             if (moveDown) moveDown();
@@ -314,12 +317,19 @@ public class FinalPanelModel implements Collidable, Serializable {
             acceleration = -0.45;
         }
 
-    }
+        if (!moveRight&&!moveLeft){
+            leftShrink(Profile.getCurrent().PANEL_SHRINKAGE_COEFFICIENT); // TODO sth is wrong!
+            rightShrink(Profile.getCurrent().PANEL_SHRINKAGE_COEFFICIENT);
+        }
 
+        if (!moveDown && !moveUp) {
+            topShrink(Profile.getCurrent().PANEL_SHRINKAGE_COEFFICIENT);
+            bottomShrink(Profile.getCurrent().PANEL_SHRINKAGE_COEFFICIENT);
+        }
+    }
 
     @Override
     public Point2D getAnchor() {
-
         return null;
     }
 
@@ -334,33 +344,32 @@ public class FinalPanelModel implements Collidable, Serializable {
     }
 
     public void trimRight(double shrinkage){
-        size.width -= shrinkage;
+        size.setSize(size.getWidth() - shrinkage, size.getHeight());
         updateVertices();
     }
 
     public void trimLeft(double shrinkage){
-        size.width -= shrinkage;
+        size.setSize(size.getWidth() - shrinkage, size.getHeight());
         Point2D movement = new Point2D.Double(shrinkage, 0);
         moveLocation(movement);
         updateVertices();
     }
 
     public void trimTop(double shrinkage){
-        size.height -= shrinkage;
+        size.setSize(size.getWidth(), size.getHeight() - shrinkage);
         Point2D movement = new Point2D.Double(0, shrinkage);
         moveLocation(movement);
         updateVertices();
     }
 
     public void trimBottom(double shrinkage){
-        size.height -= shrinkage;
+        size.setSize(size.getWidth(), size.getHeight() - shrinkage);
         updateVertices();
     }
 
     public void onCollision(Collidable other, Point2D intersection){
         if (other instanceof BulletModel) handleCollisionWithBullet(intersection);
         if (other instanceof FinalPanelModel) handleCollisionWithBullet(intersection);
-//        if (other instanceof FinalPanelModel) handleCollisionWithBullet(intersection);
     }
 
     @Override
@@ -383,8 +392,6 @@ public class FinalPanelModel implements Collidable, Serializable {
     }
 
     public void adjustEdgesOnOverlap(FinalPanelModel other) {
-//        this.updateVertices();
-
         ArrayList<Point2D> thisVertices = this.getArrayListVertices();
         ArrayList<Point2D> otherVertices = other.getArrayListVertices();
         ArrayList<Point2D> verticesInsideOtherPanel = new ArrayList<>();
@@ -403,7 +410,6 @@ public class FinalPanelModel implements Collidable, Serializable {
         }
 
         if (verticesInsideOtherPanel.isEmpty() && verticesInsideThisPanel.isEmpty()) {
-//            initializeEdges();
             return;
         }
 
@@ -431,15 +437,13 @@ public class FinalPanelModel implements Collidable, Serializable {
         if (verticesInsideThisPanel.size() == 1) {
             handleOneVertexInside(other, this, verticesInsideThisPanel.get(0), verticesInsideOtherPanel.isEmpty() ? null : verticesInsideOtherPanel.get(0));
         }
-
-
     }
 
     private void handleTwoVerticesInside(FinalPanelModel thisPanel, FinalPanelModel otherPanel, ArrayList<Point2D> verticesInside) {
         ArrayList<Point2D> intersections = findIntersections(thisPanel, otherPanel);
 
         if (intersections.size() != 2) {
-            return; // Error: we expect exactly two intersections.
+            return;
         }
 
         Point2D i1 = intersections.get(0);
@@ -471,7 +475,6 @@ public class FinalPanelModel implements Collidable, Serializable {
         }
         thisPanel.edges = newEdges;
 
-
         ArrayList<Line2D> newEs = new ArrayList<>();
         for (Line2D edge : otherPanel.edges) {
             if (!thisPanel.isEdgeInside(edge)) {
@@ -479,15 +482,13 @@ public class FinalPanelModel implements Collidable, Serializable {
             }
         }
         otherPanel.edges = newEs;
-
-
     }
 
     private void handleOneVertexInside(FinalPanelModel thisPanel, FinalPanelModel otherPanel, Point2D thisVertex, Point2D otherVertex) {
         ArrayList<Point2D> intersections = findIntersections(thisPanel, otherPanel);
 
         if (intersections.size() != 2) {
-            return; // Error: we expect exactly two intersections.
+            return;
         }
 
         ArrayList<Line2D> segments = new ArrayList<>();
@@ -511,18 +512,17 @@ public class FinalPanelModel implements Collidable, Serializable {
         boolean isSegmentVertical = segment.getX1() == segment.getX2();
 
         if (isEdgeVertical && isSegmentVertical) {
-            return trimVerticalSegments(edge, segment); // Both lines are vertical
+            return trimVerticalSegments(edge, segment);
         } else if (!isEdgeVertical && !isSegmentVertical) {
-            return trimHorizontalEdge(edge, segment); // Both lines are horizontal
+            return trimHorizontalEdge(edge, segment);
         }
 
-        return null; // Lines are not both vertical or both horizontal, return null
+        return null;
     }
 
     private static ArrayList<Line2D> trimHorizontalEdge(Line2D edge, Line2D segment) {
         ArrayList<Line2D> result = new ArrayList<>();
 
-        // Different y-coordinates, no overlap
         if (edge.getY1() != segment.getY1() ) return null;
 
         double xMinEdge = Math.min(edge.getX1(), edge.getX2());
@@ -530,25 +530,19 @@ public class FinalPanelModel implements Collidable, Serializable {
         double xMinSegment = Math.min(segment.getX1(), segment.getX2());
         double xMaxSegment = Math.max(segment.getX1(), segment.getX2());
 
-        // Every part of the edge is removed
         if (xMinSegment <= xMinEdge && xMaxEdge <= xMaxSegment) {
-            result.add(new Line2D.Double(0, 0, 0, 0)); // Add a fake line
-//            return null;
+            result.add(new Line2D.Double(0, 0, 0, 0));
         }
-        // Segments do not overlap
         else if (xMaxSegment < xMinEdge || xMaxEdge < xMinSegment) {
             result.add(edge);
         }
-        // Segment splits the edge into two parts
         else if (xMinEdge < xMinSegment && xMaxSegment < xMaxEdge) {
             result.add(new Line2D.Double(xMinEdge, edge.getY1(), xMinSegment, edge.getY1()));
             result.add(new Line2D.Double(xMaxSegment, edge.getY1(), xMaxEdge, edge.getY1()));
         }
-        // Segment overlaps the end part of the edge
         else if (xMaxSegment < xMaxEdge && xMinEdge < xMaxSegment) {
             result.add(new Line2D.Double(xMaxSegment, edge.getY1(), xMaxEdge, edge.getY1()));
         }
-        // Segment overlaps the start part of the edge
         else if (xMaxEdge <= xMaxSegment && xMinSegment < xMaxEdge) {
             result.add(new Line2D.Double(xMinEdge, edge.getY1(), xMinSegment, edge.getY1()));
         }
@@ -559,7 +553,6 @@ public class FinalPanelModel implements Collidable, Serializable {
     private static ArrayList<Line2D> trimVerticalSegments(Line2D edge, Line2D segment) {
         ArrayList<Line2D> result = new ArrayList<>();
 
-        // Different x-coordinates, no overlap
         if (edge.getX1() != segment.getX1()) return null;
 
         double yMinEdge = Math.min(edge.getY1(), edge.getY2());
@@ -567,33 +560,25 @@ public class FinalPanelModel implements Collidable, Serializable {
         double yMinSegment = Math.min(segment.getY1(), segment.getY2());
         double yMaxSegment = Math.max(segment.getY1(), segment.getY2());
 
-        // Every part of the edge is removed
         if (yMinSegment <= yMinEdge && yMaxEdge <= yMaxSegment) {
-            result.add(new Line2D.Double(0, 0, 0, 0)); // Add a fake line. Works for now!
-//            return null;
+            result.add(new Line2D.Double(0, 0, 0, 0));
         }
-        // Segments do not overlap
         if (yMaxSegment < yMinEdge || yMaxEdge < yMinSegment) {
             result.add(edge);
         }
-        // Segment splits the edge into two parts
         if (yMinEdge < yMinSegment && yMaxSegment < yMaxEdge) {
             result.add(new Line2D.Double(edge.getX1(), yMinEdge, edge.getX1(), yMinSegment));
             result.add(new Line2D.Double(edge.getX1(), yMaxSegment, edge.getX1(), yMaxEdge));
         }
-        // Segment overlaps the end part of the edge
         if (yMaxSegment < yMaxEdge && yMinEdge < yMaxSegment) {
             result.add(new Line2D.Double(edge.getX1(), yMaxSegment, edge.getX1(), yMaxEdge));
         }
-        // Segment overlaps the start part of the edge
         if (yMaxEdge <= yMaxSegment && yMinSegment < yMaxEdge) {
             result.add(new Line2D.Double(edge.getX1(), yMinEdge, edge.getX1(), yMinSegment));
         }
 
         return result.isEmpty() ? null : result;
     }
-
-
 
     public boolean isVertexInside(Point2D vertex) {
         Point2D[] array = getArrayListVertices().toArray(new Point2D[0]);
@@ -619,15 +604,12 @@ public class FinalPanelModel implements Collidable, Serializable {
         edges = newList;
     }
 
-//    public ArrayList<Line2D> getEdges() {
-//        return edges;
-//    }
-
     public void setEdges(ArrayList<Line2D> edges) {
         this.edges = edges;
     }
 
-//    public ArrayList<Point2D> getArrayListVertices() {
-//        return vertices;
-//    }
+    public void setSize(Dimension2D size) {
+        this.size = size;
+        updateVertices();
+    }
 }

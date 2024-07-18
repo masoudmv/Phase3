@@ -64,6 +64,12 @@ public class GeoShapeView {
 
     }
 
+    public void setImage(BufferedImage image) {
+        this.image = image;
+        this.imageWidth = this.image.getWidth();
+        this.imageHeight = this.image.getHeight();
+    }
+
     //    public static void drawAll(Graphics ){
 //        for (int i = 0; i < GeoShapeModel.entities.size(); i++) {
 //            if (GeoShapeModel.entities.get(i).isLaser){

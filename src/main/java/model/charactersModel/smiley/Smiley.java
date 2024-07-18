@@ -40,25 +40,13 @@ public class Smiley extends GeoShapeModel implements Collidable {
     private Hand rightHand;
 
 
-
-//    private double angularSpeed = 1.5;
-//    double angleToEpsilon;
-
     public Smiley(Point2D anchor, Hand leftHand, Hand rightHand) {
         super(anchor, image, pol);
         this.leftHand = leftHand;
-//        hands.add(this);
-
-
-//        angleToEpsilon = findAngleToEpsilon();
-//        rotate(90);
-
-
         Point2D loc = new Point2D.Double(getAnchor().getX() - 150, getAnchor().getY() - 150);
         Dimension size = new Dimension(300, 300);
         finalPanelModel = new FinalPanelModel(loc, size);
 
-//        finalPanelModel.setRigid(true);
         collidables.add(this);
         smilies.add(this);
 
@@ -69,13 +57,6 @@ public class Smiley extends GeoShapeModel implements Collidable {
 
     public Smiley(Point2D anchor) {
         super(anchor, image, pol);
-//        hands.add(this);
-
-
-//        angleToEpsilon = findAngleToEpsilon();
-//        rotate(90);
-
-
         Point2D loc = new Point2D.Double(getAnchor().getX() - 150, getAnchor().getY() - 150);
         Dimension size = new Dimension(300, 300);
         finalPanelModel = new FinalPanelModel(loc, size);
@@ -84,6 +65,9 @@ public class Smiley extends GeoShapeModel implements Collidable {
         smilies.add(this);
 
     }
+
+
+
 
 
     private void initiateSqueeze(){
@@ -101,25 +85,12 @@ public class Smiley extends GeoShapeModel implements Collidable {
 
 
         if (right && left && top) {
-//            System.out.println("AAAAAAAA");
             leftHand.squeeze();
             rightHand.squeeze();
         }
     }
 
 
-
-//    private double findAngleToEpsilon(){
-////        Point2D right = new Point2D.Double(1, 0);
-////        Point2D left = new Point2D.Double(-1, 0);
-////        Point2D center = EpsilonModel.getINSTANCE().getAnchor();
-////        Point2D vecToEpsilon = relativeLocation(getAnchor(), center);
-////        double res = 0;
-////        if (vecToEpsilon.getY() < 0) res = findAngleBetweenTwoVectors(right, vecToEpsilon);
-////        if (vecToEpsilon.getY() == 0) res = Math.PI;
-////        if (vecToEpsilon.getY() > 0) res = findAngleBetweenTwoVectors(left, vecToEpsilon) + Math.PI;
-////        return Math.toDegrees(res);
-//    }
 
 
 
@@ -131,35 +102,6 @@ public class Smiley extends GeoShapeModel implements Collidable {
             rapidFire(10, 180);
         }
 
-
-
-
-
-        // Update the angle for circular motion
-//        angleToEpsilon += angularSpeed;
-//        if (angleToEpsilon >= 360) angleToEpsilon -= 360; // Keep angle within 0-359 degrees
-//        Point2D center = EpsilonModel.getINSTANCE().getAnchor();
-//
-//        // Calculate the current radius
-//        double radius = findDistance(getAnchor(), center);
-//
-//        // Calculate new position based on the updated angle
-//        double radians = Math.toRadians(angleToEpsilon);
-//        double newX = center.getX() + radius * Math.cos(radians);
-//        double newY = center.getY() + radius * Math.sin(radians);
-//
-//        // Set the new position
-//        Point2D newAnchor = new Point2D.Double(newX, newY);
-//
-//        // Update the polygon's position
-//        Point2D movement = new Point2D.Double(newX - getAnchor().getX(), newY - getAnchor().getY());
-//        finalPanelModel.moveLocation(movement);
-//
-//        setAnchor(newAnchor);
-//
-//        // Rotate the polygon to face the center
-//        angle = getAngleTowardsCenter(center, getAnchor()) + 270;
-//        rotate(angularSpeed);
 
     }
 

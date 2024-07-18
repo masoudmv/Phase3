@@ -2,10 +2,8 @@ package org.example;
 
 import controller.Game;
 import model.MyPolygon;
-import model.Profile;
+import model.entities.Profile;
 import model.charactersModel.*;
-import model.charactersModel.blackOrb.BlackOrb;
-import model.charactersModel.blackOrb.Orb;
 import model.charactersModel.smiley.Fist;
 import model.charactersModel.smiley.Hand;
 import model.charactersModel.smiley.LeftHand;
@@ -42,6 +40,7 @@ public class Main {
     public static boolean proteusIsActivated = false;
 
     public static void main(String[] args) throws LineUnavailableException, IOException, UnsupportedAudioFileException, InterruptedException {
+//        new Profile();
 
 //    Rigid Panels should somehow be Collidable ...
 //    isometric panels should lack shrinkage and bullet impact ...
@@ -184,8 +183,6 @@ public class Main {
 
         Hand l = new LeftHand(new Point2D.Double(500, 401));
         Hand r = new Hand(new Point2D.Double(1500, 400));
-
-
         new Smiley(new Point2D.Double(1000, 200), l , r);
 
 

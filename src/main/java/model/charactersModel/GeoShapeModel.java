@@ -18,11 +18,11 @@ import static controller.Utils.*;
 //todo extend mypolygon
 
 public abstract class GeoShapeModel extends Entity {
+    protected int HP;
     protected String id;
     protected Point2D anchor;
     public MyPolygon myPolygon;
-    protected Direction direction;
-//    public boolean isLaser = false; // WTF
+    protected Direction direction = new Direction(new Point2D.Double(0, 0));
     public static ArrayList<GeoShapeModel> entities = new ArrayList<>();
     protected double radius;
     public FinalPanelModel localPanel;
@@ -152,6 +152,14 @@ public abstract class GeoShapeModel extends Entity {
     }
     public ArrayList<Line2D> getEdges(){
         return findEdges(myPolygon);
+    }
+
+    public int getHP() {
+        return HP;
+    }
+
+    public void setHP(int HP) {
+        this.HP = HP;
     }
 }
 

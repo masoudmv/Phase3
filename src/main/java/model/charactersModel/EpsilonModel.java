@@ -2,6 +2,7 @@ package model.charactersModel;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import model.DoubleDimension2D;
 import model.FinalPanelModel;
 import model.MyPolygon;
 import model.charactersModel.blackOrb.Orb;
@@ -13,14 +14,17 @@ import model.collision.CollisionState;
 import model.collision.Impactable;
 import model.movement.Direction;
 import model.movement.Movable;
+import view.charactersView.GeoShapeView;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.geom.Dimension2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
+import static controller.UserInterfaceController.findGeoShapeView;
 import static controller.constants.Constants.*;
 import static controller.UserInterfaceController.createEpsilonView;
 import static controller.Utils.*;
@@ -47,6 +51,8 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
     @Expose
     public ArrayList<Point2D> vertices = new ArrayList<>();
 
+    BabyEpsilon[] babies = new BabyEpsilon[3];
+
 //    @SerializedName("localPanel")
 //    @Expose
 //    public static FinalPanelModel localPanel;
@@ -55,7 +61,7 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
         super(anchor, image, myPolygon);
         INSTANCE = this;
         Point2D loc = new Point2D.Double(getAnchor().getX() - 250, getAnchor().getY() - 250); // todo spawn epsilon in the middle of screen
-        Dimension size = new Dimension(500, 500);
+        DoubleDimension2D size = new DoubleDimension2D(500, 500);
         localPanel = new FinalPanelModel(loc, size);
         localPanel.setIsometric(false);
         Point vector = new Point(0, 0); //todo shitty design
@@ -101,6 +107,10 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
     @Override
     public Point2D getAnchor() {
         return anchor;
+    }
+
+    public void setBabies(BabyEpsilon[] babies) {
+        this.babies = babies;
     }
 
     @Override
@@ -172,6 +182,22 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
     public void move() {
         updateLocalPanel();
         move(direction);
+        moveBabies(direction);
+    }
+
+    private void moveBabies(Direction direction){
+        if (babies[0] == null) return;
+        for (int i = 0; i < 3; i++) {
+            babies[i].move(direction);
+        }
+    }
+
+    public void empusa(){
+        Image img = new ImageIcon("./src/epsilon2.png").getImage();
+        EpsilonModel.image = getBufferedImage(img);
+        GeoShapeView view = findGeoShapeView(id);
+        view.setImage(image);
+        this.radius *= 0.90;
     }
 
     @Override
@@ -265,6 +291,11 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
     public static void nullifyEpsilon() {
         INSTANCE = null;
     }
+
+    public void cerebrus(){
+        BabyEpsilon.createBabies();
+    }
+
 
     @Override
     public void onCollision(Collidable other) {

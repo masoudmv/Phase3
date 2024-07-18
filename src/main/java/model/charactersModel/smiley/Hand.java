@@ -27,98 +27,51 @@ public class Hand extends GeoShapeModel implements Collidable {
     public static ArrayList<Hand> hands = new ArrayList<>();
     protected static MyPolygon pol;
     private FinalPanelModel finalPanelModel;
-    private boolean isMovingToDestination;
-    private boolean isProjecting;
-    private boolean rotating;
-    private double totalRotationAngle;
-    private double angularSpeed = 5;
-    double angleToEpsilon;
-    private Point2D destination;
-    private double speed = 0;
-    private double acceleration;
-    private double deceleration;
-    private boolean isDecelerating = false;
-    private double distance;
-    private double halfwayDistance;
-    private int pointerVertexIndex;
-    private double targetAngle;  // Target angle to rotate to
-    private double lastShotBulletTime = 0;
+    private MovementState movementState;
+    private RotationState rotationState;
+    private ProjectileState projectileState;
     private Point2D beforeSlapPosition;
     private double lastSlapTime = 0;
     private double squeezing;
-
-
-
-
-    private Point2D startPosition = getAnchor();
-    private Point2D projectileCenter = EpsilonModel.getINSTANCE().getAnchor();
-    private double dt = 1.0 / 60; // Assuming 60 FPS, so dt is approximately 1/60
+    private int pointerVertexIndex;  // Added missing field
 
     public Hand(Point2D anchor) {
         super(anchor, image, Hand.pol);
-        hands.add(this);
-        angleToEpsilon = findAngleToEpsilon();
-        setFinalPanelModel();
-        setPointerVertex();
-        collidables.add(this);
-        finalPanelModel.setRigid(true);
-        finalPanelModel.setIsometric(true);
-//        initializeSlap();
-//        initializeRotation(pointToEpsilon());
-//        initializeProjectile();
+        init();
     }
 
-    public  Hand(Point2D anchor, MyPolygon pol) {
+    public Hand(Point2D anchor, MyPolygon pol) {
         super(anchor, LeftHand.image, pol);
+        init();
+    }
+
+    private void init() {
         hands.add(this);
-        angleToEpsilon = findAngleToEpsilon();
         setFinalPanelModel();
         setPointerVertex();
         collidables.add(this);
-
         finalPanelModel.setRigid(true);
         finalPanelModel.setIsometric(true);
-
-
-//        initializeSlap();
-
-
-//        initializeRotation(pointToEpsilon());
-//        initializeSlap();
-
-//        initializeProjectile();
+        movementState = new MovementState();
+        rotationState = new RotationState();
+        projectileState = new ProjectileState();
     }
 
-    public void squeeze(){
-//        System.out.println("SQU");
-        if (isRightHand()) {
-            squeezing = Game.ELAPSED_TIME;
-            finalPanelModel.setRigid(true);
-//            finalPanelModel.setIsometric(true);
-            FinalPanelModel epsilonPanel = EpsilonModel.getINSTANCE().localPanel;
-            double x = epsilonPanel.getLocation().getX() + epsilonPanel.getSize().getWidth() + finalPanelModel.getSize().getWidth()/2;
-            double y = epsilonPanel.getLocation().getY() + epsilonPanel.getSize().getHeight()/2;
-            moveTo(new Point2D.Double(x, y));
-
-        }
-
-        else {
-            squeezing = Game.ELAPSED_TIME;
-            finalPanelModel.setRigid(true);
-//            finalPanelModel.setIsometric(true);
-            FinalPanelModel epsilonPanel = EpsilonModel.getINSTANCE().localPanel;
-            double x = epsilonPanel.getLocation().getX()  - finalPanelModel.getSize().getWidth()/2;
-            double y = epsilonPanel.getLocation().getY() + epsilonPanel.getSize().getHeight()/2;
-            moveTo(new Point2D.Double(x, y));
-        }
+    public void squeeze() {
+        squeezing = Game.ELAPSED_TIME;
+        finalPanelModel.setRigid(true);
+        FinalPanelModel epsilonPanel = EpsilonModel.getINSTANCE().localPanel;
+        double x = epsilonPanel.getLocation().getX() + (isRightHand() ? epsilonPanel.getSize().getWidth() + finalPanelModel.getSize().getWidth()/2 : -finalPanelModel.getSize().getWidth()/2);
+        double y = epsilonPanel.getLocation().getY() + epsilonPanel.getSize().getHeight()/2;
+        moveTo(new Point2D.Double(x, y));
     }
 
-    public boolean isAlive(){
-        //TODO complete methode
+    public boolean isAlive() {
+        // TODO: Implement method
         return true;
     }
 
-    protected boolean isRightHand(){
+    protected boolean isRightHand() {
         return true;
     }
 
@@ -126,51 +79,29 @@ public class Hand extends GeoShapeModel implements Collidable {
         return finalPanelModel;
     }
 
-    private void initializeSlap(){
-        initializeRotation(pointToEpsilon());
-        beforeSlapPosition = getAnchor();
+    private void initializeSlap() {
+        rotationState.startRotation(pointToEpsilon());
+        beforeSlapPosition = new Point2D.Double(getAnchor().getX(), getAnchor().getY()); // Store exact position
         moveTo(EpsilonModel.getINSTANCE().getAnchor());
     }
 
 
     public void moveTo(Point2D destination) {
-        this.destination = destination;
-        this.startPosition = getAnchor();
-        this.isMovingToDestination = true;
-        this.isDecelerating = false;
-        this.speed = 0; // Reset speed at the start of the movement
-
-        // Calculate the total distance to the destination
-        distance = findDistance(getAnchor(), destination);
-        halfwayDistance = distance / 2;
-
-        double t = 8; // Total time in frames (assuming 4 seconds at 60 FPS)
-        acceleration = 4 * distance / (t * t);
-        deceleration = -acceleration;
-        MAX_SPEED = acceleration * t / 2;
-
-        Point2D dir = relativeLocation(destination, getAnchor());
-        direction = new Direction(dir);
-        direction.setMagnitude(speed);
+        movementState.startMove(destination, getAnchor());
+        direction = new Direction(relativeLocation(destination, getAnchor()));
+        direction.setMagnitude(movementState.getSpeed());
+        // Move immediately to ensure initial position is updated
+        Point2D movement = multiplyVector(direction.getNormalizedDirectionVector(), direction.getMagnitude());
+        movePolygon(movement);
+        finalPanelModel.moveLocation(movement);
     }
+
 
     private void setFinalPanelModel() {
         Dimension size = new Dimension(300, 300);
         Point2D loc = new Point2D.Double(getAnchor().getX() - size.getWidth()/2, getAnchor().getY() - size.getHeight()/2);
         finalPanelModel = new FinalPanelModel(loc, size);
         finalPanelModel.setRigid(false);
-    }
-
-    private double findAngleToEpsilon() {
-        Point2D right = new Point2D.Double(1, 0);
-        Point2D left = new Point2D.Double(-1, 0);
-        Point2D center = EpsilonModel.getINSTANCE().getAnchor();
-        Point2D vecToEpsilon = relativeLocation(getAnchor(), center);
-        double res = 0;
-        if (vecToEpsilon.getY() < 0) res = findAngleBetweenTwoVectors(right, vecToEpsilon);
-        if (vecToEpsilon.getY() == 0) res = Math.PI;
-        if (vecToEpsilon.getY() > 0) res = findAngleBetweenTwoVectors(left, vecToEpsilon) + Math.PI;
-        return Math.toDegrees(res);
     }
 
     private Point2D getPointingVertexPoint2D() {
@@ -180,14 +111,13 @@ public class Hand extends GeoShapeModel implements Collidable {
     }
 
     private void creatBulletFromPointingVertex() {
-        double now = Game.ELAPSED_TIME;
-        if (now - lastShotBulletTime < 0.5) return;
+        if (Game.ELAPSED_TIME - projectileState.getLastShotBulletTime() < 0.5) return;
         BufferedImage ba = SmileyBullet.loadImage();
         GraphicalObject bos = new GraphicalObject(ba);
         MyPolygon pl = bos.getMyBoundingPolygon();
         Point2D startPos = getPointingVertexPoint2D();
         new SmileyBullet(startPos).setDirection(findBulletDirection(startPos));
-        lastShotBulletTime = now;
+        projectileState.updateLastShotBulletTime(Game.ELAPSED_TIME);
     }
 
     private Direction findBulletDirection(Point2D startPos) {
@@ -199,142 +129,77 @@ public class Hand extends GeoShapeModel implements Collidable {
     }
 
     public void move() {
-
-
         updateDirection();
         move(direction);
     }
 
-    void move(Direction direction) {
+    private void move(Direction direction) {
         if (direction == null) return;
         Point2D movement = multiplyVector(direction.getNormalizedDirectionVector(), direction.getMagnitude());
         movePolygon(movement);
         finalPanelModel.moveLocation(movement);
     }
 
-    private void initializeRotation(double angle){
-        rotating = true;
-        rotateTo(angle);
-    }
-
-    public void updateDirection() {
-
-        double now = Game.ELAPSED_TIME;
-
-        if (now - squeezing > SQUEEZE_DURATION && squeezing != -1) {
-            if (isRightHand()) moveTo(new Point2D.Double(1500, 400));
-            if (!isRightHand()) moveTo(new Point2D.Double(500, 401));
-            finalPanelModel.setRigid(false);
-            squeezing = -1;
-        }
-
-        // adjust pointer finger toward epsilon
-        if (rotating) {
-            updateRotation();
-        }
-
-        else if (isProjecting) {
-            projectile();
-        }
-
-        else if (isMovingToDestination || squeezing != -1){
-            double currentDistance = findDistance(getAnchor(), destination);
-
-            if (!isDecelerating) {
-                speed += acceleration * dt;
-                if (speed > MAX_SPEED) {
-                    speed = MAX_SPEED;
-                }
-                if (currentDistance <= halfwayDistance) {
-                    isDecelerating = true;
-                }
-            } else {
-                speed += deceleration * dt;
-                if (speed < 0 || currentDistance <= 0) {
-                    speed = 0;
-                    isMovingToDestination = false; // Stop moving when speed is 0 or destination is reached
-                }
-            }
-
-
-            direction.setMagnitude(speed);
-        }
-
-//        else if (squeezing) return;
-        else if (!isMovingToDestination && beforeSlapPosition != null){
-            moveTo(beforeSlapPosition);
-            beforeSlapPosition = null;
-        }
-
-        else {
-
-            if (now - lastSlapTime > 5){
-                double distance = findDistance(getAnchor(), EpsilonModel.getINSTANCE().getAnchor());
-                if (distance < 500) {
-                    initializeSlap();
-                    lastSlapTime = now;
-                }
-            }
-        }
-    }
-
     private void initializeProjectile() {
-//        System.out.println("TRUUUUUUUUUUU");
-        totalRotationAngle = 0;
-        isProjecting = true;
+        projectileState.start();
     }
 
     public void projectile() {
         creatBulletFromPointingVertex();
-        if (totalRotationAngle >= 360) {
-            isProjecting = false;
-            totalRotationAngle = 0;
-            return;
+        if (projectileState.updateRotation()) {
+            Point2D center = projectileState.getCenter();
+            double radius = findDistance(getAnchor(), center);
+            double radians = Math.toRadians(projectileState.getAngleToEpsilon());
+            double newX = center.getX() + radius * Math.cos(radians);
+            double newY = center.getY() - radius * Math.sin(radians);
+            Point2D newAnchor = new Point2D.Double(newX, newY);
+            Point2D movement = new Point2D.Double(newX - getAnchor().getX(), newY - getAnchor().getY());
+            finalPanelModel.moveLocation(movement);
+            setAnchor(newAnchor);
+            rotate(-projectileState.getAngularSpeed());  // Rotate method used here
+        }
+    }
+
+    public void updateDirection() {
+        double now = Game.ELAPSED_TIME;
+        if (now - squeezing > SQUEEZE_DURATION && squeezing != -1) {
+            moveTo(new Point2D.Double(isRightHand() ? 1500 : 500, 400));
+            finalPanelModel.setRigid(false);
+            squeezing = -1;
         }
 
-        angleToEpsilon += angularSpeed;
-        if (angleToEpsilon >= 360) angleToEpsilon -= 360; // Keep angle within 0-359 degrees
-        Point2D center = projectileCenter;
-
-
-        // Calculate the current radius
-        double radius = findDistance(getAnchor(), center);
-
-        // Calculate new position based on the updated angle
-        double radians = Math.toRadians(angleToEpsilon);
-        double newX = center.getX() + radius * Math.cos(radians);
-        double newY = center.getY() - radius * Math.sin(radians);
-
-        // Set the new position
-        Point2D newAnchor = new Point2D.Double(newX, newY);
-
-        // Update the polygon's position
-        Point2D movement = new Point2D.Double(newX - getAnchor().getX(), newY - getAnchor().getY());
-        finalPanelModel.moveLocation(movement);
-
-
-        setAnchor(newAnchor);
-
-        // Rotate the polygon to face the center
-        angle -= angularSpeed;
-        rotate(-angularSpeed);
-
-        totalRotationAngle += angularSpeed;
+        if (rotationState.isRotating()) {
+            rotationState.updateRotation();
+        } else if (projectileState.isProjecting()) {
+            projectile();
+        } else if (movementState.isMoving()) {
+            movementState.updateSpeed();
+            direction.setMagnitude(movementState.getSpeed());
+            move(direction); // Ensure this method is called to apply movement
+        } else if (!movementState.isMoving() && beforeSlapPosition != null) {
+            Point2D currentPos = getAnchor();
+            Point2D destination = beforeSlapPosition;
+            if (currentPos.distance(destination) > 1) { // Adding a small threshold
+                moveTo(beforeSlapPosition); // Continue moving to exact position
+            } else {
+                setAnchor(destination); // Set exact position to avoid overshoot
+                beforeSlapPosition = null;
+            }
+        } else if (now - lastSlapTime > 5) {
+            if (findDistance(getAnchor(), EpsilonModel.getINSTANCE().getAnchor()) < 500) {
+                initializeSlap();
+                lastSlapTime = now;
+            }
+        }
     }
 
-    public static double getAngleTowardsCenter(Point2D center, Point2D objectPosition) {
-        // Calculate the vector from center to object
-        double dx = objectPosition.getX() - center.getX();
-        double dy = objectPosition.getY() - center.getY();
-
-        // Calculate the angle (in radians) using atan2
-        double angle = Math.atan2(dy, dx);
-
-        return Math.toDegrees(angle);
-    }
-
-    public void rotate(double angle) {
-        setMyPolygon(Utils.rotateMyPolygon(myPolygon, angle, getAnchor()));
+    private double pointToEpsilon() {
+        Point2D center = EpsilonModel.getINSTANCE().getAnchor();
+        Point2D handVec = new Point2D.Double(1, 0);
+        Point2D toEpsilonVec = relativeLocation(center, getAnchor());
+        double dotProduct = handVec.getX() * toEpsilonVec.getX() + handVec.getY() * toEpsilonVec.getY();
+        double crossProduct = handVec.getX() * toEpsilonVec.getY() - handVec.getY() * toEpsilonVec.getX();
+        return Math.toDegrees(Math.atan2(crossProduct, dotProduct));
     }
 
     public static BufferedImage loadImage() {
@@ -344,20 +209,6 @@ public class Hand extends GeoShapeModel implements Collidable {
         pol = bowser.getMyBoundingPolygon();
         return Hand.image;
     }
-
-    private double pointToEpsilon() {
-        Point2D center = EpsilonModel.getINSTANCE().getAnchor();
-        Point2D handVec = new Point2D.Double(1, 0);
-        Point2D toEpsilonVec = relativeLocation(center, getAnchor());
-
-        double dotProduct = handVec.getX() * toEpsilonVec.getX() + handVec.getY() * toEpsilonVec.getY();
-        double crossProduct = handVec.getX() * toEpsilonVec.getY() - handVec.getY() * toEpsilonVec.getX();
-
-        double angleDifference = Math.toDegrees(Math.atan2(crossProduct, dotProduct));
-
-        return angleDifference;
-    }
-
 
     @Override
     public void setMyPolygon(MyPolygon myPolygon) {
@@ -377,7 +228,7 @@ public class Hand extends GeoShapeModel implements Collidable {
                 index = i;
             }
         }
-        pointerVertexIndex = index;
+        pointerVertexIndex = index;  // Set pointerVertexIndex here
     }
 
     @Override
@@ -393,30 +244,148 @@ public class Hand extends GeoShapeModel implements Collidable {
     public void onCollision(Collidable other) {
     }
 
-    // New method to set the target angle
-    public void rotateTo(double targetAngle) {
-        this.targetAngle = targetAngle;
+    // Rotate method added here
+    public void rotate(double angle) {
+        // Implementation for rotating the hand by the given angle
+        // This can be specific to how the rotation should affect the hand's state
+        setMyPolygon(Utils.rotateMyPolygon(myPolygon, angle, getAnchor()));
+
     }
 
-    // New method to update the rotation in each frame
-    private void updateRotation() {
-        if (Math.abs(angle- targetAngle) > 0.001) { //check this out
-//            System.out.println(angle);
-//            System.out.println(angle-targetAngle);
-            double angleDifference = targetAngle - angle;
-            System.out.println(angleDifference);
+    // New method to set the target angle
+    public void rotateTo(double targetAngle) {
+        rotationState.setTargetAngle(targetAngle);
+    }
 
-            // Normalize the angle to the range [-180, 180]
-            angleDifference = (angleDifference) % 360 ;
+    private class MovementState {
+        private boolean isMovingToDestination;
+        private boolean isDecelerating = false;
+        private double speed = 0;
+        private double acceleration;
+        private double deceleration;
+        private double distance;
+        private double halfwayDistance;
+        private Point2D destination;
+        private double dt = 1.0 / 60;
+        private double MAX_SPEED;
 
-            // Calculate the step for this frame
-            double rotationStep = Math.min(Math.abs(angleDifference), angularSpeed) * Math.signum(angleDifference);
+        public void startMove(Point2D destination, Point2D anchor) {
+            this.destination = destination;
+            isMovingToDestination = true;
+            isDecelerating = false;
+            distance = findDistance(anchor, destination);
+            halfwayDistance = distance / 2;
+            double t = 8; // Total time in frames (assuming 4 seconds at 60 FPS)
+            acceleration = 4 * distance / (t * t);
+            deceleration = -acceleration;
+            MAX_SPEED = acceleration * t / 2;
+        }
 
-            // Update the current angle
-            angle += rotationStep;
+        public void updateSpeed() {
+            double currentDistance = findDistance(getAnchor(), destination);
+            if (!isDecelerating) {
+                speed += acceleration * dt;
+                if (speed > MAX_SPEED) {
+                    speed = MAX_SPEED;
+                }
+                if (currentDistance <= halfwayDistance) {
+                    isDecelerating = true;
+                }
+            } else {
+                speed += deceleration * dt;
+                if (speed < 0 || currentDistance <= 0) {
+                    speed = 0;
+                    isMovingToDestination = false;
+                }
+            }
+        }
 
-            // Apply the rotation to the polygon
-            rotate(rotationStep);
-        }  else rotating = false;
+        public double getSpeed() {
+            return speed;
+        }
+
+        public boolean isMoving() {
+            return isMovingToDestination;
+        }
+    }
+
+    private class RotationState {
+        private boolean rotating;
+        private double totalRotationAngle;
+        private double angularSpeed = 5;
+        private double targetAngle;
+
+        public void startRotation(double angle) {
+            rotating = true;
+            rotateTo(angle);
+        }
+
+        public void updateRotation() {
+            if (Math.abs(angle - targetAngle) > 0.001) {
+                double angleDifference = (targetAngle - angle) % 360;
+                double rotationStep = Math.min(Math.abs(angleDifference), angularSpeed) * Math.signum(angleDifference);
+                angle += rotationStep;
+                rotate(rotationStep);
+            } else {
+                rotating = false;
+            }
+        }
+
+        public boolean isRotating() {
+            return rotating;
+        }
+
+        public void setTargetAngle(double targetAngle) {
+            this.targetAngle = targetAngle;
+        }
+    }
+
+    private class ProjectileState {
+        private boolean isProjecting;
+        private double totalRotationAngle;
+        private double angularSpeed = 5;
+        private double angleToEpsilon;
+        private double lastShotBulletTime = 0;
+        private Point2D center = EpsilonModel.getINSTANCE().getAnchor();
+
+        public void start() {
+            totalRotationAngle = 0;
+            isProjecting = true;
+        }
+
+        public boolean updateRotation() {
+            angleToEpsilon += angularSpeed;
+            if (angleToEpsilon >= 360) angleToEpsilon -= 360;
+            totalRotationAngle += angularSpeed;
+            if (totalRotationAngle >= 360) {
+                isProjecting = false;
+                totalRotationAngle = 0;
+            }
+            return isProjecting;
+        }
+
+        public boolean isProjecting() {
+            return isProjecting;
+        }
+
+        public double getAngleToEpsilon() {
+            return angleToEpsilon;
+        }
+
+        public double getAngularSpeed() {
+            return angularSpeed;
+        }
+
+        public Point2D getCenter() {
+            return center;
+        }
+
+        public void updateLastShotBulletTime(double time) {
+            lastShotBulletTime = time;
+        }
+
+        public double getLastShotBulletTime() {
+            return lastShotBulletTime;
+        }
     }
 }

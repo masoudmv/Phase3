@@ -87,12 +87,12 @@ public class FinalPanelView extends JPanel {
         }
 
         // Deprecated
-        for(Drawable obj: drawables){
-            obj.draw(g);
-        }
 
         for (GeoShapeView geoShapeView : GeoShapeView.geoShapeViews) {
             geoShapeView.draw(g); // This should call the appropriate overridden method
+        }
+        for(Drawable obj: drawables){
+            obj.draw(g);
         }
     }
 }

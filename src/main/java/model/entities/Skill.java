@@ -1,26 +1,21 @@
 package model.entities;
 
 import controller.Game;
-import model.Profile;
 //import model.characters.EpsilonModel;
 import model.charactersModel.EpsilonModel;
-import model.collision.Impactable;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.TimeUnit;
 
-import static controller.Game.*;
 import static controller.UserInterfaceController.*;
 import static controller.constants.SkillConstants.*;
 import static controller.constants.EntityConstants.SKILL_COOLDOWN_IN_SECONDS;
-import static model.collision.Impactable.impactables;
 
 public enum Skill {
     ARES, ASTRAPE, CERBERUS,
-    ACESO, MELAMPUS, CHIRON,
+    ACESO, MELAMPUS, CHIRON, ATHENA,
     PROTEUS, EMPUSA, DOLUS;
 
     public static Skill activeSkill = null;
@@ -42,6 +37,7 @@ public enum Skill {
         return switch (this) {
 
             case ARES, MELAMPUS, EMPUSA -> 750;
+            case ATHENA -> 1200;
             case ASTRAPE, PROTEUS -> 1000;
             case CERBERUS, DOLUS -> 1500;
             case ACESO -> 500;
@@ -53,7 +49,7 @@ public enum Skill {
         return switch (this) {
 
             case ARES, ASTRAPE, CERBERUS -> SkillType.ATTACK;
-            case ACESO, MELAMPUS, CHIRON -> SkillType.GUARD;
+            case ACESO, MELAMPUS, CHIRON, ATHENA -> SkillType.GUARD;
             case PROTEUS, EMPUSA, DOLUS -> SkillType.POLYMORPHIA;
         };
     }
@@ -62,8 +58,8 @@ public enum Skill {
         return switch (this) {
 
             case ARES -> e -> {
-                Profile.getCurrent().EPSILON_MELEE_DAMAGE += WRIT_OF_ARES_BUFF_AMOUNT.getValue();
-                Profile.getCurrent().EPSILON_RANGED_DAMAGE += WRIT_OF_ARES_BUFF_AMOUNT.getValue();
+                Profile.getCurrent().EPSILON_MELEE_DAMAGE += (int) WRIT_OF_ARES_BUFF_AMOUNT.getValue();
+                Profile.getCurrent().EPSILON_RANGED_DAMAGE += (int) WRIT_OF_ARES_BUFF_AMOUNT.getValue();
             };
             case ASTRAPE -> null;
             case CERBERUS -> null;
@@ -76,9 +72,10 @@ public enum Skill {
                 healthTimer.start();
             };
             case MELAMPUS -> null;
-            case CHIRON -> null;
+            case CHIRON -> e -> EpsilonModel.getINSTANCE().cerebrus();
+            case ATHENA -> e -> Profile.getCurrent().PANEL_SHRINKAGE_COEFFICIENT *= 0.80;
             case PROTEUS -> e -> EpsilonModel.getINSTANCE().addVertex();
-            case EMPUSA -> null;
+            case EMPUSA -> e -> EpsilonModel.getINSTANCE().empusa();
             case DOLUS -> null;
         };
     }
