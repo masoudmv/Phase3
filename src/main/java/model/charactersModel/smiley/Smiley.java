@@ -18,8 +18,11 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Random;
 
 import static controller.Utils.*;
+import static controller.constants.EntityConstants.*;
+import static controller.constants.EntityConstants.SMILEY_SLAP_COOLDOWN;
 import static model.imagetools.ToolBox.getBufferedImage;
 
 public class Smiley extends GeoShapeModel implements Collidable {
@@ -30,11 +33,22 @@ public class Smiley extends GeoShapeModel implements Collidable {
     private FinalPanelModel finalPanelModel;
     protected static MyPolygon pol;
     private double lastRapidFire = 0;
-    private double squeezeStartTime = 0;
 
 
     private Hand leftHand;
     private Hand rightHand;
+
+
+
+
+//    private boolean squeezeInProgress = false;
+//    private boolean slapInProgress = false;
+//    private boolean projectileInProgress = false;
+//
+//    private double lastSlapTime = -1;
+//    private double lastSqueezeTime = -1;
+//    private double lastProjectileTime = -1;
+
 
 
     public Smiley(Point2D anchor, Hand leftHand, Hand rightHand) {
@@ -48,10 +62,51 @@ public class Smiley extends GeoShapeModel implements Collidable {
         smilies.add(this);
 
         this.rightHand = rightHand;
-//        this.vomit();
+
+
+//        rightHand.initializeSqueeze();
+//        leftHand.initializeSqueeze();
 
 //        initiateSqueeze();
     }
+
+    private void checkForProjectileCoolDown(){
+        double now = Game.ELAPSED_TIME;
+        if (!rightHand.projectileInProgress && now - rightHand.lastProjectileTime > SMILEY_PROJECTILE_DURATION.getValue() + SMILEY_PROJECTILE_COOLDOWN.getValue()) {
+            if (Hand.slapInProgress) return;
+            rightHand.initializeProjectile();
+            leftHand.initializeProjectile();
+        }
+    }
+
+
+    private void checkForSqueezeCoolDown(){
+        double now = Game.ELAPSED_TIME;
+        if (!rightHand.squeezeInProgress && now - rightHand.lastSqueezeTime > SMILEY_SQUEEZE_DURATION.getValue() + SMILEY_SQUEEZE_COOLDOWN.getValue()) {
+            if (Hand.slapInProgress) return;
+            initiateSqueeze();
+        }
+    }
+
+
+//    private void checkForSlapCoolDown(){
+//        double now = Game.ELAPSED_TIME;
+//        if (!slapInProgress && now - lastSlapTime > SMILEY_SLAP_DURATION.getValue() + SMILEY_SLAP_COOLDOWN.getValue()) {
+//            Random random = new Random();
+//            int randomNumber = random.nextInt(2) + 1;
+//            if (randomNumber == 1) rightHand.initializeSlap();
+//            else rightHand.initializeSlap();
+//        }
+//    }
+
+
+
+
+//    private void initiateProjectile(){
+//        lastProjectileTime = Game.ELAPSED_TIME;
+//        leftHand.initializeProjectile();
+//        rightHand.initializeProjectile();
+//    }
 
 
     public Smiley(Point2D anchor) {
@@ -72,6 +127,7 @@ public class Smiley extends GeoShapeModel implements Collidable {
 
 
     private void initiateSqueeze(){
+//        lastSqueezeTime = Game.ELAPSED_TIME;
         if (!leftHand.isAlive() || !rightHand.isAlive()) return;
         FinalPanelModel leftPanel = leftHand.getFinalPanelModel();
         FinalPanelModel rightPanel = rightHand.getFinalPanelModel();
@@ -81,26 +137,25 @@ public class Smiley extends GeoShapeModel implements Collidable {
         boolean right = rightPanel.getLocation().getX() > epsilonPanel.getLocation().getX() + epsilonPanel.getSize().getWidth();
         boolean top  = epsilonPanel.getLocation().getY() > finalPanelModel.getLocation().getY() + finalPanelModel.getSize().getHeight();
 
-
-
         if (right && left && top) {
-            leftHand.squeeze();
-            rightHand.squeeze();
+            leftHand.initializeSqueeze();
+            rightHand.initializeSqueeze();
         }
     }
 
 
-
-
-
     public void move() {
+        checkForProjectileCoolDown();
+        checkForSqueezeCoolDown();
 
 
-        double now = Game.ELAPSED_TIME;
-        if (now - lastRapidFire > 5) {
-            lastRapidFire = now;
-            rapidFire(10, 360);
-        }
+
+
+
+//        if (now - lastRapidFire > 5) {
+//            lastRapidFire = now;
+//            rapidFire(10, 360);
+//        }
 
 
         SmileyAOE.updateAll();

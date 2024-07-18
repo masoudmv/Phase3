@@ -180,7 +180,7 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
 
     @Override
     public void move() {
-        updateLocalPanel();
+//        updateLocalPanel();
         move(direction);
         moveBabies(direction);
     }
@@ -327,11 +327,46 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
         return true;
     }
 
+    public Point2D getClosestPointOnCircumference(Point2D center, Point2D point) {
+        double dx = point.getX() - center.getX();
+        double dy = point.getY() - center.getY();
+        double distance = Math.sqrt(dx * dx + dy * dy);
+
+        // Scale the vector (dx, dy) to the circle's radius
+        double radius = getRadius();  // Assuming you have a method to get the radius of the circle
+        double scale = radius / distance;
+
+        // Calculate the closest point on the circumference
+        double closestX = center.getX() + dx * scale;
+        double closestY = center.getY() + dy * scale;
+
+        return new Point2D.Double(closestX, closestY);
+    }
+
     @Override
     public void onCollision(Collidable other, Point2D intersection) {
         if (other instanceof Smiley) impact(new CollisionState(intersection));
         if (other instanceof Fist) impact(new CollisionState(intersection));
-        if (other instanceof Hand) impact(new CollisionState(intersection));
+        if (other instanceof Hand) {
+            // Get the closest point on the circle's circumference to the intersection
+            Point2D closestPointOnCircumference = getClosestPointOnCircumference(getAnchor(), intersection);
+
+            // Calculate the offset vector from the closest point on the circumference to the intersection
+            Point2D offset = new Point2D.Double(intersection.getX() - closestPointOnCircumference.getX(),
+                    intersection.getY() - closestPointOnCircumference.getY());
+
+            // Calculate the magnitude of the offset vector
+            double magnitude = calculateVectorMagnitude(offset);
+
+            // Adjust the anchor if the magnitude of the offset is greater than a threshold (20 in this case)
+//            if (magnitude > 20) {
+                // Add the offset vector to the current anchor point to get the new anchor position
+                anchor = addVectors(offset, getAnchor());
+//            }
+
+            // Handle the collision with a new CollisionState based on the intersection point
+            impact(new CollisionState(intersection));
+        }
         if (other instanceof BarricadosModel) impact(new CollisionState(intersection));
         if (other instanceof OmenoctModel) impact(new CollisionState(intersection));
         if (other instanceof Orb) impact(new CollisionState(intersection));

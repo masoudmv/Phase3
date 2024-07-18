@@ -16,9 +16,10 @@ import java.awt.*;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Random;
 
 import static controller.Utils.*;
-import static controller.constants.EntityConstants.SMILEY_SLAP_COOLDOWN;
+import static controller.constants.EntityConstants.*;
 import static controller.constants.SmileyConstants.*;
 import static model.imagetools.ToolBox.getBufferedImage;
 
@@ -32,20 +33,26 @@ public class Hand extends GeoShapeModel implements Collidable {
     private RotationState rotationState;
     private ProjectileState projectileState;
     private Point2D beforeSlapPosition;
-    private double lastSlapTime = 0;
-    private double squeezing = -1;
     private int pointerVertexIndex;  // Added missing field
+
+    public static boolean slapInProgress = false;
+    public  boolean squeezeInProgress = false;
+    public boolean projectileInProgress = false;
+
+    public static double lastSlapTime = 0;
+    public double lastSqueezeTime = -1;
+    public double lastProjectileTime = -1;
 
     public Hand(Point2D anchor) {
         super(anchor, image, Hand.pol);
         init();
-        initializeProjectile();
+//        initializeProjectile();
     }
 
     public Hand(Point2D anchor, MyPolygon pol) {
         super(anchor, LeftHand.image, pol);
         init();
-        initializeProjectile();
+//        initializeProjectile();
 
     }
 
@@ -60,14 +67,46 @@ public class Hand extends GeoShapeModel implements Collidable {
         projectileState = new ProjectileState();
     }
 
-    public void squeeze() {
-        squeezing = Game.ELAPSED_TIME;
+    public void initializeSlap() {
+        if (findDistance(getAnchor(), EpsilonModel.getINSTANCE().getAnchor()) > 400) return;
+        if (projectileInProgress || squeezeInProgress || slapInProgress) return;
+        slapInProgress = true;
+        lastSlapTime = Game.ELAPSED_TIME;
+        rotationState.startRotation(pointToEpsilon());
+        beforeSlapPosition = new Point2D.Double(getAnchor().getX(), getAnchor().getY()); // Store exact position
+        moveTo(EpsilonModel.getINSTANCE().getAnchor());
+    }
+
+
+    public void initializeProjectile() {
+        if (squeezeInProgress || slapInProgress) return;
+        lastProjectileTime = Game.ELAPSED_TIME;
+        projectileInProgress = true;
+        rotationState.startRotation(pointToEpsilon());
+        beforeSlapPosition = new Point2D.Double(getAnchor().getX(), getAnchor().getY()); // Store exact position
+        projectileState.start(this.anchor);
+    }
+
+    public void initializeSqueeze() {
+        if (projectileInProgress || squeezeInProgress) return;
+        lastSqueezeTime = Game.ELAPSED_TIME;
+        squeezeInProgress = true;
         finalPanelModel.setRigid(true);
+        beforeSlapPosition = new Point2D.Double(getAnchor().getX(), getAnchor().getY()); // Store exact position
         FinalPanelModel epsilonPanel = EpsilonModel.getINSTANCE().localPanel;
         double x = epsilonPanel.getLocation().getX() + (isRightHand() ? epsilonPanel.getSize().getWidth() + finalPanelModel.getSize().getWidth()/2 : -finalPanelModel.getSize().getWidth()/2);
         double y = epsilonPanel.getLocation().getY() + epsilonPanel.getSize().getHeight()/2;
         moveTo(new Point2D.Double(x, y));
+
+//
+//        moveTo(new Point2D.Double(isRightHand() ? 1500 : 500, 400));
+//        finalPanelModel.setRigid(false);
     }
+
+
+
+
+
 
     public boolean isAlive() {
         // TODO: Implement method
@@ -81,13 +120,6 @@ public class Hand extends GeoShapeModel implements Collidable {
     public FinalPanelModel getFinalPanelModel() {
         return finalPanelModel;
     }
-
-    private void initializeSlap() {
-        rotationState.startRotation(pointToEpsilon());
-        beforeSlapPosition = new Point2D.Double(getAnchor().getX(), getAnchor().getY()); // Store exact position
-        moveTo(EpsilonModel.getINSTANCE().getAnchor());
-    }
-
 
     public void moveTo(Point2D destination) {
         movementState.startMove(destination, getAnchor());
@@ -136,6 +168,21 @@ public class Hand extends GeoShapeModel implements Collidable {
         move(direction);
     }
 
+    private void updateActions(){
+        double now = Game.ELAPSED_TIME;
+        if (squeezeInProgress && now - lastSqueezeTime > SMILEY_SQUEEZE_DURATION.getValue())  {
+            squeezeInProgress = false;
+            finalPanelModel.setRigid(false);
+        }
+        if (projectileInProgress && now - lastProjectileTime > SMILEY_PROJECTILE_DURATION.getValue()) {
+            projectileInProgress = false;
+        }
+        if (slapInProgress && now - lastSlapTime > SMILEY_SLAP_DURATION.getValue()) {
+            slapInProgress = false;
+        }
+
+    }
+
     private void move(Direction direction) {
         if (direction == null) return;
         Point2D movement = multiplyVector(direction.getNormalizedDirectionVector(), direction.getMagnitude());
@@ -143,11 +190,6 @@ public class Hand extends GeoShapeModel implements Collidable {
         finalPanelModel.moveLocation(movement);
     }
 
-    private void initializeProjectile() {
-        rotationState.startRotation(pointToEpsilon());
-        beforeSlapPosition = new Point2D.Double(getAnchor().getX(), getAnchor().getY()); // Store exact position
-        projectileState.start(this.anchor);
-    }
 
     public void projectile() {
 
@@ -167,26 +209,45 @@ public class Hand extends GeoShapeModel implements Collidable {
         }
     }
 
+
+
+
+
     public void updateDirection() {
 
-
-//        System.out.println(projectileState.isProjecting());
-//        System.out.println();
-//        System.out.println();
-//        System.out.println();
-//        System.out.println();
-//        System.out.println(beforeSlapPosition);
+        updateActions();
 
 
+//    System.out.println(beforeSlapPosition);
 
-
-
+//        if (!slapInProgress) {
+//            checkForSqueezeCoolDown();
+//            checkForProjectileCoolDown();
+//        }
 
         double now = Game.ELAPSED_TIME;
-//        if (now - squeezing > SQUEEZE_DURATION && squeezing != -1) {
+
+
+
+//        if (now -  lastSqueezeTime > SQUEEZE_DURATION && lastSqueezeTime != -1) {
 //            moveTo(new Point2D.Double(isRightHand() ? 1500 : 500, 400));
 //            finalPanelModel.setRigid(false);
-//            squeezing = -1;
+//            lastSqueezeTime = -1;
+//        }
+//        if (now - lastSqueezeTime > 5){
+//            squeezeInProgress = true;
+//        }
+
+//        System.out.println(beforeSlapPosition);
+//
+//
+//        if (now - lastSqueezeTime > 5 && squeezeInProgress){
+//            squeezeInProgress = false;
+//            moveTo(beforeSlapPosition);
+//        }
+
+//        else if (squeezeInProgress && now - lastSqueezeTime > 2){
+//            System.out.println("SSSSSSSSSSS");
 //        }
 
         if (rotationState.isRotating()) {
@@ -196,34 +257,43 @@ public class Hand extends GeoShapeModel implements Collidable {
         }
 
         else if (movementState.isMoving()) {
-            System.out.println("Moving ...");
+//            System.out.println("Moving ...");
             movementState.updateSpeed();
             direction.setMagnitude(movementState.getSpeed());
             move(direction); // Ensure this method is called to apply movement
         }
 //
         else if (beforeSlapPosition != null) {
+            if (squeezeInProgress && now - lastSqueezeTime < SMILEY_SQUEEZE_DURATION.getValue()-3){
 
-            Point2D currentPos = getAnchor();
-            Point2D destination = beforeSlapPosition;
-            if (currentPos.distance(destination) > 10) { // Adding a small threshold
-                moveTo(beforeSlapPosition); // Continue moving to exact position
             } else {
-                setAnchor(destination); // Set exact position to avoid overshoot
-                beforeSlapPosition = null;
-                lastSlapTime = now;
+                Point2D currentPos = getAnchor();
+                Point2D destination = beforeSlapPosition;
+                if (currentPos.distance(destination) > 1) { // Adding a small threshold
+                    moveTo(beforeSlapPosition); // Continue moving to exact position
+                } else if (!squeezeInProgress) {
+                    setAnchor(destination); // Set exact position to avoid overshoot
+                    beforeSlapPosition = null;
+                    lastSlapTime = now;
+                }
             }
         }
 
 
-        else if (now - lastSlapTime > SMILEY_SLAP_COOLDOWN.getValue()) {
-            if (findDistance(getAnchor(), EpsilonModel.getINSTANCE().getAnchor()) < 500) {
-                System.out.println("initiate ...");
+        else if (now - lastSlapTime > SMILEY_SLAP_COOLDOWN.getValue() && !slapInProgress) {
+            if (findDistance(getAnchor(), EpsilonModel.getINSTANCE().getAnchor()) < 700) {
+//                System.out.println("initiate ...");
                 initializeSlap();
 //                movementState.setMovingToDestination(false);
                 lastSlapTime = now;
             }
         }
+
+
+
+
+
+
     }
 
     private double pointToEpsilon() {
