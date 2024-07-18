@@ -18,6 +18,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 import static controller.Utils.*;
+import static controller.constants.EntityConstants.SMILEY_SLAP_COOLDOWN;
 import static controller.constants.SmileyConstants.*;
 import static model.imagetools.ToolBox.getBufferedImage;
 
@@ -32,7 +33,7 @@ public class Hand extends GeoShapeModel implements Collidable {
     private ProjectileState projectileState;
     private Point2D beforeSlapPosition;
     private double lastSlapTime = 0;
-    private double squeezing;
+    private double squeezing = -1;
     private int pointerVertexIndex;  // Added missing field
 
     public Hand(Point2D anchor) {
@@ -44,6 +45,8 @@ public class Hand extends GeoShapeModel implements Collidable {
     public Hand(Point2D anchor, MyPolygon pol) {
         super(anchor, LeftHand.image, pol);
         init();
+        initializeProjectile();
+
     }
 
     private void init() {
@@ -142,7 +145,8 @@ public class Hand extends GeoShapeModel implements Collidable {
 
     private void initializeProjectile() {
         rotationState.startRotation(pointToEpsilon());
-        projectileState.start();
+        beforeSlapPosition = new Point2D.Double(getAnchor().getX(), getAnchor().getY()); // Store exact position
+        projectileState.start(this.anchor);
     }
 
     public void projectile() {
@@ -164,33 +168,59 @@ public class Hand extends GeoShapeModel implements Collidable {
     }
 
     public void updateDirection() {
+
+
+//        System.out.println(projectileState.isProjecting());
+//        System.out.println();
+//        System.out.println();
+//        System.out.println();
+//        System.out.println();
+//        System.out.println(beforeSlapPosition);
+
+
+
+
+
+
         double now = Game.ELAPSED_TIME;
-        if (now - squeezing > SQUEEZE_DURATION && squeezing != -1) {
-            moveTo(new Point2D.Double(isRightHand() ? 1500 : 500, 400));
-            finalPanelModel.setRigid(false);
-            squeezing = -1;
-        }
+//        if (now - squeezing > SQUEEZE_DURATION && squeezing != -1) {
+//            moveTo(new Point2D.Double(isRightHand() ? 1500 : 500, 400));
+//            finalPanelModel.setRigid(false);
+//            squeezing = -1;
+//        }
 
         if (rotationState.isRotating()) {
             rotationState.updateRotation();
         } else if (projectileState.isProjecting()) {
             projectile();
-        } else if (movementState.isMoving()) {
+        }
+
+        else if (movementState.isMoving()) {
+            System.out.println("Moving ...");
             movementState.updateSpeed();
             direction.setMagnitude(movementState.getSpeed());
             move(direction); // Ensure this method is called to apply movement
-        } else if (!movementState.isMoving() && beforeSlapPosition != null) {
+        }
+//
+        else if (beforeSlapPosition != null) {
+
             Point2D currentPos = getAnchor();
             Point2D destination = beforeSlapPosition;
-            if (currentPos.distance(destination) > 1) { // Adding a small threshold
+            if (currentPos.distance(destination) > 10) { // Adding a small threshold
                 moveTo(beforeSlapPosition); // Continue moving to exact position
             } else {
                 setAnchor(destination); // Set exact position to avoid overshoot
                 beforeSlapPosition = null;
+                lastSlapTime = now;
             }
-        } else if (now - lastSlapTime > 5) {
+        }
+
+
+        else if (now - lastSlapTime > SMILEY_SLAP_COOLDOWN.getValue()) {
             if (findDistance(getAnchor(), EpsilonModel.getINSTANCE().getAnchor()) < 500) {
+                System.out.println("initiate ...");
                 initializeSlap();
+//                movementState.setMovingToDestination(false);
                 lastSlapTime = now;
             }
         }
@@ -279,7 +309,7 @@ public class Hand extends GeoShapeModel implements Collidable {
             isDecelerating = false;
             distance = findDistance(anchor, destination);
             halfwayDistance = distance / 2;
-            double t = 8; // Total time in frames (assuming 4 seconds at 60 FPS)
+            double t = 10; // Total time in frames (assuming 4 seconds at 60 FPS)
             acceleration = 4 * distance / (t * t);
             deceleration = -acceleration;
             MAX_SPEED = acceleration * t / 2;
@@ -288,6 +318,7 @@ public class Hand extends GeoShapeModel implements Collidable {
         public void updateSpeed() {
             double currentDistance = findDistance(getAnchor(), destination);
             if (!isDecelerating) {
+//                System.out.println("AAAAAAAAAAAA");
                 speed += acceleration * dt;
                 if (speed > MAX_SPEED) {
                     speed = MAX_SPEED;
@@ -311,6 +342,10 @@ public class Hand extends GeoShapeModel implements Collidable {
         public boolean isMoving() {
             return isMovingToDestination;
         }
+
+        public void setMovingToDestination(boolean movingToDestination) {
+            isMovingToDestination = movingToDestination;
+        }
     }
 
     private class RotationState {
@@ -325,12 +360,17 @@ public class Hand extends GeoShapeModel implements Collidable {
         }
 
         public void updateRotation() {
-            if (Math.abs(angle - targetAngle) > 0.1) {
+            double difference = Math.abs(angle - targetAngle);
+            if (difference > 1 &&  Math.abs(difference - 360) > 1) {
+//                System.out.println("updating rotation");
+                System.out.println("angle: "+ angle);
+                System.out.println("target: "+ targetAngle);
                 double angleDifference = (targetAngle - angle) % 360;
                 double rotationStep = Math.min(Math.abs(angleDifference), angularSpeed) * Math.signum(angleDifference);
 //                angle += rotationStep;
                 rotate(rotationStep);
             } else {
+                System.out.println("Seting rotation to false");
                 rotating = false;
             }
         }
@@ -344,67 +384,4 @@ public class Hand extends GeoShapeModel implements Collidable {
         }
     }
 
-    private class ProjectileState {
-        private boolean isProjecting;
-        private double totalRotationAngle;
-        private double angularSpeed = 1.5;
-        private double angleToEpsilon;
-        private double lastShotBulletTime = 0;
-        private Point2D center = EpsilonModel.getINSTANCE().getAnchor();
-
-        public void start() {
-            setAngleToEpsilon();
-            totalRotationAngle = 0;
-            isProjecting = true;
-        }
-
-        public void setAngleToEpsilon(){
-            center = EpsilonModel.getINSTANCE().getAnchor();
-            Point2D rightVec = new Point2D.Double(1, 0);
-            Point2D handVec = relativeLocation(getAnchor(), center);
-            double angle = findAngleBetweenTwoVectors(rightVec, handVec);
-//            angleToEpsilon = angle;
-
-            if (handVec.getX() > 0) angleToEpsilon = Math.toDegrees(angle);
-            else angleToEpsilon = Math.toDegrees(angle) + 180;
-
-        }
-
-
-
-        public boolean updateRotation() {
-            angleToEpsilon += angularSpeed;
-            if (angleToEpsilon >= 360) angleToEpsilon -= 360;
-            totalRotationAngle += angularSpeed;
-            if (totalRotationAngle >= 360) {
-                isProjecting = false;
-                totalRotationAngle = 0;
-            }
-            return isProjecting;
-        }
-
-        public boolean isProjecting() {
-            return isProjecting;
-        }
-
-        public double getAngleToEpsilon() {
-            return angleToEpsilon;
-        }
-
-        public double getAngularSpeed() {
-            return angularSpeed;
-        }
-
-        public Point2D getCenter() {
-            return center;
-        }
-
-        public void updateLastShotBulletTime(double time) {
-            lastShotBulletTime = time;
-        }
-
-        public double getLastShotBulletTime() {
-            return lastShotBulletTime;
-        }
-    }
 }

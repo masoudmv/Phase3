@@ -4,7 +4,6 @@ import controller.Game;
 import controller.Utils;
 import model.FinalPanelModel;
 import model.MyPolygon;
-import model.charactersModel.ArchmireModel;
 import model.charactersModel.EpsilonModel;
 import model.charactersModel.GeoShapeModel;
 //import model.collision.Coll;
@@ -12,7 +11,6 @@ import model.charactersModel.SmileyBullet;
 import model.collision.Collidable;
 import model.movement.Direction;
 import org.example.GraphicalObject;
-import view.MainFrame;
 
 import javax.swing.*;
 import java.awt.*;
@@ -20,10 +18,8 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import java.util.Random;
 
 import static controller.Utils.*;
-import static model.charactersModel.SmileyBullet.smileyBullets;
 import static model.imagetools.ToolBox.getBufferedImage;
 
 public class Smiley extends GeoShapeModel implements Collidable {
@@ -33,7 +29,7 @@ public class Smiley extends GeoShapeModel implements Collidable {
     public static ArrayList<Smiley> smilies = new ArrayList<>();
     private FinalPanelModel finalPanelModel;
     protected static MyPolygon pol;
-    private double last = 0;
+    private double lastRapidFire = 0;
     private double squeezeStartTime = 0;
 
 
@@ -101,9 +97,9 @@ public class Smiley extends GeoShapeModel implements Collidable {
 
 
         double now = Game.ELAPSED_TIME;
-        if (now - last > 5) {
-            last = now;
-            rapidFire(10, 180);
+        if (now - lastRapidFire > 5) {
+            lastRapidFire = now;
+            rapidFire(10, 360);
         }
 
 
