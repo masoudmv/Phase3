@@ -318,7 +318,7 @@ public class GameLoop implements Runnable {
         for (ArchmireModel archmireModel : ArchmireModel.archmireModels) {
             archmireModel.move();
             archmireModel.updateLocation();
-            ArrayList<Polygon> polygons = new ArrayList<>();
+//            ArrayList<Polygon> polygons = new ArrayList<>();
 //            for (int i = 0; i < MainPanel.locationHistory.size(); i++) {
 //                polygons.add(MainPanel.locationHistory.get(i).getPolygon());
 //            }

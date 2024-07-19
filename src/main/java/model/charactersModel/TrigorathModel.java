@@ -397,14 +397,12 @@ public class TrigorathModel implements Movable, Collidable, Impactable {
         double theta = random.nextGaussian(Math.PI, 1);
         if (theta<PI/2) theta = PI/2;
         if (theta>3*PI/2) theta = 3*PI/2;
-        new CollectibleModel(getAnchor(), rotateVector(direction, theta));
+        new CollectibleModel(getAnchor(), rotateVector(direction, theta), 2); // TODO check xp
 
         theta = random.nextGaussian(Math.PI, 1);
         if (theta<PI/2) theta = PI/2;
         if (theta>3*PI/2) theta = 3*PI/2;
-        new CollectibleModel(getAnchor(), rotateVector(direction, theta));
-
-
+        new CollectibleModel(getAnchor(), rotateVector(direction, theta), 2);
     }
 
     public int getHp() {

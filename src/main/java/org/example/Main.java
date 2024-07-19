@@ -102,7 +102,7 @@ public class Main {
 //        MyPolygon pp = bv.myBoundingPolygon;
 ////        until hear
         ArchmireModel.loadImage();
-//        new ArchmireModel(new Point2D.Double(300, 400));
+        new ArchmireModel(new Point2D.Double(300, 400));
 //        new ArchmireModel(new Point2D.Double(300, 400));
 //        new ArchmireModel(new Point2D.Double(300, 400));
 //        new ArchmireModel(new Point2D.Double(300, 400));
@@ -181,9 +181,9 @@ public class Main {
         LeftHand.loadImage();
 
 
-        Hand l = new LeftHand(new Point2D.Double(500, 401));
-        Hand r = new Hand(new Point2D.Double(1500, 400));
-        new Smiley(new Point2D.Double(1000, 200), l , r);
+//        Hand l = new LeftHand(new Point2D.Double(500, 401));
+//        Hand r = new Hand(new Point2D.Double(1500, 400));
+//        new Smiley(new Point2D.Double(1000, 200), l , r);
 
 
 

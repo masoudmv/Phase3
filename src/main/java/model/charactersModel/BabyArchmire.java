@@ -9,6 +9,7 @@ import java.awt.*;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 
+import static controller.constants.EntityConstants.*;
 import static model.imagetools.ToolBox.getBufferedImage;
 
 public class BabyArchmire extends ArchmireModel {
@@ -18,6 +19,20 @@ public class BabyArchmire extends ArchmireModel {
     public BabyArchmire(Point2D anchor) {
         super(anchor, pol);
     }
+
+
+
+    @Override
+    public void eliminate(){
+        super.eliminate();
+        collidables.remove(this);
+        archmireModels.remove(this);
+
+        CollectibleModel.dropCollectible(
+                getAnchor(), BABY_ARCHMIRE_NUM_OF_COLLECTIBLES.getValue(), BABY_ARCHMIRE_COLLECTIBLES_XP.getValue()
+        );
+    }
+
 
     public static BufferedImage loadImage() {
         Image img = new ImageIcon("./src/babyArchmire.png").getImage();

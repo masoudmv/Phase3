@@ -21,7 +21,7 @@ import static model.collision.Impactable.impactables;
 import static model.movement.Movable.movables;
 import static org.example.Main.totalXP;
 import static view.charactersView.BulletView.bulletViews;
-import static view.charactersView.CollectibleView.collectibleViews;
+//import static view.charactersView.CollectibleView.collectibleViews;
 //import static view.MainPanel.nullifyMainPanel;
 import static view.junks.Menu.addMenu;
 import static view.charactersView.Drawable.drawables;
@@ -99,7 +99,7 @@ public class GameOverPanel extends JPanel implements MouseListener {
         bulletModels.clear();
         bulletViews.clear();
         collectibleModels.clear();
-        collectibleViews.clear();
+//        collectibleViews.clear();
         totalXP += inGameXP;
         nullifyEpsilon();
         nullifyGameInstance();

@@ -24,7 +24,7 @@ import static model.charactersModel.SquarantineModel.squarantineModels;
 import static model.charactersModel.TrigorathModel.trigorathModels;
 import static view.FinalPanelView.finalPanelViews;
 import static view.charactersView.BulletView.bulletViews;
-import static view.charactersView.CollectibleView.collectibleViews;
+//import static view.charactersView.CollectibleView.collectibleViews;
 import static view.charactersView.NecropickView.necropickViews;
 import static view.charactersView.SquarantineView.squarantineViews;
 import static view.charactersView.TrigorathView.trigorathViews;
@@ -239,12 +239,12 @@ public abstract class UserInterfaceController {
 
 
 
-    public static Point2D calculateViewLocationCollectible(Component component, String id){
-        CollectibleModel collectibleModel = findCollectibleModel(id);
-        Point corner = new Point(component.getX(),component.getY());
-        assert collectibleModel != null;
-        return relativeLocation(collectibleModel.getAnchor(),corner);
-    }
+//    public static Point2D calculateViewLocationCollectible(Component component, String id){
+//        CollectibleModel collectibleModel = findCollectibleModel(id);
+//        Point corner = new Point(component.getX(),component.getY());
+//        assert collectibleModel != null;
+//        return relativeLocation(collectibleModel.getAnchor(),corner);
+//    }
 
     public static Point2D calculateLocationOfFinalPanelView(String id){
         FinalPanelModel f = findFinalPanelModel(id);
@@ -352,12 +352,12 @@ public abstract class UserInterfaceController {
 //    }
 
 
-    public static CollectibleModel findCollectibleModel(String id){
-        for (CollectibleModel collectibleModel: collectibleModels){
-            if (collectibleModel.getId().equals(id)) return collectibleModel;
-        }
-        return null;
-    }
+//    public static CollectibleModel findCollectibleModel(String id){
+//        for (CollectibleModel collectibleModel: collectibleModels){
+//            if (collectibleModel.getId().equals(id)) return collectibleModel;
+//        }
+//        return null;
+//    }
 
 
     public static FinalPanelModel findFinalPanelModel(String id){
@@ -376,12 +376,12 @@ public abstract class UserInterfaceController {
 
 
 
-    public static CollectibleView findCollectibleView(String id){
-        for (CollectibleView collectibleView: collectibleViews){
-            if (collectibleView.getId().equals(id)) return collectibleView;
-        }
-        return null;
-    }
+//    public static CollectibleView findCollectibleView(String id){
+//        for (CollectibleView collectibleView: collectibleViews){
+//            if (collectibleView.getId().equals(id)) return collectibleView;
+//        }
+//        return null;
+//    }
 
     public static BulletView findBulletView(String id){
         for (BulletView bulletView: bulletViews){

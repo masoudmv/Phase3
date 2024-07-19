@@ -15,7 +15,6 @@ import static controller.UserInterfaceController.*;
 import static controller.Utils.*;
 
 
-//todo extend mypolygon
 
 public abstract class GeoShapeModel extends Entity {
     protected int HP;

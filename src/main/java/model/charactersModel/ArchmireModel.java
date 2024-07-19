@@ -13,8 +13,8 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import static controller.UserInterfaceController.createArchmireView;
-import static controller.constants.EntityConstants.ARCHMIRE_SPEED;
 import static controller.Utils.*;
+import static controller.constants.EntityConstants.*;
 import static model.imagetools.ToolBox.getBufferedImage;
 
 public class ArchmireModel extends GeoShapeModel implements Collidable {
@@ -74,12 +74,14 @@ public class ArchmireModel extends GeoShapeModel implements Collidable {
         collidables.remove(this);
         archmireModels.remove(this);
 
+        CollectibleModel.dropCollectible(
+                getAnchor(), ARCHMIRE_NUM_OF_COLLECTIBLES.getValue(), ARCHMIRE_COLLECTIBLES_XP.getValue()
+        );
+
         // TODO: You can do better than this!
         new BabyArchmire(new Point2D.Double(anchor.getX(), anchor.getY()+40));
-        new BabyArchmire(new Point2D.Double(anchor.getX(), anchor.getY()-40));
-
+//        new BabyArchmire(new Point2D.Double(anchor.getX(), anchor.getY()-40));
         // TODO: REAL ELIMINATE
-
     }
 
     public void updateLocation() {

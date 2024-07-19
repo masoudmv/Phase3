@@ -1,4 +1,5 @@
 package model.charactersModel;
+import model.MyPolygon;
 import model.collision.Collidable;
 import model.movement.Direction;
 import model.movement.Movable;
@@ -7,6 +8,7 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.Random;
 import java.util.UUID;
 
 import static controller.constants.Constants.BULLET_RADIUS;
@@ -14,31 +16,63 @@ import static controller.UserInterfaceController.*;
 import static controller.Game.ELAPSED_TIME;
 import static controller.Utils.*;
 import static controller.Utils.addVectors;
+import static controller.constants.Constants.PI;
+import static controller.constants.EntityConstants.COLLECTABLE_RADIUS;
 
-public class CollectibleModel implements Collidable, Movable {
-    String id;
+public class CollectibleModel extends GeoShapeModel implements Collidable, Movable {
+
     double radius;
-    private Point2D anchor;
+//    private Point2D anchor;
     public static LinkedList<CollectibleModel> collectibleModels = new LinkedList<>();
-    public Direction direction;
+//    public Direction direction;
     public boolean impactInProgress;
     public double impactMaxVel;
     public double birthTime;
+    private static final Random random = new Random();
+    private int collectibleXP;
 
 
-    public CollectibleModel(Point2D anchor, Point2D direction) {
+    public CollectibleModel(Point2D anchor, Point2D direction, int collectibleXP) {
+        super();
         birthTime = ELAPSED_TIME;
-        this.radius = BULLET_RADIUS;
-        this.id= UUID.randomUUID().toString();
+        this.radius = COLLECTABLE_RADIUS.getValue();
+//        this.id= UUID.randomUUID().toString();
         this.anchor = anchor;
         this.direction = new Direction(direction);
         this.direction.adjustDirectionMagnitude();
+        this.collectibleXP = collectibleXP;
         impactInProgress = true;
         impactMaxVel = 1.75;
+        setDummyPolygon();
         collectibleModels.add(this);
         collidables.add(this);
         createCollectibleView(id);
     }
+
+    public int getCollectibleXP() {
+        return collectibleXP;
+    }
+
+    public void setCollectibleXP(int collectibleXP) {
+        this.collectibleXP = collectibleXP;
+    }
+
+
+    private void setDummyPolygon(){
+        double[] x = {0, 0, 0};
+        double[] y = {0, 0, 0};
+        myPolygon = new MyPolygon(x, y, 3);
+    }
+
+
+    public static void dropCollectible(Point2D anchor, int numOfCollectibles, int xp) {
+        Point2D direction = relativeLocation(anchor, EpsilonModel.getINSTANCE().getAnchor());
+        for (int i = 0; i < numOfCollectibles; i++) {
+            double theta = random.nextDouble(0, 2 * PI);
+            new CollectibleModel(anchor, rotateVector(direction, theta), xp);
+        }
+    }
+
 
     public String getId() {
         return id;
@@ -97,6 +131,11 @@ public class CollectibleModel implements Collidable, Movable {
     }
 
     @Override
+    public void setMyPolygon(MyPolygon myPolygon) {
+
+    }
+
+    @Override
     public Point2D[] getVertices() {
         return getVertices();
     }
@@ -125,7 +164,7 @@ public class CollectibleModel implements Collidable, Movable {
     public void remove(){
         collidables.remove(this);movables.remove(this);
         collectibleModels.remove(this);
-        findCollectibleView((this).getId()).remove();
+//        findCollectibleView((this).getId()).remove();
     }
 
 
