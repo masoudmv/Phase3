@@ -11,9 +11,9 @@ public class Constants {
 //    public static final Dimension PANEL_SIZE = new Dimension((int) 600, (int) 600);
 
     public static final int FPS = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()[0].getDisplayMode().getRefreshRate();
-    public static final double FRAME_UPDATE_TIME=(double) TimeUnit.SECONDS.toMillis(1)/FPS;
+    public static final double FRAME_UPDATE_TIME = (double) TimeUnit.SECONDS.toMillis(1)/FPS;
     public static final int UPS = 100;
-    public static final double MODEL_UPDATE_TIME=(double) TimeUnit.SECONDS.toMillis(1)/UPS;
+    public static final double MODEL_UPDATE_TIME = (double) TimeUnit.SECONDS.toMillis(1)/UPS;
     public static double EPSILON_MAX_SPEED = 3.5;
     public static final double SPEED = 1;
     public static double RADIUS = 15;
@@ -30,5 +30,8 @@ public class Constants {
     public static final double BULLET_VELOCITY = 10;
     public static final double TRIGORATH_MAX_VEL_RADIUS = 200;
     public static double INTERVAL = 5;
+    public static double AOE_COOLDOWN = 1;
+    public static double AVALANCHE_INITIATION_DELAY = 6;
+    public static double AVALANCHE_DURATION = 0.5;
 
 }

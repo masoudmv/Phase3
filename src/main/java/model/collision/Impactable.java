@@ -2,9 +2,10 @@ package model.collision;
 
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public interface Impactable {
-    static ArrayList<Impactable> impactables = new ArrayList<>();
+    CopyOnWriteArrayList<Impactable> impactables = new CopyOnWriteArrayList<>();
     boolean isImpactInProgress();
     void setImpactInProgress(boolean impactInProgress);
     void impact(CollisionState collisionState);

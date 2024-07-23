@@ -3,13 +3,14 @@ package view.charactersView;
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import static controller.constants.Constants.BULLET_RADIUS;
 
 public class BulletView implements Drawable {
     String id;
     Point2D currentLocation=new Point2D.Double(0,0);
-    public static ArrayList<BulletView> bulletViews = new ArrayList<>();
+    public static CopyOnWriteArrayList<BulletView> bulletViews = new CopyOnWriteArrayList<>();
 
     public BulletView(String id) {
 

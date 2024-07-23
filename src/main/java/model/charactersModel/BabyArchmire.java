@@ -18,6 +18,7 @@ public class BabyArchmire extends ArchmireModel {
 
     public BabyArchmire(Point2D anchor) {
         super(anchor, pol);
+        this.health = BABY_ARCHMIRE_HEALTH.getValue();
     }
 
 

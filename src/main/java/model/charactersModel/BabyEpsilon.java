@@ -1,12 +1,8 @@
 package model.charactersModel;
 
 import model.MyPolygon;
-import model.charactersModel.EpsilonModel;
-import model.charactersModel.GeoShapeModel;
 import model.movement.Direction;
-
 import java.awt.geom.Point2D;
-
 import static controller.UserInterfaceController.createBabyEpsilon;
 import static controller.Utils.addVectors;
 import static controller.Utils.multiplyVector;
@@ -18,13 +14,8 @@ public class BabyEpsilon extends GeoShapeModel {
         super();
         this.anchor = anchor;
         this.radius = BABY_EPSILON_RADIUS.getValue();
-        setDummyPolygon();
         createBabyEpsilon(id);
     }
-
-//    public void move(){
-//
-//    }
 
     public void move(Direction direction) {
         Point2D movement = multiplyVector(direction.getNormalizedDirectionVector(), direction.getMagnitude());
@@ -36,12 +27,6 @@ public class BabyEpsilon extends GeoShapeModel {
     @Override
     public void setMyPolygon(MyPolygon myPolygon) {
 
-    }
-
-    private void setDummyPolygon(){
-        double[] x = {0,0,0};
-        double[] y = {0,0,0};
-        myPolygon = new MyPolygon(x, y, 3);
     }
 
     public static void createBabies() {

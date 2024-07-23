@@ -30,8 +30,9 @@ public class LeftHand extends Hand{
     public static BufferedImage loadImage() {
         Image img = new ImageIcon("./src/hand2.png").getImage();
         LeftHand.image = getBufferedImage(img);
-
         GraphicalObject bowser = new GraphicalObject(image);
+        bowser.refine();
+
         polygon = bowser.getMyBoundingPolygon();
 
 

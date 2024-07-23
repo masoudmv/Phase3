@@ -2,32 +2,29 @@ package model.charactersModel.blackOrb;
 
 import controller.Game;
 import model.FinalPanelModel;
-//import view.panel.GamePanelView;
 import java.awt.*;
 import java.awt.geom.Point2D;
-import java.util.ArrayList;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
+import java.util.Random;
+import java.util.concurrent.CopyOnWriteArrayList;
 import static controller.Utils.*;
 import static controller.constants.EntityConstants.ORB_PANEL_CREATION_DELAY;
 
 public class BlackOrb { // todo panels should be created with delay?
-    private double radiusOfOrb = 50;
+    Random random = new Random();
     FinalPanelModel[] panels = new FinalPanelModel[5];
     Orb[] orbs = new Orb[5];
     int numCreatedOrbs = 0;
-    public static ArrayList<Laser> lasers = new ArrayList<>();
+    public static CopyOnWriteArrayList<Laser> lasers = new CopyOnWriteArrayList<>();
     double lastCreatedOrbTime = 0;
     private final Point2D[] vertices = new Point2D[5];
     private final Point2D movePanelLocation = new Point2D.Double(125, 125);
-    public static ArrayList<BlackOrb> blackOrbs = new ArrayList<>();
-
-    // ExecutorService to manage threads
-    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
+    public static CopyOnWriteArrayList<BlackOrb> blackOrbs = new CopyOnWriteArrayList<>();
+    private boolean avalancheIsSet = false;
+    private double avalancheBirthTime;
 
     public BlackOrb() throws InterruptedException {
         super();
+        this.avalancheBirthTime = random.nextInt((int) (Game.ELAPSED_TIME + 6), (int) (Game.ELAPSED_TIME + 15));
         Point2D pivot = new Point2D.Double(500, 400); // Center of the pentagon
         double edgeLength = 350; // Distance between adjacent vertices
         double radius = edgeLength / (2 * Math.sin(Math.PI / 5)); // Circumradius of the pentagon
@@ -42,6 +39,9 @@ public class BlackOrb { // todo panels should be created with delay?
     }
 
     public void initiateBlackOrb(){
+        initiateAvalanche();
+        Laser.performAoeDamage();
+
         double now = Game.ELAPSED_TIME;
         if (now - lastCreatedOrbTime > ORB_PANEL_CREATION_DELAY && numCreatedOrbs == 5) {
             // Run initializeOrbs in a separate thread
@@ -55,6 +55,8 @@ public class BlackOrb { // todo panels should be created with delay?
         panels[numCreatedOrbs] = p;
         lastCreatedOrbTime = now;
         numCreatedOrbs ++;
+
+        System.out.println(lastCreatedOrbTime);
     }
 
     private void initializedOrbs(){
@@ -76,8 +78,11 @@ public class BlackOrb { // todo panels should be created with delay?
         }
     }
 
-//    public static void drawBlackOrb(Component component, Graphics g) {
-//        Orb.drawOrbs(component, g);
-//        Laser.drawLasers(component, g);
-//    }
+    public void initiateAvalanche(){
+        double now = Game.ELAPSED_TIME;
+        if (now - lastCreatedOrbTime < avalancheBirthTime || avalancheIsSet) return;
+        int index = random.nextInt(lasers.size());
+        lasers.get(index).setAvalanche(true);
+        avalancheIsSet = true;
+    }
 }

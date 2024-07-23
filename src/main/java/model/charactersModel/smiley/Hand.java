@@ -306,9 +306,10 @@ public class Hand extends GeoShapeModel implements Collidable {
     }
 
     public static BufferedImage loadImage() {
-        Image img = new ImageIcon("./src/hand.png").getImage();
+        Image img = new ImageIcon("./src/1.png").getImage();
         Hand.image = getBufferedImage(img);
         GraphicalObject bowser = new GraphicalObject(image);
+        bowser.refine();
         pol = bowser.getMyBoundingPolygon();
         return Hand.image;
     }

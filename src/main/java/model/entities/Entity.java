@@ -1,56 +1,40 @@
-//package model.entities;
-//
-//import model.characters.CollectibleModel;
-//import model.characters.GeoShapeModel;
-//
-//import java.util.concurrent.ConcurrentHashMap;
-//
-//import static controller.UserInterfaceController.*;
-//import static controller.constants.ImpactConstants.MELEE_COOLDOWN;
-//import static model.characters.CollectibleModel.bulkCreateCollectibles;
-//import static model.characters.GeoShapeModel.allShapeModelsList;
-//import static model.collision.Collidable.collidables;
-//
-//public abstract class Entity {
-//    public int health;
-//    public int fullHealth;
-//    public boolean vulnerable;
-//    public int numberOfCollectibles = 0;
-//    public int collectibleValue = 0;
-//    public ConcurrentHashMap<AttackTypes, Integer> damageSize = new ConcurrentHashMap<>();
-//    private long lastMeleeTime = 0;
-//
-//    protected abstract String getModelId();
-//
-//    protected abstract String getMotionPanelId();
-//
-//    public void damage(Entity entity, AttackTypes attackType) {
-//        long now = System.nanoTime();
-//        if (now - lastMeleeTime >= MELEE_COOLDOWN.getValue()) {
-//            if (entity.vulnerable) {
+package model.entities;
+
+import controller.Game;
+import model.charactersModel.GeoShapeModel;
+
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
+
+import static controller.constants.Constants.AOE_COOLDOWN;
+
+public abstract class Entity {
+    protected int health = 100;
+    public int fullHealth;
+    public boolean vulnerable = true;
+    public ConcurrentHashMap<AttackTypes, Integer> damageSize = new ConcurrentHashMap<>();
+    public static CopyOnWriteArrayList<GeoShapeModel> entities = new CopyOnWriteArrayList<>();
+    private double lastAoeTime = 0;
+
+    public void damage(Entity entity, AttackTypes attackType) {
+        double now = Game.ELAPSED_TIME;
+        if (now - lastAoeTime >= AOE_COOLDOWN) {
+            if (entity.vulnerable) {
 //                entity.health -= damageSize.get(attackType);
-//                if (entity.health <= 0) {
-//                    entity.eliminate();
-////                    if (entity instanceof CollectibleModel) playXPSoundEffect();
-////                    else playDownSoundEffect();
-//                }
-////                else playHitSoundEffect();
-//            }
-//            lastMeleeTime = now;
-//        }
-//    }
-//
-////    public void eliminate() {
-////        if (this instanceof GeoShapeModel) {
-////            bulkCreateCollectibles((GeoShapeModel) this);
-////            allShapeModelsList.remove(this);
-////            collidables.remove(this);
-////            eliminateView(getModelId(), getMotionPanelId());
-////        }
-////    }
-//
-//    public void addHealth(int units) {
-//        this.health = Math.min(fullHealth, health + units);
-//    }
-//
-//}
+                if (entity.health <= 0) {
+                    entity.eliminate();
+                    // if (entity instanceof CollectibleModel) playXPSoundEffect();
+                    // else playDownSoundEffect();
+                }   // else playHitSoundEffect();
+            }
+            lastAoeTime = now;
+        }
+    }
+
+    public void addHealth(int units) {
+        this.health = Math.min(fullHealth, health + units);
+    }
+
+    public abstract void eliminate();
+
+}

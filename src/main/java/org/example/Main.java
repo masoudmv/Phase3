@@ -1,7 +1,10 @@
 package org.example;
 
 import controller.Game;
+import javafx.scene.shape.Arc;
 import model.MyPolygon;
+import model.charactersModel.blackOrb.BlackOrb;
+import model.charactersModel.blackOrb.Orb;
 import model.entities.Profile;
 import model.charactersModel.*;
 import model.charactersModel.smiley.Fist;
@@ -50,6 +53,11 @@ public class Main {
 //        System.out.println(id);
 
         SmileyBullet.loadImage();
+        NecropickModel.loadImage();
+        BabyArchmire.loadImage();
+        OmenoctModel.loadImage();
+        ArchmireModel.loadImage();
+        SmileyBullet.loadImage();
 
 //        new SmileyBullet(new Point2D.Double(300, 300)).rapidFire(10, 180);
 
@@ -57,7 +65,7 @@ public class Main {
         BufferedImage b = EpsilonModel.loadImage();
         GraphicalObject bows = new GraphicalObject(b);
         MyPolygon pol = bows.myBoundingPolygon;
-        String id = new EpsilonModel(new Point2D.Double(1000, 700), pol).getId();
+        new EpsilonModel(new Point2D.Double(1000, 700), pol);
 
 
 
@@ -91,6 +99,12 @@ public class Main {
 //        MyPolygon pl = ber.myBoundingPolygon;
 //        new BarricadosModel(new Point2D.Double(900, 400), pl);
 
+//        new TrigorathModel(new Point2D.Double(1000, 500));
+
+
+//        new OmenoctModel(new Point2D.Double( 500, 500));
+//        new ArchmireModel(new Point2D.Double( 500, 500));
+
 //        Orb.loadImage();
 //        new BlackOrb();
 
@@ -101,15 +115,13 @@ public class Main {
 //        GraphicalObject bv = new GraphicalObject(bx);
 //        MyPolygon pp = bv.myBoundingPolygon;
 ////        until hear
-        ArchmireModel.loadImage();
-        new ArchmireModel(new Point2D.Double(300, 400));
 //        new ArchmireModel(new Point2D.Double(300, 400));
 //        new ArchmireModel(new Point2D.Double(300, 400));
 //        new ArchmireModel(new Point2D.Double(300, 400));
 //        new ArchmireModel(new Point2D.Double(300, 400));
 //        new ArchmireModel(new Point2D.Double(300, 400));
 //        new ArchmireModel(new Point2D.Double(300, 400));
-        BabyArchmire.loadImage();
+//        new ArchmireModel(new Point2D.Double(300, 400));
 //
 //
 
@@ -121,10 +133,12 @@ public class Main {
 
 
 
-//        BufferedImage bq = NecropickModel.loadImage();
 //        GraphicalObject boww = new GraphicalObject(bq);
 //        MyPolygon polll = boww.myBoundingPolygon;
-//        new NecropickModel(new Point2D.Double(-200, -200), polll);
+//        new NecropickModel();
+//        new NecropickModel();
+//        new NecropickModel();
+//        new NecropickModel();
 
 
 

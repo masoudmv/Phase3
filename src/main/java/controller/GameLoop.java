@@ -1,5 +1,6 @@
 package controller;
 
+import controller.constants.Constants;
 import model.charactersModel.BulletModel;
 import model.charactersModel.CollectibleModel;
 import model.charactersModel.*;
@@ -15,6 +16,7 @@ import view.junks.GameOverPanel;
 import view.junks.ShopPanel;
 import view.junks.VictoryPanel;
 
+import javax.swing.*;
 import javax.swing.Timer;
 
 import java.awt.*;
@@ -43,6 +45,7 @@ import static model.charactersModel.SmileyBullet.smileyBullets;
 //import static model.collision.Coll.colls;
 import static model.collision.Collidable.collidables;
 import static model.movement.Movable.movables;
+import static view.MainFrame.label;
 //import static view.Panel.panels;
 
 
@@ -89,7 +92,7 @@ public class GameLoop implements Runnable {
 
     private boolean acesoInProgress=false;
 
-    private GameLoop() {
+    public GameLoop() {
         decreaseVelocities=false;
         decrementRation=1;
         lastShot = 0;
@@ -102,6 +105,27 @@ public class GameLoop implements Runnable {
         aliveEnemies=0;
         playThemeSound();
 
+
+
+        ELAPSED_TIME = 0;
+        inGameXP = 0;
+        wave = 1;
+//        Constants.RADIUS = 15;
+        MainFrame frame = MainFrame.getINSTANCE();
+        frame.addMouseListener(new MouseController());
+        frame.addMouseMotionListener(new MouseController());
+
+
+
+        INSTANCE = this;
+//        SwingUtilities.invokeLater(() -> {
+//            MainFrame.getINSTANCE().add(label);
+//
+//            MainFrame.getINSTANCE().addKeyListener(UserInputHandler.getINSTANCE());
+//            gameLoop = GameLoop.getINSTANCE();
+//            gameLoop.initializeGame();
+//            gameLoop.start();
+//        });
 
 //        MainFrame.getINSTANCE().addKeyListener(this);
 
@@ -123,68 +147,42 @@ public class GameLoop implements Runnable {
         gameLoop = new Timer(delay, taskPerformer);
         gameLoop.start();
 
+
+//        initializeGame();
+
+
+
+
+
+
+//        gameLoop = GameLoop.getINSTANCE();
+//        this.start();
     }
-    public void start(){
-        this.start();
+
+
+
+
+
+    public void start() {
+        if (running.get()) return;
+        running.set(true);
+        new Thread(this).start();
     }
-    public void stop(){
-        this.stop();
+
+    public void stop() {
+        if (!running.get()) return;
+        running.set(false);
+        exit.set(true);
     }
 
 
-    private void startMovementTimer() {}
 
-//    public void stopMovementTimer() {
-//        if (movementTimer != null) {
-//            movementTimer.stop();
-//            movementTimer = null;
-//
-//        }
-//    }
 
-//    private void updateMovement() {
-//
-//        double deltaX=0;
-//        double deltaY=0;
-//
-//        Map<String, Integer> keyBindings = KeyBindingMenu.getINSTANCE().getKeyBindings();
-//
-//        if (sensitivity<50) EPSILON_MAX_SPEED=3;
-//        if (50<=sensitivity && sensitivity<60) EPSILON_MAX_SPEED=3.5;
-//        if (60<sensitivity && sensitivity<70) EPSILON_MAX_SPEED=4;
-//        if (70<sensitivity && sensitivity<80) EPSILON_MAX_SPEED=4.5;
-//        if (80<sensitivity && sensitivity<90) EPSILON_MAX_SPEED=5;
-//        if (90<sensitivity && sensitivity<=100) EPSILON_MAX_SPEED=5.5;
-//
-//
-//
-//
-//        if (keysPressed.contains(keyBindings.get("Move Right"))) {
-//            deltaX += 0.7;
-//        }
-//        if (keysPressed.contains(keyBindings.get("Move Left"))) {
-//            deltaX -= 0.7;
-//        }
-//        if (keysPressed.contains(keyBindings.get("Move Up"))) {
-//            deltaY -= 0.7;
-//        }
-//        if (keysPressed.contains(keyBindings.get("Move Down"))) {
-//            deltaY += 0.7;
-//        }
-//
-//        Point2D.Double vector = new Point2D.Double(deltaX, deltaY);
-//        Point2D point = multiplyVector(EpsilonModel.getINSTANCE().getDirection().getNormalizedDirectionVector(),
-//                EpsilonModel.getINSTANCE().getDirection().getMagnitude());
-//        Direction direction = new Direction(addVectors(point, vector));
-//        direction.adjustEpsilonDirectionMagnitude();
-//        EpsilonModel.getINSTANCE().setDirection(direction);
-//
-//    }
 
     public void updateView() {
 
 
-        MainFrame.label.setText("<html>Wave: "+ Game.wave + "<br>Elapsed Time: "+ (int) Game.ELAPSED_TIME
+        label.setText("<html>Wave: "+ Game.wave + "<br>Elapsed Time: "+ (int) Game.ELAPSED_TIME
                 + "<br> XP: "+Game.inGameXP +"<br>HP: "+ EpsilonModel.getINSTANCE().getHp());
 
         long currentTickTime = System.currentTimeMillis();
@@ -300,7 +298,7 @@ public class GameLoop implements Runnable {
 
         for (Movable movable : movables) {
             movable.move();
-            movable.friction();
+//            movable.friction();
         }
 
 
@@ -326,16 +324,16 @@ public class GameLoop implements Runnable {
         }
 
 
-        for (int i = 0; i < collectibleModels.size(); i++) {
-            double age = ELAPSED_TIME - collectibleModels.get(i).birthTime;
-            if (age >= 10) collectibleModels.get(i).remove();
-        }
+//        for (int i = 0; i < collectibleModels.size(); i++) {
+//            double age = ELAPSED_TIME - collectibleModels.get(i).birthTime;
+//            if (age >= 10) collectibleModels.get(i).remove();
+//        }
 
         if (EpsilonModel.getINSTANCE().getHp() <= 0) {
 //            MainFrame.getINSTANCE().remove(MainPanel.getINSTANCE());
             MainFrame.getINSTANCE().repaint();
-            MainFrame.getINSTANCE().remove(MainFrame.label);
-            gameLoop.stop();
+            MainFrame.getINSTANCE().remove(label);
+//            gameLoop.stop();
             new GameOverPanel();
 
         }
@@ -349,8 +347,8 @@ public class GameLoop implements Runnable {
         if (RADIUS > 500) {
 //            MainFrame.getINSTANCE().remove(MainPanel.getINSTANCE());
             MainFrame.getINSTANCE().repaint();
-            MainFrame.getINSTANCE().remove(MainFrame.label);
-            gameLoop.stop();
+            MainFrame.getINSTANCE().remove(label);
+//            gameLoop.stop();
             new VictoryPanel();
 
         }
@@ -377,6 +375,7 @@ public class GameLoop implements Runnable {
         }
         EpsilonModel epsilonModel = EpsilonModel.getINSTANCE();
         if (epsilonModel.isImpactInProgress()) {
+            System.out.println("qqqqqqq");
             epsilonModel.getDirection().accelerateDirection(6);
             if (epsilonModel.getDirection().getMagnitude() > 4) {
                 epsilonModel.setImpactInProgress(false);
@@ -509,108 +508,44 @@ public class GameLoop implements Runnable {
 //
 //    }
 
-    private void
-    initializeGame(){
-        decreaseVelocities=false;
-        decrementRation=1;
-        lastShot = 0;
-//        shopAbility=null;
-        EPSILON_MELEE_DAMAGE =10;
-        EPSILON_RANGED_DAMAGE =5;
-        movementInProgress = false;
-        firstLoop= true;
-        createdNumberOfEnemies=0;
-        aliveEnemies=0;
-        playThemeSound();
 
-//        MainFrame.getINSTANCE().addKeyListener(this);
-
-
-        int delay = 10; //milliseconds
-        ActionListener taskPerformer = new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                //...Perform a task...
-                //                    updateView();
-//                    updateModel();
-
-//                    System.out.println(javax.swing.SwingUtilities.isEventDispatchThread()); returned True!
-//                    we are still on EDT!
-
-
-            }
-        };
-
-        gameLoop = new Timer(delay, taskPerformer);
-        gameLoop.start();
-
-
-    }
 
 
     @Override
     public void run() {
-        running.set(true);
-        exit.set(false);
-//        initializeGame();
-//        setupHUI();
-
-        int frames = 0, ticks = 0;
+        long initialTime = System.nanoTime();
+        final double timeU = 1000000000 / 60.0;
+        final double timeF = 1000000000 / 60.0;
         double deltaU = 0, deltaF = 0;
-        currentTime = System.nanoTime();
-        lastFrameTime = currentTime;
-        lastUpdateTime = currentTime;
-        timeSave = currentTime;
-        double timePerFrame = (double) TimeUnit.SECONDS.toNanos(1) / 60;
-        double timePerUpdate = (double) TimeUnit.SECONDS.toNanos(1) / 60;
-
-        new Thread(() -> {
-            while (!exit.get()) {
-                if (!FPS_UPS.equals("")) {
-                    System.out.println(FPS_UPS);
-                    FPS_UPS = "";
-                }
-            }
-        }) {{
-            setDaemon(true);
-        }}.start();
+        int frames = 0, ticks = 0;
+        long timer = System.currentTimeMillis();
 
         while (!exit.get()) {
-            if (running.get()) {
-                currentTime = System.nanoTime();
-                if (deltaU >= 1) {
-                    updateModel();
-                    ticks++;
-                    deltaU--;
-                }
-                if (deltaF >= 1) {
+            long currentTime = System.nanoTime();
+            deltaU += (currentTime - initialTime) / timeU;
+            deltaF += (currentTime - initialTime) / timeF;
+            initialTime = currentTime;
 
-                    updateView();
+            if (deltaU >= 1) {
+                updateModel();
+                ticks++;
+                deltaU--;
+            }
 
-                    frames++;
-                    deltaF--;
-                }
-                if (currentTime - lastFrameTime > timePerFrame) {
-                    deltaF += (currentTime - lastFrameTime - timePerFrame) / timePerFrame;
+            if (deltaF >= 1) {
+                updateView();
+                frames++;
+                deltaF--;
+            }
 
-                    updateView();
-
-                    frames++;
-                    lastFrameTime = currentTime;
-                }
-                if (currentTime - lastUpdateTime > timePerUpdate) {
-                    deltaU += (currentTime - lastUpdateTime - timePerUpdate) / timePerUpdate;
-                    updateModel();
-                    ticks++;
-                    lastUpdateTime = currentTime;
-                }
-                if (currentTime - timeSave >= TimeUnit.SECONDS.toNanos(1)) {
-                    FPS_UPS = "FPS: " + frames + " | UPS:" + ticks;
-                    frames = 0;
-                    ticks = 0;
-                    timeSave = currentTime;
-                }
+            if (System.currentTimeMillis() - timer > 1000) {
+                System.out.println(String.format("UPS: %s, FPS: %s", ticks, frames));
+                frames = 0;
+                ticks = 0;
+                timer += 1000;
             }
         }
+        stop();
     }
 
     public static GameLoop getINSTANCE() {

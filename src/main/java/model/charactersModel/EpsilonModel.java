@@ -2,6 +2,7 @@ package model.charactersModel;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import controller.Game;
 import model.DoubleDimension2D;
 import model.FinalPanelModel;
 import model.MyPolygon;
@@ -12,6 +13,7 @@ import model.charactersModel.smiley.Smiley;
 import model.collision.Collidable;
 import model.collision.CollisionState;
 import model.collision.Impactable;
+import model.entities.AttackTypes;
 import model.movement.Direction;
 import model.movement.Movable;
 import view.charactersView.GeoShapeView;
@@ -35,9 +37,7 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
     static transient BufferedImage image; // transient to avoid serialization
     private static transient EpsilonModel INSTANCE;
 
-    @SerializedName("hp")
-    @Expose
-    private int hp = 100;
+
 
     @SerializedName("impactInProgress")
     @Expose
@@ -70,6 +70,9 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
         collidables.add(this);
         movables.add(this);
         createEpsilonView(id);
+//        this.h = 100;
+//        damageSize.put(AttackTypes.AOE, 5);
+
     }
 
     public static EpsilonModel getINSTANCE() {
@@ -176,11 +179,15 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
         for (int i = 0; i < numberOfVertices; i++) {
             vertices.set(i, addVectors(vertices.get(i), movement));
         }
+
+        friction();
     }
 
     @Override
     public void move() {
+        if (5<Game.ELAPSED_TIME&& Game.ELAPSED_TIME < 5.1) initiateFall();
 //        updateLocalPanel();
+        if (isOnFall) updateVelocityOnFall();
         move(direction);
         moveBabies(direction);
     }
@@ -216,6 +223,7 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
 
     @Override
     public void friction() {
+        if (isOnFall) return;
         if (isImpactInProgress()) {
             if (direction.getMagnitude() < 1) {
                 setImpactInProgress(false);
@@ -254,20 +262,20 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
     }
 
     public void setHp(int hp) {
-        this.hp = hp;
+        this.health = hp;
     }
 
     public void sumHpWith(int hp) {
-        this.hp += hp;
-        if (this.hp > 100) this.hp = 100;
+        this.health += hp;
+        if (this.health > 100) this.health = 100;
     }
 
     public int getHp() {
-        return hp;
+        return health;
     }
 
     public void damage(int damage) {
-        this.hp -= damage;
+        this.health -= damage;
     }
 
     public double getAngle() {
@@ -295,6 +303,17 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
     public void cerebrus(){
         BabyEpsilon.createBabies();
     }
+
+    @Override
+    public ArrayList<Point2D> getBoundingPoints(){
+        ArrayList<Point2D> bound = new ArrayList<>();
+        bound.add(new Point2D.Double(getAnchor().getX() - getRadius(), getAnchor().getY()));
+        bound.add(new Point2D.Double(getAnchor().getX() + getRadius(), getAnchor().getY()));
+        bound.add(new Point2D.Double(getAnchor().getX(), getAnchor().getY() + getRadius()));
+        bound.add(new Point2D.Double(getAnchor().getX(), getAnchor().getY() - getRadius()));
+        return bound;
+    }
+
 
 
     @Override
@@ -343,39 +362,44 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
         return new Point2D.Double(closestX, closestY);
     }
 
+    // todo change name:
+    private void transferOutside(Point2D intersection){
+        Point2D closestPointOnCircumference = getClosestPointOnCircumference(getAnchor(), intersection);
+        Point2D offset = new Point2D.Double(intersection.getX() - closestPointOnCircumference.getX(),
+                intersection.getY() - closestPointOnCircumference.getY());
+        anchor = addVectors(offset, getAnchor());
+    }
+
+//    // tod/o change name:
+//    private void transferOutsideOfCircle(Point2D intersection){
+//        Point2D closestPointOnCircumference = getClosestPointOnCircumference(getAnchor(), intersection);
+//        Point2D offset = new Point2D.Double(intersection.getX() - closestPointOnCircumference.getX(),
+//                intersection.getY() - closestPointOnCircumference.getY());
+//        anchor = addVectors(offset, getAnchor());
+//    }
+
     @Override
     public void onCollision(Collidable other, Point2D intersection) {
         if (other instanceof Smiley) impact(new CollisionState(intersection));
         if (other instanceof Fist) impact(new CollisionState(intersection));
         if (other instanceof Hand) {
-            // Get the closest point on the circle's circumference to the intersection
-            Point2D closestPointOnCircumference = getClosestPointOnCircumference(getAnchor(), intersection);
 
-            // Calculate the offset vector from the closest point on the circumference to the intersection
-            Point2D offset = new Point2D.Double(intersection.getX() - closestPointOnCircumference.getX(),
-                    intersection.getY() - closestPointOnCircumference.getY());
 
-            // Calculate the magnitude of the offset vector
-            double magnitude = calculateVectorMagnitude(offset);
 
-            // Adjust the anchor if the magnitude of the offset is greater than a threshold (20 in this case)
-//            if (magnitude > 20) {
-                // Add the offset vector to the current anchor point to get the new anchor position
-                anchor = addVectors(offset, getAnchor());
-//            }
-
-            // Handle the collision with a new CollisionState based on the intersection point
             impact(new CollisionState(intersection));
         }
         if (other instanceof BarricadosModel) impact(new CollisionState(intersection));
         if (other instanceof OmenoctModel) impact(new CollisionState(intersection));
-        if (other instanceof Orb) impact(new CollisionState(intersection));
+        if (other instanceof Orb) {
+            transferOutside(intersection);
+            if (!isOnFall) impact(new CollisionState(intersection));
+        }
         if (other instanceof NecropickModel) if (!((NecropickModel) other).isHovering()) impact(new CollisionState(intersection)); // :)
-        if (other instanceof CollectibleModel) ;
+        if (other instanceof CollectibleModel) Game.inGameXP += ((CollectibleModel) other).getCollectibleXP();
         if (other instanceof BulletModel) ;
         if (other instanceof SmileyBullet) ;
         if (other instanceof FinalPanelModel) {
-            impact(new CollisionState(intersection));
+            if (!isOnFall) impact(new CollisionState(intersection));
         }
     }
 }

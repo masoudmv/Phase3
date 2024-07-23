@@ -3,13 +3,14 @@ package view.charactersView;
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import static controller.constants.Constants.RADIUS;
 
 public class EpsilonView implements Drawable{
     String id;
     Point2D currentLocation=new Point2D.Double(0,0);
-    public static ArrayList<EpsilonView> epsilonViews=new ArrayList<>();
+    public static CopyOnWriteArrayList<EpsilonView> epsilonViews=new CopyOnWriteArrayList<>();
     private  ArrayList<Point2D> vertices = new ArrayList<>();
     public EpsilonView(String id) {
         this.id = id;

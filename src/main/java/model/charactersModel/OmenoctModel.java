@@ -16,24 +16,26 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import static controller.constants.Constants.SPEED;
-import static controller.constants.EntityConstants.OMENOCT_PANEL_SPEED;
 import static controller.Utils.*;
-import static controller.constants.EntityConstants.OMENOCT_SHOT_DELAY;
+import static controller.constants.EntityConstants.*;
+import static controller.constants.EntityConstants.ARCHMIRE_COLLECTIBLES_XP;
 import static controller.constants.SmileyConstants.BULLET_SPEED;
 import static model.imagetools.ToolBox.getBufferedImage;
 
 public class OmenoctModel extends GeoShapeModel implements Collidable {
     public boolean isOnEpsilonPanel = false;
+    protected static MyPolygon pol;
     static BufferedImage image;
     private int omenoctEdgeIndex = -1;
     private int destinationEdgeIndex = -1;
     public static ArrayList<OmenoctModel> omenoctModels = new ArrayList<>();
     private double lastShotBullet = 0;
 
-    public OmenoctModel(Point2D anchor, MyPolygon polygon) {
-        super(anchor, image, polygon);
+    public OmenoctModel(Point2D anchor){
+        super(anchor, image, pol);
         omenoctModels.add(this);
         collidables.add(this);
+        this.health = OMENOCT_HEALTH.getValue();
     }
 
     private void shootNonRigidBullet(){
@@ -57,11 +59,23 @@ public class OmenoctModel extends GeoShapeModel implements Collidable {
 
     @Override
     public void eliminate() {
+        super.eliminate();
+        collidables.remove(this);
+        omenoctModels.remove(this);
+
+        CollectibleModel.dropCollectible(
+                getAnchor(), OMENOCT_NUM_OF_COLLECTIBLES.getValue(), OMENOCT_COLLECTIBLES_XP.getValue()
+        );
     }
 
     public static BufferedImage loadImage() {
         Image img = new ImageIcon("./src/omenoct.png").getImage();
         OmenoctModel.image = getBufferedImage(img);
+
+        GraphicalObject bowser = new GraphicalObject(image);
+        bowser.refine();
+        pol = bowser.getMyBoundingPolygon();
+
         return OmenoctModel.image;
     }
 
@@ -267,4 +281,6 @@ public class OmenoctModel extends GeoShapeModel implements Collidable {
     public void onCollision(Collidable other) {
 
     }
+
+
 }

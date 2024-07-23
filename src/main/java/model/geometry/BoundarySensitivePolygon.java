@@ -4,16 +4,17 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
+import static model.geometry.GeometricToolBox.clockwiseSort;
 import static model.geometry.RayDetection.getVertexModel;
 
 //import static geometry.RayDetection.getVertexModel;
 
 public class BoundarySensitivePolygon extends Polygon {
-    public static final int PRECISION = 3;
+    public static final int PRECISION = 0;
 
-    ArrayList<Point> boundaryPoints = new ArrayList<>();
+    public ArrayList<Point> boundaryPoints = new ArrayList<>();
     BufferedImage image;
-    Point pivot;
+    public Point pivot;
     Polygon superPolygon;
 
     public BoundarySensitivePolygon(BufferedImage image, Polygon superPolygon) {
@@ -23,7 +24,8 @@ public class BoundarySensitivePolygon extends Polygon {
 
     public void updateBoundary(){
         setPivot();
-        getVertexModel(image, PRECISION, pivot, this);
+        boundaryPoints = clockwiseSort(getVertexModel(image, PRECISION, pivot, this), pivot);
+
     }
 
     public void setPivot(){

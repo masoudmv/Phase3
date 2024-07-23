@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Random;
 import java.util.UUID;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import static controller.constants.Constants.BULLET_RADIUS;
 import static controller.UserInterfaceController.*;
@@ -23,7 +24,7 @@ public class CollectibleModel extends GeoShapeModel implements Collidable, Movab
 
     double radius;
 //    private Point2D anchor;
-    public static LinkedList<CollectibleModel> collectibleModels = new LinkedList<>();
+    public static CopyOnWriteArrayList<CollectibleModel> collectibleModels = new CopyOnWriteArrayList<>();
 //    public Direction direction;
     public boolean impactInProgress;
     public double impactMaxVel;
@@ -147,7 +148,7 @@ public class CollectibleModel extends GeoShapeModel implements Collidable, Movab
 
     @Override
     public void onCollision(Collidable other, Point2D intersection) {
-
+        if (other instanceof EpsilonModel) eliminate();
     }
 
     @Override
@@ -161,8 +162,10 @@ public class CollectibleModel extends GeoShapeModel implements Collidable, Movab
 
 
 
-    public void remove(){
-        collidables.remove(this);movables.remove(this);
+    public void eliminate(){
+        super.eliminate();
+        collidables.remove(this);
+        movables.remove(this);
         collectibleModels.remove(this);
 //        findCollectibleView((this).getId()).remove();
     }

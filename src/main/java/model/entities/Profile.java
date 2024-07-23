@@ -9,6 +9,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class Profile {
     private static Profile current = new Profile();
     public CopyOnWriteArrayList<Integer> WAVE_ENEMY_COUNT = new CopyOnWriteArrayList<>(List.of(2));
+    public int UPS = 80;
+    public int FPS = 80;
     public int EPSILON_MELEE_DAMAGE = 10;
     public int EPSILON_RANGED_DAMAGE = 5;
     public int EPSILON_SHOOTING_RAPIDITY = 1;

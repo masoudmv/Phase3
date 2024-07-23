@@ -52,7 +52,10 @@ public class Game {
 //            MainPanel.getINSTANCE();
 //            gameLoop = new GameLoop();
             MainFrame.getINSTANCE().addKeyListener(UserInputHandler.getINSTANCE());
-            GameLoop.getINSTANCE();
+            new GameLoop();
+//            GameLoop.getINSTANCE().initializeGame();
+//            GameLoop.getINSTANCE().start();
+//            GameLoop.getINSTANCE();
 //            gameLoop.run(); // todo change the logic of game loop
 
         });

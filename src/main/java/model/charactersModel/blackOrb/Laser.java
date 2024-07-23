@@ -1,10 +1,11 @@
 package model.charactersModel.blackOrb;
 
-import controller.UserInterfaceController;
+import controller.Game;
 import controller.Utils;
 import model.charactersModel.GeoShapeModel;
 import model.MyPolygon;
-import java.awt.*;
+import model.entities.AttackTypes;
+
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
@@ -12,12 +13,15 @@ import java.util.ArrayList;
 import static controller.UserInterfaceController.createLaserView;
 import static controller.Utils.*;
 import static controller.Utils.moveLine;
+import static controller.constants.Constants.AVALANCHE_DURATION;
+import static controller.constants.Constants.AVALANCHE_INITIATION_DELAY;
 import static model.charactersModel.blackOrb.BlackOrb.lasers;
 
 public class Laser extends GeoShapeModel {
     private double laserThickness = 60;
     private Orb[] OrbsOfALaser = new Orb[2];
-//    public static ArrayList<Laser> lasers = new ArrayList<>();
+    private boolean isAvalanche = false;
+    private double avalancheInitiation;
 
     public Laser(Orb orb1, Orb orb2) {
         super();
@@ -27,19 +31,11 @@ public class Laser extends GeoShapeModel {
         Line2D laserCenterLine = new Line2D.Double(o1, o2);
         findLaserBoundary(laserCenterLine);
         setAnchor();
-//        isLaser = true;
         lasers.add(this);
         createLaserView(id);
+        damageSize.put(AttackTypes.AOE, 12);
     }
 
-//    public static void drawLasers(Component component, Graphics g){
-//        for (int i = 0; i < GeoShapeModel.entities.size(); i++) {
-//            if (GeoShapeModel.entities.get(i).isLaser){
-//                Polygon polygon = UserInterfaceController.calculateEntityView(component, GeoShapeModel.entities.get(i).myPolygon);
-//                g.fillPolygon(polygon);
-//            }
-//        }
-//    }
 
     private void findLaserBoundary(Line2D laserCenterLine){
         Point2D vector = relativeLocation(laserCenterLine.getP2(), laserCenterLine.getP1());
@@ -83,8 +79,76 @@ public class Laser extends GeoShapeModel {
     @Override
     public void eliminate() {
         super.eliminate();
-//        lasers.remove(this);
+    }
 
-//        Laser laser =
+
+    public boolean isAvalanche() {
+        return isAvalanche;
+    }
+
+    public void setAvalanche(boolean avalanche) {
+        isAvalanche = avalanche;
+        avalancheInitiation = Game.ELAPSED_TIME + AVALANCHE_INITIATION_DELAY;
+    }
+
+    public double getAvalancheInitiation() {
+        return avalancheInitiation;
+    }
+
+    private boolean applyAvalanche(){
+        for (GeoShapeModel model : entities){
+            ArrayList<Point2D> bound = model.getBoundingPoints();
+            boolean isInside = true;
+            for (Point2D point : bound) {
+                if (!isPointInPolygon(point, myPolygon.getVertices())){
+                    isInside = false;
+                }
+            }
+            if (isInside) {
+                model.initiateFall();
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean applyAoEDamage(){
+        for (GeoShapeModel model : entities){
+            ArrayList<Point2D> bound = model.getBoundingPoints();
+            boolean isInside = true;
+
+            for (Point2D point : bound) {
+                if (!isPointInPolygon(point, myPolygon.getVertices())){
+                    isInside = false;
+                }
+            }
+
+            if (isInside) {
+                this.damage(model, AttackTypes.AOE);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private boolean executeAoe() {
+        if (isAvalanche) {
+            double now = Game.ELAPSED_TIME;
+            double avalancheStart = avalancheInitiation;
+            double avalancheEnd = avalancheStart + AVALANCHE_DURATION;
+
+            if (avalancheStart < now && now < avalancheEnd) return applyAvalanche();
+            else return applyAoEDamage();
+        }
+
+        else return applyAoEDamage();
+    }
+
+    public static void performAoeDamage(){
+        for (Laser laser : lasers){
+            boolean done = laser.executeAoe();
+            if (done) return;
+        }
     }
 }

@@ -35,13 +35,6 @@ public class SmileyBullet extends GeoShapeModel implements Collidable {
         super(anchor, image, pol);
         smileyBullets.add(this);
         collidables.add(this);
-
-
-
-
-
-
-
     }
 
     void move(Direction direction) {

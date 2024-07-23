@@ -3,6 +3,7 @@ package model.collision;
 import controller.Game;
 import model.FinalPanelModel;
 import model.charactersModel.*;
+import model.entities.Profile;
 import model.movement.Direction;
 //import view.MainPanel;
 //import view.Panel;
@@ -12,13 +13,14 @@ import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
-import static controller.GameLoop.EPSILON_MELEE_DAMAGE;
-import static controller.GameLoop.EPSILON_RANGED_DAMAGE;
+//import static controller.GameLoop.EPSILON_MELEE_DAMAGE;
+//import static controller.GameLoop.EPSILON_RANGED_DAMAGE;
 import static controller.Utils.*;
 
 public interface Collidable {
-    ArrayList<Collidable> collidables = new ArrayList<>();
+    CopyOnWriteArrayList<Collidable> collidables = new CopyOnWriteArrayList<>();
 
     boolean isCircular();
     double getRadius();
@@ -107,9 +109,9 @@ public interface Collidable {
 
     private void handleBulletImpact(Point2D intersection, Collidable collidable) {
         if (collidable instanceof SquarantineModel) {
-            ((SquarantineModel) collidable).damage(EPSILON_RANGED_DAMAGE);
+            ((SquarantineModel) collidable).damage(Profile.getCurrent().EPSILON_RANGED_DAMAGE);
         } else if (collidable instanceof TrigorathModel) {
-            ((TrigorathModel) collidable).damage(EPSILON_RANGED_DAMAGE);
+            ((TrigorathModel) collidable).damage(Profile.getCurrent().EPSILON_RANGED_DAMAGE);
         }
         ((BulletModel) this).bulletImpact((BulletModel) this, intersection, collidable);
     }
@@ -135,9 +137,9 @@ public interface Collidable {
             }
             if (minDistance < 5) {
                 if (collidable instanceof SquarantineModel) {
-                    ((SquarantineModel) collidable).damage(EPSILON_MELEE_DAMAGE);
+                    ((SquarantineModel) collidable).damage(Profile.getCurrent().EPSILON_MELEE_DAMAGE);
                 } else if (collidable instanceof TrigorathModel) {
-                    ((TrigorathModel) collidable).damage(EPSILON_MELEE_DAMAGE);
+                    ((TrigorathModel) collidable).damage(Profile.getCurrent().EPSILON_MELEE_DAMAGE);
                 }
             }
         }

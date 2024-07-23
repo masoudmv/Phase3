@@ -6,6 +6,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 import static controller.UserInterfaceController.*;
 import static controller.UserInterfaceController.calculateViewLocationBullet;
@@ -18,6 +20,7 @@ public class FinalPanelView extends JPanel {
     private Point2D Location; // absolute location of the frame
     private Dimension size;
     public static ArrayList<FinalPanelView> finalPanelViews = new ArrayList<>();
+//    private JLayeredPane layeredPane;
 
     public FinalPanelView() {}
 
@@ -35,6 +38,16 @@ public class FinalPanelView extends JPanel {
         frame.setLayout(null); // Absolute layout
         frame.add(this);
         finalPanelViews.add(this);
+
+
+
+//        MainFrame frame = MainFrame.getINSTANCE();
+//        frame.setLayout(null); // Absolute layout
+//        layeredPane = new JLayeredPane();
+//        layeredPane.setBounds(0, 0, frame.getWidth(), frame.getHeight());
+//        frame.add(layeredPane);
+//        layeredPane.add(this, JLayeredPane.DEFAULT_LAYER);
+//        finalPanelViews.add(this);
 //        repaint();
 
 //        this.setDoubleBuffered(true);
@@ -56,7 +69,7 @@ public class FinalPanelView extends JPanel {
     }
 
 
-        public void setLocation(Point2D location) {
+    public void setLocation(Point2D location) {
         this.Location = location;
         updateLocation();
 //        repaint();
@@ -69,11 +82,14 @@ public class FinalPanelView extends JPanel {
     }
 
     @Override
-    protected void paintComponent(Graphics g) { // todo layared painting
+    protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 
+
+
         updateGeoShapeViewsLocations(this);
-        for (EpsilonView epsilonView: EpsilonView.epsilonViews){
+
+        for (EpsilonView epsilonView : EpsilonView.epsilonViews) {
             epsilonView.setCurrentLocation(
                     calculateViewLocationEpsilon(this, epsilonView.getId())
             );
@@ -82,17 +98,26 @@ public class FinalPanelView extends JPanel {
             );
         }
 
-        for (BulletView bulletView : bulletViews){
+        for (BulletView bulletView : bulletViews) {
             bulletView.setCurrentLocation(calculateViewLocationBullet(this, bulletView.getId()));
         }
 
-        // Deprecated
+        // Collect all drawable objects
+//        ArrayList<GeoShapeView> drawableObjects = new ArrayList<>();
+//        GeoShapeView.geoShapeViews.addAll(GeoShapeView.geoShapeVdwiews);
+//        GeoShapeView.geoShapeViews.addAll(drawables);
 
-        for (GeoShapeView geoShapeView : GeoShapeView.geoShapeViews) {
-            geoShapeView.draw(g); // This should call the appropriate overridden method
+        for (Drawable drawable : drawables){
+            drawable.draw(g);
         }
-        for(Drawable obj: drawables){
+        // Sort the objects by z-order
+        GeoShapeView.geoShapeViews.sort(Comparator.comparingInt(GeoShapeView::getZOrder));
+
+        // Draw sorted objects
+        for (GeoShapeView obj : GeoShapeView.geoShapeViews) {
             obj.draw(g);
         }
+
+//        System.out.println(SwingUtilities.isEventDispatchThread());
     }
 }

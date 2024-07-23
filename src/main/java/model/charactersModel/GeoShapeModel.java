@@ -2,7 +2,8 @@ package model.charactersModel;
 
 import model.FinalPanelModel;
 import model.MyPolygon;
-import model.collision.entities.Entity;
+import model.entities.Entity;
+import model.entities.AttackTypes;
 import model.movement.Direction;
 
 import java.awt.geom.Line2D;
@@ -10,25 +11,30 @@ import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import static controller.UserInterfaceController.*;
+//import static controller.UserInterfaceController.playHitSoundEffect;
 import static controller.Utils.*;
 
 
-
 public abstract class GeoShapeModel extends Entity {
-    protected int HP;
+
     protected String id;
     protected Point2D anchor;
     public MyPolygon myPolygon;
     protected Direction direction = new Direction(new Point2D.Double(0, 0));
-    public static ArrayList<GeoShapeModel> entities = new ArrayList<>();
+//    public ConcurrentHashMap<AttackTypes, Integer> damageSize = new ConcurrentHashMap<>();
+//    public static ArrayList<GeoShapeModel> entities = new ArrayList<>();
     protected double radius;
     public FinalPanelModel localPanel;
     protected double angle;
+//    private double lastMeleeTime = 0;
+    protected boolean isOnFall = false;
 
     public GeoShapeModel(Point2D anchor, BufferedImage image, MyPolygon myPolygon) {
-        this.id = UUID.randomUUID().toString(); //todo swap image and anchor set logic
+        this.id = UUID.randomUUID().toString();
         this.anchor = new Point2D.Double(
                 anchor.getX() , anchor.getY()
         );
@@ -54,27 +60,30 @@ public abstract class GeoShapeModel extends Entity {
     }
 
     public GeoShapeModel(BufferedImage image, MyPolygon myPolygon){
-        this.id = UUID.randomUUID().toString(); //todo swap image and anchor set logic
+        this.id = UUID.randomUUID().toString();
         this.myPolygon = myPolygon;
         entities.add(this);
         createGeoShapeView(id, image);
     }
 
     public GeoShapeModel(Point2D anchor, BufferedImage image){
-//        System.out.println("EPSILON");
-        this.id = UUID.randomUUID().toString(); //todo swap image and anchor set logic(almost done. needs one final check)
+        this.id = UUID.randomUUID().toString();
         this.anchor = new Point2D.Double(
                 anchor.getX() , anchor.getY()
         );
         radius = (double) image.getHeight()/2;
-//        moveVertices(anchor);
         entities.add(this);
         createGeoShapeView(id, image);
+        setDummyPolygon();
+    }
+
+    private void setBoundingRect(){
+
     }
 
 
 
-
+    // deprecated
     public GeoShapeModel(Point2D anchor){
         this.anchor = anchor;
         this.id = UUID.randomUUID().toString();
@@ -85,9 +94,15 @@ public abstract class GeoShapeModel extends Entity {
     public GeoShapeModel(){
         this.id = UUID.randomUUID().toString();
         entities.add(this);
-//        createPolygonalEnemyView(id);
+        setDummyPolygon();
     }
 
+
+    private void setDummyPolygon(){
+        double[] x = {1, 2, 3};
+        double[] y = {4, 5, 6};
+        myPolygon = new MyPolygon(x, y, 3);
+    }
 
     public String getId() {
         return id;
@@ -153,12 +168,35 @@ public abstract class GeoShapeModel extends Entity {
         return findEdges(myPolygon);
     }
 
-    public int getHP() {
-        return HP;
+
+
+
+
+    public void addHealth(int units) {
+        this.health = Math.min(fullHealth, health + units);
     }
 
-    public void setHP(int HP) {
-        this.HP = HP;
+    // is it safe to use arraylist instead of copyOnRightArrayList?
+    public ArrayList<Point2D> getBoundingPoints(){
+        ArrayList<Point2D> bound = new ArrayList<>();
+        for (Integer i : myPolygon.getBoundingPointIndexes()){
+            bound.add(new Point2D.Double(myPolygon.xpoints[i], myPolygon.ypoints[i]));
+        }
+        return bound;
     }
+
+    public void initiateFall(){
+        isOnFall = true;
+        //        direction.setMagnitude(5);
+        this.direction = new Direction(new Point2D.Double(0, 1));
+    }
+
+    public void updateVelocityOnFall(){
+        double magnitude = direction.getMagnitude();
+        magnitude += 9.81 / 3;
+        direction.setMagnitude(magnitude);
+        System.out.println("MAGNITUDE:   "+ magnitude);
+    }
+
 }
 

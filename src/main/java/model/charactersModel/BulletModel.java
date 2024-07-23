@@ -14,6 +14,7 @@ import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.UUID;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import static controller.constants.Constants.BULLET_RADIUS;
 import static controller.constants.Constants.BULLET_VELOCITY;
@@ -26,7 +27,7 @@ public class BulletModel implements Movable, Collidable, Impactable {
     double radius;
     private Point2D anchor;
     Direction direction;
-    public static LinkedList<BulletModel> bulletModels = new LinkedList<>();
+    public static CopyOnWriteArrayList<BulletModel> bulletModels = new CopyOnWriteArrayList<>();
 
     public BulletModel(Point2D anchor, Direction direction) {
         this.radius = BULLET_RADIUS;

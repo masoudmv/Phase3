@@ -4,6 +4,8 @@ import controller.Game;
 import model.MyPolygon;
 //import view.MainPanel;
 import model.collision.Collidable;
+import model.movement.Direction;
+import org.example.GraphicalObject;
 import view.charactersView.NecropickView;
 
 import javax.swing.*;
@@ -20,6 +22,7 @@ import static model.imagetools.ToolBox.getBufferedImage;
 
 public class NecropickModel extends GeoShapeModel implements Collidable {
     static BufferedImage image;
+    protected static MyPolygon pol;
     public static ArrayList<NecropickModel> necropickModels = new ArrayList<>();
 //    public Polygon polygon;
     private boolean isHovering; // equals isUnderGround!
@@ -28,18 +31,23 @@ public class NecropickModel extends GeoShapeModel implements Collidable {
     private boolean isNextLocationCalculated = false; // flag to check if next location is calculated
     private static final Random random = new Random();
 
-    public NecropickModel(Point2D anchor, MyPolygon myPolygon) {
-        super(anchor, image, myPolygon, true);
+    public NecropickModel() {
+        super(new Point2D.Double(-100, -100), image, pol, true);
         necropickModels.add(this);
         stateChangeTime = Game.ELAPSED_TIME; // Initialize state change time
         isHovering = true; // Start in hovering state
         collidables.add(this);
         createNecropickView(id, image);
+        this.health = NECROPICK_HEALTH.getValue();
     }
 
     public static BufferedImage loadImage() {
         Image img = new ImageIcon("./src/necropick.png").getImage();
         NecropickModel.image = getBufferedImage(img);
+
+        GraphicalObject bowser = new GraphicalObject(image);
+        pol = bowser.getMyBoundingPolygon();
+
         return NecropickModel.image;
     }
 
@@ -54,6 +62,7 @@ public class NecropickModel extends GeoShapeModel implements Collidable {
     }
 
     private void returnToGroundSurface(){
+//        shootBullets();
         if (nextAnchor != null) {
             setAnchor(nextAnchor); // Set the precomputed next location
         }
@@ -80,7 +89,7 @@ public class NecropickModel extends GeoShapeModel implements Collidable {
             stateChangeTime = elapsedTime;
         }
 
-        if (isHovering && (elapsedTime - stateChangeTime) >= NON_HOVER_DURATION/2 && !isNextLocationCalculated) {
+        if (isHovering && (elapsedTime - stateChangeTime) >= (double) NON_HOVER_DURATION /2 && !isNextLocationCalculated) {
             updateView();
         }
 
@@ -100,7 +109,13 @@ public class NecropickModel extends GeoShapeModel implements Collidable {
 
     @Override
     public void eliminate() {
+        super.eliminate();
+        collidables.remove(this);
+        necropickModels.remove(this);
 
+        CollectibleModel.dropCollectible(
+                getAnchor(), NECROPICK_NUM_OF_COLLECTIBLES.getValue(), NECROPICK_COLLECTIBLES_XP.getValue()
+        );
     }
 
     private MyPolygon set(Point2D movement){
@@ -139,6 +154,18 @@ public class NecropickModel extends GeoShapeModel implements Collidable {
         } else {
             n.showNextLocation = false;
         }
+    }
+
+    private void shootBullets(){
+        new BulletModel(getAnchor(), new Direction(new Point2D.Double(0, -1)));
+        new BulletModel(getAnchor(), new Direction(new Point2D.Double(0, +1)));
+        new BulletModel(getAnchor(), new Direction(new Point2D.Double(+1, 0)));
+        new BulletModel(getAnchor(), new Direction(new Point2D.Double(-1, 0)));
+        new BulletModel(getAnchor(), new Direction(new Point2D.Double(+1, -1)));
+        new BulletModel(getAnchor(), new Direction(new Point2D.Double(-1, -1)));
+        new BulletModel(getAnchor(), new Direction(new Point2D.Double(+1, +1)));
+        new BulletModel(getAnchor(), new Direction(new Point2D.Double(-1, +1)));
+
     }
 
     @Override

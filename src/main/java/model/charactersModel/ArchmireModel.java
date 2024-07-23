@@ -19,11 +19,11 @@ import static model.imagetools.ToolBox.getBufferedImage;
 
 public class ArchmireModel extends GeoShapeModel implements Collidable {
     static BufferedImage image;
+    protected static MyPolygon pol;
     public static ArrayList<ArchmireModel> archmireModels = new ArrayList<>();
     private LinkedList<TimedLocation> locationHistory = new LinkedList<>();
     private double lastUpdatedLocation = 0;
     public Polygon polygon;
-    protected static MyPolygon pol;
 
     public ArchmireModel(Point2D anchor) {
         super(anchor, image, pol, true);
@@ -31,7 +31,7 @@ public class ArchmireModel extends GeoShapeModel implements Collidable {
         updateDirection();
         createArchmireView(id, ArchmireModel.image);
         collidables.add(this);
-
+        this.health = ARCHMIRE_HEALTH.getValue();
     }
 
     // BabyArchmire:
@@ -59,7 +59,6 @@ public class ArchmireModel extends GeoShapeModel implements Collidable {
         GraphicalObject bowser = new GraphicalObject(image);
         pol = bowser.getMyBoundingPolygon();
 
-
         return ArchmireModel.image;
     }
 
@@ -79,7 +78,7 @@ public class ArchmireModel extends GeoShapeModel implements Collidable {
         );
 
         // TODO: You can do better than this!
-        new BabyArchmire(new Point2D.Double(anchor.getX(), anchor.getY()+40));
+//        new BabyArchmire(new Point2D.Double(anchor.getX(), anchor.getY()+40));
 //        new BabyArchmire(new Point2D.Double(anchor.getX(), anchor.getY()-40));
         // TODO: REAL ELIMINATE
     }

@@ -80,12 +80,9 @@ public abstract class UserInterfaceController {
         GeoShapeModel geoShapeModel = findGeoShapeModel(id);
         Point corner = new Point(component.getX(),component.getY());
         assert geoShapeModel != null;
-
-//        System.out.println("Corner:   " + corner.getX() + "    " +  corner.getY());
-//        System.out.println("object:   " + polygonalEnemyModel.getAnchor().getX() + "    " +  polygonalEnemyModel.getAnchor().getY());
-
         return relativeLocation(geoShapeModel.getAnchor(),corner);
     }
+
 
 
 
@@ -156,17 +153,11 @@ public abstract class UserInterfaceController {
 
     public static void updateGeoShapeViewsLocations(Component component){
         for (GeoShapeView geoShapeView : GeoShapeView.geoShapeViews){
-            geoShapeView.setCurrentLocation(
-                    calculateViewLocationPolygonalEnemy(component, geoShapeView.getId())
-            );
-
-            geoShapeView.setMyPolygon(calculateEntityView(component, geoShapeView.getId()));
-            geoShapeView.setAngle(calculateGeoShapeViewAngle(geoShapeView.getId()));
-            geoShapeView.setLocationHistory(calculateLocationHistory(component, geoShapeView.getId())); //archmire
+            geoShapeView.update(component);
         }
     }
 
-    private static LinkedList<TimedLocation> calculateLocationHistory(Component component, String id){
+    public static LinkedList<TimedLocation> calculateLocationHistory(Component component, String id){
         GeoShapeModel geoShapeModel = findGeoShapeModel(id);
         if (!(geoShapeModel instanceof ArchmireModel)) return null;
         LinkedList<TimedLocation> timedLocations = ((ArchmireModel) geoShapeModel).getLocationHistory();
@@ -188,21 +179,6 @@ public abstract class UserInterfaceController {
         }
         return result;
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
     public static Point2D calculateViewLocationEpsilon(Component component, String id){

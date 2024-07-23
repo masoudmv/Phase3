@@ -8,7 +8,9 @@ import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.concurrent.CopyOnWriteArrayList;
 
+import static controller.UserInterfaceController.*;
 import static model.imagetools.ToolBox.getBufferedImage;
 import static model.imagetools.ToolBox.rotateImage;
 
@@ -19,9 +21,9 @@ public class GeoShapeView {
     double imageWidth;
     double imageHeight;
     protected MyPolygon myPolygon;
-    public static ArrayList<GeoShapeView> geoShapeViews = new ArrayList<>();
-    private Point2D slapTarget;
+    public static CopyOnWriteArrayList<GeoShapeView> geoShapeViews = new CopyOnWriteArrayList<>();
     protected double angle;
+    protected int zOrder = 2;
 
 
     public GeoShapeView(String id, Image image) {
@@ -70,14 +72,12 @@ public class GeoShapeView {
         this.imageHeight = this.image.getHeight();
     }
 
-    //    public static void drawAll(Graphics ){
-//        for (int i = 0; i < GeoShapeModel.entities.size(); i++) {
-//            if (GeoShapeModel.entities.get(i).isLaser){
-//                Polygon polygon = Controller.calculateEntityView(this, GeoShapeModel.entities.get(i).myPolygon);
-//                g.fillPolygon(polygon);
-//            }
-//        }
-//    }
+    public void update(Component component){
+        this.setCurrentLocation(calculateViewLocationPolygonalEnemy(component, this.getId()));
+        this.setMyPolygon(calculateEntityView(component, this.getId()));
+        this.setAngle(calculateGeoShapeViewAngle(this.getId()));
+        this.setLocationHistory(calculateLocationHistory(component, this.getId())); //archmire
+    }
 
 
 
@@ -86,7 +86,11 @@ public class GeoShapeView {
 
     }
 
+    public int getZOrder() {
+        return zOrder;
+    }
 
+    public void setZOrder(int zOrder) {this.zOrder = zOrder;}
 
     public void draw(Graphics g){
         Graphics2D g2d = (Graphics2D) g;
