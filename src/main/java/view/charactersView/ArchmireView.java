@@ -24,35 +24,35 @@ public class ArchmireView extends GeoShapeView {
 //        System.out.println("IsUpdating");
     }
 
-
-    @Override
-    public void draw(Graphics g) {
-        Graphics2D g2d = (Graphics2D) g;
-        Color baseColor = Color.BLUE;
-        int baseAlpha = 100;
-
-        // Calculate the maximum and minimum alpha values
-        int maxAlpha = baseAlpha;
-        int minAlpha = 0;
-
-        // Cache alpha values
-        Map<Integer, Color> alphaColorCache = new HashMap<>();
-
-        for (TimedLocation location : locationHistory) {
-            Polygon pol = location.getPolygon();
-            double time = Game.ELAPSED_TIME - location.getTimestamp();
-            int alpha = Math.max(minAlpha, Math.min(maxAlpha, baseAlpha - (int) (time * baseAlpha / 5)));
-
-            // Get or create the dimmer color with the cached alpha value
-            Color dimmerColor = alphaColorCache.computeIfAbsent(alpha, a ->
-                    new Color(baseColor.getRed(), baseColor.getGreen(), baseColor.getBlue(), a)
-            );
-
-            g2d.setColor(dimmerColor);
-            g2d.fillPolygon(pol);
-        }
-
-        g2d.drawImage(rotateImage(image, angle), (int) currentLocation.getX(), (int) currentLocation.getY(), null);
-    }
+//
+//    @Override
+//    public void draw(Graphics g) {
+//        Graphics2D g2d = (Graphics2D) g;
+//        Color baseColor = Color.BLUE;
+//        int baseAlpha = 100;
+//
+//        // Calculate the maximum and minimum alpha values
+//        int maxAlpha = baseAlpha;
+//        int minAlpha = 0;
+//
+//        // Cache alpha values
+//        Map<Integer, Color> alphaColorCache = new HashMap<>();
+//
+//        for (TimedLocation location : locationHistory) {
+//            Polygon pol = location.getPolygon();
+//            double time = Game.ELAPSED_TIME - location.getTimestamp();
+//            int alpha = Math.max(minAlpha, Math.min(maxAlpha, baseAlpha - (int) (time * baseAlpha / 5)));
+//
+//            // Get or create the dimmer color with the cached alpha value
+//            Color dimmerColor = alphaColorCache.computeIfAbsent(alpha, a ->
+//                    new Color(baseColor.getRed(), baseColor.getGreen(), baseColor.getBlue(), a)
+//            );
+//
+//            g2d.setColor(dimmerColor);
+//            g2d.fillPolygon(pol);
+//        }
+//
+//        g2d.drawImage(rotateImage(image, angle), (int) currentLocation.getX(), (int) currentLocation.getY(), null);
+//    }
 
 }

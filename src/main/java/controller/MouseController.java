@@ -9,6 +9,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.geom.Point2D;
 
+import static controller.UserInterfaceController.updateGeoShapeViewProperties;
 import static controller.constants.Constants.BULLET_VELOCITY;
 import static controller.constants.Constants.PI;
 import static controller.Game.*;
@@ -51,6 +52,9 @@ public class MouseController implements MouseListener,MouseMotionListener {
             lastBullet = new BulletModel(epsilon.getAnchor(), new Direction(direction));
             lastShot= ELAPSED_TIME;
             if (ELAPSED_TIME < empowerEndTime) tripleShot=true;
+
+            // sets the initial location of bullet and all entities (needs to be improved ... )
+//            updateGeoShapeViewProperties();
 
         }
 

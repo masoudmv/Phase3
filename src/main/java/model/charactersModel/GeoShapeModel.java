@@ -67,6 +67,7 @@ public abstract class GeoShapeModel extends Entity {
     }
 
     public GeoShapeModel(Point2D anchor, BufferedImage image){
+        setDummyPolygon();
         this.id = UUID.randomUUID().toString();
         this.anchor = new Point2D.Double(
                 anchor.getX() , anchor.getY()
@@ -74,7 +75,6 @@ public abstract class GeoShapeModel extends Entity {
         radius = (double) image.getHeight()/2;
         entities.add(this);
         createGeoShapeView(id, image);
-        setDummyPolygon();
     }
 
     private void setBoundingRect(){
@@ -195,7 +195,6 @@ public abstract class GeoShapeModel extends Entity {
         double magnitude = direction.getMagnitude();
         magnitude += 9.81 / 3;
         direction.setMagnitude(magnitude);
-        System.out.println("MAGNITUDE:   "+ magnitude);
     }
 
 }

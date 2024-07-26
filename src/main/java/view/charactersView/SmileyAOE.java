@@ -23,31 +23,31 @@ public class SmileyAOE extends GeoShapeView{
 //        geoShapeViews.remove(this);
     }
 
-    @Override
-    public void draw(Graphics g) {
-        g.setColor(Color.white);
-
-//        g.drawOval((int) (currentLocation.getX()-radius), (int) (currentLocation.getY()-radius), (int) (2*radius), (int) (2*radius));
-
-
-
-        double now = Game.ELAPSED_TIME;
-        g.setColor(Color.green);
-
-
-
-        if (now - birthTime < SMILEY_AOE_ACTIVATION_TIME.getValue()) {
-            g.drawOval((int) (currentLocation.getX()-radius), (int) (currentLocation.getY()-radius), (int) (2*radius), (int) (2*radius));
-        };
-
-
-        if (now - birthTime > SMILEY_AOE_ACTIVATION_TIME.getValue()) {
-            g.fillOval((int) (currentLocation.getX()-radius), (int) (currentLocation.getY()-radius), (int) (2*radius), (int) (2*radius));
-        };
-
-
-
-
-//        if (now - birthTime > SMILEY_AOE_ACTIVATED_LIFETIME.getValue());
-    }
+//    @Override
+//    public void draw(Graphics g) {
+//        g.setColor(Color.white);
+//
+////        g.drawOval((int) (currentLocation.getX()-radius), (int) (currentLocation.getY()-radius), (int) (2*radius), (int) (2*radius));
+//
+//
+//
+//        double now = Game.ELAPSED_TIME;
+//        g.setColor(Color.green);
+//
+//
+//
+//        if (now - birthTime < SMILEY_AOE_ACTIVATION_TIME.getValue()) {
+//            g.drawOval((int) (currentLocation.getX()-radius), (int) (currentLocation.getY()-radius), (int) (2*radius), (int) (2*radius));
+//        };
+//
+//
+//        if (now - birthTime > SMILEY_AOE_ACTIVATION_TIME.getValue()) {
+//            g.fillOval((int) (currentLocation.getX()-radius), (int) (currentLocation.getY()-radius), (int) (2*radius), (int) (2*radius));
+//        };
+//
+//
+//
+//
+////        if (now - birthTime > SMILEY_AOE_ACTIVATED_LIFETIME.getValue());
+//    }
 }

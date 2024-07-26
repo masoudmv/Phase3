@@ -6,6 +6,9 @@ import model.charactersModel.CollectibleModel;
 import model.charactersModel.GeoShapeModel;
 import model.MyPolygon;
 import model.collision.Collidable;
+import model.entities.AttackTypes;
+import model.entities.Entity;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.Line2D;
@@ -27,6 +30,8 @@ public class Orb extends GeoShapeModel implements Collidable {
         this.circle = new Circle(anchor.getX(), anchor.getY(), (double) image.getHeight() / 2);
         collidables.add(this);
         this.health = ORB_HEALTH.getValue();
+
+
     }
 
     public static BufferedImage loadImage() {
@@ -69,7 +74,9 @@ public class Orb extends GeoShapeModel implements Collidable {
 
     @Override
     public void onCollision(Collidable other, Point2D intersection) {
-        if (other instanceof BulletModel) eliminate();
+        if (other instanceof BulletModel) {
+            this.damage((Entity) other, AttackTypes.MELEE);
+        }
     }
 
     @Override

@@ -69,7 +69,7 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
 //        epsilonModels.add(this);
         collidables.add(this);
         movables.add(this);
-        createEpsilonView(id);
+        createEpsilonView(id, image);
 //        this.h = 100;
 //        damageSize.put(AttackTypes.AOE, 5);
 
@@ -181,13 +181,13 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
         }
 
         friction();
+        if (isOnFall) updateVelocityOnFall();
     }
 
     @Override
     public void move() {
-        if (5<Game.ELAPSED_TIME&& Game.ELAPSED_TIME < 5.1) initiateFall();
 //        updateLocalPanel();
-        if (isOnFall) updateVelocityOnFall();
+
         move(direction);
         moveBabies(direction);
     }

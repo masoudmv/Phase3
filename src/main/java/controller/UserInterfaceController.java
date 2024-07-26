@@ -4,7 +4,6 @@ import model.FinalPanelModel;
 import model.MyPolygon;
 import model.TimedLocation;
 import model.charactersModel.BulletModel;
-import model.charactersModel.CollectibleModel;
 import model.charactersModel.*;
 import model.entities.Skill;
 import view.FinalPanelView;
@@ -19,12 +18,12 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 
 import static controller.Utils.relativeLocation;
-import static model.charactersModel.CollectibleModel.collectibleModels;
 import static model.charactersModel.SquarantineModel.squarantineModels;
 import static model.charactersModel.TrigorathModel.trigorathModels;
 import static view.FinalPanelView.finalPanelViews;
 import static view.charactersView.BulletView.bulletViews;
 //import static view.charactersView.CollectibleView.collectibleViews;
+import static view.charactersView.GeoShapeView.geoShapeViews;
 import static view.charactersView.NecropickView.necropickViews;
 import static view.charactersView.SquarantineView.squarantineViews;
 import static view.charactersView.TrigorathView.trigorathViews;
@@ -35,8 +34,8 @@ public abstract class UserInterfaceController {
 
 
     // what a fucking mess!!!
-    public static void createEpsilonView(String id){
-        new EpsilonView(id);
+    public static void createEpsilonView(String id, Image image){
+        new EpsilonView(id, image);
     }
     public static void createSquarantineView(String id){
         new SquarantineView(id);
@@ -45,7 +44,8 @@ public abstract class UserInterfaceController {
 
     public static void creatBulletView(String id){ new BulletView(id); }
     public static void createCollectibleView(String id){ new CollectibleView(id); }
-    public static void createBabyEpsilon(String id){ new BabyEpsilonView(id); }
+    public static void createBabyEpsilonView(String id){ new BabyEpsilonView(id); }
+    public static void createBulletView(String id){ new BulletView(id); }
     public static void createSmileyAOEView(String id){ new SmileyAOE(id); }
 
 
@@ -61,7 +61,17 @@ public abstract class UserInterfaceController {
 
 
 
-    public static void createGeoShapeView(String id, Image image){ new GeoShapeView(id, image); }
+    public static void createGeoShapeView(String id, Image image){
+        new GeoShapeView(id, image);
+
+    }
+
+    public static void createGeoShapeView(String id, Image image, Point2D anchor, MyPolygon myPolygon){ // keeping this just in case it is needed
+        new GeoShapeView(id, image, anchor, myPolygon);
+
+    }
+
+
     public static void createNecropickView(String id, Image image){
         new NecropickView(id, image);
     }
@@ -78,15 +88,24 @@ public abstract class UserInterfaceController {
 
     public static Point2D calculateViewLocationPolygonalEnemy(Component component, String id){
         GeoShapeModel geoShapeModel = findGeoShapeModel(id);
-        Point corner = new Point(component.getX(),component.getY());
+        Point corner = new Point(component.getX(), component.getY());
         assert geoShapeModel != null;
-        return relativeLocation(geoShapeModel.getAnchor(),corner);
+        return relativeLocation(geoShapeModel.getAnchor(), corner);
+    }
+
+
+
+    public static Point2D calculateViewLocationPolygonalEnemy(FinalPanelView component, String id){
+        GeoShapeModel geoShapeModel = findGeoShapeModel(id);
+        Point corner = new Point(component.getX(), component.getY());
+        assert geoShapeModel != null;
+        return relativeLocation(geoShapeModel.getAnchor(), corner);
     }
 
 
 
 
-    public static MyPolygon calculateEntityView(Component component, String id){
+    public static MyPolygon calculateEntityView(FinalPanelView component, String id){
         GeoShapeModel geoShapeModel = findGeoShapeModel(id);
         Point corner = new Point(component.getX(),component.getY());
         assert geoShapeModel != null;
@@ -151,9 +170,26 @@ public abstract class UserInterfaceController {
     }
 
 
-    public static void updateGeoShapeViewsLocations(Component component){
-        for (GeoShapeView geoShapeView : GeoShapeView.geoShapeViews){
-            geoShapeView.update(component);
+
+
+    public static void updateGeoShapeViewProperties(){
+        for (FinalPanelView finalPanelView : finalPanelViews){
+            for (GeoShapeView geoShapeView : geoShapeViews){
+                Point2D currentLocation = calculateViewLocationPolygonalEnemy(finalPanelView, geoShapeView.getId());
+                String panelID = finalPanelView.getId();
+
+
+                geoShapeView.setCurrentLocation(panelID, currentLocation);
+
+
+                geoShapeView.setMyPolygon(panelID, calculateEntityView(finalPanelView, geoShapeView.getId()));
+
+
+            }
+        }
+
+        for (GeoShapeView geoShapeView : geoShapeViews){
+            geoShapeView.setAngle(calculateGeoShapeViewAngle(geoShapeView.getId()));
         }
     }
 
@@ -281,12 +317,12 @@ public abstract class UserInterfaceController {
 
 
 
-    public static Point2D calculateViewLocationBullet(Component component, String id){
-        BulletModel bulletModel = findBulletModel(id);
-        Point corner = new Point(component.getX(),component.getY());
-        assert bulletModel != null;
-        return relativeLocation(bulletModel.getAnchor(),corner);
-    }
+//    public static Point2D calculateViewLocationBullet(Component component, String id){
+//        BulletModel bulletModel = findBulletModel(id);
+//        Point corner = new Point(component.getX(),component.getY());
+//        assert bulletModel != null;
+//        return relativeLocation(bulletModel.getAnchor(),corner);
+//    }
 
     // todo use oop paradigm!
 
@@ -312,12 +348,13 @@ public abstract class UserInterfaceController {
         }
         return null;
     }
-    public static BulletModel findBulletModel(String id){
-        for (BulletModel bulletModel: BulletModel.bulletModels){
-            if (bulletModel.getId().equals(id)) return bulletModel;
-        }
-        return null;
-    }
+
+//    public static BulletModel findBulletModel(String id){
+//        for (BulletModel bulletModel: BulletModel.bulletModels){
+//            if (bulletModel.getId().equals(id)) return bulletModel;
+//        }
+//        return null;
+//    }
 
 
 //    public static OmenoctModel findOmenoctModel(String id){

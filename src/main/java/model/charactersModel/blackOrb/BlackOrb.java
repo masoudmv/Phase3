@@ -2,10 +2,14 @@ package model.charactersModel.blackOrb;
 
 import controller.Game;
 import model.FinalPanelModel;
+
+import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
+
+import static controller.UserInterfaceController.updateGeoShapeViewProperties;
 import static controller.Utils.*;
 import static controller.constants.EntityConstants.ORB_PANEL_CREATION_DELAY;
 
@@ -46,7 +50,20 @@ public class BlackOrb { // todo panels should be created with delay?
         if (now - lastCreatedOrbTime > ORB_PANEL_CREATION_DELAY && numCreatedOrbs == 5) {
             // Run initializeOrbs in a separate thread
 //            executorService.submit(this::initializedOrbs); // TODO ADD CONURENCY TO REQUIRED METHODS IN GAMELOOP.
-            initializedOrbs();
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    initializedOrbs();
+                }
+            }).start();
+
+//            initializedOrbs();
+            double a = System.currentTimeMillis();
+//            initializedOrbs();
+            double b = System.currentTimeMillis();
+
+            System.out.println("delay:  " + (b - a));
+
             numCreatedOrbs++;
         }
         if ( now - lastCreatedOrbTime < ORB_PANEL_CREATION_DELAY || numCreatedOrbs > 4) return;
@@ -56,15 +73,20 @@ public class BlackOrb { // todo panels should be created with delay?
         lastCreatedOrbTime = now;
         numCreatedOrbs ++;
 
-        System.out.println(lastCreatedOrbTime);
+
     }
 
     private void initializedOrbs(){
         for (int i = 0; i < 5; i++) {
             orbs[i] = new Orb(addVectors(vertices[i], movePanelLocation));
+//            updateGeoShapeViewProperties();
+
         }
         setLasers();
+//        updateGeoShapeViewProperties();
     }
+
+
     private Dimension getPanelDimension(){
         return new Dimension(250, 250);
 
@@ -74,6 +96,8 @@ public class BlackOrb { // todo panels should be created with delay?
         for (int i = 0; i < 5; i++) {
             for (int j = i+1; j < 5; j++) {
                 new Laser(orbs[i], orbs[j]);
+//                updateGeoShapeViewProperties();
+
             }
         }
     }

@@ -10,7 +10,7 @@ import java.util.Collections;
 import java.util.Comparator;
 
 import static controller.UserInterfaceController.*;
-import static controller.UserInterfaceController.calculateViewLocationBullet;
+//import static controller.UserInterfaceController.calculateViewLocationBullet;
 import static controller.Utils.addVectors;
 import static view.charactersView.BulletView.bulletViews;
 import static view.charactersView.Drawable.drawables;
@@ -85,22 +85,20 @@ public class FinalPanelView extends JPanel {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 
+//        updateGeoShapeViewsLocations(this);
 
+//        for (EpsilonView epsilonView : EpsilonView.epsilonViews) {
+//            epsilonView.setCurrentLocation(
+//                    calculateViewLocationEpsilon(this, epsilonView.getId())
+//            );
+//            epsilonView.setVertices(
+//                    calculateViewLocationOfEpsilonVertices(this, epsilonView.getId())
+//            );
+//        }
 
-        updateGeoShapeViewsLocations(this);
-
-        for (EpsilonView epsilonView : EpsilonView.epsilonViews) {
-            epsilonView.setCurrentLocation(
-                    calculateViewLocationEpsilon(this, epsilonView.getId())
-            );
-            epsilonView.setVertices(
-                    calculateViewLocationOfEpsilonVertices(this, epsilonView.getId())
-            );
-        }
-
-        for (BulletView bulletView : bulletViews) {
-            bulletView.setCurrentLocation(calculateViewLocationBullet(this, bulletView.getId()));
-        }
+//        for (BulletView bulletView : bulletViews) {
+//            bulletView.setCurrentLocation(calculateViewLocationBullet(this, bulletView.getId()));
+//        }
 
         // Collect all drawable objects
 //        ArrayList<GeoShapeView> drawableObjects = new ArrayList<>();
@@ -110,12 +108,15 @@ public class FinalPanelView extends JPanel {
         for (Drawable drawable : drawables){
             drawable.draw(g);
         }
+
+
         // Sort the objects by z-order
         GeoShapeView.geoShapeViews.sort(Comparator.comparingInt(GeoShapeView::getZOrder));
 
         // Draw sorted objects
         for (GeoShapeView obj : GeoShapeView.geoShapeViews) {
-            obj.draw(g);
+            String panelID = getId();
+            obj.draw(g, panelID);
         }
 
 //        System.out.println(SwingUtilities.isEventDispatchThread());

@@ -10,8 +10,10 @@ import model.charactersModel.smiley.Fist;
 import model.charactersModel.smiley.Hand;
 import model.charactersModel.SmileyBullet;
 import model.charactersModel.smiley.Smiley;
+import model.entities.Profile;
 import model.movement.Movable;
 import view.*;
+import view.charactersView.GeoShapeView;
 import view.junks.GameOverPanel;
 import view.junks.ShopPanel;
 import view.junks.VictoryPanel;
@@ -22,6 +24,7 @@ import javax.swing.Timer;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.geom.Point2D;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -45,7 +48,9 @@ import static model.charactersModel.SmileyBullet.smileyBullets;
 //import static model.collision.Coll.colls;
 import static model.collision.Collidable.collidables;
 import static model.movement.Movable.movables;
+import static view.FinalPanelView.finalPanelViews;
 import static view.MainFrame.label;
+import static view.charactersView.GeoShapeView.geoShapeViews;
 //import static view.Panel.panels;
 
 
@@ -97,8 +102,6 @@ public class GameLoop implements Runnable {
         decrementRation=1;
         lastShot = 0;
         shopAbility=null;
-        EPSILON_MELEE_DAMAGE =10;
-        EPSILON_RANGED_DAMAGE =5;
         movementInProgress = false;
         firstLoop= true;
         createdNumberOfEnemies=0;
@@ -130,22 +133,22 @@ public class GameLoop implements Runnable {
 //        MainFrame.getINSTANCE().addKeyListener(this);
 
 
-        int delay = 10; //milliseconds
-        ActionListener taskPerformer = new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                //...Perform a task...
-                updateView();
-                updateModel();
-
-//                    System.out.println(javax.swing.SwingUtilities.isEventDispatchThread()); returned True!
-//                    we are still on EDT!
-
-
-            }
-        };
-
-        gameLoop = new Timer(delay, taskPerformer);
-        gameLoop.start();
+//        int delay = 10; //milliseconds
+//        ActionListener taskPerformer = new ActionListener() {
+//            public void actionPerformed(ActionEvent evt) {
+//                //...Perform a task...
+//                updateView();
+//                updateModel();
+//
+////                    System.out.println(javax.swing.SwingUtilities.isEventDispatchThread()); returned True!
+////                    we are still on EDT!
+//
+//
+//            }
+//        };
+//
+//        gameLoop = new Timer(delay, taskPerformer);
+//        gameLoop.start();
 
 
 //        initializeGame();
@@ -156,7 +159,7 @@ public class GameLoop implements Runnable {
 
 
 //        gameLoop = GameLoop.getINSTANCE();
-//        this.start();
+        this.start();
     }
 
 
@@ -251,19 +254,31 @@ public class GameLoop implements Runnable {
 //        }
 
 
-        for (FinalPanelView f : FinalPanelView.finalPanelViews){
+        for (FinalPanelView f : finalPanelViews){
             f.setLocation(calculateLocationOfFinalPanelView(f.getId()));
             f.setSize(calculateDimensionOfFinalPanelView(f.getId()));
         }
 
 
 
-//        updateEntitiesLocations(Main);
 
-        MainFrame.getINSTANCE().repaint();
+//        MainFrame.getINSTANCE().repaint();
+
+//        for (FinalPanelView finalPanelView : finalPanelViews) {
+//            updateGeoShapeViewsLocations(finalPanelView);
+//            SwingUtilities.invokeLater(finalPanelView::repaint);
+//        }
+
+
+//        SwingUtilities.invokeLater(MainFrame.getINSTANCE()::repaint);
+
+
+        updateGeoShapeViewProperties();
+        SwingUtilities.invokeLater(MainFrame.getINSTANCE()::repaint);
     }
 
     public void updateModel() {
+
 
         for (int i = 0; i < finalPanelModels.size(); i++) {
             finalPanelModels.get(i).panelMotion();  // todo
@@ -375,7 +390,6 @@ public class GameLoop implements Runnable {
         }
         EpsilonModel epsilonModel = EpsilonModel.getINSTANCE();
         if (epsilonModel.isImpactInProgress()) {
-            System.out.println("qqqqqqq");
             epsilonModel.getDirection().accelerateDirection(6);
             if (epsilonModel.getDirection().getMagnitude() > 4) {
                 epsilonModel.setImpactInProgress(false);
@@ -514,8 +528,8 @@ public class GameLoop implements Runnable {
     @Override
     public void run() {
         long initialTime = System.nanoTime();
-        final double timeU = 1000000000 / 60.0;
-        final double timeF = 1000000000 / 60.0;
+        final double timeF = (double) 1000000000 / Profile.getCurrent().FPS;
+        final double timeU = (double) 1000000000 / Profile.getCurrent().UPS;
         double deltaU = 0, deltaF = 0;
         int frames = 0, ticks = 0;
         long timer = System.currentTimeMillis();
@@ -545,7 +559,7 @@ public class GameLoop implements Runnable {
                 timer += 1000;
             }
         }
-        stop();
+//        stop();
     }
 
     public static GameLoop getINSTANCE() {

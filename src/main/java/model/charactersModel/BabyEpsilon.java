@@ -3,7 +3,7 @@ package model.charactersModel;
 import model.MyPolygon;
 import model.movement.Direction;
 import java.awt.geom.Point2D;
-import static controller.UserInterfaceController.createBabyEpsilon;
+import static controller.UserInterfaceController.createBabyEpsilonView;
 import static controller.Utils.addVectors;
 import static controller.Utils.multiplyVector;
 import static controller.constants.EntityConstants.BABY_EPSILON_RADIUS;
@@ -14,7 +14,7 @@ public class BabyEpsilon extends GeoShapeModel {
         super();
         this.anchor = anchor;
         this.radius = BABY_EPSILON_RADIUS.getValue();
-        createBabyEpsilon(id);
+        createBabyEpsilonView(id);
     }
 
     public void move(Direction direction) {

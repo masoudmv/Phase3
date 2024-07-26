@@ -1,45 +1,39 @@
 package model.charactersModel;
-//import controller.SoundHandler;
-import model.FinalPanelModel;
 
+import model.FinalPanelModel;
+import model.MyPolygon;
 import model.charactersModel.blackOrb.Orb;
 import model.collision.Collidable;
 import model.collision.CollisionState;
 import model.collision.Impactable;
 import model.movement.Direction;
 import model.movement.Movable;
-
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import static controller.UserInterfaceController.findBulletView;
 import static controller.constants.Constants.BULLET_RADIUS;
 import static controller.constants.Constants.BULLET_VELOCITY;
 import static controller.UserInterfaceController.creatBulletView;
-import static controller.UserInterfaceController.findBulletView;
 import static controller.Utils.*;
 
-public class BulletModel implements Movable, Collidable, Impactable {
-    String id;
-    double radius;
-    private Point2D anchor;
-    Direction direction;
+public class BulletModel extends GeoShapeModel implements Movable, Collidable, Impactable {
     public static CopyOnWriteArrayList<BulletModel> bulletModels = new CopyOnWriteArrayList<>();
 
     public BulletModel(Point2D anchor, Direction direction) {
+        super();
         this.radius = BULLET_RADIUS;
-        this.id= UUID.randomUUID().toString();
         this.anchor = anchor;
         this.direction = direction;
+        // is needed?
         bulletModels.add(this);
+
+
         movables.add(this);
         collidables.add(this);
         creatBulletView(id);
-
-
     }
 
     public String getId() {
@@ -65,41 +59,19 @@ public class BulletModel implements Movable, Collidable, Impactable {
 
     @Override
     public void bulletImpact(BulletModel bulletModel, Point2D collisionPoint) {
-        this.remove();
+        this.eliminate();
     }
 
 
 
     public void bulletImpact(BulletModel bulletModel, Point2D collisionPoint, Collidable collidable) {
-
         ((Movable) collidable).bulletImpact(bulletModel, collisionPoint);
-//        SoundHandler.playClip();
-
-//        try
-//        {
-//            clip = AudioSystem.getClip();
-//            clip.open(AudioSystem.getAudioInputStream(new File("C:\\Users\\masoo\\Desktop\\Projects\\windowkill_AP\\src\\main\\resources\\burst2.wav")));
-//            clip.start();
-//        }
-//        catch (Exception exc)
-//        {
-//            exc.printStackTrace(System.out);
-//       }
-//        new Thread(() -> {
-//            if (clip != null) {
-//                clip.stop();          // Stop the clip before rewinding it
-//                clip.setFramePosition(0);  // Rewind to the beginning
-//                clip.start();         // Start playing
-//            }
-//        }).start();
-
-
-
         for (Movable movable : movables){
             if (movable != this && movable != bulletModel && movable!= collidable){
                 ((Impactable)movable).impact(new CollisionState(collisionPoint));
             }
-        } this.remove();
+        }
+        this.eliminate();
     }
 
 
@@ -127,7 +99,10 @@ public class BulletModel implements Movable, Collidable, Impactable {
         return this.anchor;
     }
 
+    @Override
+    public void setMyPolygon(MyPolygon myPolygon) {
 
+    }
 
 
     @Override
@@ -165,18 +140,20 @@ public class BulletModel implements Movable, Collidable, Impactable {
     @Override
     public void banish() {}
 
-    public void remove(){
-        collidables.remove(this);
+    @Override
+    public void eliminate(){
+        // is needed?
         bulletModels.remove(this);
+
+        collidables.remove(this);
         movables.remove(this);
-        findBulletView((this).getId()).remove();
+        findBulletView((this).getId()).eliminate();
     }
 
     @Override
     public void onCollision(Collidable other, Point2D intersection) {
-//        return;
-        if (other instanceof FinalPanelModel) remove();
-        if (other instanceof Orb) remove();
+        if (other instanceof FinalPanelModel) eliminate();
+        if (other instanceof Orb) eliminate();
     }
 
     @Override

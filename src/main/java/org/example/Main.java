@@ -105,8 +105,8 @@ public class Main {
 //        new OmenoctModel(new Point2D.Double( 500, 500));
 //        new ArchmireModel(new Point2D.Double( 500, 500));
 
-//        Orb.loadImage();
-//        new BlackOrb();
+        Orb.loadImage();
+        new BlackOrb();
 
 
 
