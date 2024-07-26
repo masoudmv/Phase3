@@ -11,6 +11,7 @@ import model.charactersModel.smiley.Fist;
 import model.charactersModel.smiley.Hand;
 import model.charactersModel.smiley.LeftHand;
 import model.charactersModel.smiley.Smiley;
+import model.entities.Skill;
 import view.*;
 
 import javax.imageio.ImageIO;
@@ -20,6 +21,8 @@ import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+
+import view.junks.Menu;
 
 public class Main {
     static BufferedImage bufferedImage;
@@ -62,16 +65,19 @@ public class Main {
 //        new SmileyBullet(new Point2D.Double(300, 300)).rapidFire(10, 180);
 
 
-        BufferedImage b = EpsilonModel.loadImage();
-        GraphicalObject bows = new GraphicalObject(b);
-        MyPolygon pol = bows.myBoundingPolygon;
-        new EpsilonModel(new Point2D.Double(1000, 700), pol);
+//        BufferedImage b = EpsilonModel.loadImage();
+//        GraphicalObject bows = new GraphicalObject(b);
+//        MyPolygon pol = bows.myBoundingPolygon;
+//        new EpsilonModel(new Point2D.Double(1000, 700), pol);
 
 
 
-        MainFrame.getINSTANCE();
-        new Profile();
-        new Game(); // uncoment this todo
+//        MainFrame.getINSTANCE();
+//        new Profile();
+//        new Game(); // uncoment this todo
+
+        Skill.initializeSkills();
+        Menu.getINSTANCE();
 
 
 
@@ -105,8 +111,8 @@ public class Main {
 //        new OmenoctModel(new Point2D.Double( 500, 500));
 //        new ArchmireModel(new Point2D.Double( 500, 500));
 
-        Orb.loadImage();
-        new BlackOrb();
+//        Orb.loadImage();
+//        new BlackOrb();
 
 
 
