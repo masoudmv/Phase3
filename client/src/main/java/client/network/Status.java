@@ -1,42 +1,23 @@
 package client.network;
 
 import client.network.socket.SocketRequestSender;
-
-import java.net.InetAddress;
-import java.net.NetworkInterface;
+import shared.Model.Player;
 
 public class Status {
-    static Status INSTANCE = null;
-    private boolean isConnectedToServer = false;
-    private String macAddress;
+    private static Status INSTANCE;
     private SocketRequestSender socket;
-
-
+    private boolean connectedToServer;
+    private Player player;
 
     private Status() {
-        this.setMACAddress();
+        connectedToServer = false;
     }
 
-
-    public void setMACAddress(){
-        try {
-            InetAddress localHost = InetAddress.getLocalHost();
-            NetworkInterface ni = NetworkInterface.getByInetAddress(localHost);
-
-            byte[] hardwareAddress = ni.getHardwareAddress();
-
-            String[] hexadecimal = new String[hardwareAddress.length];
-            for (int i = 0; i < hardwareAddress.length; i++) {
-                hexadecimal[i] = String.format("%02X", hardwareAddress[i]);
-            }
-            this.macAddress = String.join("-", hexadecimal);
-        } catch (Exception e){
-            e.printStackTrace();
-            // implement better exception handling ...
-
-
-
+    public static Status getINSTANCE() {
+        if (INSTANCE == null) {
+            INSTANCE = new Status();
         }
+        return INSTANCE;
     }
 
     public SocketRequestSender getSocket() {
@@ -47,23 +28,19 @@ public class Status {
         this.socket = socket;
     }
 
-
-
-
-    public String getMacAddress() {
-        return macAddress;
-    }
-
-    public static Status getINSTANCE(){
-        if (INSTANCE == null) INSTANCE = new Status();
-        return INSTANCE;
-    }
-
     public boolean isConnectedToServer() {
-        return isConnectedToServer;
+        return connectedToServer;
     }
 
     public void setConnectedToServer(boolean connectedToServer) {
-        this.isConnectedToServer = connectedToServer;
+        this.connectedToServer = connectedToServer;
+    }
+
+    public Player getPlayer() {
+        return player;
+    }
+
+    public void setPlayer(Player player) {
+        this.player = player;
     }
 }

@@ -1,6 +1,6 @@
 package server;
 
-import shared.Model.User;
+import shared.Model.Player;
 
 import java.util.UUID;
 
@@ -11,10 +11,10 @@ public class Authentication {
         this.dataBase = dataBase;
     }
 
-    public User getUserById(UUID uuid) {
-        for (User user : dataBase.getUsers()) {
-            if (user.getId().equals(uuid)) {
-                return user;
+    public Player getUserById(UUID uuid) {
+        for (Player player : dataBase.getUsers()) {
+            if (player.getId().equals(uuid)) {
+                return player;
             }
         }
         return null;

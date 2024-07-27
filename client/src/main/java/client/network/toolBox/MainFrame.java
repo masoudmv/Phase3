@@ -34,6 +34,16 @@ public final class MainFrame extends JFrame {
     }
 
 
+    public void switchToPanel(JPanel panel) {
+        getContentPane().removeAll();
+        getContentPane().add(panel);
+        revalidate();
+        repaint();
+    }
+
+
+
+
 
 
 }

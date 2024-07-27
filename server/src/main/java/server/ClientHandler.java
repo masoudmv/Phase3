@@ -1,7 +1,7 @@
 package server;
 
 import server.socket.SocketResponseSender;
-import shared.Model.User;
+import shared.Model.Player;
 import shared.request.HiRequest;
 import shared.request.LoginRequest;
 import shared.request.RequestHandler;
@@ -38,7 +38,7 @@ public class ClientHandler extends Thread implements RequestHandler {
 
     @Override
     public Response handleLoginRequest(LoginRequest loginRequest) {
-        dataBase.getUsers().add(new User(loginRequest.getUsername(),loginRequest.getPassword()));
+//        dataBase.getUsers().add(new Player(loginRequest.getUsername(),loginRequest.getPassword()));
         return null;
     }
 }

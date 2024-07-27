@@ -1,18 +1,21 @@
 package server;
 
-import shared.Model.User;
+import shared.Model.Player;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class DataBase {
-    private List<User> users = new ArrayList();
 
-    public List<User> getUsers() {
-        return users;
+    // TODO implement a real DB ...
+
+    private List<Player> players = new ArrayList();
+
+    public List<Player> getUsers() {
+        return players;
     }
 
-    public void setUsers(List<User> users) {
-        this.users = users;
+    public void setUsers(List<Player> players) {
+        this.players = players;
     }
 }
