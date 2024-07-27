@@ -16,7 +16,10 @@ public class utils {
             Status.getINSTANCE().setConnectedToServer(true);
             Status.getINSTANCE().setSocket(socketRequestSender);
 
-            Menu.getINSTANCE();
+            new Thread(new Menu.ConnectionChecker()).start();
+
+
+//            MainFrame.getINSTANCE().switchToPanel(Menu.getINSTANCE());
         } catch (Exception e) {
             Object[] options = {"Yes", "Retry", "Cancel"};
             int choice = JOptionPane.showOptionDialog(
@@ -32,8 +35,7 @@ public class utils {
 
             if (choice == JOptionPane.YES_OPTION) {
                 Status.getINSTANCE().setConnectedToServer(false);
-                // Implement offline mode loading logic...
-                Menu.getINSTANCE();
+                Status.getINSTANCE().setSocket(null);
             } else if (choice == JOptionPane.NO_OPTION) {
                 tryConnection();
             }

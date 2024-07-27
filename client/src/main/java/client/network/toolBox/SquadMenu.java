@@ -3,11 +3,13 @@ package client.network.toolBox;
 import client.network.Status;
 import shared.Model.Player;
 import shared.Model.Squad;
+import shared.request.GetSquadsListRequest;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 
 public class SquadMenu extends JPanel {
     private JLabel usernameLabel;
@@ -89,35 +91,27 @@ public class SquadMenu extends JPanel {
 //            SwingUtilities.invokeLater(() -> {
 //            });
 
-            frame.remove(SquadMenu.this);
+//            frame.remove(SquadMenu.this);
 
-            Menu.getINSTANCE();
+//            Menu.getINSTANCE();
+
+            MainFrame.getINSTANCE().switchToPanel(Menu.getINSTANCE());
             frame.repaint();
         }
     }
 
-//    private class SetUsernameAction implements ActionListener {
-//        @Override
-//        public void actionPerformed(ActionEvent e) {
-//            String username = showInputDialog(SquadMenu.this, "Please Enter Your Username");
-//            if (username != null && !username.isEmpty()) {
-//                Player player = Status.getINSTANCE().getPlayer();
-//                if (player == null) {
-//                    player = new Player();
-//                    Status.getINSTANCE().setPlayer(player);
-//                }
-//                player.setUsername(username);
-//                updateUsernameDisplay();
-//                JOptionPane.showMessageDialog(SquadMenu.this, "Username set to: " + username);
-//            }
-//        }
-//    }
 
     private class ListSquadsAction implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            // Code to list squads
-            JOptionPane.showMessageDialog(SquadMenu.this, "List of squads.");
+
+            try {
+                Status.getINSTANCE().getSocket().sendRequest(new GetSquadsListRequest()).run(Status.getINSTANCE().getResponseHandler()); // ewwwwwwww
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+
+
         }
     }
 

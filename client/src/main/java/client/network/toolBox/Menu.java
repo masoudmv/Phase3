@@ -34,13 +34,11 @@ public class Menu extends JPanel {
     private volatile boolean isOnline;
 
     private Menu() {
-        MainFrame frame = MainFrame.getINSTANCE();
         Dimension dimension = new Dimension(600, 600);
-        setSize(dimension);
+        setPreferredSize(dimension);
         setVisible(true);
-        setLocationToCenter(frame);
 
-        int buttonX = getWidth() / 2 - buttonWidth / 2;
+        int buttonX = dimension.width / 2 - buttonWidth / 2;
         start = new Point(buttonX, 150);
         squad = new Point(buttonX, 200);
         settings = new Point(buttonX, 250);
@@ -78,36 +76,34 @@ public class Menu extends JPanel {
         toggleModeButton.addActionListener(new ToggleModeButtonAction());
         exitButton.addActionListener(new ExitButtonAction());
 
-        frame.add(this);
-        frame.repaint();
-
-        if (isOnline) new Thread(new ConnectionChecker()).start();
     }
 
     private class StartButtonAction implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            removeMainMenu();
             // Start button logic
+            System.out.println("Start button clicked");
         }
     }
 
     private class SquadButtonAction implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            eliminate();
             Status status = Status.getINSTANCE();
-            String name;
-            if (status.getPlayer() == null) {
-                name = JOptionPane.showInputDialog("Please Enter Your username");
+            String name = null;
+            MainFrame frame = MainFrame.getINSTANCE();
+            if (!isOnline){
+                JOptionPane.showMessageDialog(frame, "You are not online!", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+
+            else if (status.getPlayer() == null) {
+                name = JOptionPane.showInputDialog(frame, "Please Enter Your username");
             } else {
                 name = status.getPlayer().getUsername();
             }
-            if (name == null) {
-                Menu.getINSTANCE();
-            } else {
+            if (name != null) {
                 status.setPlayer(new Player(name));
-                showSquadMenu();
+                PanelManager.showSquadMenu();
             }
         }
     }
@@ -115,24 +111,23 @@ public class Menu extends JPanel {
     private class SettingsButtonAction implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            removeMainMenu();
             // Settings button logic
+            System.out.println("Settings button clicked");
         }
     }
 
     private class TutorialButtonAction implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            System.out.println("tutorial chosen");
-            // Tutorial button logic
+            System.out.println("Tutorial button clicked");
         }
     }
 
     private class SkillTreeButtonAction implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            removeMainMenu();
             // SkillTree button logic
+            System.out.println("SkillTree button clicked");
         }
     }
 
@@ -140,15 +135,16 @@ public class Menu extends JPanel {
         @Override
         public void actionPerformed(ActionEvent e) {
             toggleOnlineOfflineMode();
-            eliminate();
             if (isOnline) {
                 Status.getINSTANCE().getSocket().close();
                 Status.getINSTANCE().setConnectedToServer(false);
                 isOnline = false;
-            } else {
-                tryConnection();
-            }
-            Menu.getINSTANCE();
+
+            } else tryConnection();
+
+
+            updateStatusLabel();
+//            Menu.getINSTANCE();
         }
     }
 
@@ -159,29 +155,7 @@ public class Menu extends JPanel {
         }
     }
 
-    private void showSquadMenu() {
-        MainFrame frame = MainFrame.getINSTANCE();
-        SquadMenu squadMenu = new SquadMenu();
-        frame.switchToPanel(squadMenu);
-        squadMenu.updateSquadStatus();
-    }
 
-    private void removeMainMenu() {
-        MainFrame frame = MainFrame.getINSTANCE();
-        frame.remove(this);
-        frame.revalidate();
-        frame.repaint();
-    }
-
-    public void setLocationToCenter(MainFrame frame) {
-        setLocation(frame.getWidth() / 2 - getWidth() / 2, frame.getHeight() / 2 - getHeight() / 2);
-    }
-
-    public static void addMenu() {
-        MainFrame.getINSTANCE().add(Menu.getINSTANCE());
-        MainFrame.getINSTANCE().revalidate();
-        MainFrame.getINSTANCE().repaint();
-    }
 
     public static Menu getINSTANCE() {
         if (Menu.INSTANCE == null) INSTANCE = new Menu();
@@ -195,7 +169,7 @@ public class Menu extends JPanel {
         updateStatusLabel();
     }
 
-    private void updateStatusLabel() {
+    public void updateStatusLabel() {
         synchronized (this) {
             isOnline = Status.getINSTANCE().isConnectedToServer();
             statusLabel.setText("Status: " + (isOnline ? "Online" : "Offline"));
@@ -203,15 +177,7 @@ public class Menu extends JPanel {
         statusLabel.repaint();
     }
 
-    public void eliminate() {
-        SwingUtilities.invokeLater(() -> {
-            MainFrame.getINSTANCE().remove(this);
-            Menu.INSTANCE = null;
-            MainFrame.getINSTANCE().repaint();
-        });
-    }
-
-    private class ConnectionChecker implements Runnable {
+    static class ConnectionChecker implements Runnable {
         @Override
         public void run() {
             while (true) {
@@ -219,14 +185,15 @@ public class Menu extends JPanel {
                     Thread.sleep(1000);
 
                     synchronized (Menu.getINSTANCE()) {
-                        if (!isOnline) break;
+                        if (!Status.getINSTANCE().isConnectedToServer()) break;
                     }
                     SocketRequestSender socketRequestSender = Status.getINSTANCE().getSocket();
                     socketRequestSender.sendRequest(new HiRequest());
                     System.out.println("Connection check successful.");
                 } catch (Exception e) {
-                    eliminate();
-                    tryConnection();
+                    JOptionPane.showMessageDialog(MainFrame.getINSTANCE(), "Connection Lost!", "Error", JOptionPane.ERROR_MESSAGE);
+                    Status.getINSTANCE().setConnectedToServer(false);
+                    PanelManager.displayMainMenu();
                     break;
                 }
             }

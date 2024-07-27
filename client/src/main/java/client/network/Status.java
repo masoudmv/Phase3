@@ -6,11 +6,13 @@ import shared.Model.Player;
 public class Status {
     private static Status INSTANCE;
     private SocketRequestSender socket;
+    private MyResponseHandler responseHandler;
     private boolean connectedToServer;
     private Player player;
 
     private Status() {
-        connectedToServer = false;
+        this.connectedToServer = false;
+        this.responseHandler = new MyResponseHandler();
     }
 
     public static Status getINSTANCE() {
@@ -42,5 +44,13 @@ public class Status {
 
     public void setPlayer(Player player) {
         this.player = player;
+    }
+
+    public MyResponseHandler getResponseHandler() {
+        return responseHandler;
+    }
+
+    public void setResponseHandler(MyResponseHandler responseHandler) {
+        this.responseHandler = responseHandler;
     }
 }
