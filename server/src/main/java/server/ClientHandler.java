@@ -39,6 +39,6 @@ public class ClientHandler extends Thread implements RequestHandler {
     @Override
     public Response handleLoginRequest(LoginRequest loginRequest) {
         dataBase.getUsers().add(new User(loginRequest.getUsername(),loginRequest.getPassword()));
-        return;
+        return null;
     }
 }

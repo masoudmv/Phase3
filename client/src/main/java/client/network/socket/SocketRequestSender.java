@@ -1,4 +1,4 @@
-package client.socket;
+package client.network.socket;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import shared.request.Request;
