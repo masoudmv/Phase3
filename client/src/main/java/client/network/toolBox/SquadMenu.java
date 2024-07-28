@@ -1,6 +1,7 @@
 package client.network.toolBox;
 
 import client.network.Status;
+import client.network.socket.SocketRequestSender;
 import shared.Model.Player;
 import shared.Model.Squad;
 import shared.request.GetSquadsListRequest;
@@ -10,6 +11,8 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+
+import static client.network.toolBox.SquadConstants.SQUAD_CREATION_XP;
 
 public class SquadMenu extends JPanel {
     private JLabel usernameLabel;
@@ -95,7 +98,7 @@ public class SquadMenu extends JPanel {
 
 //            Menu.getINSTANCE();
 
-            MainFrame.getINSTANCE().switchToPanel(Menu.getINSTANCE());
+            frame.switchToPanel(Menu.getINSTANCE());
             frame.repaint();
         }
     }
@@ -106,7 +109,9 @@ public class SquadMenu extends JPanel {
         public void actionPerformed(ActionEvent e) {
 
             try {
-                Status.getINSTANCE().getSocket().sendRequest(new GetSquadsListRequest()).run(Status.getINSTANCE().getResponseHandler()); // ewwwwwwww
+                Status status = Status.getINSTANCE();
+                SocketRequestSender socket = status.getSocket();
+                socket.sendRequest(new GetSquadsListRequest()).run(status.getResponseHandler());
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }
@@ -118,15 +123,21 @@ public class SquadMenu extends JPanel {
     private class CreateSquadAction implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
+
+            // todo reimplement ...
             Player player = Status.getINSTANCE().getPlayer();
-            if (player != null) {
+
+            if (player.getSquad() == null) {
+                // TODO move to server side ...
+                boolean hasReqXP = player.getXP() > SQUAD_CREATION_XP.getValue();
                 Squad squad = new Squad(player);
                 player.setSquad(squad);
                 squadStatusLabel.setText("Squad Status: In a squad");
                 JOptionPane.showMessageDialog(SquadMenu.this, "Squad created.");
             } else {
-                JOptionPane.showMessageDialog(SquadMenu.this, "Please set a username first.");
+                JOptionPane.showMessageDialog(SquadMenu.this, "You Are Already in a squad ...");
             }
+
         }
     }
 

@@ -3,8 +3,14 @@ package client.network;
 import client.network.socket.SocketRequestSender;
 import shared.Model.Player;
 
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.net.UnknownHostException;
+
 public class Status {
     private static Status INSTANCE;
+    private String macAddress;
     private SocketRequestSender socket;
     private MyResponseHandler responseHandler;
     private boolean connectedToServer;
@@ -13,6 +19,8 @@ public class Status {
     private Status() {
         this.connectedToServer = false;
         this.responseHandler = new MyResponseHandler();
+        String macAddress = findMacAddress();
+        this.player = new Player(macAddress);
     }
 
     public static Status getINSTANCE() {
@@ -53,4 +61,27 @@ public class Status {
     public void setResponseHandler(MyResponseHandler responseHandler) {
         this.responseHandler = responseHandler;
     }
+
+    private String findMacAddress(){
+        String[] hexadecimal = null;
+
+        try {
+            InetAddress localHost = InetAddress.getLocalHost();
+            NetworkInterface ni = NetworkInterface.getByInetAddress(localHost);
+            byte[] hardwareAddress = ni.getHardwareAddress();
+
+            hexadecimal = new String[hardwareAddress.length];
+            for (int i = 0; i < hardwareAddress.length; i++) {
+                hexadecimal[i] = String.format("%02X", hardwareAddress[i]);
+            }
+        } catch (UnknownHostException | SocketException e) {
+            System.out.println("Unable to find local host");
+            throw new RuntimeException(e);
+        }
+
+        return macAddress = String.join("-", hexadecimal);
+    }
+
+
+
 }

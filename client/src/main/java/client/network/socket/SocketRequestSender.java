@@ -10,9 +10,9 @@ import java.net.Socket;
 import java.util.Scanner;
 
 public class SocketRequestSender {
+    private final Scanner scanner;
     private final Socket socket;
     private final PrintStream printStream;
-    private final Scanner scanner;
     private final ObjectMapper objectMapper;
 
     public SocketRequestSender() throws IOException {

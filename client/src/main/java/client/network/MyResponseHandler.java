@@ -6,9 +6,8 @@ import client.network.toolBox.Menu;
 import client.network.toolBox.PanelManager;
 import shared.Model.Player;
 import shared.Model.Squad;
-import shared.response.GetSquadsListResponse;
-import shared.response.HiResponse;
-import shared.response.ResponseHandler;
+import shared.request.IdentificationRequest;
+import shared.response.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -29,29 +28,44 @@ public class MyResponseHandler implements ResponseHandler {
     @Override
     public void handleGetSquadsListResponse(GetSquadsListResponse getSquadsListResponse) {
         List<Squad> squads = getSquadsListResponse.getList();
-        squads.add(new Squad(new Player("massooood")));
-        squads.add(new Squad(new Player("massooood")));
-        squads.add(new Squad(new Player("massooood")));
-        squads.add(new Squad(new Player("massooood")));
-        squads.add(new Squad(new Player("massooood")));
-        squads.add(new Squad(new Player("massooood")));
-        squads.add(new Squad(new Player("massooood")));
-        squads.add(new Squad(new Player("massooood")));
-        squads.add(new Squad(new Player("massooood")));
-        squads.add(new Squad(new Player("massooood")));
-        squads.add(new Squad(new Player("massooood")));
-        squads.add(new Squad(new Player("massooood")));
-        squads.add(new Squad(new Player("massooood")));
-        squads.add(new Squad(new Player("massooood")));
-        squads.add(new Squad(new Player("massooood")));
-        squads.add(new Squad(new Player("massooood")));
-        squads.add(new Squad(new Player("massooood")));
+//        squads.add(new Squad(new Player("massooood")));
+//        squads.add(new Squad(new Player("massooood")));
+//        squads.add(new Squad(new Player("massooood")));
+//        squads.add(new Squad(new Player("massooood")));
+//        squads.add(new Squad(new Player("massooood")));
+//        squads.add(new Squad(new Player("massooood")));
+//        squads.add(new Squad(new Player("massooood")));
+//        squads.add(new Squad(new Player("massooood")));
+//        squads.add(new Squad(new Player("massooood")));
+//        squads.add(new Squad(new Player("massooood")));
+//        squads.add(new Squad(new Player("massooood")));
+//        squads.add(new Squad(new Player("massooood")));
+//        squads.add(new Squad(new Player("massooood")));
+//        squads.add(new Squad(new Player("massooood")));
+//        squads.add(new Squad(new Player("massooood")));
+//        squads.add(new Squad(new Player("massooood")));
+//        squads.add(new Squad(new Player("massooood")));
 
         SwingUtilities.invokeLater(() -> {
             MainFrame frame = MainFrame.getINSTANCE();
             SquadListPanel squadListPanel = new SquadListPanel(squads, frame);
             frame.switchToPanel(squadListPanel);
         });
+    }
+
+    @Override
+    public void handleCreateSquadResponse(CreateSquadResponse createSquadResponse) {
+        // TODO IMPLEMENT ...
+        System.out.println("in Client ...");
+    }
+
+    @Override
+    public void handleIdentificationResponse(IdentificationResponse identificationResponse) {
+        System.out.println("handling ident response ...");
+        String username = identificationResponse.getUsername();
+        Player player = Status.getINSTANCE().getPlayer();
+        System.out.println("username : " + username);
+        player.setUsername(username);
     }
 }
 

@@ -12,7 +12,7 @@ public class Authentication {
     }
 
     public Player getUserById(UUID uuid) {
-        for (Player player : dataBase.getUsers()) {
+        for (Player player : dataBase.getPlayers()) {
             if (player.getId().equals(uuid)) {
                 return player;
             }

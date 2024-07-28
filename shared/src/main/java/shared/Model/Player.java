@@ -1,16 +1,18 @@
 package shared.Model;
 
 public class Player extends Model {
+    private String macAddress;
     private String username;
-    private Squad squad;
-    private String MACAddress;
+    private Status status;
+    private Squad squad; // null squad means the player is squadless
+    private int XP = 0;
 
-    public Player(String username) {
-        this.username = username;
+    public Player(String macAddress) {
+        this.macAddress = macAddress;
     }
 
-    public Player() {
-    }
+//    public Player() {
+//    }
 
     public String getUsername() {
         return username;
@@ -28,11 +30,31 @@ public class Player extends Model {
         this.squad = squad;
     }
 
-    public String getMACAddress() {
-        return MACAddress;
+    public String getMacAddress() {
+        return macAddress;
     }
 
-    public void setMACAddress(String MACAddress) {
-        this.MACAddress = MACAddress;
+    public void setMacAddress(String macAddress) {
+        this.macAddress = macAddress;
     }
+
+    public int getXP() {
+        return XP;
+    }
+
+    public void setXP(int XP) {
+        this.XP = XP;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+}
+
+enum Status{
+    offline, online, busy;
 }

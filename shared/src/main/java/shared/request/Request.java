@@ -12,6 +12,8 @@ import shared.response.Response;
         @JsonSubTypes.Type(value = HiRequest.class, name = "hiRequest"),
         @JsonSubTypes.Type(value = LoginRequest.class, name = "loginRequest"),
         @JsonSubTypes.Type(value = GetSquadsListRequest.class, name = "GetSquadsListRequest"),
+        @JsonSubTypes.Type(value = CreateSquadRequest.class, name = "CreateSquadRequest"),
+        @JsonSubTypes.Type(value = IdentificationRequest.class, name = "IdentificationRequest"),
 })
 public interface Request {
     Response run(RequestHandler requestHandler);

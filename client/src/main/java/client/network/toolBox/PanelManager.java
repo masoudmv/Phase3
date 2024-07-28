@@ -7,7 +7,7 @@ public class PanelManager {
         MainFrame frame = MainFrame.getINSTANCE();
         SquadMenu squadMenu = new SquadMenu();
         frame.switchToPanel(squadMenu);
-        squadMenu.updateSquadStatus();
+        squadMenu.updateSquadStatus(); // needed really???
     }
 
     public static void displayMainMenu() {

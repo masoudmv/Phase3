@@ -2,22 +2,16 @@ package server;
 
 import server.socket.SocketResponseSender;
 import shared.Model.Squad;
-import shared.request.GetSquadsListRequest;
-import shared.request.HiRequest;
-import shared.request.LoginRequest;
-import shared.request.RequestHandler;
-import shared.response.GetSquadsListResponse;
-import shared.response.HiResponse;
-import shared.response.Response;
+import shared.request.*;
+import shared.response.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class ClientHandler extends Thread implements RequestHandler {
+public class MyRequestHandler extends Thread implements RequestHandler {
     private SocketResponseSender socketResponseSender;
     private DataBase dataBase;
 
-    public ClientHandler(SocketResponseSender socketResponseSender, DataBase dataBase) {
+    public MyRequestHandler(SocketResponseSender socketResponseSender, DataBase dataBase) {
         this.dataBase = dataBase;
         this.socketResponseSender = socketResponseSender;
     }
@@ -50,7 +44,27 @@ public class ClientHandler extends Thread implements RequestHandler {
     @Override
     public Response handleGetSquadsRequest(GetSquadsListRequest getSquadsListRequest) {
         System.out.println("in server ...");
-        List<Squad> out = dataBase.getSquads();
+        List<Squad> out = dataBase.getAllSquads();
         return new GetSquadsListResponse(out);
+    }
+
+    @Override
+    public Response handleCreateSquadRequest(CreateSquadRequest createSquadRequest) {
+        // TODO ...
+
+        System.out.println("in server ...");
+        return new CreateSquadResponse();
+    }
+
+    @Override
+    public Response handleIdentificationRequest(IdentificationRequest identificationRequest) {
+        String macAddress = identificationRequest.getMACAddress();
+        String username = identificationRequest.getUsername();
+        if (username != null){
+            dataBase.setUsername(macAddress, username);
+            System.out.println("username is set to " + username);
+        }
+        username = dataBase.identificate(macAddress);
+        return new IdentificationResponse(username);
     }
 }

@@ -2,6 +2,7 @@ package client.network.toolBox;
 
 import client.network.Status;
 import client.network.socket.SocketRequestSender;
+import shared.request.IdentificationRequest;
 
 import javax.swing.*;
 import static client.network.toolBox.UIMessageConstants.CONNECTED_TO_SERVER;
@@ -16,6 +17,11 @@ public class utils {
             Status.getINSTANCE().setConnectedToServer(true);
             Status.getINSTANCE().setSocket(socketRequestSender);
 
+            // send identification Request ...
+            String macAddress = Status.getINSTANCE().getPlayer().getMacAddress();
+            socketRequestSender.sendRequest(new IdentificationRequest(macAddress)).run(Status.getINSTANCE().getResponseHandler());
+
+            // start a thread to check connection with server ...
             new Thread(new Menu.ConnectionChecker()).start();
 
 

@@ -1,7 +1,9 @@
 package client.network;
 
 
+import client.network.socket.SocketRequestSender;
 import client.network.toolBox.PanelManager;
+import shared.request.IdentificationRequest;
 
 import java.io.IOException;
 
@@ -22,8 +24,9 @@ public class Main {
 //        JOptionPane.showMessageDialog(frame, "Username set to: " + username);
 
 //        SocketRequestSender socketRequestSender = new SocketRequestSender();
-//        MyResponseHandler serverHandler = new MyResponseHandler(socketRequestSender);
-//        socketRequestSender.sendRequest(new GetSquadsListRequest()).run(serverHandler);
+//        MyResponseHandler serverHandler = new MyResponseHandler();
+//        String macAddress = Status.getINSTANCE().getPlayer().getMacAddress();
+//        socketRequestSender.sendRequest(new IdentificationRequest(macAddress)).run(serverHandler);
 
 
 //        InetAddress localHost = InetAddress.getLocalHost();

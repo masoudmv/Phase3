@@ -4,11 +4,13 @@ import client.network.Status;
 import client.network.socket.SocketRequestSender;
 import shared.Model.Player;
 import shared.request.HiRequest;
+import shared.request.IdentificationRequest;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 
 import static client.network.toolBox.utils.tryConnection;
 
@@ -89,20 +91,28 @@ public class Menu extends JPanel {
     private class SquadButtonAction implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            Status status = Status.getINSTANCE();
-            String name = null;
             MainFrame frame = MainFrame.getINSTANCE();
+            Status status = Status.getINSTANCE();
+            Player player = Status.getINSTANCE().getPlayer();
+            String username = player.getUsername();
             if (!isOnline){
                 JOptionPane.showMessageDialog(frame, "You are not online!", "Error", JOptionPane.ERROR_MESSAGE);
             }
 
-            else if (status.getPlayer() == null) {
-                name = JOptionPane.showInputDialog(frame, "Please Enter Your username");
-            } else {
-                name = status.getPlayer().getUsername();
+            else if (username == null) {
+                username = JOptionPane.showInputDialog(frame, "Please Enter Your username");
             }
-            if (name != null) {
-                status.setPlayer(new Player(name));
+
+            if (username != null && isOnline) {
+
+                try {
+                    status.getSocket().sendRequest(new IdentificationRequest(status.getPlayer().getMacAddress(), username)).run(Status.getINSTANCE().getResponseHandler());
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+
+
+                status.getPlayer().setUsername(username);
                 PanelManager.showSquadMenu();
             }
         }
