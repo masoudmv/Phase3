@@ -4,6 +4,7 @@ import client.network.Status;
 import client.network.socket.SocketRequestSender;
 import shared.Model.Player;
 import shared.Model.Squad;
+import shared.request.CreateSquadRequest;
 import shared.request.GetSquadsListRequest;
 
 import javax.swing.*;
@@ -12,17 +13,16 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
 
-import static client.network.toolBox.SquadConstants.SQUAD_CREATION_XP;
-
 public class SquadMenu extends JPanel {
     private JLabel usernameLabel;
     private JLabel usernameDisplayLabel;
     private JButton backButton;
-//    private JButton setUsernameButton;
     private JButton listSquadsButton;
     private JButton createSquadButton;
-    private JButton mySquadButton;
-    private JLabel squadStatusLabel;
+    private JPanel mySquadPanelContainer;
+    private Timer updateTimer;
+    private JButton leaveSquadButton;
+    private JButton squadAbilitiesButton;
 
     public SquadMenu() {
         setLayout(new GridBagLayout());
@@ -32,15 +32,14 @@ public class SquadMenu extends JPanel {
 
         backButton = new JButton("Back");
         usernameLabel = new JLabel("Username:");
-        usernameDisplayLabel = new JLabel("Not set"); // Display the username
-//        setUsernameButton = new JButton("Set Username");
+        usernameDisplayLabel = new JLabel("Not set");
         listSquadsButton = new JButton("List Squads");
         createSquadButton = new JButton("Create Squad");
-        mySquadButton = new JButton("My Squad");
-        squadStatusLabel = new JLabel("Squad Status: Not in a squad");
+        leaveSquadButton = new JButton("Leave Squad");
+        squadAbilitiesButton = new JButton("Squad Abilities");
 
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(10, 10, 10, 10); // Add padding
+        gbc.insets = new Insets(10, 10, 10, 10);
 
         gbc.gridx = 0;
         gbc.gridy = 0;
@@ -55,12 +54,6 @@ public class SquadMenu extends JPanel {
         gbc.gridx = 2;
         add(usernameDisplayLabel, gbc);
 
-//        gbc.gridx = 1;
-//        gbc.gridy = 1;
-//        gbc.gridwidth = 2;
-//        gbc.anchor = GridBagConstraints.CENTER;
-//        add(setUsernameButton, gbc);
-
         gbc.gridy = 2;
         add(listSquadsButton, gbc);
 
@@ -68,46 +61,56 @@ public class SquadMenu extends JPanel {
         add(createSquadButton, gbc);
 
         gbc.gridy = 4;
-        add(mySquadButton, gbc);
+        gbc.gridwidth = 3;
+        gbc.fill = GridBagConstraints.BOTH;
+        mySquadPanelContainer = new JPanel(new BorderLayout());
+        add(mySquadPanelContainer, gbc);
 
         gbc.gridy = 5;
-        add(squadStatusLabel, gbc);
+        add(squadAbilitiesButton, gbc);
+        squadAbilitiesButton.setVisible(false);
+
+        gbc.gridy = 6;
+        gbc.gridwidth = 1;
+        gbc.fill = GridBagConstraints.NONE;
+        add(leaveSquadButton, gbc);
+        leaveSquadButton.setVisible(false);
 
         backButton.addActionListener(new BackAction());
-//        setUsernameButton.addActionListener(new SetUsernameAction());
         listSquadsButton.addActionListener(new ListSquadsAction());
         createSquadButton.addActionListener(new CreateSquadAction());
-        mySquadButton.addActionListener(new MySquadAction());
+        leaveSquadButton.addActionListener(new LeaveSquadAction());
+        squadAbilitiesButton.addActionListener(new SquadAbilitiesAction());
 
-        // Center the panel on the screen
         centerPanel();
         updateUsernameDisplay();
+        startUpdateTimer();
+    }
+
+    private void startUpdateTimer() {
+        updateTimer = new Timer(1000, e -> updateSquadStatus());
+        updateTimer.start();
+    }
+
+    private void stopUpdateTimer() {
+        if (updateTimer != null) {
+            updateTimer.stop();
+        }
     }
 
     private class BackAction implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            // Code to handle back button action
-            // For example, you can switch to the previous panel or close this panel
+            stopUpdateTimer();
             MainFrame frame = MainFrame.getINSTANCE();
-
-//            SwingUtilities.invokeLater(() -> {
-//            });
-
-//            frame.remove(SquadMenu.this);
-
-//            Menu.getINSTANCE();
-
             frame.switchToPanel(Menu.getINSTANCE());
             frame.repaint();
         }
     }
 
-
     private class ListSquadsAction implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-
             try {
                 Status status = Status.getINSTANCE();
                 SocketRequestSender socket = status.getSocket();
@@ -115,50 +118,107 @@ public class SquadMenu extends JPanel {
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }
-
-
         }
     }
 
     private class CreateSquadAction implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-
-            // todo reimplement ...
-            Player player = Status.getINSTANCE().getPlayer();
-
-            if (player.getSquad() == null) {
-                // TODO move to server side ...
-                boolean hasReqXP = player.getXP() > SQUAD_CREATION_XP.getValue();
-                Squad squad = new Squad(player);
-                player.setSquad(squad);
-                squadStatusLabel.setText("Squad Status: In a squad");
-                JOptionPane.showMessageDialog(SquadMenu.this, "Squad created.");
-            } else {
-                JOptionPane.showMessageDialog(SquadMenu.this, "You Are Already in a squad ...");
+            String macAddress = Status.getINSTANCE().getPlayer().getMacAddress();
+            SocketRequestSender socket = Status.getINSTANCE().getSocket();
+            try {
+                socket.sendRequest(new CreateSquadRequest(macAddress)).run(Status.getINSTANCE().getResponseHandler());
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
             }
-
         }
     }
 
-    private class MySquadAction implements ActionListener {
+    private class LeaveSquadAction implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
             Player player = Status.getINSTANCE().getPlayer();
             if (player != null && player.getSquad() != null) {
-                JOptionPane.showMessageDialog(SquadMenu.this, "You are in a squad.");
-            } else {
-                JOptionPane.showMessageDialog(SquadMenu.this, "You are not in a squad.");
+                player.setSquad(null); // Remove squad reference
+                JOptionPane.showMessageDialog(SquadMenu.this, "You have left the squad.");
+                updateMySquadPanel();
             }
+        }
+    }
+
+    private class SquadAbilitiesAction implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            MainFrame frame = MainFrame.getINSTANCE();
+            frame.switchToPanel(new SquadAbilitiesPanel());
+            frame.repaint();
         }
     }
 
     public void updateSquadStatus() {
         Player player = Status.getINSTANCE().getPlayer();
         if (player != null && player.getSquad() != null) {
-            squadStatusLabel.setText("Squad Status: In a squad");
+            leaveSquadButton.setVisible(true);
+            squadAbilitiesButton.setVisible(true);
         } else {
-            squadStatusLabel.setText("Squad Status: Not in a squad");
+            leaveSquadButton.setVisible(false);
+            squadAbilitiesButton.setVisible(false);
+        }
+        updateMySquadPanel();
+    }
+
+    private void updateMySquadPanel() {
+        Player player = Status.getINSTANCE().getPlayer();
+        mySquadPanelContainer.removeAll();
+
+        if (player != null && player.getSquad() != null) {
+            JPanel squadPanel = new JPanel(new GridBagLayout());
+            GridBagConstraints gbc = new GridBagConstraints();
+            gbc.insets = new Insets(10, 10, 10, 10);
+            gbc.gridx = 0;
+            gbc.gridy = 0;
+            gbc.anchor = GridBagConstraints.CENTER;
+
+            Squad squad = player.getSquad();
+            for (Player member : squad.getMembers()) {
+                JLabel memberLabel = new JLabel(member.getUsername() + " - XP: " + member.getXP() + " - Status: " + member.getStatus());
+                gbc.gridx = 0;
+                gbc.gridy++;
+                squadPanel.add(memberLabel, gbc);
+
+                JButton kickButton = new JButton("Kick");
+                gbc.gridx = 1;
+                squadPanel.add(kickButton, gbc);
+
+                kickButton.addActionListener(new KickMemberAction(member));
+            }
+
+            mySquadPanelContainer.add(new JScrollPane(squadPanel), BorderLayout.CENTER);
+        } else {
+            JLabel noSquadLabel = new JLabel("You are not in any squad currently");
+            noSquadLabel.setHorizontalAlignment(SwingConstants.CENTER);
+            mySquadPanelContainer.add(noSquadLabel, BorderLayout.CENTER);
+        }
+
+        mySquadPanelContainer.revalidate();
+        mySquadPanelContainer.repaint();
+    }
+
+    private class KickMemberAction implements ActionListener {
+        private Player member;
+
+        public KickMemberAction(Player member) {
+            this.member = member;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            Player player = Status.getINSTANCE().getPlayer();
+            if (player != null && player.getSquad() != null) {
+                player.getSquad().getMembers().remove(member);
+                JOptionPane.showMessageDialog(SquadMenu.this, "Member " + member.getUsername() + " has been kicked.");
+                updateMySquadPanel();
+            }
         }
     }
 
@@ -177,27 +237,5 @@ public class SquadMenu extends JPanel {
         int x = (screenSize.width - getPreferredSize().width) / 2;
         int y = (screenSize.height - getPreferredSize().height) / 2;
         setBounds(x, y, getPreferredSize().width, getPreferredSize().height);
-    }
-
-    public static String showInputDialog(Component parentComponent, String message) {
-        JTextField textField = new JTextField(20);
-        final JComponent[] inputs = new JComponent[] {
-                new JLabel(message),
-                textField
-        };
-        int result = JOptionPane.showOptionDialog(
-                parentComponent,
-                inputs,
-                "Input",
-                JOptionPane.DEFAULT_OPTION,
-                JOptionPane.PLAIN_MESSAGE,
-                null,
-                new Object[]{"OK"},
-                "OK");
-
-        if (result == JOptionPane.OK_OPTION) {
-            return textField.getText();
-        }
-        return null;
     }
 }

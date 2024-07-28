@@ -1,17 +1,18 @@
 package server;
 
 import server.socket.SocketResponseSender;
+import shared.Model.Player;
 import shared.Model.Squad;
 import shared.request.*;
 import shared.response.*;
 
 import java.util.List;
 
-public class MyRequestHandler extends Thread implements RequestHandler {
+public class ServersideReqHandler extends Thread implements RequestHandler {
     private SocketResponseSender socketResponseSender;
     private DataBase dataBase;
 
-    public MyRequestHandler(SocketResponseSender socketResponseSender, DataBase dataBase) {
+    public ServersideReqHandler(SocketResponseSender socketResponseSender, DataBase dataBase) {
         this.dataBase = dataBase;
         this.socketResponseSender = socketResponseSender;
     }
@@ -43,28 +44,41 @@ public class MyRequestHandler extends Thread implements RequestHandler {
 
     @Override
     public Response handleGetSquadsRequest(GetSquadsListRequest getSquadsListRequest) {
-        System.out.println("in server ...");
         List<Squad> out = dataBase.getAllSquads();
         return new GetSquadsListResponse(out);
     }
 
     @Override
     public Response handleCreateSquadRequest(CreateSquadRequest createSquadRequest) {
-        // TODO ...
-
-        System.out.println("in server ...");
-        return new CreateSquadResponse();
+        String macAddress = createSquadRequest.getMACAddress();
+        String message = dataBase.createSquad(macAddress);
+        Player player = dataBase.findPlayer(macAddress);
+        Squad squad = player.getSquad();
+        return new CreateSquadResponse(message, player, squad);
     }
 
     @Override
     public Response handleIdentificationRequest(IdentificationRequest identificationRequest) {
         String macAddress = identificationRequest.getMACAddress();
         String username = identificationRequest.getUsername();
+        dataBase.identificate(macAddress);
+
+
         if (username != null){
             dataBase.setUsername(macAddress, username);
-            System.out.println("username is set to " + username);
         }
-        username = dataBase.identificate(macAddress);
-        return new IdentificationResponse(username);
+
+        Player player = dataBase.findPlayer(macAddress);
+        Squad squad = player.getSquad();
+        return new IdentificationResponse(player, squad);
+    }
+
+    @Override
+    public Response handleDonateRequest(DonateRequest donateRequest) {
+        System.out.println("donateRequest");
+        Player player = dataBase.findPlayer(donateRequest.getMacAddress());
+        int amount = donateRequest.getAmount();
+        String message = dataBase.donateToSquad(player, amount);
+        return new DonateResponse(message);
     }
 }

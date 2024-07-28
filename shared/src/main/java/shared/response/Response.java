@@ -14,6 +14,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         @JsonSubTypes.Type(value = GetSquadsListResponse.class, name = "GetSquadsListResponse"),
         @JsonSubTypes.Type(value = CreateSquadResponse.class, name = "CreateSquadResponse"),
         @JsonSubTypes.Type(value = IdentificationResponse.class, name = "IdentificationResponse"),
+        @JsonSubTypes.Type(value = DonateResponse.class, name = "DonateResponse"),
 
 })
 public interface Response {

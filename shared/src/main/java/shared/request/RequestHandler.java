@@ -8,4 +8,5 @@ public interface RequestHandler {
     Response handleGetSquadsRequest(GetSquadsListRequest getSquadsListRequest);
     Response handleCreateSquadRequest(CreateSquadRequest createSquadRequest);
     Response handleIdentificationRequest(IdentificationRequest identificationRequest);
+    Response handleDonateRequest(DonateRequest donateRequest);
 }

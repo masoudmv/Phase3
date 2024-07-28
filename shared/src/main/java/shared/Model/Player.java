@@ -1,18 +1,26 @@
 package shared.Model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 public class Player extends Model {
     private String macAddress;
     private String username;
     private Status status;
+    private int donatedAmount; // make zero after each squad battle or leaving squad.
+
+    @JsonBackReference
     private Squad squad; // null squad means the player is squadless
+
     private int XP = 0;
 
     public Player(String macAddress) {
         this.macAddress = macAddress;
+        this.XP = 1000;
     }
 
-//    public Player() {
-//    }
+    public Player() {
+    }
 
     public String getUsername() {
         return username;
@@ -22,6 +30,7 @@ public class Player extends Model {
         this.username = username;
     }
 
+    @JsonBackReference
     public Squad getSquad() {
         return squad;
     }
@@ -53,8 +62,21 @@ public class Player extends Model {
     public void setStatus(Status status) {
         this.status = status;
     }
+
+    public int getDonatedAmount() {
+        return donatedAmount;
+    }
+
+    public void addDonatedAmount(int donatedAmount) {
+        this.donatedAmount += donatedAmount;
+    }
+
+    public void reduceXpBy(int amount) {
+        if (amount > this.XP) return;
+        this.XP -= amount;
+    }
 }
 
-enum Status{
+enum Status {
     offline, online, busy;
 }

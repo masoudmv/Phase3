@@ -1,6 +1,6 @@
 package server.socket;
 
-import server.MyRequestHandler;
+import server.ServersideReqHandler;
 import server.DataBase;
 
 import java.net.ServerSocket;
@@ -18,7 +18,7 @@ public class SocketStarter extends Thread {
             serverSocket = new ServerSocket(8080);
             while (true) {
                 Socket socket = serverSocket.accept();
-                new MyRequestHandler(new SocketResponseSender(socket), dataBase).start();
+                new ServersideReqHandler(new SocketResponseSender(socket), dataBase).start();
             }
         } catch (Exception e) {
             System.out.println('d');

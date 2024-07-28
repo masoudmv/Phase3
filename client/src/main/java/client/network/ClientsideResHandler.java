@@ -1,12 +1,9 @@
 package client.network;
 
-import client.network.socket.SocketRequestSender;
 import client.network.toolBox.MainFrame;
-import client.network.toolBox.Menu;
 import client.network.toolBox.PanelManager;
 import shared.Model.Player;
 import shared.Model.Squad;
-import shared.request.IdentificationRequest;
 import shared.response.*;
 
 import javax.swing.*;
@@ -15,9 +12,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 
-public class MyResponseHandler implements ResponseHandler {
+public class ClientsideResHandler implements ResponseHandler {
 
-    public MyResponseHandler() {
+    public ClientsideResHandler() {
     }
 
     @Override
@@ -55,17 +52,30 @@ public class MyResponseHandler implements ResponseHandler {
 
     @Override
     public void handleCreateSquadResponse(CreateSquadResponse createSquadResponse) {
-        // TODO IMPLEMENT ...
-        System.out.println("in Client ...");
+
+        String message = createSquadResponse.getMessage();
+        MainFrame frame = MainFrame.getINSTANCE();
+        JOptionPane.showMessageDialog(frame, message);
+
+
+        Player player = createSquadResponse.getPlayer();
+        Status.getINSTANCE().getPlayer().setSquad(createSquadResponse.getSquad());
     }
 
     @Override
     public void handleIdentificationResponse(IdentificationResponse identificationResponse) {
-        System.out.println("handling ident response ...");
-        String username = identificationResponse.getUsername();
-        Player player = Status.getINSTANCE().getPlayer();
-        System.out.println("username : " + username);
-        player.setUsername(username);
+        Player player = identificationResponse.getPlayer();
+        if (player != null) {
+            Status.getINSTANCE().setPlayer(player);
+            Status.getINSTANCE().getPlayer().setSquad(identificationResponse.getSquad());
+        }
+    }
+
+    @Override
+    public void handleDonateResponse(DonateResponse donateResponse) {
+        String message = donateResponse.getMessage();
+        MainFrame frame = MainFrame.getINSTANCE();
+        JOptionPane.showMessageDialog(frame, message);
     }
 }
 

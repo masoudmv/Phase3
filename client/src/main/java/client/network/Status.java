@@ -12,13 +12,13 @@ public class Status {
     private static Status INSTANCE;
     private String macAddress;
     private SocketRequestSender socket;
-    private MyResponseHandler responseHandler;
+    private ClientsideResHandler responseHandler;
     private boolean connectedToServer;
     private Player player;
 
     private Status() {
         this.connectedToServer = false;
-        this.responseHandler = new MyResponseHandler();
+        this.responseHandler = new ClientsideResHandler();
         String macAddress = findMacAddress();
         this.player = new Player(macAddress);
     }
@@ -54,11 +54,11 @@ public class Status {
         this.player = player;
     }
 
-    public MyResponseHandler getResponseHandler() {
+    public ClientsideResHandler getResponseHandler() {
         return responseHandler;
     }
 
-    public void setResponseHandler(MyResponseHandler responseHandler) {
+    public void setResponseHandler(ClientsideResHandler responseHandler) {
         this.responseHandler = responseHandler;
     }
 

@@ -1,5 +1,6 @@
 package client.network.toolBox;
 
+import client.network.RequestFactory;
 import client.network.Status;
 import client.network.socket.SocketRequestSender;
 import shared.Model.Player;
@@ -95,22 +96,17 @@ public class Menu extends JPanel {
             Status status = Status.getINSTANCE();
             Player player = Status.getINSTANCE().getPlayer();
             String username = player.getUsername();
+
             if (!isOnline){
                 JOptionPane.showMessageDialog(frame, "You are not online!", "Error", JOptionPane.ERROR_MESSAGE);
             }
 
             else if (username == null) {
                 username = JOptionPane.showInputDialog(frame, "Please Enter Your username");
+                RequestFactory.createIdentificateReq(username);
             }
 
             if (username != null && isOnline) {
-
-                try {
-                    status.getSocket().sendRequest(new IdentificationRequest(status.getPlayer().getMacAddress(), username)).run(Status.getINSTANCE().getResponseHandler());
-                } catch (IOException ex) {
-                    throw new RuntimeException(ex);
-                }
-
 
                 status.getPlayer().setUsername(username);
                 PanelManager.showSquadMenu();
@@ -145,6 +141,7 @@ public class Menu extends JPanel {
         @Override
         public void actionPerformed(ActionEvent e) {
             toggleOnlineOfflineMode();
+
             if (isOnline) {
                 Status.getINSTANCE().getSocket().close();
                 Status.getINSTANCE().setConnectedToServer(false);
@@ -197,8 +194,7 @@ public class Menu extends JPanel {
                     synchronized (Menu.getINSTANCE()) {
                         if (!Status.getINSTANCE().isConnectedToServer()) break;
                     }
-                    SocketRequestSender socketRequestSender = Status.getINSTANCE().getSocket();
-                    socketRequestSender.sendRequest(new HiRequest());
+                    RequestFactory.createIdentificateReq();
                     System.out.println("Connection check successful.");
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(MainFrame.getINSTANCE(), "Connection Lost!", "Error", JOptionPane.ERROR_MESSAGE);

@@ -1,8 +1,9 @@
 package shared.Model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArraySet;
 
 public class Squad {
     private String name;
@@ -13,8 +14,13 @@ public class Squad {
     public Squad(Player owner) {
         this.owner = owner;
         this.members.add(owner);
+        owner.setSquad(this);
     }
 
+    public Squad() {
+    }
+
+    @JsonManagedReference
     public List<Player> getMembers() {
         return members;
     }
@@ -35,8 +41,8 @@ public class Squad {
         return vault;
     }
 
-    public void setVault(int vault) {
-        this.vault = vault;
+    public void addToVault(int vault) {
+        this.vault += vault;
     }
 
     public String getName() {

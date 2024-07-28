@@ -1,5 +1,6 @@
 package client.network.toolBox;
 
+import client.network.RequestFactory;
 import client.network.Status;
 import client.network.socket.SocketRequestSender;
 import shared.request.IdentificationRequest;
@@ -18,8 +19,10 @@ public class utils {
             Status.getINSTANCE().setSocket(socketRequestSender);
 
             // send identification Request ...
-            String macAddress = Status.getINSTANCE().getPlayer().getMacAddress();
-            socketRequestSender.sendRequest(new IdentificationRequest(macAddress)).run(Status.getINSTANCE().getResponseHandler());
+//            String macAddress = Status.getINSTANCE().getPlayer().getMacAddress();
+
+            RequestFactory.createIdentificateReq();
+            System.out.println("no i am here");
 
             // start a thread to check connection with server ...
             new Thread(new Menu.ConnectionChecker()).start();
