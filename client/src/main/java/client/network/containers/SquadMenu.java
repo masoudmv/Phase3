@@ -2,17 +2,13 @@ package client.network.containers;
 
 import client.network.RequestFactory;
 import client.network.Status;
-import client.network.socket.SocketRequestSender;
 import shared.Model.Player;
 import shared.Model.Squad;
-import shared.request.CreateSquadRequest;
-import shared.request.GetSquadsListRequest;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
 
 public class SquadMenu extends JPanel {
     private JLabel usernameLabel;
@@ -24,8 +20,12 @@ public class SquadMenu extends JPanel {
     private Timer updateTimer;
     private JButton leaveSquadButton;
     private JButton squadAbilitiesButton;
+    private JButton opponentButton; // Declare the new button
 
     public SquadMenu() {
+
+
+
         setLayout(new GridBagLayout());
         Dimension dimension = new Dimension(600, 600);
         setPreferredSize(dimension);
@@ -38,6 +38,7 @@ public class SquadMenu extends JPanel {
         createSquadButton = new JButton("Create Squad");
         leaveSquadButton = new JButton("Leave Squad");
         squadAbilitiesButton = new JButton("Squad Abilities");
+        opponentButton = new JButton("Opponent"); // Initialize the new button
 
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
@@ -69,22 +70,28 @@ public class SquadMenu extends JPanel {
 
         gbc.gridy = 5;
         add(squadAbilitiesButton, gbc);
-        squadAbilitiesButton.setVisible(false);
 
         gbc.gridy = 6;
         gbc.gridwidth = 1;
         gbc.fill = GridBagConstraints.NONE;
         add(leaveSquadButton, gbc);
+
+        gbc.gridy = 7;
+        add(opponentButton, gbc); // Add the new button to the layout
+
         leaveSquadButton.setVisible(false);
+        squadAbilitiesButton.setVisible(false);
 
         backButton.addActionListener(new BackAction());
         listSquadsButton.addActionListener(new ListSquadsAction());
         createSquadButton.addActionListener(new CreateSquadAction());
         leaveSquadButton.addActionListener(new LeaveSquadAction());
         squadAbilitiesButton.addActionListener(new SquadAbilitiesAction());
+        opponentButton.addActionListener(new OpponentAction()); // Set up the action listener
 
         centerPanel();
         updateUsernameDisplay();
+        updateSquadStatus();
         startUpdateTimer();
     }
 
@@ -135,6 +142,26 @@ public class SquadMenu extends JPanel {
         public void actionPerformed(ActionEvent e) {
             MainFrame frame = MainFrame.getINSTANCE();
             frame.switchToPanel(new SquadAbilitiesMenu());
+            frame.repaint();
+        }
+    }
+
+    private class OpponentAction implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            Squad opponent = Status.getINSTANCE().getOpponent();
+            MainFrame frame = MainFrame.getINSTANCE();
+            Squad squad = Status.getINSTANCE().getPlayer().getSquad();
+            if (squad == null){
+                JOptionPane.showMessageDialog(frame, "You are not in any squad!");
+                return;
+            }
+
+            if (opponent == null) {
+                JOptionPane.showMessageDialog(frame, "Your squad is not in a battle yet!");
+                return;
+            }
+            frame.switchToPanel(new OpponentPanel(opponent));
             frame.repaint();
         }
     }
@@ -197,12 +224,7 @@ public class SquadMenu extends JPanel {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            Player player = Status.getINSTANCE().getPlayer();
-            if (player != null && player.getSquad() != null) {
-                player.getSquad().getMembers().remove(member);
-                JOptionPane.showMessageDialog(SquadMenu.this, "Member " + member.getUsername() + " has been kicked.");
-                updateMySquadPanel();
-            }
+            RequestFactory.createKickPlayerReq(member.getMacAddress());
         }
     }
 

@@ -1,10 +1,12 @@
-package shared.request;
+package shared.request.leader;
 
+import shared.request.Request;
+import shared.request.RequestHandler;
 import shared.response.Response;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
 @JsonTypeName("KickPlayerReq")
-public class KickPlayerReq implements Request{
+public class KickPlayerReq implements Request {
     private String myMacAddress;
     private String playerMacAddress;
 
@@ -35,6 +37,6 @@ public class KickPlayerReq implements Request{
 
     @Override
     public Response run(RequestHandler requestHandler) {
-        return null;
+        return requestHandler.handleKickPlayerReq(this);
     }
 }

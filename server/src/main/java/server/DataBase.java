@@ -16,7 +16,12 @@ public class DataBase {
     private final List<Pair<Squad, Squad>> squadPairs = new CopyOnWriteArrayList<>();
 
     public DataBase() {
-        squads.add(new Squad(new Player("Mahmood")));
+//        Squad squad = new Squad(new Player("Mahmood"));
+//        squad.addMember(new Player("Mahmut"));
+//        squad.addMember(new Player("Mah"));
+//        squad.addMember(new Player("Mahfffafmut"));
+//        squad.addMember(new Player("Mahmrheaaaaaaaut"));
+//        squads.add(squad);
     }
 
     public synchronized Player findPlayer(String macAddress) {
@@ -117,12 +122,41 @@ public class DataBase {
     }
 
 
-    public String joinPlayerToSquad(Player demander, Squad squad) {
+    public String joinPlayerToSquad(Player demander, Squad squad, boolean accepted) {
         if (squad == null) return "the Squad does not exist anymore!";
         if (demander.getSquad() != null) return "the Player has already joined another squad!";
+        if (!accepted) {
+            demander.setHasMessage(true);
+            demander.setMessage(Message.JOIN_REQUEST_UNSUCCESSFUL.getValue());
+            return "You have declined the request!";
+        }
         demander.setSquad(squad);
         squad.addMember(demander);
+
+        demander.setHasMessage(true);
+        demander.setMessage(Message.JOIN_REQUEST_SUCCESSFUL.getValue());
         return "The Player has successfully joined the squad!";
+    }
+
+    public String kickPlayer(Player player){
+        Squad squad = player.getSquad();
+        if (squad == null) return "the player is not in any squad!";
+        squad.getMembers().remove(player);
+        player.setSquad(null);
+        player.setHasMessage(true);
+        player.setMessage("You have been kicked out of the squad by leader!");
+        return "the player was successfully kicked!";
+    }
+
+    public Squad findOpponent(Squad squad){
+        if (squadPairs.isEmpty() || !squad.isInBattle()) return null;
+        for (Pair<Squad, Squad> pair : squadPairs) {
+            if (squad.equals(pair.getFirst())){
+                return pair.getSecond();
+            } else if (squad.equals(pair.getSecond())){
+                return pair.getFirst();
+            }
+        } return null;
     }
 
 
@@ -134,8 +168,8 @@ public class DataBase {
             Squad squad2 = squads.get(i + 1);
             squad1.setInBattle(true);
             squad2.setInBattle(true);
-            squad1.setOpponent(squad2);
-            squad2.setOpponent(squad1);
+//            squad1.setOpponent(squad2);
+//            squad2.setOpponent(squad1);
             squadPairs.add(new Pair<>(squad1, squad2));
             System.out.println(squad1.getName() + " vs " + squad2.getName());
         }
@@ -144,7 +178,7 @@ public class DataBase {
         // Handle the case where there is an odd number of squads
         if (squads.size() % 2 != 0) {
             Squad lastSquad = squads.get(squads.size() - 1);
-            lastSquad.setOpponent(null); // or handle appropriately
+//            lastSquad.setOpponent(null); // or handle appropriately
             lastSquad.setInBattle(false);
         }
 

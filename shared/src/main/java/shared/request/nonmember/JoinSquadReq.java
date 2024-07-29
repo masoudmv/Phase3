@@ -1,11 +1,13 @@
-package shared.request;
+package shared.request.nonmember;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import shared.request.Request;
+import shared.request.RequestHandler;
 import shared.response.Response;
 
 @JsonTypeName("JoinSquadReq")
 
-public class JoinSquadReq implements Request{
+public class JoinSquadReq implements Request {
     private String myMacAddress;
     private String ownerMacAddress;
 

@@ -4,7 +4,15 @@ import client.network.socket.SocketRequestSender;
 
 import shared.Model.Skill;
 import shared.request.*;
-import shared.response.ResponseHandler;
+import shared.request.leader.JoinDemandStatusReq;
+import shared.request.leader.KickPlayerReq;
+import shared.request.leader.PurchaseSkillRequest;
+import shared.request.member.InitMonomachiaReq;
+import shared.request.member.MonomachiaInvitationStatusReq;
+import shared.request.nonmember.CreateSquadRequest;
+import shared.request.member.LeaveSquadReq;
+import shared.request.nonmember.GetSquadsListRequest;
+import shared.request.nonmember.JoinSquadReq;
 
 import java.io.IOException;
 
@@ -96,8 +104,41 @@ public class RequestFactory {
         try {
             socketRequestSender.sendRequest(new JoinDemandStatusReq(macAddress, demanderMacAddress, accepted)).run(requestHandler);
         } catch (IOException e) {
-            System.out.println("JoinSquad Req was not sent ... ")  ;
+            System.out.println("JoinDemandStatusReq Req was not sent ... ")  ;
             throw new RuntimeException(e);
         }
     }
+
+    public static void createKickPlayerReq(String kickedMacAddress){
+        socketRequestSender = status.getSocket();
+        try {
+            socketRequestSender.sendRequest(new KickPlayerReq(macAddress, kickedMacAddress)).run(requestHandler);
+        } catch (IOException e) {
+            System.out.println("KickPlayerReq Req was not sent ... ")  ;
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    public static void createInitMonomachiaReq(String opponentMacAddress){
+        socketRequestSender = status.getSocket();
+        try {
+            socketRequestSender.sendRequest(new InitMonomachiaReq(macAddress, opponentMacAddress)).run(requestHandler);
+        } catch (IOException e) {
+            System.out.println("InitMonomachiaReq Req was not sent ... ")  ;
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    public static void createMonomachiaInvitationStatusReq(String requesterMacAddress, boolean accepted){
+        socketRequestSender = status.getSocket();
+        try {
+            socketRequestSender.sendRequest(new MonomachiaInvitationStatusReq(requesterMacAddress, macAddress, accepted)).run(requestHandler);
+        } catch (IOException e) {
+            System.out.println("InitMonomachiaReq Req was not sent ... ")  ;
+            throw new RuntimeException(e);
+        }
+    }
+
 }

@@ -2,6 +2,7 @@ package client.network;
 
 import client.network.socket.SocketRequestSender;
 import shared.Model.Player;
+import shared.Model.Squad;
 
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -16,6 +17,7 @@ public class Status {
     private ClientsideResHandler responseHandler;
     private boolean connectedToServer;
     private Player player;
+    private Squad opponent;
 
     private Status() {
         this.connectedToServer = false;
@@ -53,6 +55,14 @@ public class Status {
 
     public void setPlayer(Player player) {
         this.player = player;
+    }
+
+    public Squad getOpponent() {
+        return opponent;
+    }
+
+    public void setOpponent(Squad opponent) {
+        this.opponent = opponent;
     }
 
     public ClientsideResHandler getResponseHandler() {

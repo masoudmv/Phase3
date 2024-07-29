@@ -70,8 +70,11 @@ public class ClientsideResHandler implements ResponseHandler {
         System.out.println("handling identification response");
         Player player = identificationResponse.getPlayer();
         if (player != null) {
+            // todo eww ...
             Status.getINSTANCE().setPlayer(player);
             Status.getINSTANCE().getPlayer().setSquad(identificationResponse.getSquad());
+            Status.getINSTANCE().setOpponent(identificationResponse.getOpponent());
+//            Status.getINSTANCE().getPlayer().getSquad().setOpponent(identificationResponse.getOpponent());
         }
     }
 
@@ -125,6 +128,37 @@ public class ClientsideResHandler implements ResponseHandler {
             // Add your code here to handle the declination
         }
     }
+
+    @Override
+    public void handleMonomachiaInvitationResponse(MonomachiaInvitationResponse monomachiaInvitationResponse) {
+        String requesterMacAddress = monomachiaInvitationResponse.getMacAddress();
+
+        String username = monomachiaInvitationResponse.getUsername();
+        MainFrame frame = MainFrame.getINSTANCE();
+
+        int response = JOptionPane.showOptionDialog(
+                frame,
+                username + " challenges you to a monomachia battle. Do you accept?",
+                "Monomachia Invitation",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                new Object[]{"Accept", "Decline"}, // Custom button text
+                "Accept" // Default button
+        );
+
+        if (response == JOptionPane.YES_OPTION) {
+            // Handle accept action
+            // Add your logic here to handle the acceptance
+            RequestFactory.createMonomachiaInvitationStatusReq(requesterMacAddress, true);
+        } else if (response == JOptionPane.NO_OPTION) {
+            // Handle decline action
+            // Add your logic here to handle the declination
+            RequestFactory.createMonomachiaInvitationStatusReq(requesterMacAddress, false);
+
+        }
+    }
+
 
 }
 

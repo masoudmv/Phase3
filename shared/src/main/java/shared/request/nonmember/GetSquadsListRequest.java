@@ -1,18 +1,22 @@
-package shared.request;
+package shared.request.nonmember;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import shared.request.Request;
+import shared.request.RequestHandler;
 import shared.response.Response;
 
-@JsonTypeName("LeaveSquadReq")
-public class LeaveSquadReq implements Request{
+@JsonTypeName("GetSquadsListRequest")
+
+public class GetSquadsListRequest implements Request {
     private String macAddress;
 
-    public LeaveSquadReq(String macAddress) {
+    public GetSquadsListRequest(String macAddress) {
         this.macAddress = macAddress;
     }
 
-    public LeaveSquadReq() {
+    public GetSquadsListRequest() {
     }
+
 
     public String getMacAddress() {
         return macAddress;
@@ -24,6 +28,6 @@ public class LeaveSquadReq implements Request{
 
     @Override
     public Response run(RequestHandler requestHandler) {
-        return requestHandler.handleLeaveSquadReq(this);
+        return requestHandler.handleGetSquadsRequest(this);
     }
 }

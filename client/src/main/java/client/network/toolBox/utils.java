@@ -19,10 +19,10 @@ public class utils {
             // Implement menu loading in Online mode and other logic...
             Status.getINSTANCE().setConnectedToServer(true);
             Status.getINSTANCE().setSocket(socketRequestSender);
+            System.out.println("good");
 
             // send identification Request ...
             RequestFactory.createIdentificateReq();
-
             // start a thread to check connection with server ...
             new Thread(new ConnectionChecker()).start();
 

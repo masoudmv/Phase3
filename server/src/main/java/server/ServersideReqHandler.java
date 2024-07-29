@@ -1,13 +1,19 @@
 package server;
 
 import server.socket.SocketResponseSender;
-import shared.Model.Player;
-import shared.Model.Skill;
-import shared.Model.Squad;
+import shared.Model.*;
 import shared.request.*;
+import shared.request.leader.JoinDemandStatusReq;
+import shared.request.leader.KickPlayerReq;
+import shared.request.leader.PurchaseSkillRequest;
+import shared.request.member.InitMonomachiaReq;
+import shared.request.member.MonomachiaInvitationStatusReq;
+import shared.request.nonmember.CreateSquadRequest;
+import shared.request.member.DonateRequest;
+import shared.request.member.LeaveSquadReq;
+import shared.request.nonmember.GetSquadsListRequest;
+import shared.request.nonmember.JoinSquadReq;
 import shared.response.*;
-
-import java.sql.Struct;
 
 public class ServersideReqHandler extends Thread implements RequestHandler {
     private SocketResponseSender socketResponseSender;
@@ -70,8 +76,10 @@ public class ServersideReqHandler extends Thread implements RequestHandler {
         dataBase.identificate(macAddress);
         if (username != null) dataBase.setUsername(macAddress, username);
         Player player = dataBase.findPlayer(macAddress);
+
         player.setLastOnlineTime(System.currentTimeMillis());
         Squad squad = player.getSquad();
+
         if (player.hasMessage()){
             player.setHasMessage(false);
             return new MessageResponse(player.getMessage());
@@ -84,7 +92,24 @@ public class ServersideReqHandler extends Thread implements RequestHandler {
             return new JoinDemandResponse(macAdd, uName);
         }
 
-        return new IdentificationResponse(player, squad);
+        if (player.hasNotification()){
+            if (player.getNotification().getNotificationType() == NotificationType.monomachia) {
+                String macAddress1 = player.getNotification().getMacAddress();
+                String username1 = player.getNotification().getUsername();
+                player.setHasNotification(false); // should be after the two previous lines!
+                System.out.println("Sending message to Requester ...");
+                return new MonomachiaInvitationResponse(macAddress1, username1);
+            } else if (player.getNotification().getNotificationType() == NotificationType.simpleMessage) {
+                String message1 = player.getNotification().getMessage();
+                player.setHasNotification(false);
+                System.out.println("Setting simple message ...");
+                return new MessageResponse(message1);
+            }
+        }
+
+
+        Squad opponent = dataBase.findOpponent(squad);
+        return new IdentificationResponse(player, squad, opponent);
     }
 
     @Override
@@ -106,6 +131,14 @@ public class ServersideReqHandler extends Thread implements RequestHandler {
     @Override
     public Response handleLeaveSquadReq(LeaveSquadReq leaveSquadReq) {
         Player player = dataBase.findPlayer(leaveSquadReq.getMacAddress());
+        Squad squad = player.getSquad();
+
+        if (squad.isInBattle()){
+            Squad opponent = dataBase.findOpponent(squad);
+            opponent.setInBattle(false);
+            dataBase.getSquadPairs().remove(new Pair<>(squad, opponent));
+        }
+
         String message = dataBase.sendOutFromSquad(player);
         return new LeaveSquadResponse(message);
     }
@@ -128,7 +161,8 @@ public class ServersideReqHandler extends Thread implements RequestHandler {
         Player leader = dataBase.findPlayer(joinDemandStatusReq.getOwnerMacAddress());
         Player demander = dataBase.findPlayer(joinDemandStatusReq.getDemanderMacAddress());
         Squad squad = leader.getSquad();
-        String message = dataBase.joinPlayerToSquad(demander, squad);
+        boolean accepted = joinDemandStatusReq.isAccepted();
+        String message = dataBase.joinPlayerToSquad(demander, squad, accepted);
         return new MessageResponse(message);
     }
 
@@ -138,14 +172,63 @@ public class ServersideReqHandler extends Thread implements RequestHandler {
         String myMacAddress = kickPlayerReq.getMyMacAddress();
         Player me = dataBase.findPlayer(myMacAddress);
         Squad squad = me.getSquad();
+        if (squad == null) return new MessageResponse("You are not in any squad!");
         String leaderMacAddress = squad.getOwner().getMacAddress();
         if (!leaderMacAddress.equals(myMacAddress)) return new MessageResponse("You are not the leader of squad!");
-
-
-        Player player = dataBase.findPlayer(kickPlayerReq.getPlayerMacAddress());
-
-
-
-        return null;
+        String macAddressToBeKicked = kickPlayerReq.getPlayerMacAddress();
+        Player playerToBeKicked = dataBase.findPlayer(macAddressToBeKicked);
+        if (macAddressToBeKicked.equals(myMacAddress)) return new MessageResponse("You cannot kick out yourself!");
+        String message = dataBase.kickPlayer(playerToBeKicked);
+        return new MessageResponse(message);
     }
+
+    @Override
+    public Response handleInitMonomachiaReq(InitMonomachiaReq initMonomachiaReq) {
+
+        String requesterMacAddress = initMonomachiaReq.getRequesterMacAddress();
+        Player requester = dataBase.findPlayer(requesterMacAddress);
+        String requesterUsername = requester.getUsername();
+
+        String opponentMacAddress = initMonomachiaReq.getOpponentMacAddress();
+        Player opponent = dataBase.findPlayer(opponentMacAddress);
+        String opponentUsername = opponent.getUsername();
+
+        Status status = opponent.getStatus();
+
+        if (opponent.isAttendedMonomachia()) return new MessageResponse(opponentUsername + " has already been in a monomachia battle");
+        if (status == Status.offline) return new MessageResponse(opponentUsername + " is offline right now!");
+        else if (status == Status.busy) return new MessageResponse(opponentUsername + " is Busy right now!");
+
+
+        Notification notification = new Notification(NotificationType.monomachia, requesterUsername + "challenges you to a monomachia battle!");
+        notification.setMacAddress(requesterMacAddress);
+        notification.setUsername(requesterUsername);
+        opponent.setNotification(notification);
+
+        return new MessageResponse("Your monomachia challenge has been sent to opponent successfully!");
+    }
+
+    @Override
+    public Response handleMonomachiaInvitationStatusReq(MonomachiaInvitationStatusReq monomachiaInvitationStatusReq) {
+        String requesterMacAddress = monomachiaInvitationStatusReq.getRequesterMacAddress();
+        String acceptorMacAddress = monomachiaInvitationStatusReq.getAcceptorMacAddress();
+
+        Player requester = dataBase.findPlayer(requesterMacAddress);
+        Player acceptor = dataBase.findPlayer(acceptorMacAddress);
+
+        boolean accepted = monomachiaInvitationStatusReq.isAccepted();
+
+        if (!accepted) {
+            Notification notification = new Notification(NotificationType.simpleMessage, "Your Monomachia challenge request was not accepted");
+            requester.setNotification(notification);
+            System.out.println("Monomachia challenge request was not accepted");
+            return new MessageResponse("You did not accept the monomachia battle challenge");
+        } else {
+            Notification notification = new Notification(NotificationType.simpleMessage, "Your Monomachia challenge request was accepted. It will start in 15 seconds.");
+            requester.setNotification(notification);
+            System.out.println("Monomachia challenge request was accepted");
+            return new MessageResponse("Monomachia challenge will start in 15 seconds!");
+        }
+    }
+
 }

@@ -9,4 +9,5 @@ public interface ResponseHandler {
     void handlePurchaseSkillResponse(MessageResponse messageResponse);
     void handleLeaveSquadResponse(LeaveSquadResponse leaveSquadResponse);
     void handleJoinDemandResponse(JoinDemandResponse joinDemandResponse);
+    void handleMonomachiaInvitationResponse(MonomachiaInvitationResponse monomachiaInvitationResponse);
 }

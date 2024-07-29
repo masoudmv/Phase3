@@ -1,6 +1,8 @@
-package shared.request;
+package shared.request.member;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import shared.request.Request;
+import shared.request.RequestHandler;
 import shared.response.Response;
 
 @JsonTypeName("DonateRequest")

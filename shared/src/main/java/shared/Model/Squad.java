@@ -1,5 +1,6 @@
 package shared.Model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import java.util.ArrayList;
@@ -11,7 +12,9 @@ public class Squad {
     private Player owner = null;
     private int vault;
     private boolean inBattle = false;
-    private Squad opponent = null;
+
+//    @JsonIgnore
+//    private Squad opponent = null;
 
     private int palioxis = 0;
     private int adonis = 0;
@@ -25,7 +28,6 @@ public class Squad {
 
     public Squad() {
     }
-
 
     public void addMember(Player player){
         members.add(player);
@@ -88,13 +90,13 @@ public class Squad {
         this.inBattle = inBattle;
     }
 
-    public Squad getOpponent() {
-        return opponent;
-    }
-
-    public void setOpponent(Squad opponent) {
-        this.opponent = opponent;
-    }
+//    public Squad getOpponent() {
+//        return opponent;
+//    }
+//
+//    public void setOpponent(Squad opponent) {
+//        this.opponent = opponent;
+//    }
 
     public String buySkill(Skill skill) {
         switch (skill) {
@@ -114,12 +116,9 @@ public class Squad {
                 if (vault < 300) return "Squad vault does not have the required XP!";
                 reduceVaultBy(300);
                 gefjon++;
-
                 return "Gefjon was Purchased successfully!";
-
             }
             default -> throw new IllegalArgumentException("Unknown skill: " + skill);
         }
     }
 }
-

@@ -6,7 +6,7 @@ import client.network.socket.SocketRequestSender;
 import shared.Model.Player;
 import shared.Model.Squad;
 import shared.Model.Skill;
-import shared.request.DonateRequest;
+import shared.request.member.DonateRequest;
 
 import javax.swing.*;
 import java.awt.*;

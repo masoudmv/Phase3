@@ -1,12 +1,14 @@
-package shared.request;
+package shared.request.leader;
 
 import shared.Model.Skill;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import shared.request.Request;
+import shared.request.RequestHandler;
 import shared.response.Response;
 
 @JsonTypeName("PurchaseSkillRequest")
 
-public class PurchaseSkillRequest implements Request{
+public class PurchaseSkillRequest implements Request {
     private String macAddress;
     private Skill skill;
 

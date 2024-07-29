@@ -1,7 +1,6 @@
 package shared.Model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import static shared.Model.Status.online;
 
@@ -11,11 +10,24 @@ public class Player extends Model {
     private Status status;
     private int donatedAmount; // make zero after each squad battle or leaving squad.
     private double lastOnlineTime;
-    private boolean hasMessage = false;
+
     private boolean hasJoinDemandMessage = false;
     private String joinDemandMacAddress;
     private String joinDemandUsername;
+
+    private boolean hasMessage = false;
     private String message;
+
+    private boolean hasNotification = false;
+    private Notification notification = null;
+
+    private boolean attendedMonomachia = false;
+    private boolean attendedColosseum = false;
+
+    // todo a thread in server side to check connection status
+    // todo remove set message, has message ...
+
+
 
     @JsonBackReference
     private Squad squad; // null squad means the player is squadless
@@ -131,6 +143,41 @@ public class Player extends Model {
 
     public void setJoinDemandUsername(String joinDemandUsername) {
         this.joinDemandUsername = joinDemandUsername;
+    }
+
+
+    public void setHasNotification(boolean hasNotification) {
+        this.hasNotification = hasNotification;
+        this.notification = null;
+    }
+
+    public boolean hasNotification() {
+        return hasNotification;
+    }
+
+    public Notification getNotification() {
+        return notification;
+    }
+
+    public void setNotification(Notification notification) {
+        this.hasNotification = true;
+        this.notification = notification;
+    }
+
+    public boolean isAttendedMonomachia() {
+        return attendedMonomachia;
+    }
+
+    public void setAttendedMonomachia(boolean attendedMonomachia) {
+        this.attendedMonomachia = attendedMonomachia;
+    }
+
+    public boolean isAttendedColosseum() {
+        return attendedColosseum;
+    }
+
+    public void setAttendedColosseum(boolean attendedColosseum) {
+        this.attendedColosseum = attendedColosseum;
     }
 }
 

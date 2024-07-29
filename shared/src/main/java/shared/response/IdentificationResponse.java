@@ -9,12 +9,20 @@ import shared.Model.Squad;
 public class IdentificationResponse implements Response{
     private Player player;
     private Squad squad;
+    private Squad opponent;
 //    private String username;
 
+
+    public IdentificationResponse(Player player, Squad squad, Squad opponent) {
+        this.player = player;
+        this.squad = squad;
+        this.opponent = opponent;
+    }
 
     public IdentificationResponse(Player player, Squad squad) {
         this.player = player;
         this.squad = squad;
+        this.opponent = null;
     }
 
     public IdentificationResponse(Player player) {
@@ -50,6 +58,14 @@ public class IdentificationResponse implements Response{
 
     public void setSquad(Squad squad) {
         this.squad = squad;
+    }
+
+    public Squad getOpponent() {
+        return opponent;
+    }
+
+    public void setOpponent(Squad opponent) {
+        this.opponent = opponent;
     }
 
     @Override
