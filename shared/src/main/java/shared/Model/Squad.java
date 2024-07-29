@@ -10,6 +10,8 @@ public class Squad {
     private List<Player> members = new ArrayList<>();
     private Player owner = null;
     private int vault;
+    private boolean inBattle = false;
+    private Squad opponent = null;
 
     private int palioxis = 0;
     private int adonis = 0;
@@ -22,6 +24,11 @@ public class Squad {
     }
 
     public Squad() {
+    }
+
+
+    public void addMember(Player player){
+        members.add(player);
     }
 
     @JsonManagedReference
@@ -71,6 +78,22 @@ public class Squad {
 
     public void reduceVaultBy(int amount) {
         this.vault -= amount;
+    }
+
+    public boolean isInBattle() {
+        return inBattle;
+    }
+
+    public void setInBattle(boolean inBattle) {
+        this.inBattle = inBattle;
+    }
+
+    public Squad getOpponent() {
+        return opponent;
+    }
+
+    public void setOpponent(Squad opponent) {
+        this.opponent = opponent;
     }
 
     public String buySkill(Skill skill) {

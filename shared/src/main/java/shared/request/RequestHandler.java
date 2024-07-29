@@ -11,4 +11,7 @@ public interface RequestHandler {
     Response handleDonateRequest(DonateRequest donateRequest);
     Response handlePurchaseSkillRequest(PurchaseSkillRequest purchaseSkillRequest);
     Response handleLeaveSquadReq(LeaveSquadReq leaveSquadReq);
+    Response handleJoinSquadReq(JoinSquadReq joinSquadReq);
+    Response handleJoinDemandStatusReq(JoinDemandStatusReq joinDemandStatusReq);
+    Response handleKickPlayerReq(KickPlayerReq kickPlayerReq);
 }

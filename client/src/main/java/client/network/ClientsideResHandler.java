@@ -21,6 +21,12 @@ public class ClientsideResHandler implements ResponseHandler {
 
     @Override
     public void handleGetSquadsListResponse(GetSquadsListResponse getSquadsListResponse) {
+        String message = getSquadsListResponse.getMessage();
+        if (message != null) {
+            MainFrame frame = MainFrame.getINSTANCE();
+            JOptionPane.showMessageDialog(frame, message);
+            return;
+        }
         List<Squad> squads = getSquadsListResponse.getList();
 //        squads.add(new Squad(new Player("massooood")));
 //        squads.add(new Squad(new Player("massooood")));
@@ -79,8 +85,8 @@ public class ClientsideResHandler implements ResponseHandler {
     }
 
     @Override
-    public void handlePurchaseSkillResponse(PurchaseSkillResponse purchaseSkillResponse) {
-        String message = purchaseSkillResponse.getMessage();
+    public void handlePurchaseSkillResponse(MessageResponse messageResponse) {
+        String message = messageResponse.getMessage();
         MainFrame frame = MainFrame.getINSTANCE();
         JOptionPane.showMessageDialog(frame, message);
     }
@@ -91,5 +97,34 @@ public class ClientsideResHandler implements ResponseHandler {
         MainFrame frame = MainFrame.getINSTANCE();
         JOptionPane.showMessageDialog(frame, message);
     }
+
+    @Override
+    public void handleJoinDemandResponse(JoinDemandResponse joinDemandResponse) {
+        String demanderMacAddress = joinDemandResponse.getMacAddress();
+        String username = joinDemandResponse.getUsername();
+        MainFrame frame = MainFrame.getINSTANCE();
+
+        int response = JOptionPane.showConfirmDialog(
+                frame,
+                "User " + username + " wants to join your squad. Do you agree?",
+                "Join Request",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.QUESTION_MESSAGE
+        );
+
+        if (response == JOptionPane.YES_OPTION) {
+            // Handle accept action
+            RequestFactory.createJoinDemandStatusReq(demanderMacAddress, true);
+
+//            System.out.println(username + " has been accepted to join the squad.");
+            // Add your code here to handle the acceptance
+        } else if (response == JOptionPane.NO_OPTION) {
+            // Handle decline action
+            RequestFactory.createJoinDemandStatusReq(demanderMacAddress, false);
+//            System.out.println(username + " has been declined to join the squad.");
+            // Add your code here to handle the declination
+        }
+    }
+
 }
 

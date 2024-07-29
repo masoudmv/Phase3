@@ -61,7 +61,7 @@ public class RequestFactory {
     public static void createGetSquadListReq(){
         socketRequestSender = status.getSocket();
         try {
-            socketRequestSender.sendRequest(new GetSquadsListRequest()).run(requestHandler);
+            socketRequestSender.sendRequest(new GetSquadsListRequest(macAddress)).run(requestHandler);
         } catch (IOException e) {
             System.out.println("getSquadList Req was not sent ... ");
             throw new RuntimeException(e);
@@ -78,6 +78,26 @@ public class RequestFactory {
         }
     }
 
+    public static void createJoinSquadReq(String ownerMacAddress){
+        socketRequestSender = status.getSocket();
+        try {
+            socketRequestSender.sendRequest(new JoinSquadReq(macAddress, ownerMacAddress)).run(requestHandler);
+        } catch (IOException e) {
+            System.out.println("JoinSquad Req was not sent ... ")  ;
+            throw new RuntimeException(e);
+        }
+    }
 
 
+
+
+    public static void createJoinDemandStatusReq(String demanderMacAddress, boolean accepted){
+        socketRequestSender = status.getSocket();
+        try {
+            socketRequestSender.sendRequest(new JoinDemandStatusReq(macAddress, demanderMacAddress, accepted)).run(requestHandler);
+        } catch (IOException e) {
+            System.out.println("JoinSquad Req was not sent ... ")  ;
+            throw new RuntimeException(e);
+        }
+    }
 }

@@ -8,7 +8,7 @@ import client.network.containers.PanelManager;
 import client.network.socket.SocketRequestSender;
 
 import javax.swing.*;
-import static client.network.constants.UIMessageConstants.CONNECTED_TO_SERVER;
+import static shared.constants.UIMessageConstants.CONNECTED_TO_SERVER;
 
 public class utils {
     public static void tryConnection() {

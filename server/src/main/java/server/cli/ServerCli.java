@@ -22,7 +22,7 @@ public class ServerCli implements Callable<Integer> {
     @CommandLine.Option(names = {"-t", "--terminateSquadBattle"}, description = "Terminates a squad battle")
     private boolean terminateSquadBattle;
 
-    private DataBase dataBase;
+    private final DataBase dataBase;
 
     public ServerCli(DataBase dataBase) {
         this.dataBase = dataBase;
@@ -41,6 +41,9 @@ public class ServerCli implements Callable<Integer> {
 
     private void initiateSquadBattle() {
         // Add logic to initiate a squad battle
+        synchronized (dataBase){
+            dataBase.initiateSquadBattle();
+        }
         System.out.println("Initiating squad battle...");
     }
 

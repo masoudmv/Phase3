@@ -1,4 +1,4 @@
-package client.network.constants;
+package shared.constants;
 
 public enum UIMessageConstants {
     CONNECTED_TO_SERVER, DIDNT_CONNECT_TO_SERVER,;

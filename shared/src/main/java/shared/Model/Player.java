@@ -11,6 +11,11 @@ public class Player extends Model {
     private Status status;
     private int donatedAmount; // make zero after each squad battle or leaving squad.
     private double lastOnlineTime;
+    private boolean hasMessage = false;
+    private boolean hasJoinDemandMessage = false;
+    private String joinDemandMacAddress;
+    private String joinDemandUsername;
+    private String message;
 
     @JsonBackReference
     private Squad squad; // null squad means the player is squadless
@@ -86,6 +91,46 @@ public class Player extends Model {
 
     public void setLastOnlineTime(double lastOnlineTime) {
         this.lastOnlineTime = lastOnlineTime;
+    }
+
+    public boolean hasMessage() {
+        return hasMessage;
+    }
+
+    public void setHasMessage(boolean hasMessage) {
+        this.hasMessage = hasMessage;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public boolean hasJoinDemandMessage() {
+        return hasJoinDemandMessage;
+    }
+
+    public void setHasJoinDemandMessage(boolean hasJoinDemandMessage) {
+        this.hasJoinDemandMessage = hasJoinDemandMessage;
+    }
+
+    public String getJoinDemandMacAddress() {
+        return joinDemandMacAddress;
+    }
+
+    public void setJoinDemandMacAddress(String joinDemandMacAddress) {
+        this.joinDemandMacAddress = joinDemandMacAddress;
+    }
+
+    public String getJoinDemandUsername() {
+        return joinDemandUsername;
+    }
+
+    public void setJoinDemandUsername(String joinDemandUsername) {
+        this.joinDemandUsername = joinDemandUsername;
     }
 }
 

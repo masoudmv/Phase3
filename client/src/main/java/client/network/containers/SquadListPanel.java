@@ -1,5 +1,6 @@
 package client.network.containers;
 
+import client.network.RequestFactory;
 import shared.Model.Squad;
 
 import javax.swing.*;
@@ -29,8 +30,8 @@ public class SquadListPanel extends JPanel {
             joinButton.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    JOptionPane.showMessageDialog(frame, "Joining squad: " + squad.getName());
                     // Add your join squad logic here
+                    RequestFactory.createJoinSquadReq(squad.getOwner().getMacAddress());
                 }
             });
 

@@ -1,17 +1,16 @@
 package shared.response;
 
-import shared.request.Request;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
-@JsonTypeName("PurchaseSkillResponse")
-public class PurchaseSkillResponse implements Response {
+@JsonTypeName("MessageResponse")
+public class MessageResponse implements Response {
     private String message;
 
-    public PurchaseSkillResponse(String message) {
+    public MessageResponse(String message) {
         this.message = message;
     }
 
-    public PurchaseSkillResponse() {
+    public MessageResponse() {
     }
 
     public String getMessage() {

@@ -7,9 +7,12 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class SocketStarter extends Thread {
-    private DataBase dataBase = new DataBase();
+    private DataBase dataBase;
     private ServerSocket serverSocket;
 
+    public SocketStarter(DataBase dataBase) {
+        this.dataBase = dataBase;
+    }
 
     @Override
     public void run() {

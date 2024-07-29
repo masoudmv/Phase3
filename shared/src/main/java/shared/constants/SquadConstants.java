@@ -1,4 +1,4 @@
-package client.network.constants;
+package shared.constants;
 
 public enum SquadConstants {
     SQUAD_CREATION_XP;

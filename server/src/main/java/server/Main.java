@@ -11,7 +11,7 @@ public class Main {
         DataBase dataBase = new DataBase();
 
         // Start the server
-        SocketStarter socketStarter = new SocketStarter();
+        SocketStarter socketStarter = new SocketStarter(dataBase);
         socketStarter.start();
 
         // Start the CLI in a separate thread

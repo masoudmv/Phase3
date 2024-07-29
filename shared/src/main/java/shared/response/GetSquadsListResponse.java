@@ -12,6 +12,11 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 
 public class GetSquadsListResponse implements Response{
     private List<Squad> list;
+    String message = null;
+
+    public GetSquadsListResponse(String message) {
+        this.message = message;
+    }
 
     public GetSquadsListResponse(List<Squad> list) {
         this.list = list;
@@ -22,6 +27,14 @@ public class GetSquadsListResponse implements Response{
 
     public List<Squad> getList() {
         return list;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 
     @Override
