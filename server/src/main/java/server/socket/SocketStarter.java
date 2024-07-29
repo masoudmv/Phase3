@@ -8,7 +8,6 @@ import java.net.Socket;
 
 public class SocketStarter extends Thread {
     private DataBase dataBase = new DataBase();
-
     private ServerSocket serverSocket;
 
 

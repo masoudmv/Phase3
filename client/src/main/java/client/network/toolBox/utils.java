@@ -2,11 +2,13 @@ package client.network.toolBox;
 
 import client.network.RequestFactory;
 import client.network.Status;
+import client.network.containers.MainFrame;
+import client.network.containers.MainMenu;
+import client.network.containers.PanelManager;
 import client.network.socket.SocketRequestSender;
-import shared.request.IdentificationRequest;
 
 import javax.swing.*;
-import static client.network.toolBox.UIMessageConstants.CONNECTED_TO_SERVER;
+import static client.network.constants.UIMessageConstants.CONNECTED_TO_SERVER;
 
 public class utils {
     public static void tryConnection() {
@@ -19,13 +21,10 @@ public class utils {
             Status.getINSTANCE().setSocket(socketRequestSender);
 
             // send identification Request ...
-//            String macAddress = Status.getINSTANCE().getPlayer().getMacAddress();
-
-            System.out.println("trying to connect ...");
             RequestFactory.createIdentificateReq();
 
             // start a thread to check connection with server ...
-            new Thread(new Menu.ConnectionChecker()).start();
+            new Thread(new ConnectionChecker()).start();
 
 
 //            MainFrame.getINSTANCE().switchToPanel(Menu.getINSTANCE());
@@ -50,6 +49,29 @@ public class utils {
                 tryConnection();
             } else {
                 System.out.println("Cancel chosen");
+            }
+        }
+    }
+
+
+    static class ConnectionChecker implements Runnable {
+        @Override
+        public void run() {
+            while (true) {
+                try {
+                    Thread.sleep(1000);
+
+                    synchronized (MainMenu.getINSTANCE()) {
+                        if (!Status.getINSTANCE().isConnectedToServer()) break;
+                    }
+                    RequestFactory.createIdentificateReq();
+                    System.out.println("Connection check successful.");
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(MainFrame.getINSTANCE(), "Connection Lost!", "Error", JOptionPane.ERROR_MESSAGE);
+                    Status.getINSTANCE().setConnectedToServer(false);
+                    PanelManager.displayMainMenu();
+                    break;
+                }
             }
         }
     }

@@ -113,4 +113,29 @@ public class DataBase {
         if (!ownerMacAddress.equals(playerMacAddress)) return "You are not the creator of the squad!";
         return squad.buySkill(skill);
     }
+
+    public String sendOutFromSquad(Player player){
+        Squad squad = player.getSquad();
+        if (squad == null) return "The player isn't in any squad!";
+
+        String playerMacAddress = player.getMacAddress();
+        String ownerMacAddress = squad.getOwner().getMacAddress();
+
+        if (player.equals(ownerMacAddress)){
+            // remove the whole squad!
+            for (Player p : squad.getMembers()){
+                p.setSquad(null);
+            }
+            squad.setMembers(null);
+            squads.remove(squad);
+            return "The squad was successfully terminated!";
+
+
+        } else {
+            // just remove this player from his/her squad!
+            player.setSquad(null);
+            squad.getMembers().remove(player);
+            return "You have successfully left the squad!";
+        }
+    }
 }

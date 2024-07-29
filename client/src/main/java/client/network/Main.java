@@ -1,9 +1,7 @@
 package client.network;
 
 
-import client.network.socket.SocketRequestSender;
-import client.network.toolBox.PanelManager;
-import shared.request.IdentificationRequest;
+import client.network.containers.PanelManager;
 
 import java.io.IOException;
 

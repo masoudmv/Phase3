@@ -60,7 +60,6 @@ public class ServersideReqHandler extends Thread implements RequestHandler {
 
     @Override
     public Response handleIdentificationRequest(IdentificationRequest identificationRequest) {
-        System.out.println("Response is created ... ");
         String macAddress = identificationRequest.getMACAddress();
         String username = identificationRequest.getUsername();
         dataBase.identificate(macAddress); // todo rename this method
@@ -69,8 +68,8 @@ public class ServersideReqHandler extends Thread implements RequestHandler {
 
         Player player = dataBase.findPlayer(macAddress);
         player.setLastOnlineTime(System.currentTimeMillis());
-//        Squad squad = player.getSquad();
-        return new IdentificationResponse(player);
+        Squad squad = player.getSquad();
+        return new IdentificationResponse(player, squad);
     }
 
     @Override
@@ -88,5 +87,12 @@ public class ServersideReqHandler extends Thread implements RequestHandler {
         Skill skill = purchaseSkillRequest.getSkill();
         String message = dataBase.purchaseSkill(player, skill);
         return new PurchaseSkillResponse(message);
+    }
+
+    @Override
+    public Response handleLeaveSquadReq(LeaveSquadReq leaveSquadReq) {
+        Player player = dataBase.findPlayer(leaveSquadReq.getMacAddress());
+        String message = dataBase.sendOutFromSquad(player);
+        return new LeaveSquadResponse(message);
     }
 }

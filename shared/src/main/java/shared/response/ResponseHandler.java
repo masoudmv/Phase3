@@ -2,6 +2,7 @@ package shared.response;
 
 import shared.request.DonateRequest;
 import shared.request.IdentificationRequest;
+import shared.request.LeaveSquadReq;
 
 public interface ResponseHandler {
     void handleHiResponse(HiResponse hiResponse);
@@ -10,4 +11,5 @@ public interface ResponseHandler {
     void handleIdentificationResponse(IdentificationResponse identificationResponse);
     void handleDonateResponse(DonateResponse donateResponse);
     void handlePurchaseSkillResponse(PurchaseSkillResponse purchaseSkillResponse);
+    void handleLeaveSquadResponse(LeaveSquadResponse leaveSquadResponse);
 }

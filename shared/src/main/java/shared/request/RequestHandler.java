@@ -10,4 +10,5 @@ public interface RequestHandler {
     Response handleIdentificationRequest(IdentificationRequest identificationRequest);
     Response handleDonateRequest(DonateRequest donateRequest);
     Response handlePurchaseSkillRequest(PurchaseSkillRequest purchaseSkillRequest);
+    Response handleLeaveSquadReq(LeaveSquadReq leaveSquadReq);
 }
