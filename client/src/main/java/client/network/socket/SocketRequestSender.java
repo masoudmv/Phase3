@@ -15,11 +15,16 @@ public class SocketRequestSender {
     private final PrintStream printStream;
     private final ObjectMapper objectMapper;
 
-    public SocketRequestSender() throws IOException {
-        this.socket = new Socket("127.0.0.1", 8080);
-        printStream = new PrintStream(socket.getOutputStream());
-        scanner = new Scanner(socket.getInputStream());
-        objectMapper = new ObjectMapper();
+    public SocketRequestSender() {
+        try {
+            this.socket = new Socket("127.0.0.1", 8080);
+            printStream = new PrintStream(socket.getOutputStream());
+            scanner = new Scanner(socket.getInputStream());
+            objectMapper = new ObjectMapper();
+        } catch (IOException e) {
+            System.out.println("could not open a new socket");
+            throw new RuntimeException(e);
+        }
     }
 
 

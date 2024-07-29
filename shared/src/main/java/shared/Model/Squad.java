@@ -11,6 +11,10 @@ public class Squad {
     private Player owner = null;
     private int vault;
 
+    private int palioxis = 0;
+    private int adonis = 0;
+    private int gefjon = 0;
+
     public Squad(Player owner) {
         this.owner = owner;
         this.members.add(owner);
@@ -52,4 +56,47 @@ public class Squad {
     public void setName(String name) {
         this.name = name;
     }
+
+    public int getPalioxis() {
+        return palioxis;
+    }
+
+    public int getAdonis() {
+        return adonis;
+    }
+
+    public int getGefjon() {
+        return gefjon;
+    }
+
+    public void reduceVaultBy(int amount) {
+        this.vault -= amount;
+    }
+
+    public String buySkill(Skill skill) {
+        switch (skill) {
+            case palioxis -> {
+                if (vault < members.size() * 100) return "Squad vault does not have the required XP!";
+                reduceVaultBy(members.size() * 100);
+                palioxis++;
+                return "Palioxis was Purchased successfully!";
+            }
+            case adonis -> {
+                if (vault < 400) return "Squad vault does not have the required XP!";
+                reduceVaultBy(400);
+                adonis++;
+                return "Adonis was Purchased successfully!";
+            }
+            case gefjon -> {
+                if (vault < 300) return "Squad vault does not have the required XP!";
+                reduceVaultBy(300);
+                gefjon++;
+
+                return "Gefjon was Purchased successfully!";
+
+            }
+            default -> throw new IllegalArgumentException("Unknown skill: " + skill);
+        }
+    }
 }
+

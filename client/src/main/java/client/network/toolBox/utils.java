@@ -21,8 +21,8 @@ public class utils {
             // send identification Request ...
 //            String macAddress = Status.getINSTANCE().getPlayer().getMacAddress();
 
+            System.out.println("trying to connect ...");
             RequestFactory.createIdentificateReq();
-            System.out.println("no i am here");
 
             // start a thread to check connection with server ...
             new Thread(new Menu.ConnectionChecker()).start();
@@ -30,6 +30,7 @@ public class utils {
 
 //            MainFrame.getINSTANCE().switchToPanel(Menu.getINSTANCE());
         } catch (Exception e) {
+            System.out.println("could not connect. loading in offline mode ...");
             Object[] options = {"Yes", "Retry", "Cancel"};
             int choice = JOptionPane.showOptionDialog(
                     MainFrame.getINSTANCE(), // Parent component
@@ -47,6 +48,8 @@ public class utils {
                 Status.getINSTANCE().setSocket(null);
             } else if (choice == JOptionPane.NO_OPTION) {
                 tryConnection();
+            } else {
+                System.out.println("Cancel chosen");
             }
         }
     }

@@ -2,6 +2,7 @@ package server;
 
 import server.socket.SocketResponseSender;
 import shared.Model.Player;
+import shared.Model.Skill;
 import shared.Model.Squad;
 import shared.request.*;
 import shared.response.*;
@@ -59,18 +60,17 @@ public class ServersideReqHandler extends Thread implements RequestHandler {
 
     @Override
     public Response handleIdentificationRequest(IdentificationRequest identificationRequest) {
+        System.out.println("Response is created ... ");
         String macAddress = identificationRequest.getMACAddress();
         String username = identificationRequest.getUsername();
-        dataBase.identificate(macAddress);
+        dataBase.identificate(macAddress); // todo rename this method
 
-
-        if (username != null){
-            dataBase.setUsername(macAddress, username);
-        }
+        if (username != null) dataBase.setUsername(macAddress, username);
 
         Player player = dataBase.findPlayer(macAddress);
-        Squad squad = player.getSquad();
-        return new IdentificationResponse(player, squad);
+        player.setLastOnlineTime(System.currentTimeMillis());
+//        Squad squad = player.getSquad();
+        return new IdentificationResponse(player);
     }
 
     @Override
@@ -80,5 +80,13 @@ public class ServersideReqHandler extends Thread implements RequestHandler {
         int amount = donateRequest.getAmount();
         String message = dataBase.donateToSquad(player, amount);
         return new DonateResponse(message);
+    }
+
+    @Override
+    public Response handlePurchaseSkillRequest(PurchaseSkillRequest purchaseSkillRequest) {
+        Player player = dataBase.findPlayer(purchaseSkillRequest.getMacAddress());
+        Skill skill = purchaseSkillRequest.getSkill();
+        String message = dataBase.purchaseSkill(player, skill);
+        return new PurchaseSkillResponse(message);
     }
 }

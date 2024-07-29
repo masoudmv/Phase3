@@ -1,10 +1,12 @@
 package client.network.toolBox;
 
+import client.network.RequestFactory;
 import client.network.Status;
 import client.network.socket.SocketRequestSender;
-import shared.request.DonateRequest;
 import shared.Model.Player;
 import shared.Model.Squad;
+import shared.Model.Skill;
+import shared.request.DonateRequest;
 
 import javax.swing.*;
 import java.awt.*;
@@ -51,9 +53,10 @@ public class SquadAbilitiesPanel extends JPanel {
         ability2Button = new JButton("Call of Adonis");
         ability3Button = new JButton("Call of Gefjon");
 
-        ability1Status = new JLabel("Not Purchased");
-        ability2Status = new JLabel("Not Purchased");
-        ability3Status = new JLabel("Not Purchased");
+        Squad squad = Status.getINSTANCE().getPlayer().getSquad();
+        ability1Status = new JLabel(String.valueOf(squad.getPalioxis()));
+        ability2Status = new JLabel(String.valueOf(squad.getAdonis()));
+        ability3Status = new JLabel(String.valueOf(squad.getGefjon()));
 
         gbc.gridy++;
         add(ability1Button, gbc);
@@ -74,14 +77,14 @@ public class SquadAbilitiesPanel extends JPanel {
 
         backButton.addActionListener(e -> {
             running = false; // Stop the update thread
-//            MainFrame frame = MainFrame.getINSTANCE();
-
             PanelManager.showSquadMenu();
-
-//            frame.repaint();
         });
 
         donateButton.addActionListener(e -> openDonationPanel());
+
+        ability1Button.addActionListener(e -> buySkill(Skill.palioxis));
+        ability2Button.addActionListener(e -> buySkill(Skill.adonis));
+        ability3Button.addActionListener(e -> buySkill(Skill.gefjon));
 
         setVisible(true);
 
@@ -99,6 +102,11 @@ public class SquadAbilitiesPanel extends JPanel {
 
     private void updateSquadVaultLabel() {
         squadVaultLabel.setText("Squad Vault: " + getCurrentSquadVaultXP());
+
+        Squad squad = Status.getINSTANCE().getPlayer().getSquad();
+        ability1Status.setText(String.valueOf(squad.getPalioxis()));
+        ability2Status.setText(String.valueOf(squad.getAdonis()));
+        ability3Status.setText(String.valueOf(squad.getGefjon()));
     }
 
     private void openDonationPanel() {
@@ -165,5 +173,25 @@ public class SquadAbilitiesPanel extends JPanel {
         });
         updateThread.setDaemon(true);
         updateThread.start();
+    }
+
+    private void buySkill(Skill skill) {
+        // Implement functionality for buying skills
+        RequestFactory.createPurchaseSkillReq(skill);
+//        switch (skill) {
+//            case palioxis -> {
+//                // Add logic for buying Palioxis skill
+//                System.out.println("Palioxis skill purchased.");
+//            }
+//            case adonis -> {
+//                // Add logic for buying Adonis skill
+//                System.out.println("Adonis skill purchased.");
+//            }
+//            case gefjon -> {
+//                // Add logic for buying Gefjon skill
+//                System.out.println("Gefjon skill purchased.");
+//            }
+//            default -> throw new IllegalArgumentException("Unknown skill: " + skill);
+//        }
     }
 }

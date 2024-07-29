@@ -7,6 +7,7 @@ import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.util.Enumeration;
 
 public class Status {
     private static Status INSTANCE;
@@ -62,24 +63,32 @@ public class Status {
         this.responseHandler = responseHandler;
     }
 
-    private String findMacAddress(){
-        String[] hexadecimal = null;
-
+    private String findMacAddress() {
         try {
-            InetAddress localHost = InetAddress.getLocalHost();
-            NetworkInterface ni = NetworkInterface.getByInetAddress(localHost);
-            byte[] hardwareAddress = ni.getHardwareAddress();
+            Enumeration<NetworkInterface> networkInterfaces = NetworkInterface.getNetworkInterfaces();
+            while (networkInterfaces.hasMoreElements()) {
+                NetworkInterface ni = networkInterfaces.nextElement();
 
-            hexadecimal = new String[hardwareAddress.length];
-            for (int i = 0; i < hardwareAddress.length; i++) {
-                hexadecimal[i] = String.format("%02X", hardwareAddress[i]);
+                // Skip loopback and non-ethernet interfaces
+                if (ni.isLoopback() || !ni.getName().startsWith("eth")) {
+                    continue;
+                }
+
+                byte[] hardwareAddress = ni.getHardwareAddress();
+                if (hardwareAddress != null && hardwareAddress.length > 0) {
+                    String[] hexadecimal = new String[hardwareAddress.length];
+                    for (int i = 0; i < hardwareAddress.length; i++) {
+                        hexadecimal[i] = String.format("%02X", hardwareAddress[i]);
+                    }
+                    return String.join("-", hexadecimal);
+                }
             }
-        } catch (UnknownHostException | SocketException e) {
-            System.out.println("Unable to find local host");
+        } catch (SocketException e) {
+            System.out.println("Unable to find network interfaces");
             throw new RuntimeException(e);
         }
 
-        return macAddress = String.join("-", hexadecimal);
+        throw new RuntimeException("No valid MAC address found");
     }
 
 

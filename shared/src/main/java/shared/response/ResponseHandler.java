@@ -9,4 +9,5 @@ public interface ResponseHandler {
     void handleCreateSquadResponse(CreateSquadResponse createSquadResponse);
     void handleIdentificationResponse(IdentificationResponse identificationResponse);
     void handleDonateResponse(DonateResponse donateResponse);
+    void handlePurchaseSkillResponse(PurchaseSkillResponse purchaseSkillResponse);
 }

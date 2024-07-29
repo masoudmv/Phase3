@@ -64,6 +64,7 @@ public class ClientsideResHandler implements ResponseHandler {
 
     @Override
     public void handleIdentificationResponse(IdentificationResponse identificationResponse) {
+        System.out.println("handling identification response");
         Player player = identificationResponse.getPlayer();
         if (player != null) {
             Status.getINSTANCE().setPlayer(player);
@@ -74,6 +75,13 @@ public class ClientsideResHandler implements ResponseHandler {
     @Override
     public void handleDonateResponse(DonateResponse donateResponse) {
         String message = donateResponse.getMessage();
+        MainFrame frame = MainFrame.getINSTANCE();
+        JOptionPane.showMessageDialog(frame, message);
+    }
+
+    @Override
+    public void handlePurchaseSkillResponse(PurchaseSkillResponse purchaseSkillResponse) {
+        String message = purchaseSkillResponse.getMessage();
         MainFrame frame = MainFrame.getINSTANCE();
         JOptionPane.showMessageDialog(frame, message);
     }

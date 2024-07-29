@@ -140,14 +140,18 @@ public class Menu extends JPanel {
     private class ToggleModeButtonAction implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            toggleOnlineOfflineMode();
+//            toggleOnlineOfflineMode();
 
             if (isOnline) {
                 Status.getINSTANCE().getSocket().close();
                 Status.getINSTANCE().setConnectedToServer(false);
-                isOnline = false;
+                System.out.println("socket closed successfully ... ");
+//                isOnline = false;
 
-            } else tryConnection();
+            } else {
+                System.out.println("in else block");
+                tryConnection();
+            }
 
 
             updateStatusLabel();
@@ -194,8 +198,8 @@ public class Menu extends JPanel {
                     synchronized (Menu.getINSTANCE()) {
                         if (!Status.getINSTANCE().isConnectedToServer()) break;
                     }
-                    RequestFactory.createIdentificateReq();
-                    System.out.println("Connection check successful.");
+//                    RequestFactory.createIdentificateReq();
+//                    System.out.println("Connection check successful.");
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(MainFrame.getINSTANCE(), "Connection Lost!", "Error", JOptionPane.ERROR_MESSAGE);
                     Status.getINSTANCE().setConnectedToServer(false);

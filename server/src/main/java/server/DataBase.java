@@ -1,7 +1,9 @@
 package server;
 
 import shared.Model.Player;
+import shared.Model.Skill;
 import shared.Model.Squad;
+import shared.Model.Status;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +15,26 @@ public class DataBase {
     private List<Squad> squads = new ArrayList();
 
     private List<Player> players = new ArrayList();
+
+//    public DataBase() {
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                while (true){
+//                    try {
+//                        for (Player player : players){
+//                            double now = System.currentTimeMillis();
+//                            if (now - player.getLastOnlineTime() > 3000) player.setStatus(Status.offline);
+//                        }
+//
+//                        Thread.sleep(500);
+//                    } catch (InterruptedException e) {
+//                        throw new RuntimeException(e);
+//                    }
+//                }
+//            }
+//        });
+//    }
 
     private List<String> getAllMacAddresses(){
         List<String> macAddresses = new ArrayList();
@@ -81,5 +103,14 @@ public class DataBase {
         squad.addToVault(amount);
         player.reduceXpBy(amount);
         return "You have successfully donated " + amount + " XP to Squad Vault!";
+    }
+
+
+    public String purchaseSkill(Player player, Skill skill){
+        Squad squad = player.getSquad();
+        String playerMacAddress = player.getMacAddress();
+        String ownerMacAddress = squad.getOwner().getMacAddress();
+        if (!ownerMacAddress.equals(playerMacAddress)) return "You are not the creator of the squad!";
+        return squad.buySkill(skill);
     }
 }

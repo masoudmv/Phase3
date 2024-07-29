@@ -36,9 +36,6 @@ public class Main {
 
 
 
-
-
-
 //        List<Squad> squads = new ArrayList<>();
 //        squads.add(new Squad(new Player("massooood")));
 //        squads.add(new Squad(new Player("massooood")));
