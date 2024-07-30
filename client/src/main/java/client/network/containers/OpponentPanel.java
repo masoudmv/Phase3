@@ -1,6 +1,7 @@
 package client.network.containers;
 
 import client.network.RequestFactory;
+import shared.Model.NotificationType;
 import shared.Model.Player;
 import shared.Model.Squad;
 
@@ -87,7 +88,7 @@ public class OpponentPanel extends JPanel {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         // Add your logic to handle the "Start Monomachia" action here
-                        RequestFactory.createInitMonomachiaReq(member.getMacAddress());
+                        RequestFactory.createAskForSthRequest(NotificationType.MONOMACHIA, member.getMacAddress());
                     }
                 });
 

@@ -2,6 +2,7 @@ package client.network.containers;
 
 import client.network.RequestFactory;
 import client.network.Status;
+import shared.Model.NotificationType;
 import shared.Model.Player;
 import shared.Model.Squad;
 
@@ -27,7 +28,7 @@ public class SquadMenu extends JPanel {
 
 
         setLayout(new GridBagLayout());
-        Dimension dimension = new Dimension(600, 600);
+        Dimension dimension = new Dimension(800, 600);
         setPreferredSize(dimension);
         setVisible(true);
 
@@ -201,7 +202,17 @@ public class SquadMenu extends JPanel {
                 gbc.gridx = 1;
                 squadPanel.add(kickButton, gbc);
 
+                JButton summon = new JButton("summon");
+                gbc.gridx = 2;
+                squadPanel.add(summon, gbc);
+
+                JButton colosseum = new JButton("start colosseum");
+                gbc.gridx = 3;
+                squadPanel.add(colosseum, gbc);
+
                 kickButton.addActionListener(new KickMemberAction(member));
+                summon.addActionListener(new SummonAction(member));
+                colosseum.addActionListener(new StartColosseumAction(member));
             }
 
             mySquadPanelContainer.add(new JScrollPane(squadPanel), BorderLayout.CENTER);
@@ -225,6 +236,34 @@ public class SquadMenu extends JPanel {
         @Override
         public void actionPerformed(ActionEvent e) {
             RequestFactory.createKickPlayerReq(member.getMacAddress());
+        }
+    }
+
+    private class SummonAction implements ActionListener {
+        private Player member;
+
+        public SummonAction(Player member) {
+            this.member = member;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            System.out.println("sending a summon request ...");
+            RequestFactory.createAskForSthRequest(NotificationType.SUMMON, member.getMacAddress());
+        }
+    }
+
+
+    private class StartColosseumAction implements ActionListener {
+        private Player member;
+
+        public StartColosseumAction(Player member) {
+            this.member = member;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            RequestFactory.createAskForSthRequest(NotificationType.COLOSSEUM, member.getMacAddress());
         }
     }
 

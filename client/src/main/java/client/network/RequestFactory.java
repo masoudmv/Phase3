@@ -121,10 +121,10 @@ public class RequestFactory {
     }
 
 
-    public static void createInitMonomachiaReq(String opponentMacAddress){
+    public static void createAskForSthRequest(NotificationType type, String opponentMacAddress){
         socketRequestSender = status.getSocket();
         try {
-            socketRequestSender.sendRequest(new AskForSthRequest(macAddress, opponentMacAddress, NotificationType.MONOMACHIA)).run(requestHandler);
+            socketRequestSender.sendRequest(new AskForSthRequest(type, macAddress, opponentMacAddress)).run(requestHandler);
         } catch (IOException e) {
             System.out.println("InitMonomachiaReq Req was not sent ... ")  ;
             throw new RuntimeException(e);
@@ -135,7 +135,7 @@ public class RequestFactory {
     public static void createReportAskedPleaRequest(NotificationType type, String requesterMacAddress, boolean accepted){
         socketRequestSender = status.getSocket();
         try {
-            socketRequestSender.sendRequest(new ReportAskedPleaRequest(NotificationType.MONOMACHIA, requesterMacAddress, macAddress, accepted)).run(requestHandler);
+            socketRequestSender.sendRequest(new ReportAskedPleaRequest(type, requesterMacAddress, macAddress, accepted)).run(requestHandler);
         } catch (IOException e) {
             System.out.println("InitMonomachiaReq Req was not sent ... ")  ;
             throw new RuntimeException(e);

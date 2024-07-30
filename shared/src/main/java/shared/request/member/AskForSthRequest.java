@@ -9,14 +9,14 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 
 @JsonTypeName("AskForSthRequest")
 public class AskForSthRequest implements Request {
+    private NotificationType notificationType;
     private String requesterMacAddress;
     private String receiverMacAddress;
-    private NotificationType notificationType;
 
-    public AskForSthRequest(String requesterMacAddress, String receiverMacAddress, NotificationType notificationType) {
+    public AskForSthRequest(NotificationType notificationType, String requesterMacAddress, String receiverMacAddress) {
+        this.notificationType = notificationType;
         this.requesterMacAddress = requesterMacAddress;
         this.receiverMacAddress = receiverMacAddress;
-        this.notificationType = notificationType;
     }
 
     public AskForSthRequest() {

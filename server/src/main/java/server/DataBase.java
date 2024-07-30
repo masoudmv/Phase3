@@ -13,6 +13,8 @@ public class DataBase {
     private volatile List<Squad> squads = new CopyOnWriteArrayList<>();
     private volatile List<Player> players = new CopyOnWriteArrayList<>();
     private final List<Pair<Squad, Squad>> squadPairs = new CopyOnWriteArrayList<>();
+    private final List<Pair<Player, Player>> monomachiaPairs = new CopyOnWriteArrayList<>();
+    private final List<Pair<Player, Player>> colosseumPairs = new CopyOnWriteArrayList<>();
 
     public DataBase() {
 //        Squad squad = new Squad(new Player("Mahmood"));
@@ -169,6 +171,7 @@ public class DataBase {
     }
 
     public String getMonomachiaMessageForRequester(Player requester, Player receiver){
+        System.out.println("handling monomachia ...");
         Status status = receiver.getStatus();
         String receiverUsername = receiver.getUsername();
         if (receiver.isAttendedMonomachia()) return receiverUsername + " has already been in a monomachia battle";
@@ -193,7 +196,7 @@ public class DataBase {
         else if (status == Status.offline) return receiverUsername + " is offline right now!";
         else if (status == Status.busy) return receiverUsername + " is Busy right now!";
         else {
-            Notification notification = new Notification(NotificationType.MONOMACHIA);
+            Notification notification = new Notification(NotificationType.COLOSSEUM);
             String requesterMacAddress = requester.getMacAddress();
             String requesterUsername = requester.getUsername();
             notification.setMacAddress(requesterMacAddress);
@@ -203,16 +206,38 @@ public class DataBase {
         }
     }
 
+    private String getSummonMessageForRequester(Player requester, Player receiver) {
+        System.out.println("got summon request");
+        Status status = receiver.getStatus();
+        String receiverUsername = receiver.getUsername();
+
+        if (status == Status.offline) return receiverUsername + " is offline right now!";
+        else if (status == Status.busy) return receiverUsername + " is Busy right now!";
+        else {
+            Notification notification = new Notification(NotificationType.SUMMON);
+            String requesterMacAddress = requester.getMacAddress();
+            String requesterUsername = requester.getUsername();
+            notification.setMacAddress(requesterMacAddress);
+            notification.setUsername(requesterUsername);
+            receiver.setNotification(notification);
+            return "Your Summon request has been sent to" + receiverUsername + "successfully!";
+        }
+    }
+
 
     public String sth(Player requester, Player receiver, NotificationType type){
         switch (type) {
             case MONOMACHIA -> {
                 return getMonomachiaMessageForRequester(requester, receiver);
             }
+
             case COLOSSEUM -> {
                 return getColosseumMessageForRequester(requester, receiver);
             }
-            case SUMMON -> System.out.println();
+
+            case SUMMON -> {
+                return getSummonMessageForRequester(requester, receiver);
+            }
 
             case JOIN -> System.out.println();
             case SIMPLE_MESSAGE -> System.out.println();
@@ -222,17 +247,14 @@ public class DataBase {
 
     public Response sendNotificationToReceiver(NotificationType type, Player receiver){
         switch (type) {
-            case MONOMACHIA -> {
+            case MONOMACHIA, COLOSSEUM, SUMMON -> {
                 String macAddress1 = receiver.getNotification().getMacAddress();
                 String username1 = receiver.getNotification().getUsername();
                 receiver.setHasNotification(false); // should be after the two previous lines!
                 System.out.println("Sending message to Requester ...");
                 return new TransferReqToClientResponse(type, macAddress1, username1);
             }
-            case COLOSSEUM -> {
-
-            }
-            case SUMMON -> System.out.println();
+//            case SUMMON -> System.out.println();
 
             case JOIN -> System.out.println();
             case SIMPLE_MESSAGE -> {
@@ -254,6 +276,9 @@ public class DataBase {
                             "Your Monomachia challenge request was accepted. It will start in 15 seconds.");
                     requester.setNotification(notification);
 
+                    requester.setInBattle(true);
+                    receiver.setInBattle(true);
+
                     return "Monomachia challenge will start in 15 seconds!";
                 } else {
                     Notification notification = new Notification(NotificationType.SIMPLE_MESSAGE,
@@ -263,9 +288,39 @@ public class DataBase {
                 }
             }
             case COLOSSEUM -> {
+                if (accepted){
+                    Notification notification = new Notification(NotificationType.SIMPLE_MESSAGE,
+                            "Your Colosseum challenge request was accepted. It will start in 15 seconds.");
+                    requester.setNotification(notification);
 
+                    requester.setInBattle(true);
+                    receiver.setInBattle(true);
+
+                    return "Colosseum challenge will start in 15 seconds!";
+                } else {
+                    Notification notification = new Notification(NotificationType.SIMPLE_MESSAGE,
+                            "Your Colosseum challenge request was not accepted");
+                    requester.setNotification(notification);
+                    return "You did not accept the Colosseum battle challenge";
+                }
             }
-            case SUMMON -> System.out.println();
+            case SUMMON -> {
+                if (accepted){
+                    Notification notification = new Notification(NotificationType.SIMPLE_MESSAGE,
+                            "Your Summon challenge request was accepted.");
+                    requester.setNotification(notification);
+
+                    requester.setInBattle(true);
+                    receiver.setInBattle(true);
+
+                    return "You accepted to be someones summon. prepare yourself for monomachia battle!";
+                } else {
+                    Notification notification = new Notification(NotificationType.SIMPLE_MESSAGE,
+                            "Your Summon request was not accepted");
+                    requester.setNotification(notification);
+                    return "You did not accept the Summon request";
+                }
+            }
 
             case JOIN -> System.out.println();
             case SIMPLE_MESSAGE -> {

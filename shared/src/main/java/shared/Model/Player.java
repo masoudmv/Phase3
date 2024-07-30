@@ -24,6 +24,8 @@ public class Player extends Model {
     private boolean attendedMonomachia = false;
     private boolean attendedColosseum = false;
 
+    private boolean isInBattle = false;
+
     // todo a thread in server side to check connection status
     // todo remove set message, has message ...
 
@@ -178,6 +180,14 @@ public class Player extends Model {
 
     public void setAttendedColosseum(boolean attendedColosseum) {
         this.attendedColosseum = attendedColosseum;
+    }
+
+    public boolean isInBattle() {
+        return isInBattle;
+    }
+
+    public void setInBattle(boolean inBattle) {
+        isInBattle = inBattle;
     }
 }
 

@@ -98,21 +98,6 @@ public class ServersideReqHandler extends Thread implements RequestHandler {
             System.out.println("notification type is indeed monomachia ...");
             return dataBase.sendNotificationToReceiver(type, player);
 
-
-
-
-//            if (player.getNotification().getNotificationType() == NotificationType.MONOMACHIA) {
-//                String macAddress1 = player.getNotification().getMacAddress();
-//                String username1 = player.getNotification().getUsername();
-//                player.setHasNotification(false); // should be after the two previous lines!
-//                System.out.println("Sending message to Requester ...");
-//                return new TransferReqToClientResponse(macAddress1, username1);
-//            } else if (player.getNotification().getNotificationType() == NotificationType.SIMPLE_MESSAGE) {
-//                String message1 = player.getNotification().getMessage();
-//                player.setHasNotification(false);
-//                System.out.println("Setting simple message ...");
-//                return new MessageResponse(message1);
-//            }
         }
 
         Squad opponent = dataBase.findOpponent(squad);
@@ -201,6 +186,7 @@ public class ServersideReqHandler extends Thread implements RequestHandler {
         NotificationType type  = askForSthRequest.getNotificationType();
 
         String message = dataBase.sth(requester, receiver, type);
+        System.out.println("Message: " + message);
         return new MessageResponse(message);
     }
 

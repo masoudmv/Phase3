@@ -168,9 +168,67 @@ public class ClientsideResHandler implements ResponseHandler {
                 }
             }
             case COLOSSEUM -> {
+                String requesterMacAddress = monomachiaInvitationResponse.getMacAddress();
 
+                String username = monomachiaInvitationResponse.getUsername();
+                MainFrame frame = MainFrame.getINSTANCE();
+
+                int response = JOptionPane.showOptionDialog(
+                        frame,
+                        username + " challenges you to a Colosseum battle. Do you accept?",
+                        "Colosseum Invitation",
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.QUESTION_MESSAGE,
+                        null,
+                        new Object[]{"Accept", "Decline"}, // Custom button text
+                        "Accept" // Default button
+                );
+
+                if (response == JOptionPane.YES_OPTION) {
+                    // Handle accept action
+                    System.out.println("handle monomachia request");
+                    // Add your logic here to handle the acceptance
+                    RequestFactory.createReportAskedPleaRequest(type, requesterMacAddress, true);
+                    System.out.println("handle monomachia request");
+
+                } else if (response == JOptionPane.NO_OPTION) {
+                    // Handle decline action
+                    // Add your logic here to handle the declination
+                    RequestFactory.createReportAskedPleaRequest(type, requesterMacAddress, false);
+
+                }
             }
-            case SUMMON -> System.out.println();
+            case SUMMON -> {
+                String requesterMacAddress = monomachiaInvitationResponse.getMacAddress();
+
+                String username = monomachiaInvitationResponse.getUsername();
+                MainFrame frame = MainFrame.getINSTANCE();
+
+                int response = JOptionPane.showOptionDialog(
+                        frame,
+                        username + " Summons you to a Monomachia battle. Do you accept?",
+                        "Colosseum Invitation",
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.QUESTION_MESSAGE,
+                        null,
+                        new Object[]{"Accept", "Decline"}, // Custom button text
+                        "Accept" // Default button
+                );
+
+                if (response == JOptionPane.YES_OPTION) {
+                    // Handle accept action
+                    System.out.println("handle monomachia request");
+                    // Add your logic here to handle the acceptance
+                    RequestFactory.createReportAskedPleaRequest(type, requesterMacAddress, true);
+                    System.out.println("handle monomachia request");
+
+                } else if (response == JOptionPane.NO_OPTION) {
+                    // Handle decline action
+                    // Add your logic here to handle the declination
+                    RequestFactory.createReportAskedPleaRequest(type, requesterMacAddress, false);
+
+                }
+            }
 
             case JOIN -> System.out.println();
             case SIMPLE_MESSAGE -> {
