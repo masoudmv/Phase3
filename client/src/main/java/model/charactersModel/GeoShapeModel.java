@@ -197,5 +197,7 @@ public abstract class GeoShapeModel extends Entity {
         direction.setMagnitude(magnitude);
     }
 
+    abstract void move();
+
 }
 
