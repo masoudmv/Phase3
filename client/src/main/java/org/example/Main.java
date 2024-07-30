@@ -59,6 +59,13 @@ public class Main {
         Skill.initializeSkills();
 
 
+        SquarantineModel.loadImage();
+        TrigorathModel.loadImage();
+
+        new TrigorathModel(new Point2D.Double(500, 500));
+        new SquarantineModel(new Point2D.Double(500, 600));
+
+
 
         // don't touch the above lines for now!
 

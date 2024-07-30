@@ -49,8 +49,6 @@ public class GeoShapeView {
         this.imageWidth = this.image.getWidth();
         this.imageHeight = this.image.getHeight();
         geoShapeViews.add(this);
-
-//        initiator();
     }
 
     public GeoShapeView(String id) {
@@ -149,22 +147,29 @@ public class GeoShapeView {
         int y = (int) locations.get(panelID).getY();
 
 
-        g2d.drawImage(rotateImage(image, angle), (int) (x - imageWidth/2), (int) (y - imageWidth/2), null);
+        g2d.drawImage(rotateImage(image, Math.toDegrees(-angle)), (int) (x - imageWidth/2), (int) (y - imageWidth/2), null);
 
-//        int[] xpoints = new int[myPolygon.npoints];
-//        int[] ypoints = new int[myPolygon.npoints];
-//
-//        for (int i = 0; i < myPolygon.npoints; i++) {
-//            xpoints[i] = (int) myPolygon.xpoints[i];
-//            ypoints[i] = (int) myPolygon.ypoints[i];
-//        }
 
-//        double radius = imageHeight/2;
-//        g2d.drawOval((int) getCurrentLocation().getX(), (int) getCurrentLocation().getY(), (int) (2*radius), (int) (2*radius));
-//        g2d.drawOval((int) getCurrentLocation().getX(), (int) getCurrentLocation().getY(), (int) (2), (int) (2));
-//        g2d.setColor(Color.red);
-//
-//        g2d.drawPolygon(xpoints, ypoints, myPolygon.npoints);
+
+        g2d.setColor(Color.white);
+        for (FinalPanelView finalPanelView : FinalPanelView.finalPanelViews){
+            if (finalPanelView.getId().equals(panelID)) {
+                MyPolygon myPolygon = myPolygons.get(finalPanelView.getId());
+                int[] xpoints = new int[myPolygon.npoints];
+                int[] ypoints = new int[myPolygon.npoints];
+
+                for (int i = 0; i < myPolygon.npoints; i++) {
+                    xpoints[i] = (int) myPolygon.xpoints[i];
+                    ypoints[i] = (int) myPolygon.ypoints[i];
+                }
+                g2d.drawPolygon(xpoints, ypoints, myPolygon.npoints);
+
+//                double radius = imageHeight/2;
+//                g2d.drawOval((int) getCurrentLocation().getX(), (int) getCurrentLocation().getY(), (int) (2*radius), (int) (2*radius));
+//                g2d.drawOval((int) getCurrentLocation().getX(), (int) getCurrentLocation().getY(), (int) (2), (int) (2));
+//                g2d.setColor(Color.red);
+
+            }
+        }
     }
-
 }

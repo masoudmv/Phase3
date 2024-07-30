@@ -108,12 +108,13 @@ public interface Collidable {
     }
 
     private void handleBulletImpact(Point2D intersection, Collidable collidable) {
-        if (collidable instanceof SquarantineModel) {
-            ((SquarantineModel) collidable).damage(Profile.getCurrent().EPSILON_RANGED_DAMAGE);
-        } else if (collidable instanceof TrigorathModel) {
-            ((TrigorathModel) collidable).damage(Profile.getCurrent().EPSILON_RANGED_DAMAGE);
-        }
-        ((BulletModel) this).bulletImpact((BulletModel) this, intersection, collidable);
+        // todo edit
+//        if (collidable instanceof SquarantineModel) {
+//            ((SquarantineModel) collidable).damage(Profile.getCurrent().EPSILON_RANGED_DAMAGE);
+//        } else if (collidable instanceof TrigorathModel) {
+//            ((TrigorathModel) collidable).damage(Profile.getCurrent().EPSILON_RANGED_DAMAGE);
+//        }
+//        ((BulletModel) this).bulletImpact((BulletModel) this, intersection, collidable);
     }
 
     private void handleCirclePolygonImpact(Point2D intersection, Collidable collidable) {
@@ -137,9 +138,9 @@ public interface Collidable {
             }
             if (minDistance < 5) {
                 if (collidable instanceof SquarantineModel) {
-                    ((SquarantineModel) collidable).damage(Profile.getCurrent().EPSILON_MELEE_DAMAGE);
+//                    ((SquarantineModel) collidable).damage(Profile.getCurrent().EPSILON_MELEE_DAMAGE);
                 } else if (collidable instanceof TrigorathModel) {
-                    ((TrigorathModel) collidable).damage(Profile.getCurrent().EPSILON_MELEE_DAMAGE);
+//                    ((TrigorathModel) collidable).damage(Profile.getCurrent().EPSILON_MELEE_DAMAGE);
                 }
             }
         }
@@ -165,9 +166,9 @@ public interface Collidable {
     }
 
     private void handlePolygonPolygonCollision(Collidable collidable) {
-//        if (!(collidable instanceof MainPanel) && !(this instanceof MainPanel)) {
-//            findSingleIntersectionPoint(collidable);
-//        }
+        if (!(collidable instanceof FinalPanelModel) && !(this instanceof FinalPanelModel)) {
+            findSingleIntersectionPoint(collidable);
+        }
     }
 
     private static Point2D getIntersectionPoint(Line2D line1, Line2D line2) {
@@ -224,6 +225,7 @@ public interface Collidable {
         }
 
         if (intersectionPoints.size() == 2) {
+            // todo fix triangle-squarantine collision ...
             handlePolygonIntersection(intersectionsOfPoly1, intersectionsOfPoly2, edges1, edges2, vertices1, vertices2, poly2);
         }
     }

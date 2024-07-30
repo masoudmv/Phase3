@@ -1,52 +1,54 @@
 package view.charactersView;
 
+import model.MyPolygon;
+import view.FinalPanelView;
+
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
+
+import static model.imagetools.ToolBox.rotateImage;
 //import static controller.Game.squarantine;
 
-public class SquarantineView implements Drawable{
-    String id;
-    Point2D currentLocation=new Point2D.Double(0,0);
-    public static ArrayList<SquarantineView> squarantineViews=new ArrayList<>();
-    Point2D point1= new Point2D.Double(0,0);
-    Point2D point2= new Point2D.Double(0,0);
-    Point2D point3= new Point2D.Double(0,0);
-    Point2D point4= new Point2D.Double(0,0);
-    private Point2D[] vertices = new Point2D[]{point1,point2,point3,point4};
+public class SquarantineView extends GeoShapeView{
+
+
     public SquarantineView(String id) {
-        this.id = id;
-        squarantineViews.add(this);
-        drawables.add(this);
+        super(id);
     }
 
-    public Point2D getCurrentLocation() {
-        return currentLocation;
+
+
+
+//    public String getId() {
+//        return id;
+//    }
+
+
+    public void draw(Graphics g, String panelID){
+        Graphics2D g2d = (Graphics2D) g;
+
+
+        g2d.setColor(Color.green);
+        // Set the stroke for thicker edges
+        float thickness = 5.0f; // Thickness of the edges
+        g2d.setStroke(new BasicStroke(thickness));
+
+        for (FinalPanelView finalPanelView : FinalPanelView.finalPanelViews){
+            if (finalPanelView.getId().equals(panelID)) {
+                MyPolygon myPolygon = myPolygons.get(finalPanelView.getId());
+                int[] xpoints = new int[myPolygon.npoints];
+                int[] ypoints = new int[myPolygon.npoints];
+
+                for (int i = 0; i < myPolygon.npoints; i++) {
+                    xpoints[i] = (int) myPolygon.xpoints[i];
+                    ypoints[i] = (int) myPolygon.ypoints[i];
+                }
+                g2d.drawPolygon(xpoints, ypoints, myPolygon.npoints);
+
+
+            }
+        }
     }
 
-    public void setCurrentLocation(Point2D currentLocation) {
-        this.currentLocation = currentLocation;
-    }
-
-    public String getId() {
-        return id;
-    }
-    @Override
-    public void draw(Graphics g){
-        int[] xPoly = new int[]{(int) vertices[0].getX(), (int) vertices[1].getX(), (int) vertices[2].getX(), (int) vertices[3].getX()};
-        int[] yPoly = new int[]{(int) vertices[0].getY(), (int) vertices[1].getY(), (int) vertices[2].getY(), (int) vertices[3].getY()};
-        g.setColor(Color.white);
-        Polygon poly = new Polygon(xPoly, yPoly, xPoly.length);
-        g.setColor(Color.green);
-        g.drawPolygon(poly);
-    }
-
-    public void setVertices(Point2D[] vertices) {
-        this.vertices = vertices;
-    }
-
-    public void remove() {
-        drawables.remove(this);
-        squarantineViews.remove(this);
-    }
 }

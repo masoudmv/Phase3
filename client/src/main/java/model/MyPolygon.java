@@ -11,7 +11,7 @@ public class MyPolygon extends Polygon { //todo remove inheritance
     public int npoints;
     public double[] xpoints;
     public double[] ypoints;
-    private static final int MIN_LENGTH = 4;
+    private static final int MIN_LENGTH = 3;
     private CopyOnWriteArrayList<Integer> boundingPointIndexes = new CopyOnWriteArrayList<>();
 
     public MyPolygon() {
@@ -85,8 +85,15 @@ public class MyPolygon extends Polygon { //todo remove inheritance
         Point2D[] point2DS = new Point2D[npoints];
         for (int i = 0; i < npoints; i++) {
             point2DS[i] = new Point2D.Double(xpoints[i], ypoints[i]);
+        } return point2DS;
+    }
+
+    public void setVertices(Point2D[] points) {
+        npoints = points.length;
+        for (int i = 0; i < points.length; i++) {
+            xpoints[i] = points[i].getX();
+            ypoints[i] = points[i].getY();
         }
-        return point2DS;
     }
 
 }

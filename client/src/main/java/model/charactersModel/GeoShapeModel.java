@@ -35,20 +35,17 @@ public abstract class GeoShapeModel extends Entity {
 
     public GeoShapeModel(Point2D anchor, BufferedImage image, MyPolygon myPolygon) {
         this.id = UUID.randomUUID().toString();
-        this.anchor = new Point2D.Double(
-                anchor.getX() , anchor.getY()
-        );
+        this.anchor = new Point2D.Double(anchor.getX() , anchor.getY());
         this.myPolygon = myPolygon;
         radius = (double) image.getWidth()/2;
         Point2D img = new Point2D.Double((double) -image.getWidth()/2, (double) -image.getHeight()/2);
-
-
         moveVertices(addVectors(anchor, img));
         entities.add(this);
         createGeoShapeView(id, image);
     }
 
 
+    // The following constructor doesn't create the view. the child shall take care of it!
     public GeoShapeModel(Point2D anchor, BufferedImage image, MyPolygon myPolygon, boolean necropick) { // exclusive for Necropick
         this.id = UUID.randomUUID().toString();
         this.anchor = new Point2D.Double(anchor.getX() , anchor.getY());
@@ -69,9 +66,7 @@ public abstract class GeoShapeModel extends Entity {
     public GeoShapeModel(Point2D anchor, BufferedImage image){
         setDummyPolygon();
         this.id = UUID.randomUUID().toString();
-        this.anchor = new Point2D.Double(
-                anchor.getX() , anchor.getY()
-        );
+        this.anchor = new Point2D.Double(anchor.getX() , anchor.getY());
         radius = (double) image.getHeight()/2;
         entities.add(this);
         createGeoShapeView(id, image);
@@ -196,8 +191,6 @@ public abstract class GeoShapeModel extends Entity {
         magnitude += 9.81 / 3;
         direction.setMagnitude(magnitude);
     }
-
-    abstract void move();
 
 }
 

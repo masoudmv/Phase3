@@ -58,7 +58,7 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
 //    public static FinalPanelModel localPanel;
 
     public EpsilonModel(Point2D anchor, MyPolygon myPolygon) {
-        super(anchor, image, myPolygon);
+        super(anchor, image, myPolygon, true);
         INSTANCE = this;
         Point2D loc = new Point2D.Double(getAnchor().getX() - 250, getAnchor().getY() - 250); // todo spawn epsilon in the middle of screen
         DoubleDimension2D size = new DoubleDimension2D(500, 500);
@@ -382,6 +382,8 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
     public void onCollision(Collidable other, Point2D intersection) {
         if (other instanceof Smiley) impact(new CollisionState(intersection));
         if (other instanceof Fist) impact(new CollisionState(intersection));
+        if (other instanceof SquarantineModel) impact(relativeLocation(getAnchor(), intersection), intersection, other);
+        if (other instanceof TrigorathModel) impact(relativeLocation(getAnchor(), intersection), intersection, other);
         if (other instanceof Hand) {
 
 

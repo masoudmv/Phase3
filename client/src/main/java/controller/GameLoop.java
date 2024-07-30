@@ -311,10 +311,10 @@ public class GameLoop implements Runnable {
         }
 
 
-        for (Movable movable : movables) {
-            movable.move();
-//            movable.friction();
-        }
+//        for (Movable movable : movables) {
+//            movable.move();
+////            movable.friction();
+//        }
 
 
         for (OmenoctModel omenoctModel : OmenoctModel.omenoctModels) {
@@ -368,6 +368,8 @@ public class GameLoop implements Runnable {
 
         }
         updateCount++;
+
+
         for (int i = 0; i < squarantineModels.size(); i++) {
             if (squarantineModels.get(i).isImpactInProgress()) {
                 squarantineModels.get(i).getDirection().accelerateDirection(squarantineModels.get(i).impactMaxVelocity);
@@ -375,7 +377,9 @@ public class GameLoop implements Runnable {
                     squarantineModels.get(i).setImpactInProgress(false);
                 }
             }
-            if (squarantineModels.get(i).getHp() <= 0) squarantineModels.get(i).remove();
+            // todo edit the following code with health instead of hp ...
+//            if (squarantineModels.get(i).getHp() <= 0) squarantineModels.get(i).remove();
+
 
         }
         for (int i = 0; i < trigorathModels.size(); i++) {
@@ -385,7 +389,8 @@ public class GameLoop implements Runnable {
                     trigorathModels.get(i).setImpactInProgress(false);
                 }
             }
-            if (trigorathModels.get(i).getHp() <= 0) trigorathModels.get(i).remove();
+//            if (trigorathModels.get(i).getHp() <= 0) trigorathModels.get(i).remove();
+            // todo edit the following code with health instead of hp ...
 
         }
         EpsilonModel epsilonModel = EpsilonModel.getINSTANCE();
@@ -447,6 +452,12 @@ public class GameLoop implements Runnable {
                 epsilon.sumHpWith(1);
                 lastHpRegainTime = ELAPSED_TIME;
             }
+        }
+
+
+        for (Movable movable: movables){
+            movable.move();
+            movable.friction();
         }
 
     }

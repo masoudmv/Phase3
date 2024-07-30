@@ -46,7 +46,6 @@ public class Wyrm extends GeoShapeModel implements Collidable {
 
     }
 
-    @Override
     void move() {
 
     }

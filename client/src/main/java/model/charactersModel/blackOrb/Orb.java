@@ -30,8 +30,6 @@ public class Orb extends GeoShapeModel implements Collidable {
         this.circle = new Circle(anchor.getX(), anchor.getY(), (double) image.getHeight() / 2);
         collidables.add(this);
         this.health = ORB_HEALTH.getValue();
-
-
     }
 
     public static BufferedImage loadImage() {
@@ -39,6 +37,9 @@ public class Orb extends GeoShapeModel implements Collidable {
         Orb.image = getBufferedImage(img);
         return Orb.image;
     }
+
+
+
 
     public Circle getCircle() {
         return circle;

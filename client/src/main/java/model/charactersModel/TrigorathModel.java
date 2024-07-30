@@ -1,15 +1,21 @@
 
 package model.charactersModel;
 
+import model.MyPolygon;
 import model.collision.Collidable;
 import model.collision.CollisionState;
 import model.collision.Impactable;
 import model.movement.Direction;
 import model.movement.Movable;
+import view.charactersView.TrigorathView;
 
+import javax.swing.*;
+import java.awt.*;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
@@ -19,41 +25,36 @@ import static controller.Sound.playBubble;
 import static controller.Sound.playDeathSound;
 import static controller.GameLoop.aliveEnemies;
 import static controller.Utils.*;
+import static model.imagetools.ToolBox.getBufferedImage;
 
-public class TrigorathModel implements Movable, Collidable, Impactable {
-    private int hp = 15;
-    private Point2D anchor;
-    Point2D currentLocation;
-    double radius;
-    String id;
+public class TrigorathModel extends GeoShapeModel implements Movable, Collidable, Impactable {
     public double impactMaxVelocity;
-    public double aggressionMAxVel;
-    Direction direction;
 
     private boolean impactInProgress = false;
-    public static ArrayList<TrigorathModel> trigorathModels =new ArrayList<>();
-    private final Point2D[] vertices;
-    private double angle;
+    public static List<TrigorathModel> trigorathModels =new ArrayList<>();
     private double angularVelocity;
     private double angularAcceleration;
-    public boolean isAggression;
-    public double maxVel1 = 1;
-    public double maxVel2 = 2;
+
+    static BufferedImage image;
+    private static double edgeLength;
 
     public TrigorathModel(Point2D anchor) {
-        this.anchor = anchor;
-        this.radius = TRIGORATH_RADIUS;
-        Point2D point1 = new Point2D.Double(anchor.getX(), anchor.getY()-radius);
-        Point2D point2 = new Point2D.Double(anchor.getX()+ radius*Math.cos(Math.PI/6), anchor.getY()+radius/2);
-        Point2D point3 = new Point2D.Double(anchor.getX()-radius*Math.cos(Math.PI/6), anchor.getY()+radius/2);
-        vertices = new Point2D[]{point1, point2, point3};
-        this.id= UUID.randomUUID().toString();
-        this.direction = new Direction(0);
+        super(anchor, image, new MyPolygon(new double[3], new double[3], 3), true);
+        initVertices();
         trigorathModels.add(this);
         collidables.add(this);
         movables.add(this);
         impactables.add(this);
         createTrigorathView(id);
+    }
+
+    private void initVertices(){
+        double radius = edgeLength = edgeLength / Math.sqrt(3);
+        Point2D point1 = new Point2D.Double(anchor.getX(), anchor.getY()-radius);
+        Point2D point2 = new Point2D.Double(anchor.getX()+ radius*Math.cos(Math.PI/6), anchor.getY()+radius/2);
+        Point2D point3 = new Point2D.Double(anchor.getX()-radius*Math.cos(Math.PI/6), anchor.getY()+radius/2);
+        Point2D[] vertices = new Point2D[]{point1, point2, point3};
+        myPolygon.setVertices(vertices);
     }
 
     public String getId() {
@@ -87,6 +88,13 @@ public class TrigorathModel implements Movable, Collidable, Impactable {
 //    public void setAnchor(Point2D anchor) {
 //
 //    }
+
+    public static BufferedImage loadImage() {
+        Image img = new ImageIcon("./client/src/squarantine.png").getImage();
+        TrigorathModel.image = getBufferedImage(img);
+        edgeLength = 45;
+        return TrigorathModel.image;
+    }
 
 
 
@@ -246,7 +254,7 @@ public class TrigorathModel implements Movable, Collidable, Impactable {
 
     @Override
     public Point2D[] getVertices() {
-        return this.vertices;
+        return this.myPolygon.getVertices();
     }
 
     @Override
@@ -255,33 +263,19 @@ public class TrigorathModel implements Movable, Collidable, Impactable {
     } // todo implement
 
     @Override
-    public void onCollision(Collidable other, Point2D intersection) {
-
-    }
-
-    @Override
-    public void onCollision(Collidable other) {
-
-    }
-
-    @Override
     public void move(Direction direction) {
         double distanceByEpsilon = getAnchor().distance(EpsilonModel.getINSTANCE().getAnchor());
         Point2D movement = multiplyVector(direction.getDirectionVector(), direction.getMagnitude());
         double magnitude = getDirection().getMagnitude();
-        this.anchor = addVectors(anchor, movement);
-        for (int i = 0; i < 3; i++) {
-            vertices[i] = addVectors(vertices[i], movement);
-        }
-        // TODO !isImpactInProgress???
-//        if (distanceByEpsilon > TRIGORATH_MAX_VEL_RADIUS && !isImpactInProgress()){
-////            getDirection().setMagnitude(1);
-//            if (magnitude * 1.1 < 1.5) getDirection().setMagnitude(magnitude * 1.1);
-//        }
-//        if (distanceByEpsilon < TRIGORATH_MAX_VEL_RADIUS  && !isImpactInProgress()){
-//            if (magnitude / 1.1 > 1) getDirection().setMagnitude(magnitude / 1.1);
-//        }
+//        this.anchor = addVectors(anchor, movement);
 
+
+//        for (int i = 0; i < 3; i++) {
+//            vertices[i] = addVectors(vertices[i], movement);
+//        }
+        // TODO !isImpactInProgress???
+
+        movePolygon(movement);
     }
 
     @Override
@@ -299,9 +293,7 @@ public class TrigorathModel implements Movable, Collidable, Impactable {
         return 0;
     }
 
-    public Point2D getCurrentLocation() {
-        return currentLocation;
-    }
+
     @Override
     public void friction(){
 //        System.out.println(getDirection().getMagnitude());
@@ -334,9 +326,15 @@ public class TrigorathModel implements Movable, Collidable, Impactable {
         return angle;
     }
 
+    @Override
+    public void setMyPolygon(MyPolygon myPolygon) {
+
+    }
+
     public void setAngle(double angle) {
         this.angle = angle;
     }
+
     public void rotate(){
 //        System.out.println(angularVelocity);
 //        angularVelocity *= 0.99;
@@ -361,9 +359,12 @@ public class TrigorathModel implements Movable, Collidable, Impactable {
         }
         else angularAcceleration = 0;
         angle += angularVelocity;
-        vertices[0] = new Point2D.Double(anchor.getX()-radius*Math.sin(angle), anchor.getY()-radius*Math.cos(angle));
-        vertices[1] = new Point2D.Double(anchor.getX()+radius*Math.cos(Math.PI/6-angle), anchor.getY()+radius*Math.sin(Math.PI/6-angle));
-        vertices[2] = new Point2D.Double(anchor.getX()-radius*Math.cos(Math.PI/6+angle), anchor.getY()+radius*Math.sin(Math.PI/6+angle));
+
+//        vertices[0] = new Point2D.Double(anchor.getX()-radius*Math.sin(angle), anchor.getY()-radius*Math.cos(angle));
+//        vertices[1] = new Point2D.Double(anchor.getX()+radius*Math.cos(Math.PI/6-angle), anchor.getY()+radius*Math.sin(Math.PI/6-angle));
+//        vertices[2] = new Point2D.Double(anchor.getX()-radius*Math.cos(Math.PI/6+angle), anchor.getY()+radius*Math.sin(Math.PI/6+angle));
+
+        myPolygon = rotateMyPolygon(myPolygon, Math.toDegrees(-angularVelocity), anchor);
 
     }
     public Point2D reflect(Point2D normalVector){
@@ -380,13 +381,12 @@ public class TrigorathModel implements Movable, Collidable, Impactable {
 //        System.out.println(mass*length*length/12);
         return 50000;
     }
-
     public void remove(){
         collidables.remove(this);
         movables.remove(this);
         trigorathModels.remove(this);
         aliveEnemies--;
-        findTrigorathView(id).remove();
+//        findTrigorathView(id).remove();
         dropCollectible();
         playDeathSound();
     }
@@ -405,19 +405,15 @@ public class TrigorathModel implements Movable, Collidable, Impactable {
         new CollectibleModel(getAnchor(), rotateVector(direction, theta), 2);
     }
 
-    public int getHp() {
-        return hp;
+
+
+    @Override
+    public void onCollision(Collidable other, Point2D intersection) {
+        if (other instanceof EpsilonModel) impact(relativeLocation(intersection, anchor), intersection, other);
     }
 
-    public void setHp(int hp) {
-        this.hp = hp;
-    }
-    public void sumHpWith(int hp){
-        this.hp += hp;
-    }
-    // damage parameter is a positive number
-    public void damage(int damage){
-        this.hp -= damage;
-        playBubble();
+    @Override
+    public void onCollision(Collidable other) {
+
     }
 }

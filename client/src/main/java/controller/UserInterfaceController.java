@@ -25,8 +25,8 @@ import static view.charactersView.BulletView.bulletViews;
 //import static view.charactersView.CollectibleView.collectibleViews;
 import static view.charactersView.GeoShapeView.geoShapeViews;
 import static view.charactersView.NecropickView.necropickViews;
-import static view.charactersView.SquarantineView.squarantineViews;
-import static view.charactersView.TrigorathView.trigorathViews;
+//import static view.charactersView.SquarantineView.squarantineViews;
+//import static view.charactersView.TrigorathView.trigorathViews;
 
 public abstract class UserInterfaceController {
 
@@ -63,7 +63,6 @@ public abstract class UserInterfaceController {
 
     public static void createGeoShapeView(String id, Image image){
         new GeoShapeView(id, image);
-
     }
 
     public static void createGeoShapeView(String id, Image image, Point2D anchor, MyPolygon myPolygon){ // keeping this just in case it is needed
@@ -403,18 +402,18 @@ public abstract class UserInterfaceController {
         return null;
     }
 
-    public static TrigorathView findTrigorathView(String id){
-        for (TrigorathView trigorathView: trigorathViews){
-            if (trigorathView.getId().equals(id)) return trigorathView;
-        }
-        return null;
-    }
-    public static SquarantineView findSquarantineView(String id){
-        for (SquarantineView squarantineView: squarantineViews){
-            if (squarantineView.getId().equals(id)) return squarantineView;
-        }
-        return null;
-    }
+//    public static TrigorathView findTrigorathView(String id){
+//        for (TrigorathView trigorathView: trigorathViews){
+//            if (trigorathView.getId().equals(id)) return trigorathView;
+//        }
+//        return null;
+//    }
+//    public static SquarantineView findSquarantineView(String id){
+//        for (SquarantineView squarantineView: squarantineViews){
+//            if (squarantineView.getId().equals(id)) return squarantineView;
+//        }
+//        return null;
+//    }
 
 
 

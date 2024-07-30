@@ -1,14 +1,20 @@
 package model.charactersModel;
 
+import model.MyPolygon;
 import model.collision.Collidable;
 import model.collision.CollisionState;
 import model.collision.Impactable;
 import model.movement.Direction;
 import model.movement.Movable;
+import org.example.GraphicalObject;
 
+import javax.swing.*;
+import java.awt.*;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
@@ -18,47 +24,60 @@ import static controller.Sound.playBubble;
 import static controller.Sound.playDeathSound;
 import static controller.GameLoop.aliveEnemies;
 import static controller.Utils.*;
+import static model.imagetools.ToolBox.getBufferedImage;
 
-public class SquarantineModel implements Movable, Collidable, Impactable {
-    private int hp = 10;
-    String id;
+public class SquarantineModel extends GeoShapeModel implements Movable, Collidable, Impactable {
+    static BufferedImage image;
     double nextDash = Double.MAX_VALUE;
-    private Point2D anchor;
-    Direction direction;
-    Point2D currentLocation;
-    private final Point2D[] vertices;
-    double radius;
+
+
+
+
     private boolean impactInProgress = false;
     public double impactMaxVelocity;
-    private double angle;
     private double angularVelocity;
     private double angularAcceleration;
-    public static ArrayList<SquarantineModel> squarantineModels = new ArrayList<>();
-
-
+    public static List<SquarantineModel> squarantineModels = new ArrayList<>();
+    private static double edgeLength;
 
 
     public SquarantineModel(Point2D anchor) {
-        this.anchor = anchor;
-        this.radius =SQUARANTINE_EDGE /2;
-        Point2D point1 = new Point2D.Double((anchor.getX()-SQUARANTINE_EDGE /2), (anchor.getY()-SQUARANTINE_EDGE /2));
-        Point2D point2 = new Point2D.Double((anchor.getX()+SQUARANTINE_EDGE /2), (anchor.getY()-SQUARANTINE_EDGE /2));
-        Point2D point3 = new Point2D.Double((anchor.getX()+SQUARANTINE_EDGE /2), (anchor.getY()+SQUARANTINE_EDGE /2));
-        Point2D point4 = new Point2D.Double((anchor.getX()-SQUARANTINE_EDGE /2), (anchor.getY()+SQUARANTINE_EDGE /2));
-        vertices = new Point2D[]{point1, point2, point3, point4};
-        this.id= UUID.randomUUID().toString();
-        this.direction = new Direction(0);
+        super(anchor, image, new MyPolygon(new double[4], new double[4], 4), true);
+        initMyPolygon();
         updateNextDashTime();
         squarantineModels.add(this);
         collidables.add(this);
         movables.add(this);
         impactables.add(this);
         createSquarantineView(id);
+
     }
 
-    public String getId() {
-        return id;
+    private void initMyPolygon() {
+        double halfEdgeLength = edgeLength / 2;
+        double x = anchor.getX();
+        double y = anchor.getY();
+
+        Point2D[] vertices = new Point2D[4];
+        vertices[0] = new Point2D.Double(x - halfEdgeLength, y - halfEdgeLength); // Top-left
+        vertices[1] = new Point2D.Double(x + halfEdgeLength, y - halfEdgeLength); // Top-right
+        vertices[2] = new Point2D.Double(x + halfEdgeLength, y + halfEdgeLength); // Bottom-right
+        vertices[3] = new Point2D.Double(x - halfEdgeLength, y + halfEdgeLength); // Bottom-left
+
+        myPolygon.setVertices(vertices);
     }
+
+
+    public static BufferedImage loadImage() {
+        Image img = new ImageIcon("./client/src/squarantine.png").getImage();
+        SquarantineModel.image = getBufferedImage(img);
+        edgeLength = 45;
+        return SquarantineModel.image;
+    }
+
+//    public String getId() {
+//        return id;
+//    }
 
     @Override
     public boolean isImpactInProgress() {
@@ -79,13 +98,18 @@ public class SquarantineModel implements Movable, Collidable, Impactable {
         return this.direction;
     }
 
-    @Override
-    public Point2D getAnchor() {
-        return anchor;
-    }
+//    @Override
+//    public Point2D getAnchor() {
+//        return anchor;
+//    }
 
     public void setAnchor(Point2D anchor) {
         this.anchor = anchor;
+    }
+
+    @Override
+    public void setMyPolygon(MyPolygon myPolygon) {
+        // todo
     }
 
     @Override
@@ -117,8 +141,8 @@ public class SquarantineModel implements Movable, Collidable, Impactable {
         Point2D r = relativeLocation(collisionPoint, this.getAnchor());
         Point2D f = relativeLocation(collisionPoint, polygon.getAnchor());
         double torque = -r.getX()*f.getY()+r.getY()*f.getX();
-        if (torque>400) torque = 400;
-        if (torque<-400) torque = -400;
+        if (torque > 400) torque = 400;
+        if (torque < -400) torque = -400;
         double momentOfInertia = calculateSquarantineInertia();
         angularAcceleration = torque/momentOfInertia;
         angularVelocity = 0;
@@ -193,22 +217,12 @@ public class SquarantineModel implements Movable, Collidable, Impactable {
 
     @Override
     public Point2D[] getVertices() {
-        return this.vertices;
+        return myPolygon.getVertices();
     }
 
     @Override
     public ArrayList<Line2D> getEdges() {
         return null;
-    }
-
-    @Override
-    public void onCollision(Collidable other, Point2D intersection) {
-
-    }
-
-    @Override
-    public void onCollision(Collidable other) {
-
     }
 
     @Override
@@ -218,15 +232,13 @@ public class SquarantineModel implements Movable, Collidable, Impactable {
         Point2D dir = normalizeVector(relativeLocation(EpsilonModel.getINSTANCE().getAnchor(), getAnchor()));
         double angle = findAngleBetweenTwoVectors(dir, getDirection().getDirectionVector());
         nextDash -= 0.010;
-        if (nextDash<=0 && !impactInProgress && angle<1){
+
+        if (nextDash <= 0 && !impactInProgress && angle < 1){
             updateNextDashTime();
             impactMaxVelocity = 2 * IMPACT_COEFFICIENT / 5;
             setImpactInProgress(true);
         }
-        this.anchor = addVectors(anchor, movement);
-        for (int i = 0; i < 4; i++) {
-            vertices[i] = addVectors(vertices[i], movement);
-        }
+        movePolygon(movement);
     }
 
     @Override
@@ -244,9 +256,10 @@ public class SquarantineModel implements Movable, Collidable, Impactable {
         return 0;
     }
 
-    public Point2D getCurrentLocation() {
-        return currentLocation;
-    }
+//    public Point2D getCurrentLocation() {
+//        return currentLocation;
+//    }
+
     @Override
     public void friction(){
         direction.setMagnitude(direction.getMagnitude() * 0.97);
@@ -256,7 +269,6 @@ public class SquarantineModel implements Movable, Collidable, Impactable {
             getDirection().adjustDirectionMagnitude();
         }
     }
-
     public double getAngle() {
         return angle;
     }
@@ -264,6 +276,7 @@ public class SquarantineModel implements Movable, Collidable, Impactable {
     public void setAngle(double angle) {
         this.angle = angle;
     }
+
     public void rotate(){
         if (Math.abs(angularVelocity) < 0.0001 && angularAcceleration ==0){
             angularVelocity = 0;
@@ -280,24 +293,14 @@ public class SquarantineModel implements Movable, Collidable, Impactable {
         }
         else angularAcceleration = 0;
         angle += angularVelocity;
-        vertices[0] = new Point2D.Double(
-                (anchor.getX()-SQUARANTINE_RADIUS*Math.sin(PI/4+angle)),
-                (anchor.getY()-SQUARANTINE_RADIUS*Math.cos(PI/4+angle))
-        );
-        vertices[1] = new Point2D.Double(
-                (anchor.getX()+SQUARANTINE_RADIUS*Math.cos(PI/4+angle)),
-                (anchor.getY()-SQUARANTINE_RADIUS*Math.sin(PI/4+angle))
-        );
-        vertices[2] = new Point2D.Double(
-                (anchor.getX()+SQUARANTINE_RADIUS*Math.cos(PI/4-angle)),
-                (anchor.getY()+SQUARANTINE_RADIUS*Math.sin(PI/4-angle))
-        );
-        vertices[3] = new Point2D.Double(
-                (anchor.getX()-SQUARANTINE_RADIUS*Math.sin(PI/4-angle)),
-                (anchor.getY()+SQUARANTINE_RADIUS*Math.cos(PI/4-angle))
-        );
+
+
+        myPolygon = rotateMyPolygon(myPolygon, Math.toDegrees(-angularVelocity), anchor);
+
+
 
     }
+
     public Point2D reflect(Point2D normalVector){
         double dotProduct = dotVectors(getDirection().getDirectionVector(), normalVector);
         Point2D reflection = addVectors(
@@ -310,33 +313,17 @@ public class SquarantineModel implements Movable, Collidable, Impactable {
         double mass = 200;
         double height = SQUARANTINE_EDGE;
         double width = SQUARANTINE_EDGE;
-//        System.out.println(mass*(height*height+width*width)/12);
         return 50000;
 
     }
-
     public void remove(){
         collidables.remove(this);
         movables.remove(this);
         squarantineModels.remove(this);
         aliveEnemies--;
-        findSquarantineView(id).remove();
+//        findSquarantineView(id).remove();
         dropCollectible();
         playDeathSound();
-    }
-
-    public int getHp() {
-        return hp;
-    }
-
-    public void setHp(int hp) {
-        this.hp = hp;
-    }
-
-    // damage parameter is a positive number
-    public void damage(int damage){
-        this.hp -= damage;
-        playBubble();
     }
 
 
@@ -345,11 +332,21 @@ public class SquarantineModel implements Movable, Collidable, Impactable {
         Random random = new Random();
         double theta = random.nextGaussian(Math.PI, 1);
         if (theta<PI/2) theta = PI/2;
-        if (theta>3*PI/2) theta = 3*PI/2;
+        if (theta>3*PI/2) theta = 3 * PI/2;
         new CollectibleModel(getAnchor(), rotateVector(direction, theta), 2);  // TODO check xp
     }
 
-    public ArrayList<SquarantineModel> getModels() {
+    public List<SquarantineModel> getModels() {
         return squarantineModels;
+    }
+
+    @Override
+    public void onCollision(Collidable other, Point2D intersection) {
+        if (other instanceof EpsilonModel) impact(relativeLocation(intersection, anchor), intersection, other);
+    }
+
+    @Override
+    public void onCollision(Collidable other) {
+
     }
 }

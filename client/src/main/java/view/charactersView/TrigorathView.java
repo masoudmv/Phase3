@@ -1,59 +1,42 @@
 package view.charactersView;
 
+import model.MyPolygon;
+import view.FinalPanelView;
+
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
-public class TrigorathView implements Drawable{
-    String id;
-    Point2D currentLocation = new Point2D.Double(0,0);
-    Point2D point1= new Point2D.Double(0,0);
-    Point2D point2= new Point2D.Double(0,0);
-    Point2D point3= new Point2D.Double(0,0);
-    private Point2D[] vertices = new Point2D[]{point1,point2,point3};
-    public static ArrayList<TrigorathView> trigorathViews=new ArrayList<>();
+public class TrigorathView extends  GeoShapeView{
+
     public TrigorathView(String id) {
-        this.id = id;
-        trigorathViews.add(this);
-        drawables.add(this);
+        super(id);
     }
 
-    public Point2D getCurrentLocation() {
-        return currentLocation;
-    }
 
-    public void setCurrentLocation(Point2D currentLocation) {
-        this.currentLocation = currentLocation;
-    }
+    public void draw(Graphics g, String panelID){
+        Graphics2D g2d = (Graphics2D) g;
 
-    public String getId() {
-        return id;
-    }
 
-    public void remove(){
-        drawables.remove(this);
-        trigorathViews.remove(this);
-    }
+        g2d.setColor(Color.yellow);
+        // Set the stroke for thicker edges
+        float thickness = 5.0f; // Thickness of the edges
+        g2d.setStroke(new BasicStroke(thickness));
 
-    @Override
-    public void draw(Graphics g) {
-        int[] xPoly = new int[]{(int) vertices[0].getX(), (int) vertices[1].getX(), (int) vertices[2].getX()};
-        int[] yPoly = new int[]{(int) vertices[0].getY(), (int) vertices[1].getY(), (int) vertices[2].getY()};
-        g.setColor(Color.white);
-        Polygon poly = new Polygon(xPoly, yPoly, xPoly.length);
-        g.setColor(Color.yellow);
-        // what the fuck does setPainMod do???
-        g.setPaintMode();
-        g.drawPolygon(poly);
+        for (FinalPanelView finalPanelView : FinalPanelView.finalPanelViews){
+            if (finalPanelView.getId().equals(panelID)) {
+                MyPolygon myPolygon = myPolygons.get(finalPanelView.getId());
+                int[] xpoints = new int[myPolygon.npoints];
+                int[] ypoints = new int[myPolygon.npoints];
 
-//        g.setColor(Color.yellow);
-//        g.fillOval((int)vertices[0].getX()-2, (int)vertices[0].getY()-2, 4, 4);
-//        g.fillOval((int)vertices[1].getX()-2, (int)vertices[1].getY()-2, 4, 4);
-//        g.fillOval((int)vertices[2].getX()-2, (int)vertices[2].getY()-2, 4, 4);
+                for (int i = 0; i < myPolygon.npoints; i++) {
+                    xpoints[i] = (int) myPolygon.xpoints[i];
+                    ypoints[i] = (int) myPolygon.ypoints[i];
+                }
+                g2d.drawPolygon(xpoints, ypoints, myPolygon.npoints);
 
-    }
 
-    public void setVertices(Point2D[] vertices) {
-        this.vertices = vertices;
+            }
+        }
     }
 }
