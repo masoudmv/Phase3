@@ -80,6 +80,7 @@ public class ServersideReqHandler extends Thread implements RequestHandler {
         Player player = dataBase.findPlayer(macAddress);
         player.setLastOnlineTime(System.currentTimeMillis());
         Squad squad = player.getSquad();
+
         if (player.hasMessage()){
             player.setHasMessage(false);
             return new MessageResponse(player.getMessage());

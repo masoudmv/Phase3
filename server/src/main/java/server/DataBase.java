@@ -15,6 +15,9 @@ public class DataBase {
     private final List<Pair<Squad, Squad>> squadPairs = new CopyOnWriteArrayList<>();
     private final List<Pair<Player, Player>> monomachiaPairs = new CopyOnWriteArrayList<>();
     private final List<Pair<Player, Player>> colosseumPairs = new CopyOnWriteArrayList<>();
+    // todo update playerPairs based on summons ...
+
+    private boolean squadBattleInitiated = false;
 
     public DataBase() {
 //        Squad squad = new Squad(new Player("Mahmood"));
@@ -63,6 +66,14 @@ public class DataBase {
 
     public List<Pair<Squad, Squad>> getSquadPairs() {
         return squadPairs;
+    }
+
+    public boolean isSquadBattleInitiated() {
+        return squadBattleInitiated;
+    }
+
+    public void setSquadBattleInitiated(boolean squadBattleInitiated) {
+        this.squadBattleInitiated = squadBattleInitiated;
     }
 
     public synchronized String createSquad(String macAddress) {
@@ -150,6 +161,7 @@ public class DataBase {
     }
 
     public Squad findOpponent(Squad squad){
+        if (squad == null) return null;
         if (squadPairs.isEmpty() || !squad.isInBattle()) return null;
         for (Pair<Squad, Squad> pair : squadPairs) {
             if (squad.equals(pair.getFirst())){
@@ -174,9 +186,12 @@ public class DataBase {
         System.out.println("handling monomachia ...");
         Status status = receiver.getStatus();
         String receiverUsername = receiver.getUsername();
-        if (receiver.isAttendedMonomachia()) return receiverUsername + " has already been in a monomachia battle";
+        if (requester.equals(receiver)) return "You cannot request yourself!";
+        else if (!requester.getSquad().isInBattle()) return "Your squad is not in a battle yet!";
+        else if (receiver.isAttendedMonomachia()) return receiverUsername + " has already been in a monomachia battle";
         else if (status == Status.offline) return receiverUsername + " is offline right now!";
         else if (status == Status.busy) return receiverUsername + " is Busy right now!";
+
         else {
             Notification notification = new Notification(NotificationType.MONOMACHIA);
             String requesterMacAddress = requester.getMacAddress();
@@ -192,7 +207,9 @@ public class DataBase {
     public String getColosseumMessageForRequester(Player requester, Player receiver){
         Status status = receiver.getStatus();
         String receiverUsername = receiver.getUsername();
-        if (receiver.isAttendedColosseum()) return receiverUsername + " has already been in a colosseum battle";
+        if (requester.equals(receiver)) return receiverUsername + " you cannot request yourself!";
+        else if (!requester.getSquad().isInBattle()) return "Your squad is not in a battle yet!";
+        else if (receiver.isAttendedColosseum()) return receiverUsername + " has already been in a colosseum battle";
         else if (status == Status.offline) return receiverUsername + " is offline right now!";
         else if (status == Status.busy) return receiverUsername + " is Busy right now!";
         else {
@@ -210,8 +227,9 @@ public class DataBase {
         System.out.println("got summon request");
         Status status = receiver.getStatus();
         String receiverUsername = receiver.getUsername();
-
-        if (status == Status.offline) return receiverUsername + " is offline right now!";
+        if (requester.equals(receiver)) return receiverUsername + " you cannot request yourself!";
+        else if (!requester.getSquad().isInBattle()) return "Your squad is not in a battle yet!";
+        else if (status == Status.offline) return receiverUsername + " is offline right now!";
         else if (status == Status.busy) return receiverUsername + " is Busy right now!";
         else {
             Notification notification = new Notification(NotificationType.SUMMON);
@@ -296,6 +314,10 @@ public class DataBase {
                     requester.setInBattle(true);
                     receiver.setInBattle(true);
 
+                    // todo update status
+
+                    colosseumPairs.add(new Pair<>(receiver, requester));
+
                     return "Colosseum challenge will start in 15 seconds!";
                 } else {
                     Notification notification = new Notification(NotificationType.SIMPLE_MESSAGE,
@@ -333,6 +355,8 @@ public class DataBase {
 
 
     public synchronized void initiateSquadBattle() {
+        squadBattleInitiated = true;
+        // todo dont allow subsequent -i calls ...
         Collections.shuffle(squads);
 
         for (int i = 0; i < squads.size() - 1; i += 2) {
