@@ -1,7 +1,7 @@
-package shared.constants;
+package shared.Model;
 
 public enum Message {
-    KICKED, SQUAD_BATTLE_START, SQUAD_BATTLE_END, JOIN_REQUEST, JOIN_REQUEST_SUCCESSFUL, JOIN_REQUEST_UNSUCCESSFUL;
+    KICKED, SQUAD_BATTLE_START, SQUAD_BATTLE_END, JOIN_REQUEST, JOIN_REQUEST_SUCCESSFUL, JOIN_REQUEST_UNSUCCESSFUL,;
 
     public String getValue() {
         return switch (this) {

@@ -1,6 +1,7 @@
 package client.network;
 
 import client.network.socket.SocketRequestSender;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import shared.Model.Player;
 import shared.Model.Squad;
 
@@ -9,6 +10,7 @@ import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.Enumeration;
+import java.util.UUID;
 
 public class Status {
     private static Status INSTANCE;
@@ -90,7 +92,11 @@ public class Status {
                     for (int i = 0; i < hardwareAddress.length; i++) {
                         hexadecimal[i] = String.format("%02X", hardwareAddress[i]);
                     }
-                    return String.join("-", hexadecimal);
+
+                    // todo revert to using mac address ...
+//                    return String.join("-", hexadecimal);
+                    return UUID.randomUUID().toString();
+
                 }
             }
         } catch (SocketException e) {

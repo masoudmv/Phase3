@@ -1,8 +1,5 @@
 package shared.Model;
 
 public enum NotificationType {
-    monomachia, simpleMessage;
-
-
-
+    JOIN, MONOMACHIA, COLOSSEUM, SUMMON, SIMPLE_MESSAGE;
 }

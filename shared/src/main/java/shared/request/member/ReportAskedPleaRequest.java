@@ -1,23 +1,33 @@
 package shared.request.member;
 
+import shared.Model.NotificationType;
 import shared.request.Request;
 import shared.request.RequestHandler;
 import shared.response.Response;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
-@JsonTypeName("MonomachiaInvitationStatusReq")
-public class MonomachiaInvitationStatusReq implements Request {
+@JsonTypeName("ReportAskedPleaRequest")
+public class ReportAskedPleaRequest implements Request {
+    private NotificationType notificationType;
     private String requesterMacAddress;
     private String acceptorMacAddress;
     private boolean accepted;
 
-    public MonomachiaInvitationStatusReq(String requesterMacAddress, String acceptorMacAddress, boolean accepted) {
+    public ReportAskedPleaRequest(NotificationType notificationType, String requesterMacAddress, String acceptorMacAddress, boolean accepted) {
+        this.notificationType = notificationType;
         this.requesterMacAddress = requesterMacAddress;
         this.acceptorMacAddress = acceptorMacAddress;
         this.accepted = accepted;
     }
 
-    public MonomachiaInvitationStatusReq() {
+    public ReportAskedPleaRequest(String requesterMacAddress, String acceptorMacAddress, boolean accepted) {
+        this.requesterMacAddress = requesterMacAddress;
+        this.acceptorMacAddress = acceptorMacAddress;
+        this.accepted = accepted;
+    }
+
+
+    public ReportAskedPleaRequest() {
     }
 
     public String getRequesterMacAddress() {
@@ -44,8 +54,16 @@ public class MonomachiaInvitationStatusReq implements Request {
         this.accepted = accepted;
     }
 
+    public NotificationType getNotificationType() {
+        return notificationType;
+    }
+
+    public void setNotificationType(NotificationType notificationType) {
+        this.notificationType = notificationType;
+    }
+
     @Override
     public Response run(RequestHandler requestHandler) {
-        return requestHandler.handleMonomachiaInvitationStatusReq(this);
+        return requestHandler.handleReportAskedPleaReq(this);
     }
 }

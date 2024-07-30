@@ -4,9 +4,9 @@ import shared.request.leader.JoinDemandStatusReq;
 import shared.request.leader.KickPlayerReq;
 import shared.request.leader.PurchaseSkillRequest;
 import shared.request.member.DonateRequest;
-import shared.request.member.InitMonomachiaReq;
+import shared.request.member.AskForSthRequest;
 import shared.request.member.LeaveSquadReq;
-import shared.request.member.MonomachiaInvitationStatusReq;
+import shared.request.member.ReportAskedPleaRequest;
 import shared.request.nonmember.CreateSquadRequest;
 import shared.request.nonmember.GetSquadsListRequest;
 import shared.request.nonmember.JoinSquadReq;
@@ -24,6 +24,6 @@ public interface RequestHandler {
     Response handleJoinSquadReq(JoinSquadReq joinSquadReq);
     Response handleJoinDemandStatusReq(JoinDemandStatusReq joinDemandStatusReq);
     Response handleKickPlayerReq(KickPlayerReq kickPlayerReq);
-    Response handleInitMonomachiaReq(InitMonomachiaReq initMonomachiaReq);
-    Response handleMonomachiaInvitationStatusReq(MonomachiaInvitationStatusReq monomachiaInvitationStatusReq);
+    Response handleAskForSthReq(AskForSthRequest askForSthRequest);
+    Response handleReportAskedPleaReq(ReportAskedPleaRequest reportAskedPleaRequest);
 }

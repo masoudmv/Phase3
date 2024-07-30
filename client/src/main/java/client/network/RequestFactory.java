@@ -2,13 +2,14 @@ package client.network;
 
 import client.network.socket.SocketRequestSender;
 
+import shared.Model.NotificationType;
 import shared.Model.Skill;
 import shared.request.*;
 import shared.request.leader.JoinDemandStatusReq;
 import shared.request.leader.KickPlayerReq;
 import shared.request.leader.PurchaseSkillRequest;
-import shared.request.member.InitMonomachiaReq;
-import shared.request.member.MonomachiaInvitationStatusReq;
+import shared.request.member.AskForSthRequest;
+import shared.request.member.ReportAskedPleaRequest;
 import shared.request.nonmember.CreateSquadRequest;
 import shared.request.member.LeaveSquadReq;
 import shared.request.nonmember.GetSquadsListRequest;
@@ -123,7 +124,7 @@ public class RequestFactory {
     public static void createInitMonomachiaReq(String opponentMacAddress){
         socketRequestSender = status.getSocket();
         try {
-            socketRequestSender.sendRequest(new InitMonomachiaReq(macAddress, opponentMacAddress)).run(requestHandler);
+            socketRequestSender.sendRequest(new AskForSthRequest(macAddress, opponentMacAddress, NotificationType.MONOMACHIA)).run(requestHandler);
         } catch (IOException e) {
             System.out.println("InitMonomachiaReq Req was not sent ... ")  ;
             throw new RuntimeException(e);
@@ -131,10 +132,10 @@ public class RequestFactory {
     }
 
 
-    public static void createMonomachiaInvitationStatusReq(String requesterMacAddress, boolean accepted){
+    public static void createReportAskedPleaRequest(NotificationType type, String requesterMacAddress, boolean accepted){
         socketRequestSender = status.getSocket();
         try {
-            socketRequestSender.sendRequest(new MonomachiaInvitationStatusReq(requesterMacAddress, macAddress, accepted)).run(requestHandler);
+            socketRequestSender.sendRequest(new ReportAskedPleaRequest(NotificationType.MONOMACHIA, requesterMacAddress, macAddress, accepted)).run(requestHandler);
         } catch (IOException e) {
             System.out.println("InitMonomachiaReq Req was not sent ... ")  ;
             throw new RuntimeException(e);

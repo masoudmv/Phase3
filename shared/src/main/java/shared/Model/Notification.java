@@ -12,6 +12,10 @@ public class Notification {
         this.message = message;
     }
 
+    public Notification(NotificationType notificationType) {
+        this.notificationType = notificationType;
+    }
+
     public Notification() {
     }
 

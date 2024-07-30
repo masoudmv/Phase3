@@ -2,6 +2,7 @@ package client.network;
 
 import client.network.containers.SquadListPanel;
 import client.network.containers.MainFrame;
+import shared.Model.NotificationType;
 import shared.Model.Player;
 import shared.Model.Squad;
 import shared.response.*;
@@ -130,33 +131,55 @@ public class ClientsideResHandler implements ResponseHandler {
     }
 
     @Override
-    public void handleMonomachiaInvitationResponse(MonomachiaInvitationResponse monomachiaInvitationResponse) {
-        String requesterMacAddress = monomachiaInvitationResponse.getMacAddress();
+    public void handleTransferReqToClientResponse(TransferReqToClientResponse monomachiaInvitationResponse) {
+        NotificationType type = monomachiaInvitationResponse.getNotificationType();
 
-        String username = monomachiaInvitationResponse.getUsername();
-        MainFrame frame = MainFrame.getINSTANCE();
+        switch (type) {
+            case MONOMACHIA -> {
+                System.out.println("handle monomachia request");
+                String requesterMacAddress = monomachiaInvitationResponse.getMacAddress();
 
-        int response = JOptionPane.showOptionDialog(
-                frame,
-                username + " challenges you to a monomachia battle. Do you accept?",
-                "Monomachia Invitation",
-                JOptionPane.YES_NO_OPTION,
-                JOptionPane.QUESTION_MESSAGE,
-                null,
-                new Object[]{"Accept", "Decline"}, // Custom button text
-                "Accept" // Default button
-        );
+                String username = monomachiaInvitationResponse.getUsername();
+                MainFrame frame = MainFrame.getINSTANCE();
 
-        if (response == JOptionPane.YES_OPTION) {
-            // Handle accept action
-            // Add your logic here to handle the acceptance
-            RequestFactory.createMonomachiaInvitationStatusReq(requesterMacAddress, true);
-        } else if (response == JOptionPane.NO_OPTION) {
-            // Handle decline action
-            // Add your logic here to handle the declination
-            RequestFactory.createMonomachiaInvitationStatusReq(requesterMacAddress, false);
+                int response = JOptionPane.showOptionDialog(
+                        frame,
+                        username + " challenges you to a monomachia battle. Do you accept?",
+                        "Monomachia Invitation",
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.QUESTION_MESSAGE,
+                        null,
+                        new Object[]{"Accept", "Decline"}, // Custom button text
+                        "Accept" // Default button
+                );
 
+                if (response == JOptionPane.YES_OPTION) {
+                    // Handle accept action
+                    System.out.println("handle monomachia request");
+                    // Add your logic here to handle the acceptance
+                    RequestFactory.createReportAskedPleaRequest(type, requesterMacAddress, true);
+                    System.out.println("handle monomachia request");
+
+                } else if (response == JOptionPane.NO_OPTION) {
+                    // Handle decline action
+                    // Add your logic here to handle the declination
+                    RequestFactory.createReportAskedPleaRequest(type, requesterMacAddress, false);
+
+                }
+            }
+            case COLOSSEUM -> {
+
+            }
+            case SUMMON -> System.out.println();
+
+            case JOIN -> System.out.println();
+            case SIMPLE_MESSAGE -> {
+                String message = monomachiaInvitationResponse.getMessage();
+                MainFrame frame = MainFrame.getINSTANCE();
+                JOptionPane.showMessageDialog(frame, message);
+            }
         }
+
     }
 
 

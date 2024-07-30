@@ -1,11 +1,10 @@
 package server;
 
-import shared.Model.Player;
-import shared.Model.Skill;
-import shared.Model.Squad;
-import shared.constants.Message;
+import shared.Model.*;
+import shared.response.MessageResponse;
+import shared.response.Response;
+import shared.response.TransferReqToClientResponse;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -157,6 +156,124 @@ public class DataBase {
                 return pair.getFirst();
             }
         } return null;
+    }
+
+
+    public boolean isAcceptableBattleReq(Player receiver){
+        Status status = receiver.getStatus();
+        boolean hasAttended = receiver.isAttendedMonomachia();
+        boolean isOffline = (status == Status.offline);
+        boolean isBusy = (status == Status.busy);
+        if (hasAttended || isOffline || isBusy) return false;
+        return true;
+    }
+
+    public String getMonomachiaMessageForRequester(Player requester, Player receiver){
+        Status status = receiver.getStatus();
+        String receiverUsername = receiver.getUsername();
+        if (receiver.isAttendedMonomachia()) return receiverUsername + " has already been in a monomachia battle";
+        else if (status == Status.offline) return receiverUsername + " is offline right now!";
+        else if (status == Status.busy) return receiverUsername + " is Busy right now!";
+        else {
+            Notification notification = new Notification(NotificationType.MONOMACHIA);
+            String requesterMacAddress = requester.getMacAddress();
+            String requesterUsername = requester.getUsername();
+            notification.setMacAddress(requesterMacAddress);
+            notification.setUsername(requesterUsername);
+            receiver.setNotification(notification);
+            return "Your monomachia challenge has been sent to opponent successfully!";
+        }
+    }
+
+
+    public String getColosseumMessageForRequester(Player requester, Player receiver){
+        Status status = receiver.getStatus();
+        String receiverUsername = receiver.getUsername();
+        if (receiver.isAttendedColosseum()) return receiverUsername + " has already been in a colosseum battle";
+        else if (status == Status.offline) return receiverUsername + " is offline right now!";
+        else if (status == Status.busy) return receiverUsername + " is Busy right now!";
+        else {
+            Notification notification = new Notification(NotificationType.MONOMACHIA);
+            String requesterMacAddress = requester.getMacAddress();
+            String requesterUsername = requester.getUsername();
+            notification.setMacAddress(requesterMacAddress);
+            notification.setUsername(requesterUsername);
+            receiver.setNotification(notification);
+            return "Your colosseum challenge has been sent to opponent successfully!";
+        }
+    }
+
+
+    public String sth(Player requester, Player receiver, NotificationType type){
+        switch (type) {
+            case MONOMACHIA -> {
+                return getMonomachiaMessageForRequester(requester, receiver);
+            }
+            case COLOSSEUM -> {
+                return getColosseumMessageForRequester(requester, receiver);
+            }
+            case SUMMON -> System.out.println();
+
+            case JOIN -> System.out.println();
+            case SIMPLE_MESSAGE -> System.out.println();
+        }
+        return "";
+    }
+
+    public Response sendNotificationToReceiver(NotificationType type, Player receiver){
+        switch (type) {
+            case MONOMACHIA -> {
+                String macAddress1 = receiver.getNotification().getMacAddress();
+                String username1 = receiver.getNotification().getUsername();
+                receiver.setHasNotification(false); // should be after the two previous lines!
+                System.out.println("Sending message to Requester ...");
+                return new TransferReqToClientResponse(type, macAddress1, username1);
+            }
+            case COLOSSEUM -> {
+
+            }
+            case SUMMON -> System.out.println();
+
+            case JOIN -> System.out.println();
+            case SIMPLE_MESSAGE -> {
+                String message1 = receiver.getNotification().getMessage();
+                System.out.println("messageeeeeee:   " + message1);
+                receiver.setHasNotification(false);
+                System.out.println("Setting simple message ...");
+                return new MessageResponse(message1);
+            }
+        }
+        return null;
+    }
+
+    public String getRequestStatus(NotificationType type,Player requester,  Player receiver, boolean accepted){
+        switch (type) {
+            case MONOMACHIA -> {
+                if (accepted){
+                    Notification notification = new Notification(NotificationType.SIMPLE_MESSAGE,
+                            "Your Monomachia challenge request was accepted. It will start in 15 seconds.");
+                    requester.setNotification(notification);
+
+                    return "Monomachia challenge will start in 15 seconds!";
+                } else {
+                    Notification notification = new Notification(NotificationType.SIMPLE_MESSAGE,
+                            "Your Monomachia challenge request was not accepted");
+                    requester.setNotification(notification);
+                    return "You did not accept the monomachia battle challenge";
+                }
+            }
+            case COLOSSEUM -> {
+
+            }
+            case SUMMON -> System.out.println();
+
+            case JOIN -> System.out.println();
+            case SIMPLE_MESSAGE -> {
+
+            }
+        }
+        return "null";
+
     }
 
 
