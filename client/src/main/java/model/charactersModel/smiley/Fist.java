@@ -3,23 +3,17 @@ package model.charactersModel.smiley;
 import controller.Utils;
 import model.FinalPanelModel;
 import model.MyPolygon;
-import model.charactersModel.ArchmireModel;
 import model.charactersModel.GeoShapeModel;
 //import model.collision.Coll;
 import model.collision.Collidable;
 import model.movement.Direction;
 import org.example.GraphicalObject;
-import util.ThreadPoolManager;
-import view.MainFrame;
-import view.charactersView.GeoShapeView;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import static controller.Utils.multiplyVector;
 import static controller.constants.SmileyConstants.*;
@@ -174,7 +168,7 @@ public class Fist extends GeoShapeModel implements Collidable {
     }
 
     @Override
-    public void onCollision(Collidable other) {
+    public void onCollision(Collidable other, Point2D coll1, Point2D coll2) {
 
     }
 }

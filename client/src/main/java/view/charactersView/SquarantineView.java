@@ -17,6 +17,10 @@ public class SquarantineView extends GeoShapeView{
         super(id);
     }
 
+    public void eliminate(){
+        super.eliminate();
+    }
+
 
 
 

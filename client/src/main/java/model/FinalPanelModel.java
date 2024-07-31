@@ -363,16 +363,6 @@ public class FinalPanelModel implements Collidable, Serializable {
         updateVertices();
     }
 
-    public void onCollision(Collidable other, Point2D intersection){
-        if (other instanceof BulletModel) handleCollisionWithBullet(intersection);
-        if (other instanceof FinalPanelModel) handleCollisionWithBullet(intersection);
-    }
-
-    @Override
-    public void onCollision(Collidable other) {
-        if (other instanceof FinalPanelModel) handlePanelPanelCollision(this, (FinalPanelModel) other);
-    }
-
     public void setVertices(ArrayList<Point2D> vertices) {
         this.vertices = vertices;
         initializeEdges();
@@ -610,5 +600,18 @@ public class FinalPanelModel implements Collidable, Serializable {
     public void setSize(Dimension2D size) {
         this.size = size;
         updateVertices();
+    }
+
+    public void onCollision(Collidable other, Point2D intersection){
+        if (other instanceof BulletModel) handleCollisionWithBullet(intersection);
+        if (other instanceof FinalPanelModel) handleCollisionWithBullet(intersection);
+        if (other instanceof BulletModel) {
+            createImpactWave(this, other, intersection);
+        }
+    }
+
+    @Override
+    public void onCollision(Collidable other, Point2D coll1, Point2D coll2) {
+        if (other instanceof FinalPanelModel) handlePanelPanelCollision(this, (FinalPanelModel) other);
     }
 }

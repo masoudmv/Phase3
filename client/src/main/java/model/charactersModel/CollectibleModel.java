@@ -7,12 +7,9 @@ import model.movement.Movable;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.Random;
-import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import static controller.constants.Constants.BULLET_RADIUS;
 import static controller.UserInterfaceController.*;
 import static controller.Game.ELAPSED_TIME;
 import static controller.Utils.*;
@@ -22,7 +19,7 @@ import static controller.constants.EntityConstants.COLLECTABLE_RADIUS;
 
 public class CollectibleModel extends GeoShapeModel implements Collidable, Movable {
 
-    double radius;
+//    double radius;
 //    private Point2D anchor;
     public static CopyOnWriteArrayList<CollectibleModel> collectibleModels = new CopyOnWriteArrayList<>();
 //    public Direction direction;
@@ -152,7 +149,7 @@ public class CollectibleModel extends GeoShapeModel implements Collidable, Movab
     }
 
     @Override
-    public void onCollision(Collidable other) {
+    public void onCollision(Collidable other, Point2D coll1, Point2D coll2) {
 
     }
 

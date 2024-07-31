@@ -8,6 +8,8 @@ import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import static controller.UserInterfaceController.*;
 //import static controller.UserInterfaceController.calculateViewLocationBullet;
@@ -19,7 +21,7 @@ public class FinalPanelView extends JPanel {
     private String id;
     private Point2D Location; // absolute location of the frame
     private Dimension size;
-    public static ArrayList<FinalPanelView> finalPanelViews = new ArrayList<>();
+    public static List<FinalPanelView> finalPanelViews = new CopyOnWriteArrayList<>();
 //    private JLayeredPane layeredPane;
 
     public FinalPanelView() {}
@@ -105,9 +107,9 @@ public class FinalPanelView extends JPanel {
 //        GeoShapeView.geoShapeViews.addAll(GeoShapeView.geoShapeVdwiews);
 //        GeoShapeView.geoShapeViews.addAll(drawables);
 
-        for (Drawable drawable : drawables){
-            drawable.draw(g);
-        }
+//        for (Drawable drawable : drawables){
+//            drawable.draw(g);
+//        }
 
 
         // Sort the objects by z-order

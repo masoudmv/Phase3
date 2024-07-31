@@ -6,8 +6,12 @@ import model.charactersModel.blackOrb.Orb;
 import model.collision.Collidable;
 import model.collision.CollisionState;
 import model.collision.Impactable;
+import model.entities.AttackTypes;
+import model.entities.Entity;
 import model.movement.Direction;
 import model.movement.Movable;
+import view.charactersView.NecropickView;
+
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
@@ -21,20 +25,37 @@ import static controller.Utils.*;
 
 public class BulletModel extends GeoShapeModel implements Movable, Collidable, Impactable {
     public static CopyOnWriteArrayList<BulletModel> bulletModels = new CopyOnWriteArrayList<>();
+    private boolean createdByEpsilon = true;
 
     public BulletModel(Point2D anchor, Direction direction) {
         super();
         this.radius = BULLET_RADIUS;
         this.anchor = anchor;
         this.direction = direction;
-        // is needed?
+        // is needed? not think so!
         bulletModels.add(this);
-
 
         movables.add(this);
         collidables.add(this);
         creatBulletView(id);
+        damageSize.put(AttackTypes.MELEE, 5);
     }
+
+    public BulletModel(Point2D anchor, Direction direction, boolean createdByEpsilon) {
+        super();
+        this.radius = BULLET_RADIUS;
+        this.anchor = anchor;
+        this.direction = direction;
+        // is needed? not think so!
+        this.createdByEpsilon = createdByEpsilon;
+        bulletModels.add(this);
+
+        movables.add(this);
+        collidables.add(this);
+        creatBulletView(id);
+        damageSize.put(AttackTypes.MELEE, 5);
+    }
+
 
     public String getId() {
         return id;
@@ -140,6 +161,14 @@ public class BulletModel extends GeoShapeModel implements Movable, Collidable, I
     @Override
     public void banish() {}
 
+    public boolean isCreatedByEpsilon() {
+        return createdByEpsilon;
+    }
+
+    public void setCreatedByEpsilon(boolean createdByEpsilon) {
+        this.createdByEpsilon = createdByEpsilon;
+    }
+
     @Override
     public void eliminate(){
         // is needed?
@@ -152,12 +181,34 @@ public class BulletModel extends GeoShapeModel implements Movable, Collidable, I
 
     @Override
     public void onCollision(Collidable other, Point2D intersection) {
-        if (other instanceof FinalPanelModel) eliminate();
-        if (other instanceof Orb) eliminate();
+        if (other instanceof EpsilonModel){
+            if (createdByEpsilon) return;
+            else {
+                this.damage((Entity) other, AttackTypes.MELEE);
+                eliminate();
+                return;
+            }
+        }
+        if ( other instanceof CollectibleModel || other instanceof BulletModel) return;
+        else if (other instanceof NecropickModel){
+            if (((NecropickModel) other).isHovering()) return;
+            if (!createdByEpsilon) {
+                return;
+            }
+        }
+        else if (other instanceof FinalPanelModel) {
+            eliminate();
+            return;
+        }
+
+
+        this.damage((Entity) other, AttackTypes.MELEE);
+        eliminate();
+
     }
 
     @Override
-    public void onCollision(Collidable other) {
+    public void onCollision(Collidable other, Point2D coll1, Point2D coll2) {
 
     }
 }

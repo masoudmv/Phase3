@@ -113,7 +113,6 @@ public class GameLoop implements Runnable {
         ELAPSED_TIME = 0;
         inGameXP = 0;
         wave = 1;
-//        Constants.RADIUS = 15;
         MainFrame frame = MainFrame.getINSTANCE();
         frame.addMouseListener(new MouseController());
         frame.addMouseMotionListener(new MouseController());
@@ -121,44 +120,7 @@ public class GameLoop implements Runnable {
 
 
         INSTANCE = this;
-//        SwingUtilities.invokeLater(() -> {
-//            MainFrame.getINSTANCE().add(label);
-//
-//            MainFrame.getINSTANCE().addKeyListener(UserInputHandler.getINSTANCE());
-//            gameLoop = GameLoop.getINSTANCE();
-//            gameLoop.initializeGame();
-//            gameLoop.start();
-//        });
 
-//        MainFrame.getINSTANCE().addKeyListener(this);
-
-
-//        int delay = 10; //milliseconds
-//        ActionListener taskPerformer = new ActionListener() {
-//            public void actionPerformed(ActionEvent evt) {
-//                //...Perform a task...
-//                updateView();
-//                updateModel();
-//
-////                    System.out.println(javax.swing.SwingUtilities.isEventDispatchThread()); returned True!
-////                    we are still on EDT!
-//
-//
-//            }
-//        };
-//
-//        gameLoop = new Timer(delay, taskPerformer);
-//        gameLoop.start();
-
-
-//        initializeGame();
-
-
-
-
-
-
-//        gameLoop = GameLoop.getINSTANCE();
         this.start();
     }
 
@@ -262,16 +224,6 @@ public class GameLoop implements Runnable {
 
 
 
-//        MainFrame.getINSTANCE().repaint();
-
-//        for (FinalPanelView finalPanelView : finalPanelViews) {
-//            updateGeoShapeViewsLocations(finalPanelView);
-//            SwingUtilities.invokeLater(finalPanelView::repaint);
-//        }
-
-
-//        SwingUtilities.invokeLater(MainFrame.getINSTANCE()::repaint);
-
 
         updateGeoShapeViewProperties();
         SwingUtilities.invokeLater(MainFrame.getINSTANCE()::repaint);
@@ -330,7 +282,7 @@ public class GameLoop implements Runnable {
 
         for (ArchmireModel archmireModel : ArchmireModel.archmireModels) {
             archmireModel.move();
-            archmireModel.updateLocation();
+
 //            ArrayList<Polygon> polygons = new ArrayList<>();
 //            for (int i = 0; i < MainPanel.locationHistory.size(); i++) {
 //                polygons.add(MainPanel.locationHistory.get(i).getPolygon());
@@ -396,7 +348,7 @@ public class GameLoop implements Runnable {
         EpsilonModel epsilonModel = EpsilonModel.getINSTANCE();
         if (epsilonModel.isImpactInProgress()) {
             epsilonModel.getDirection().accelerateDirection(6);
-            if (epsilonModel.getDirection().getMagnitude() > 4) {
+            if (epsilonModel.getDirection().getMagnitude() > 4.5) {
                 epsilonModel.setImpactInProgress(false);
             }
         }

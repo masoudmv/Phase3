@@ -18,10 +18,16 @@ public class CollectibleView extends GeoShapeView {
         super.eliminate();
     }
 
-//    @Override
-//    public void draw(Graphics g) {
-//        g.setColor(Color.pink);
-//        Point2D location = this.getCurrentLocation();
-//        g.drawOval((int) (location.getX() - radius), (int) (location.getY()-radius), (int) (2 *radius), (int) (2*radius));
-//    }
+
+    @Override
+    public void draw(Graphics g, String panelID){
+        Graphics2D g2d = (Graphics2D) g;
+        if (locations.get(panelID) == null) return;
+        int x = (int) locations.get(panelID).getX();
+        int y = (int) locations.get(panelID).getY();
+
+        g2d.setColor(Color.red);
+        g2d.drawOval((int) (x - radius/2), (int) (y - radius/2), (int) (2 * radius), (int) (2 * radius));
+
+    }
 }

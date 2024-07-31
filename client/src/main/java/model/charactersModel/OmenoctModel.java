@@ -18,7 +18,6 @@ import java.util.HashMap;
 import static controller.constants.Constants.SPEED;
 import static controller.Utils.*;
 import static controller.constants.EntityConstants.*;
-import static controller.constants.EntityConstants.ARCHMIRE_COLLECTIBLES_XP;
 import static controller.constants.SmileyConstants.BULLET_SPEED;
 import static model.imagetools.ToolBox.getBufferedImage;
 
@@ -45,7 +44,7 @@ public class OmenoctModel extends GeoShapeModel implements Collidable {
         GraphicalObject bos = new GraphicalObject(ba);
         MyPolygon pl = bos.getMyBoundingPolygon();
         Point2D startPos = getAnchor();
-//        new SmileyBullet(startPos).setDirection(findBulletDirection(startPos));
+        new SmileyBullet(startPos).setDirection(findBulletDirection(startPos));
         lastShotBullet = now;
     }
 
@@ -69,7 +68,7 @@ public class OmenoctModel extends GeoShapeModel implements Collidable {
     }
 
     public static BufferedImage loadImage() {
-        Image img = new ImageIcon("./src/omenoct.png").getImage();
+        Image img = new ImageIcon("./client/src/omenoct.png").getImage();
         OmenoctModel.image = getBufferedImage(img);
 
         GraphicalObject bowser = new GraphicalObject(image);
@@ -278,7 +277,7 @@ public class OmenoctModel extends GeoShapeModel implements Collidable {
     }
 
     @Override
-    public void onCollision(Collidable other) {
+    public void onCollision(Collidable other, Point2D coll1, Point2D coll2) {
 
     }
 

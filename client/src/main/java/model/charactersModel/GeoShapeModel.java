@@ -46,7 +46,7 @@ public abstract class GeoShapeModel extends Entity {
 
 
     // The following constructor doesn't create the view. the child shall take care of it!
-    public GeoShapeModel(Point2D anchor, BufferedImage image, MyPolygon myPolygon, boolean necropick) { // exclusive for Necropick
+    public GeoShapeModel(Point2D anchor, BufferedImage image, MyPolygon myPolygon, boolean necropick) {
         this.id = UUID.randomUUID().toString();
         this.anchor = new Point2D.Double(anchor.getX() , anchor.getY());
         this.myPolygon = myPolygon;
@@ -151,7 +151,7 @@ public abstract class GeoShapeModel extends Entity {
         this.radius = radius;
     }
 
-    public void eliminate(){
+    public synchronized void eliminate(){
         entities.remove(this);
         findGeoShapeView(id).eliminate();
     }
@@ -163,8 +163,16 @@ public abstract class GeoShapeModel extends Entity {
         return findEdges(myPolygon);
     }
 
-
-
+    public boolean isInside(Point2D[] polygon){
+        ArrayList<Point2D> bound = this.getBoundingPoints();
+        boolean isInside = true;
+        for (Point2D point : bound) {
+            if (!isPointInPolygon(point, polygon)){
+                isInside = false;
+                break;
+            }
+        } return isInside;
+    }
 
 
     public void addHealth(int units) {
@@ -176,8 +184,7 @@ public abstract class GeoShapeModel extends Entity {
         ArrayList<Point2D> bound = new ArrayList<>();
         for (Integer i : myPolygon.getBoundingPointIndexes()){
             bound.add(new Point2D.Double(myPolygon.xpoints[i], myPolygon.ypoints[i]));
-        }
-        return bound;
+        } return bound;
     }
 
     public void initiateFall(){

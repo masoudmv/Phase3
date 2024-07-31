@@ -176,14 +176,9 @@ public abstract class UserInterfaceController {
             for (GeoShapeView geoShapeView : geoShapeViews){
                 Point2D currentLocation = calculateViewLocationPolygonalEnemy(finalPanelView, geoShapeView.getId());
                 String panelID = finalPanelView.getId();
-
-
                 geoShapeView.setCurrentLocation(panelID, currentLocation);
-
-
                 geoShapeView.setMyPolygon(panelID, calculateEntityView(finalPanelView, geoShapeView.getId()));
-
-
+                geoShapeView.setHistory(panelID, calculateLocationHistory(finalPanelView, geoShapeView.getId()));
             }
         }
 
@@ -192,7 +187,7 @@ public abstract class UserInterfaceController {
         }
     }
 
-    public static LinkedList<TimedLocation> calculateLocationHistory(Component component, String id){
+    public static LinkedList<TimedLocation> calculateLocationHistory(FinalPanelView component, String id){
         GeoShapeModel geoShapeModel = findGeoShapeModel(id);
         if (!(geoShapeModel instanceof ArchmireModel)) return null;
         LinkedList<TimedLocation> timedLocations = ((ArchmireModel) geoShapeModel).getLocationHistory();

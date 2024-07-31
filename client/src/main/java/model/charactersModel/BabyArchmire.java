@@ -2,6 +2,7 @@ package model.charactersModel;
 
 import javafx.scene.shape.Arc;
 import model.MyPolygon;
+import model.collision.Collidable;
 import org.example.GraphicalObject;
 
 import javax.swing.*;
@@ -15,17 +16,19 @@ import static model.imagetools.ToolBox.getBufferedImage;
 public class BabyArchmire extends ArchmireModel {
 
     static BufferedImage image;
+    protected static MyPolygon poly;
 
     public BabyArchmire(Point2D anchor) {
-        super(anchor, pol);
+        super(anchor, poly);
         this.health = BABY_ARCHMIRE_HEALTH.getValue();
+
     }
 
 
 
     @Override
     public void eliminate(){
-        super.eliminate();
+        super.eli();
         collidables.remove(this);
         archmireModels.remove(this);
 
@@ -36,13 +39,19 @@ public class BabyArchmire extends ArchmireModel {
 
 
     public static BufferedImage loadImage() {
-        Image img = new ImageIcon("./src/babyArchmire.png").getImage();
+        Image img = new ImageIcon("./client/src/babyArchmire.png").getImage();
         BabyArchmire.image = getBufferedImage(img);
 
         GraphicalObject bowser = new GraphicalObject(image);
-        pol = bowser.getMyBoundingPolygon();
+        poly = bowser.getMyBoundingPolygon();
 
 
         return BabyArchmire.image;
     }
+
+    @Override
+    public void onCollision(Collidable other, Point2D intersection) {
+//        if (other instanceof BulletModel) eliminate();
+    }
+
 }

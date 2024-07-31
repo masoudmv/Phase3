@@ -16,7 +16,6 @@ import java.awt.*;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import java.util.Random;
 
 import static controller.Utils.*;
 import static controller.constants.EntityConstants.*;
@@ -345,7 +344,7 @@ public class Hand extends GeoShapeModel implements Collidable {
     }
 
     @Override
-    public void onCollision(Collidable other) {
+    public void onCollision(Collidable other, Point2D coll1, Point2D coll2) {
     }
 
     // Rotate method added here

@@ -6,7 +6,6 @@ import model.collision.CollisionState;
 import model.collision.Impactable;
 import model.movement.Direction;
 import model.movement.Movable;
-import org.example.GraphicalObject;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,14 +15,13 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.UUID;
 
 import static controller.constants.Constants.*;
 import static controller.UserInterfaceController.*;
-import static controller.Sound.playBubble;
 import static controller.Sound.playDeathSound;
 import static controller.GameLoop.aliveEnemies;
 import static controller.Utils.*;
+import static controller.constants.EntityConstants.*;
 import static model.imagetools.ToolBox.getBufferedImage;
 
 public class SquarantineModel extends GeoShapeModel implements Movable, Collidable, Impactable {
@@ -50,6 +48,7 @@ public class SquarantineModel extends GeoShapeModel implements Movable, Collidab
         movables.add(this);
         impactables.add(this);
         createSquarantineView(id);
+        this.health = 10;
 
     }
 
@@ -71,7 +70,7 @@ public class SquarantineModel extends GeoShapeModel implements Movable, Collidab
     public static BufferedImage loadImage() {
         Image img = new ImageIcon("./client/src/squarantine.png").getImage();
         SquarantineModel.image = getBufferedImage(img);
-        edgeLength = 45;
+        edgeLength = 35;
         return SquarantineModel.image;
     }
 
@@ -138,15 +137,51 @@ public class SquarantineModel extends GeoShapeModel implements Movable, Collidab
         this.setDirection(new Direction(normalizeVector(impactVector)));
 
         // Angular motion
+        setAngularMotion(collisionPoint, polygon, 34000);
+        createImpactWave(this, polygon, collisionPoint);
+    }
+
+    //todo duplicated version. needs to be eiminated ...
+    public void impact(Point2D normalVector, Point2D collisionPoint, Collidable polygon, double inertia) {
+        double distanceByEpsilon = getAnchor().distance(EpsilonModel.getINSTANCE().getAnchor());
+        if (distanceByEpsilon<TRIGORATH_MAX_VEL_RADIUS) {
+            Point2D collisionRelativeVector = relativeLocation(this.getAnchor(), collisionPoint);
+            double impactCoefficient = getImpactCoefficient(collisionRelativeVector);
+            Point2D impactVector = relativeLocation(collisionPoint, polygon.getAnchor());
+            if(!(polygon instanceof  EpsilonModel)) impactVector = multiplyVector(normalizeVector(impactVector) ,1);
+            impactVector = addVectors(impactVector, getDirection().getNormalizedDirectionVector());
+            impactVector = multiplyVector(impactVector ,impactCoefficient);
+            this.setDirection(new Direction(normalizeVector(impactVector)));
+        }
+        else {
+            Point2D collisionRelativeVector = relativeLocation(this.getAnchor(), collisionPoint);
+            double impactCoefficient = getImpactCoefficient(collisionRelativeVector);
+            Point2D impactVector = relativeLocation(collisionPoint, polygon.getAnchor());
+            if(!(polygon instanceof  EpsilonModel)) impactVector = multiplyVector(normalizeTrigorathVector(impactVector) ,1);
+            impactVector = addVectors(impactVector, getDirection().getTrigorathNormalizedDirectionVector());
+            impactVector = multiplyVector(impactVector ,impactCoefficient);
+            this.setDirection(new Direction(normalizeTrigorathVector(impactVector)));
+
+        }
+        // Angular motion
+        setAngularMotion(collisionPoint, polygon, inertia);
+        createImpactWave(this, polygon, collisionPoint);
+    }
+
+    protected void setAngularMotion(Point2D collisionPoint, Collidable polygon, double inertia){
         Point2D r = relativeLocation(collisionPoint, this.getAnchor());
         Point2D f = relativeLocation(collisionPoint, polygon.getAnchor());
         double torque = -r.getX()*f.getY()+r.getY()*f.getX();
         if (torque > 400) torque = 400;
         if (torque < -400) torque = -400;
-        double momentOfInertia = calculateSquarantineInertia();
+        double momentOfInertia = inertia;
         angularAcceleration = torque/momentOfInertia;
         angularVelocity = 0;
     }
+
+
+
+
 
     public void bulletImpact(BulletModel bulletModel, Point2D collisionPoint){
         Point2D impactVector = bulletModel.getDirection().getDirectionVector();
@@ -316,14 +351,30 @@ public class SquarantineModel extends GeoShapeModel implements Movable, Collidab
         return 50000;
 
     }
-    public void remove(){
+
+
+    @Override
+    public ArrayList<Point2D> getBoundingPoints(){;
+        ArrayList<Point2D> bound = new ArrayList<>();
+        for (int i = 0; i < myPolygon.npoints; i++) {
+            bound.add( new Point2D.Double(myPolygon.xpoints[i], myPolygon.ypoints[i]) );
+        } return bound;
+    }
+
+
+    @Override
+    public void eliminate(){
+        super.eliminate();
         collidables.remove(this);
         movables.remove(this);
         squarantineModels.remove(this);
-        aliveEnemies--;
-//        findSquarantineView(id).remove();
-        dropCollectible();
-        playDeathSound();
+
+//        aliveEnemies--;
+
+        CollectibleModel.dropCollectible(getAnchor(), SQUARANTINE_NUM_OF_COLLECTIBLES.getValue(), SQUARANTINE_COLLECTIBLES_XP.getValue());
+
+
+
     }
 
 
@@ -343,10 +394,16 @@ public class SquarantineModel extends GeoShapeModel implements Movable, Collidab
     @Override
     public void onCollision(Collidable other, Point2D intersection) {
         if (other instanceof EpsilonModel) impact(relativeLocation(intersection, anchor), intersection, other);
+        if (other instanceof BulletModel) {
+            impact(relativeLocation(intersection, anchor), intersection, other, 7200);
+            createImpactWave(this, other, intersection);
+        }
+
     }
 
     @Override
-    public void onCollision(Collidable other) {
+    public void onCollision(Collidable other, Point2D coll1, Point2D coll2) {
+        ((Impactable) this).impact(coll1, coll2, other);
 
     }
 }

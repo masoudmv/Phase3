@@ -2,7 +2,6 @@ package model.charactersModel.blackOrb;
 
 import javafx.scene.shape.Circle;
 import model.charactersModel.BulletModel;
-import model.charactersModel.CollectibleModel;
 import model.charactersModel.GeoShapeModel;
 import model.MyPolygon;
 import model.collision.Collidable;
@@ -33,7 +32,7 @@ public class Orb extends GeoShapeModel implements Collidable {
     }
 
     public static BufferedImage loadImage() {
-        Image img = new ImageIcon("./src/orb.png").getImage();
+        Image img = new ImageIcon("./client/src/orb.png").getImage();
         Orb.image = getBufferedImage(img);
         return Orb.image;
     }
@@ -75,17 +74,16 @@ public class Orb extends GeoShapeModel implements Collidable {
 
     @Override
     public void onCollision(Collidable other, Point2D intersection) {
-        if (other instanceof BulletModel) {
-            this.damage((Entity) other, AttackTypes.MELEE);
-        }
+//        if (other instanceof BulletModel) {
+//            this.damage((Entity) other, AttackTypes.MELEE);
+//        }
     }
 
     @Override
-    public void onCollision(Collidable other) {}
+    public void onCollision(Collidable other, Point2D coll1, Point2D coll2) {}
 
     @Override
     public void eliminate() {
-//        System.out.println(SwingUtilities.isEventDispatchThread());
         super.eliminate();
         collidables.remove(this);
 
@@ -104,6 +102,6 @@ public class Orb extends GeoShapeModel implements Collidable {
 
         // Remove collected lasers from the list
         lasers.removeAll(lasersToRemove);
-        collidables.remove(this);
+//        collidables.remove(this);
     }
 }

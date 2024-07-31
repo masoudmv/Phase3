@@ -18,11 +18,9 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import java.util.Random;
 
 import static controller.Utils.*;
 import static controller.constants.EntityConstants.*;
-import static controller.constants.EntityConstants.SMILEY_SLAP_COOLDOWN;
 import static model.imagetools.ToolBox.getBufferedImage;
 
 public class Smiley extends GeoShapeModel implements Collidable {
@@ -258,7 +256,7 @@ public class Smiley extends GeoShapeModel implements Collidable {
     }
 
     @Override
-    public void onCollision(Collidable other) {
+    public void onCollision(Collidable other, Point2D coll1, Point2D coll2) {
 
     }
 

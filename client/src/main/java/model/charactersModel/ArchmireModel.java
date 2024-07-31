@@ -4,6 +4,7 @@ import controller.Game;
 import model.MyPolygon;
 import model.TimedLocation;
 import model.collision.Collidable;
+import model.entities.AttackTypes;
 import model.movement.Direction;
 import org.example.GraphicalObject;
 import javax.swing.*;
@@ -15,6 +16,7 @@ import java.util.LinkedList;
 import static controller.UserInterfaceController.createArchmireView;
 import static controller.Utils.*;
 import static controller.constants.EntityConstants.*;
+import static model.charactersModel.EpsilonModel.epsilons;
 import static model.imagetools.ToolBox.getBufferedImage;
 
 public class ArchmireModel extends GeoShapeModel implements Collidable {
@@ -27,20 +29,26 @@ public class ArchmireModel extends GeoShapeModel implements Collidable {
 
     public ArchmireModel(Point2D anchor) {
         super(anchor, image, pol, true);
-        archmireModels.add(this);
+        this.health = ARCHMIRE_HEALTH.getValue();
         updateDirection();
         createArchmireView(id, ArchmireModel.image);
+
+        archmireModels.add(this);
         collidables.add(this);
-        this.health = ARCHMIRE_HEALTH.getValue();
+        damageSize.put(AttackTypes.DROWN, 10);
+        damageSize.put(AttackTypes.AOE, 2);
     }
 
     // BabyArchmire:
     public ArchmireModel(Point2D anchor, MyPolygon myPolygon) {
         super(anchor, BabyArchmire.image, myPolygon, true);
-        archmireModels.add(this);
         updateDirection();
         createArchmireView(id, BabyArchmire.image);
 
+        archmireModels.add(this);
+        collidables.add(this);
+        damageSize.put(AttackTypes.DROWN, 5);
+        damageSize.put(AttackTypes.AOE, 1);
     }
 
 
@@ -53,7 +61,7 @@ public class ArchmireModel extends GeoShapeModel implements Collidable {
     }
 
     public static BufferedImage loadImage() {
-        Image img = new ImageIcon("./src/archmire.png").getImage();
+        Image img = new ImageIcon("./client/src/archmire.png").getImage();
         ArchmireModel.image = getBufferedImage(img);
 
         GraphicalObject bowser = new GraphicalObject(image);
@@ -65,6 +73,7 @@ public class ArchmireModel extends GeoShapeModel implements Collidable {
     @Override
     public void setMyPolygon(MyPolygon myPolygon) {
         // Implementation needed
+
     }
 
     @Override
@@ -73,15 +82,24 @@ public class ArchmireModel extends GeoShapeModel implements Collidable {
         collidables.remove(this);
         archmireModels.remove(this);
 
-        CollectibleModel.dropCollectible(
-                getAnchor(), ARCHMIRE_NUM_OF_COLLECTIBLES.getValue(), ARCHMIRE_COLLECTIBLES_XP.getValue()
-        );
+        CollectibleModel.dropCollectible(getAnchor(), ARCHMIRE_NUM_OF_COLLECTIBLES.getValue(), ARCHMIRE_COLLECTIBLES_XP.getValue());
 
-        // TODO: You can do better than this!
-//        new BabyArchmire(new Point2D.Double(anchor.getX(), anchor.getY()+40));
-//        new BabyArchmire(new Point2D.Double(anchor.getX(), anchor.getY()-40));
+        new BabyArchmire(new Point2D.Double(anchor.getX(), anchor.getY() + 40));
+        new BabyArchmire(new Point2D.Double(anchor.getX(), anchor.getY() - 40));
         // TODO: REAL ELIMINATE
+
+
+
     }
+
+
+
+    public void eli() {
+        super.eliminate();
+        collidables.remove(this);
+        archmireModels.remove(this);
+    }
+
 
     public void updateLocation() {
         double now = Game.ELAPSED_TIME;
@@ -107,6 +125,31 @@ public class ArchmireModel extends GeoShapeModel implements Collidable {
     void move(Direction direction) {
         Point2D movement = multiplyVector(direction.getNormalizedDirectionVector(), direction.getMagnitude());
         movePolygon(movement);
+        updateLocation();
+        applyAOE();
+    }
+
+
+    private void applyAOE(){
+        for (EpsilonModel model : epsilons){
+            boolean isInside = model.isInside(myPolygon.getVertices());
+            if (isInside) {
+                this.damage(model, AttackTypes.DROWN);
+                return;
+            }
+
+
+            for (TimedLocation location : locationHistory){
+                isInside = model.isInside(location.getMyPolygon().getVertices());
+                if (isInside) {
+                    this.damage(model, AttackTypes.AOE);
+                }
+            }
+
+
+        }
+
+
     }
 
     public void move() {
@@ -120,11 +163,11 @@ public class ArchmireModel extends GeoShapeModel implements Collidable {
 
     @Override
     public void onCollision(Collidable other, Point2D intersection) {
-        if (other instanceof BulletModel) eliminate();
+//        if (other instanceof BulletModel) eliminate();
     }
 
     @Override
-    public void onCollision(Collidable other) {
+    public void onCollision(Collidable other, Point2D coll1, Point2D coll2) {
 
     }
 }

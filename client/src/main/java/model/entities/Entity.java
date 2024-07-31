@@ -9,7 +9,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import static controller.constants.Constants.AOE_COOLDOWN;
 
 public abstract class Entity {
-    protected int health = 100;
+    protected int health;
     public int fullHealth;
     public boolean vulnerable = true;
     public ConcurrentHashMap<AttackTypes, Integer> damageSize = new ConcurrentHashMap<>();
@@ -20,12 +20,10 @@ public abstract class Entity {
         double now = Game.ELAPSED_TIME;
         if (now - lastAoeTime >= AOE_COOLDOWN) {
             if (entity.vulnerable) {
-//                entity.health -= damageSize.get(attackType);
+                entity.health -= damageSize.get(attackType);
                 if (entity.health <= 0) {
                     entity.eliminate();
-                    // if (entity instanceof CollectibleModel) playXPSoundEffect();
-                    // else playDownSoundEffect();
-                }   // else playHitSoundEffect();
+                }
             }
             lastAoeTime = now;
         }

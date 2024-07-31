@@ -13,7 +13,12 @@ public class TrigorathView extends  GeoShapeView{
         super(id);
     }
 
+    public void eliminate(){
+        super.eliminate();
+    }
 
+
+    @Override
     public void draw(Graphics g, String panelID){
         Graphics2D g2d = (Graphics2D) g;
 
@@ -34,7 +39,6 @@ public class TrigorathView extends  GeoShapeView{
                     ypoints[i] = (int) myPolygon.ypoints[i];
                 }
                 g2d.drawPolygon(xpoints, ypoints, myPolygon.npoints);
-
 
             }
         }

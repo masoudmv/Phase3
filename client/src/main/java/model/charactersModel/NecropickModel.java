@@ -42,7 +42,7 @@ public class NecropickModel extends GeoShapeModel implements Collidable {
     }
 
     public static BufferedImage loadImage() {
-        Image img = new ImageIcon("./src/necropick.png").getImage();
+        Image img = new ImageIcon("./client/src/necropick.png").getImage();
         NecropickModel.image = getBufferedImage(img);
 
         GraphicalObject bowser = new GraphicalObject(image);
@@ -62,7 +62,7 @@ public class NecropickModel extends GeoShapeModel implements Collidable {
     }
 
     private void returnToGroundSurface(){
-//        shootBullets();
+        shootBullets();
         if (nextAnchor != null) {
             setAnchor(nextAnchor); // Set the precomputed next location
         }
@@ -157,14 +157,14 @@ public class NecropickModel extends GeoShapeModel implements Collidable {
     }
 
     private void shootBullets(){
-        new BulletModel(getAnchor(), new Direction(new Point2D.Double(0, -1)));
-        new BulletModel(getAnchor(), new Direction(new Point2D.Double(0, +1)));
-        new BulletModel(getAnchor(), new Direction(new Point2D.Double(+1, 0)));
-        new BulletModel(getAnchor(), new Direction(new Point2D.Double(-1, 0)));
-        new BulletModel(getAnchor(), new Direction(new Point2D.Double(+1, -1)));
-        new BulletModel(getAnchor(), new Direction(new Point2D.Double(-1, -1)));
-        new BulletModel(getAnchor(), new Direction(new Point2D.Double(+1, +1)));
-        new BulletModel(getAnchor(), new Direction(new Point2D.Double(-1, +1)));
+        new BulletModel(getAnchor(), new Direction(new Point2D.Double(0, -1)), false);
+        new BulletModel(getAnchor(), new Direction(new Point2D.Double(0, +1)), false);
+        new BulletModel(getAnchor(), new Direction(new Point2D.Double(+1, 0)), false);
+        new BulletModel(getAnchor(), new Direction(new Point2D.Double(-1, 0)), false);
+        new BulletModel(getAnchor(), new Direction(new Point2D.Double(+1, -1)), false);
+        new BulletModel(getAnchor(), new Direction(new Point2D.Double(-1, -1)), false);
+        new BulletModel(getAnchor(), new Direction(new Point2D.Double(+1, +1)), false);
+        new BulletModel(getAnchor(), new Direction(new Point2D.Double(-1, +1)), false);
 
     }
 
@@ -179,7 +179,7 @@ public class NecropickModel extends GeoShapeModel implements Collidable {
     }
 
     @Override
-    public void onCollision(Collidable other) {
+    public void onCollision(Collidable other, Point2D coll1, Point2D coll2) {
 
     }
 }

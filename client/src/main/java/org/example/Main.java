@@ -61,9 +61,23 @@ public class Main {
 
         SquarantineModel.loadImage();
         TrigorathModel.loadImage();
+        OmenoctModel.loadImage();
+        NecropickModel.loadImage();
+        BabyArchmire.loadImage();
+        ArchmireModel.loadImage();
+        Orb.loadImage();
 
-        new TrigorathModel(new Point2D.Double(500, 500));
-        new SquarantineModel(new Point2D.Double(500, 600));
+//        new NecropickModel();
+        new ArchmireModel(new Point2D.Double(500, 700));
+
+
+
+
+//        new BlackOrb();
+
+
+//        new SquarantineModel(new Point2D.Double(900, 600));
+
 
 
 
@@ -80,16 +94,13 @@ public class Main {
 
 //        SmileyBullet.loadImage();
 //        NecropickModel.loadImage();
-//        BabyArchmire.loadImage();
 //        OmenoctModel.loadImage();
-//        ArchmireModel.loadImage();
 //        SmileyBullet.loadImage();
 
 //        new SmileyBullet(new Point2D.Double(300, 300)).rapidFire(10, 180);
 
 
-
-
+//    new NecropickModel();
 
 
 //        Menu.getINSTANCE();
@@ -100,20 +111,8 @@ public class Main {
 //        BufferedImage bImg = OmenoctModel.loadImage();
 //        GraphicalObject bowser = new GraphicalObject(bImg);
 //        MyPolygon p = bowser.myBoundingPolygon;
-//        new OmenoctModel(new Point2D.Double(300, 400), p);
-//        new OmenoctModel(new Point2D.Double(300, 400), p);
-//        new OmenoctModel(new Point2D.Double(300, 400), p);
-//        new OmenoctModel(new Point2D.Double(300, 400), p);
-//        new OmenoctModel(new Point2D.Double(300, 400), p);
-//        new OmenoctModel(new Point2D.Double(300, 400), p);
-//        new OmenoctModel(new Point2D.Double(300, 400), p);
-//        new OmenoctModel(new Point2D.Double(300, 400), p);
-//        new OmenoctModel(new Point2D.Double(300, 400), p);
-//        new OmenoctModel(new Point2D.Double(300, 400), p);
-//        new OmenoctModel(new Point2D.Double(300, 400), p);
-//        new OmenoctModel(new Point2D.Double(300, 400), p);
-//        new OmenoctModel(new Point2D.Double(300, 400), p);
-//        new OmenoctModel(new Point2D.Double(300, 400), p);
+//        new OmenoctModel(new Point2D.Double(1000, 400));
+
 
 //        BufferedImage bg = BarricadosModel.loadImage();
 //        GraphicalObject ber = new GraphicalObject(bg);
@@ -136,21 +135,6 @@ public class Main {
 //        GraphicalObject bv = new GraphicalObject(bx);
 //        MyPolygon pp = bv.myBoundingPolygon;
 ////        until hear
-//        new ArchmireModel(new Point2D.Double(300, 400));
-//        new ArchmireModel(new Point2D.Double(300, 400));
-//        new ArchmireModel(new Point2D.Double(300, 400));
-//        new ArchmireModel(new Point2D.Double(300, 400));
-//        new ArchmireModel(new Point2D.Double(300, 400));
-//        new ArchmireModel(new Point2D.Double(300, 400));
-//        new ArchmireModel(new Point2D.Double(300, 400));
-//
-//
-
-//        new BabyArchmire(new Point2D.Double(300, 800));
-//        new ArchmireModel(new Point2D.Double(300, 500), pol);
-//        new ArchmireModel(new Point2D.Double(300, 600), pol);
-//        new ArchmireModel(new Point2D.Double(300, 700), pol);
-
 
 
 
@@ -176,6 +160,7 @@ public class Main {
 
 
 //        GraphicalObject bows = new GraphicalObject(baf);
+//        new OmenoctModel(new Point2D.Double(600, 500));
 //        MyPolygon ol = bows.myBoundingPolygon;
 //        new EpsilonModel(new Point2D.Double(200, 200));
 
@@ -223,17 +208,6 @@ public class Main {
 
 
 
-
-
-
-
-//        new ArchmireModel(new Point2D.Double(100, 500));
-//        new ArchmireModel(new Point2D.Double(100, 500));
-//        new ArchmireModel(new Point2D.Double(100, 500));
-//        new ArchmireModel(new Point2D.Double(100, 500));
-//        new ArchmireModel(new Point2D.Double(100, 500));
-//        new ArchmireModel(new Point2D.Double(100, 500));
-//        new ArchmireModel(new Point2D.Double(100, 500));
 
 
 

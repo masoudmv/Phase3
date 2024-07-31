@@ -1,7 +1,6 @@
 package model.charactersModel;
 
 import model.MyPolygon;
-import model.TimedLocation;
 import model.collision.Collidable;
 import model.movement.Direction;
 
@@ -9,7 +8,6 @@ import java.awt.*;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 import static controller.UserInterfaceController.createArchmireView;
@@ -61,7 +59,7 @@ public class Wyrm extends GeoShapeModel implements Collidable {
     }
 
     @Override
-    public void onCollision(Collidable other) {
+    public void onCollision(Collidable other, Point2D coll1, Point2D coll2) {
 
     }
 }

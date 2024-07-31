@@ -13,18 +13,18 @@ import model.charactersModel.smiley.Smiley;
 import model.collision.Collidable;
 import model.collision.CollisionState;
 import model.collision.Impactable;
-import model.entities.AttackTypes;
 import model.movement.Direction;
 import model.movement.Movable;
 import view.charactersView.GeoShapeView;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.geom.Dimension2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import static controller.UserInterfaceController.findGeoShapeView;
 import static controller.constants.Constants.*;
@@ -53,6 +53,8 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
 
     BabyEpsilon[] babies = new BabyEpsilon[3];
 
+    public static List<EpsilonModel> epsilons = new CopyOnWriteArrayList<>();
+
 //    @SerializedName("localPanel")
 //    @Expose
 //    public static FinalPanelModel localPanel;
@@ -72,6 +74,9 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
         createEpsilonView(id, image);
 //        this.h = 100;
 //        damageSize.put(AttackTypes.AOE, 5);
+
+        this.health = 100;
+        epsilons.add(this);
 
     }
 
@@ -229,7 +234,7 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
                 setImpactInProgress(false);
             }
         } else {
-            direction.setMagnitude(direction.getMagnitude() * 0.93);
+            direction.setMagnitude(direction.getMagnitude() * 0.96);
             if (direction.getMagnitude() < 0.5) {
                 direction.setMagnitude(0);
             }
@@ -316,9 +321,6 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
 
 
 
-    @Override
-    public void onCollision(Collidable other) {
-    }
 
     private void updateLocalPanel() {
         if (localPanel != null) if (isInFinalPanelModel(localPanel)) return;
@@ -403,5 +405,10 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
         if (other instanceof FinalPanelModel) {
             if (!isOnFall) impact(new CollisionState(intersection));
         }
+    }
+
+    @Override
+    public void onCollision(Collidable other, Point2D poly1, Point2D poly2) {
+
     }
 }

@@ -2,8 +2,9 @@ package model.charactersModel;
 
 import model.FinalPanelModel;
 import model.MyPolygon;
-import model.charactersModel.smiley.Smiley;
 import model.collision.Collidable;
+import model.entities.AttackTypes;
+import model.entities.Entity;
 import model.movement.Direction;
 import org.example.GraphicalObject;
 import view.MainFrame;
@@ -14,7 +15,6 @@ import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import static controller.UserInterfaceController.findBulletView;
 import static controller.Utils.adjustVectorMagnitude;
 import static controller.Utils.multiplyVector;
 import static model.imagetools.ToolBox.getBufferedImage;
@@ -35,6 +35,7 @@ public class SmileyBullet extends GeoShapeModel implements Collidable {
         super(anchor, image, pol);
         smileyBullets.add(this);
         collidables.add(this);
+        damageSize.put(AttackTypes.MELEE, 5);
     }
 
     void move(Direction direction) {
@@ -72,7 +73,7 @@ public class SmileyBullet extends GeoShapeModel implements Collidable {
     }
 
     public static BufferedImage loadImage() {
-        Image img = new ImageIcon("./src/bullet.png").getImage();
+        Image img = new ImageIcon("./client/src/bullet.png").getImage();
 //        SmileyBullet.image = getBufferedImage(img);
 
         SmileyBullet.image = getBufferedImage(img);
@@ -106,7 +107,6 @@ public class SmileyBullet extends GeoShapeModel implements Collidable {
         super.eliminate();
         collidables.remove(this);
         smileyBullets.remove(this);
-//        findBulletView((this).getId()).remove(); //todo
 
     }
 
@@ -118,12 +118,15 @@ public class SmileyBullet extends GeoShapeModel implements Collidable {
     @Override
     public void onCollision(Collidable other, Point2D intersection) {
         if (other instanceof FinalPanelModel) return;
-//        eliminate();
+        if (other instanceof EpsilonModel) {
+            this.damage((Entity) other, AttackTypes.MELEE);
+            eliminate();
+        }
 
     }
 
     @Override
-    public void onCollision(Collidable other) {
+    public void onCollision(Collidable other, Point2D coll1, Point2D coll2) {
 
     }
 }
