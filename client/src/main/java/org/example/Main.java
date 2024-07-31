@@ -47,6 +47,7 @@ public class Main {
 
     public static void main(String[] args) throws LineUnavailableException, IOException, UnsupportedAudioFileException, InterruptedException {
 
+
         BufferedImage b = EpsilonModel.loadImage();
         GraphicalObject bows = new GraphicalObject(b);
         MyPolygon pol = bows.myBoundingPolygon;
@@ -67,8 +68,13 @@ public class Main {
         ArchmireModel.loadImage();
         Orb.loadImage();
 
+//        new Menu();
+
 //        new NecropickModel();
-        new ArchmireModel(new Point2D.Double(500, 700));
+//        new ArchmireModel(new Point2D.Double(500, 700));
+
+
+
 
 
 
@@ -76,7 +82,8 @@ public class Main {
 //        new BlackOrb();
 
 
-//        new SquarantineModel(new Point2D.Double(900, 600));
+        new SquarantineModel(new Point2D.Double(900, 600));
+        new SquarantineModel(new Point2D.Double(700, 600));
 
 
 

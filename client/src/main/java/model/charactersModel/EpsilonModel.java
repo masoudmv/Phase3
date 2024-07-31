@@ -13,6 +13,9 @@ import model.charactersModel.smiley.Smiley;
 import model.collision.Collidable;
 import model.collision.CollisionState;
 import model.collision.Impactable;
+import model.entities.AttackTypes;
+import model.entities.Entity;
+import model.entities.Profile;
 import model.movement.Direction;
 import model.movement.Movable;
 import view.charactersView.GeoShapeView;
@@ -36,6 +39,7 @@ import static model.imagetools.ToolBox.getBufferedImage;
 public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, Impactable {
     static transient BufferedImage image; // transient to avoid serialization
     private static transient EpsilonModel INSTANCE;
+    private double lastCerebrus = -Double.MAX_VALUE;
 
 
 
@@ -74,8 +78,9 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
         createEpsilonView(id, image);
 //        this.h = 100;
 //        damageSize.put(AttackTypes.AOE, 5);
+        damageSize.put(AttackTypes.ASTRAPE, 0);
 
-        this.health = 100;
+        this.health = 50;
         epsilons.add(this);
 
     }
@@ -191,10 +196,14 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
 
     @Override
     public void move() {
-//        updateLocalPanel();
+//        System.out.println(Profile.getCurrent().PANEL_SHRINKAGE_COEFFICIENT);
 
-        move(direction);
+
+
         moveBabies(direction);
+        move(direction);
+
+        applyCerebrus();
     }
 
     private void moveBabies(Direction direction){
@@ -205,10 +214,11 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
     }
 
     public void empusa(){
-        Image img = new ImageIcon("./src/epsilon2.png").getImage();
+        Image img = new ImageIcon("./client/src/epsilon2.png").getImage();
         EpsilonModel.image = getBufferedImage(img);
         GeoShapeView view = findGeoShapeView(id);
         view.setImage(image);
+        Profile.getCurrent().EPSILON_RADIUS = 18;
         this.radius *= 0.90;
     }
 
@@ -321,6 +331,21 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
 
 
 
+    public void damage(Entity entity, double damage) {
+        // maybe usable for melee damage of epsilon?
+        if (damage == 0) return;
+        this.health += (int) Profile.getCurrent().EPSILON_HEALTH_REGAIN;
+        System.out.println("DAMAGING ...");
+        if (entity.vulnerable) {
+            entity.health -= damageSize.get(damage);
+            if (entity.health <= 0) {
+                entity.eliminate();
+            }
+        }
+    }
+
+
+
 
     private void updateLocalPanel() {
         if (localPanel != null) if (isInFinalPanelModel(localPanel)) return;
@@ -380,11 +405,44 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
 //        anchor = addVectors(offset, getAnchor());
 //    }
 
+    private void applyCerebrus(){
+        if (babies[0] == null) return;
+
+        for (GeoShapeModel enemy : entities){
+            if (enemy instanceof EpsilonModel || enemy instanceof BabyEpsilon) {
+
+            }
+            else {
+                for (int i = 0; i < babies.length; i++) {
+                    List<Point2D> points = babies[i].getBoundingPoints();
+                    boolean apply = babies[i].isInside(enemy.myPolygon.getVertices());
+                    double now = Game.ELAPSED_TIME;
+                    if (apply && now - lastCerebrus > 15) {
+                        babies[i].damage(enemy, AttackTypes.MELEE);
+                        lastCerebrus = Game.ELAPSED_TIME;
+                    }
+                }
+
+            }
+        }
+    }
+
     @Override
     public void onCollision(Collidable other, Point2D intersection) {
+        if (other instanceof FinalPanelModel) {
+            if (!isOnFall) impact(new CollisionState(intersection));
+            return;
+        }
+        // todo this may need to change
+        damage((Entity) other, AttackTypes.ASTRAPE);
+
         if (other instanceof Smiley) impact(new CollisionState(intersection));
         if (other instanceof Fist) impact(new CollisionState(intersection));
-        if (other instanceof SquarantineModel) impact(relativeLocation(getAnchor(), intersection), intersection, other);
+        if (other instanceof SquarantineModel) {
+
+
+            impact(relativeLocation(getAnchor(), intersection), intersection, other);
+        }
         if (other instanceof TrigorathModel) impact(relativeLocation(getAnchor(), intersection), intersection, other);
         if (other instanceof Hand) {
 
@@ -402,9 +460,7 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
         if (other instanceof CollectibleModel) Game.inGameXP += ((CollectibleModel) other).getCollectibleXP();
         if (other instanceof BulletModel) ;
         if (other instanceof SmileyBullet) ;
-        if (other instanceof FinalPanelModel) {
-            if (!isOnFall) impact(new CollisionState(intersection));
-        }
+
     }
 
     @Override

@@ -437,7 +437,9 @@ public abstract class UserInterfaceController {
     }
 
     public static void fireSkill() {
-        if (Skill.activeSkill != null) Skill.activeSkill.fire();
+        if (Skill.activeSkill != null) {
+            Skill.activeSkill.fire();
+        }
     }
 
     public static boolean isGameRunning() {

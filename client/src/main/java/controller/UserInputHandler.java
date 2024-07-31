@@ -1,6 +1,7 @@
 package controller;
 
 import model.charactersModel.EpsilonModel;
+import model.entities.Skill;
 import model.movement.Direction;
 import view.MainFrame;
 import view.junks.KeyBindingMenu;
@@ -8,6 +9,7 @@ import view.junks.ShopPanel;
 
 
 import javax.swing.*;
+import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.geom.Point2D;
@@ -18,6 +20,7 @@ import java.util.Set;
 import static controller.Game.SkillTreeAbility.*;
 import static controller.Game.activeAbility;
 import static controller.GameLoop.movementInProgress;
+import static controller.UserInterfaceController.fireSkill;
 import static controller.Utils.addVectors;
 import static controller.Utils.multiplyVector;
 import static controller.constants.Constants.EPSILON_MAX_SPEED;
@@ -87,11 +90,7 @@ public class UserInputHandler implements KeyListener {
         }
 
         if (GameLoop.getINSTANCE().isRunning()) {
-            if (e.getKeyCode() == keyBindings.get("Activate Skill Tree Ability")){
-//                if (activeAbility == ares) ares();
-//                if (activeAbility == aceso) aceso();
-//                if (activeAbility == proteus)  proteus();
-            }
+            if (e.getKeyCode() == KeyEvent.VK_G) UserInterfaceController.fireSkill();
         }
 
         if (GameLoop.getINSTANCE().isRunning()) {

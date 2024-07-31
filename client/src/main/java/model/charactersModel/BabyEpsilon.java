@@ -1,8 +1,11 @@
 package model.charactersModel;
 
 import model.MyPolygon;
+import model.entities.AttackTypes;
 import model.movement.Direction;
 import java.awt.geom.Point2D;
+import java.util.ArrayList;
+
 import static controller.UserInterfaceController.createBabyEpsilonView;
 import static controller.Utils.addVectors;
 import static controller.Utils.multiplyVector;
@@ -15,6 +18,7 @@ public class BabyEpsilon extends GeoShapeModel {
         this.anchor = anchor;
         this.radius = BABY_EPSILON_RADIUS.getValue();
         createBabyEpsilonView(id);
+        damageSize.put(AttackTypes.MELEE, 10);
     }
 
     public void move(Direction direction) {
@@ -31,7 +35,7 @@ public class BabyEpsilon extends GeoShapeModel {
 
     public static void createBabies() {
         Point2D epsilonAnchor = EpsilonModel.getINSTANCE().getAnchor();
-        double sideLength = 50; // replace with the actual side length if known
+        double sideLength = 70; // replace with the actual side length if known
         BabyEpsilon[] babies = new BabyEpsilon[3];
         Point2D[] vertices = calculateEquilateralTriangleVertices(epsilonAnchor, sideLength);
 
@@ -40,6 +44,16 @@ public class BabyEpsilon extends GeoShapeModel {
         }
 
         EpsilonModel.getINSTANCE().setBabies(babies);
+    }
+
+    @Override
+    public ArrayList<Point2D> getBoundingPoints(){
+        ArrayList<Point2D> bound = new ArrayList<>();
+        bound.add(new Point2D.Double(getAnchor().getX() - getRadius(), getAnchor().getY()));
+        bound.add(new Point2D.Double(getAnchor().getX() + getRadius(), getAnchor().getY()));
+        bound.add(new Point2D.Double(getAnchor().getX(), getAnchor().getY() + getRadius()));
+        bound.add(new Point2D.Double(getAnchor().getX(), getAnchor().getY() - getRadius()));
+        return bound;
     }
 
     private static Point2D[] calculateEquilateralTriangleVertices(Point2D center, double sideLength) {

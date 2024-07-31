@@ -9,7 +9,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import static controller.constants.Constants.AOE_COOLDOWN;
 
 public abstract class Entity {
-    protected int health;
+    public int health;
     public int fullHealth;
     public boolean vulnerable = true;
     public ConcurrentHashMap<AttackTypes, Integer> damageSize = new ConcurrentHashMap<>();
@@ -17,6 +17,8 @@ public abstract class Entity {
     private double lastAoeTime = 0;
 
     public void damage(Entity entity, AttackTypes attackType) {
+        // todo
+        // implement melampus ...
         double now = Game.ELAPSED_TIME;
         if (now - lastAoeTime >= AOE_COOLDOWN) {
             if (entity.vulnerable) {

@@ -8,6 +8,7 @@ import model.collision.CollisionState;
 import model.collision.Impactable;
 import model.entities.AttackTypes;
 import model.entities.Entity;
+import model.entities.Profile;
 import model.movement.Direction;
 import model.movement.Movable;
 import view.charactersView.NecropickView;
@@ -201,7 +202,9 @@ public class BulletModel extends GeoShapeModel implements Movable, Collidable, I
             return;
         }
 
-
+        // todo: change for multiplayer part ...
+        EpsilonModel epsilon = EpsilonModel.getINSTANCE();
+        epsilon.health += (int) Profile.getCurrent().EPSILON_HEALTH_REGAIN;
         this.damage((Entity) other, AttackTypes.MELEE);
         eliminate();
 

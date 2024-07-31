@@ -3,7 +3,6 @@ package model.entities;
 //import model.entities.Skill;
 
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Profile {
@@ -15,7 +14,10 @@ public class Profile {
     public int EPSILON_MELEE_DAMAGE = 10;
     public int EPSILON_RANGED_DAMAGE = 5;
     public int EPSILON_SHOOTING_RAPIDITY = 1;
-    public double PANEL_SHRINKAGE_COEFFICIENT = 0.125;
+    public double PANEL_SHRINKAGE_COEFFICIENT = 0.15;
+    public double EPSILON_HEALTH_REGAIN = 0;
+    public double EPSILON_VULNERABILITY_PROBABILITY = 100;
+    public double EPSILON_AUTO_DAMAGE = 0;
     public String activeSkillSaveName = "";
     public CopyOnWriteArrayList<String> acquiredSkillsNames = new CopyOnWriteArrayList<>();
     public int totalXP = 0;
