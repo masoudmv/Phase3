@@ -15,7 +15,6 @@ import static controller.UserInterfaceController.*;
 //import static controller.UserInterfaceController.calculateViewLocationBullet;
 import static controller.Utils.addVectors;
 import static view.charactersView.BulletView.bulletViews;
-import static view.charactersView.Drawable.drawables;
 
 public class FinalPanelView extends JPanel {
     private String id;

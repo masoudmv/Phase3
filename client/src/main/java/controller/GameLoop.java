@@ -1,11 +1,9 @@
 package controller;
 
-import controller.constants.Constants;
 import model.charactersModel.BulletModel;
 import model.charactersModel.CollectibleModel;
 import model.charactersModel.*;
 import model.charactersModel.blackOrb.BlackOrb;
-import model.charactersModel.blackOrb.Laser;
 import model.charactersModel.smiley.Fist;
 import model.charactersModel.smiley.Hand;
 import model.charactersModel.SmileyBullet;
@@ -13,7 +11,6 @@ import model.charactersModel.smiley.Smiley;
 import model.entities.Profile;
 import model.movement.Movable;
 import view.*;
-import view.charactersView.GeoShapeView;
 import view.junks.GameOverPanel;
 import view.junks.ShopPanel;
 import view.junks.VictoryPanel;
@@ -21,12 +18,6 @@ import view.junks.VictoryPanel;
 import javax.swing.*;
 import javax.swing.Timer;
 
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.geom.Point2D;
-import java.util.*;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static controller.constants.Constants.*;
@@ -41,7 +32,6 @@ import static model.charactersModel.CollectibleModel.collectibleModels;
 import static model.charactersModel.NecropickModel.necropickModels;
 import static model.charactersModel.SquarantineModel.squarantineModels;
 import static model.charactersModel.TrigorathModel.trigorathModels;
-import static model.charactersModel.blackOrb.BlackOrb.lasers;
 import static model.charactersModel.smiley.Fist.fists;
 import static model.charactersModel.smiley.Hand.hands;
 import static model.charactersModel.SmileyBullet.smileyBullets;
@@ -50,7 +40,6 @@ import static model.collision.Collidable.collidables;
 import static model.movement.Movable.movables;
 import static view.FinalPanelView.finalPanelViews;
 import static view.MainFrame.label;
-import static view.charactersView.GeoShapeView.geoShapeViews;
 //import static view.Panel.panels;
 
 
@@ -276,7 +265,7 @@ public class GameLoop implements Runnable {
 
 
         for (NecropickModel n : necropickModels) {   // todo revert
-            n.update();
+            n.move();
         }
 
 

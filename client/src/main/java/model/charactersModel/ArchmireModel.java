@@ -30,9 +30,9 @@ public class ArchmireModel extends GeoShapeModel implements Collidable {
     public ArchmireModel(Point2D anchor) {
         super(anchor, image, pol, true);
         this.health = ARCHMIRE_HEALTH.getValue();
+        this.isHovering = true;
         updateDirection();
         createArchmireView(id, ArchmireModel.image);
-
         archmireModels.add(this);
         collidables.add(this);
         damageSize.put(AttackTypes.DROWN, 10);

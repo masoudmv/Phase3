@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 
 import static controller.Utils.relativeLocation;
+import static model.charactersModel.NecropickModel.necropickModels;
 import static model.charactersModel.SquarantineModel.squarantineModels;
 import static model.charactersModel.TrigorathModel.trigorathModels;
 import static view.FinalPanelView.finalPanelViews;
@@ -63,6 +64,10 @@ public abstract class UserInterfaceController {
 
     public static void createGeoShapeView(String id, Image image){
         new GeoShapeView(id, image);
+    }
+
+    public static void createGeoShapeView(String id, Image image, int zOrder){
+        new GeoShapeView(id, image, zOrder);
     }
 
     public static void createGeoShapeView(String id, Image image, Point2D anchor, MyPolygon myPolygon){ // keeping this just in case it is needed
@@ -185,6 +190,15 @@ public abstract class UserInterfaceController {
         for (GeoShapeView geoShapeView : geoShapeViews){
             geoShapeView.setAngle(calculateGeoShapeViewAngle(geoShapeView.getId()));
         }
+    }
+
+
+    public static void updateNecropick(String id){
+        NecropickModel m = findNecropickModel(id);
+        NecropickView v = findNecropickView(id);
+        assert m != null;
+        assert v != null;
+        v.showNextLocation = m.isHovering();
     }
 
     public static LinkedList<TimedLocation> calculateLocationHistory(FinalPanelView component, String id){
@@ -415,6 +429,13 @@ public abstract class UserInterfaceController {
     public static NecropickView findNecropickView(String id){
         for (NecropickView n: necropickViews){
             if (n.getId().equals(id)) return n;
+        }
+        return null;
+    }
+
+    public static NecropickModel findNecropickModel(String id){
+        for (NecropickModel m: necropickModels){
+            if (m.getId().equals(id)) return m;
         }
         return null;
     }

@@ -15,8 +15,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Random;
 
-import static controller.UserInterfaceController.createNecropickView;
-import static controller.UserInterfaceController.findNecropickView;
+import static controller.UserInterfaceController.*;
 import static controller.constants.EntityConstants.*;
 import static model.imagetools.ToolBox.getBufferedImage;
 
@@ -62,13 +61,12 @@ public class NecropickModel extends GeoShapeModel implements Collidable {
     }
 
     private void returnToGroundSurface(){
+        if (checkIntersectionExistence()) return;
         shootBullets();
-        if (nextAnchor != null) {
-            setAnchor(nextAnchor); // Set the precomputed next location
-        }
         isHovering = false;
-
     }
+
+
 
     public static Point2D getRandomPoint(Point2D pivot, double minRadius, double maxRadius) {
         double angle = 2 * Math.PI * random.nextDouble(); // Random angle between 0 and 2π
@@ -81,7 +79,7 @@ public class NecropickModel extends GeoShapeModel implements Collidable {
         return new Point2D.Double(x, y);
     }
 
-    public void update() {
+    public void move() {
         double elapsedTime = Game.ELAPSED_TIME;
 
         if (!isHovering && (elapsedTime - stateChangeTime) >= HOVER_DURATION) {
@@ -118,43 +116,28 @@ public class NecropickModel extends GeoShapeModel implements Collidable {
         );
     }
 
-    private MyPolygon set(Point2D movement){
-        double[] xpoints = new double[myPolygon.npoints];
-        double[] ypoints = new double[myPolygon.npoints];
-        for (int i = 0; i < myPolygon.npoints; i++) {
-            xpoints[i] = this.myPolygon.xpoints[i] + movement.getX() - EpsilonModel.getINSTANCE().localPanel.getLocation().getX();
-            ypoints[i] = this.myPolygon.ypoints[i] + movement.getY() - EpsilonModel.getINSTANCE().localPanel.getLocation().getY();
-        }
-        return new MyPolygon(xpoints, ypoints, myPolygon.npoints);
-    }
+
 
     private void updateView() {
-        NecropickView n = findNecropickView(id);
-        // todo this shit is ugly. clean it:
-        // TODO also you have to update nextLoc continuously !
         if (isHovering) {
-            isNextLocationCalculated = true;
-            Point2D dest = EpsilonModel.getINSTANCE().getAnchor();
-            nextAnchor = getRandomPoint(dest, NECROPICK_MIN_RADIUS, NECROPICK_MAX_RADIUS);
-
-
-            setAnchor(nextAnchor);
-
-//            anchor = nextAnchor;
-//
-//            Point2D move = Utils.relativeLocation(nextAnchor, this.anchor);
-//            MyPolygon pol = set(move);
-//
-//            setMyPolygon(pol);
-//            n.setNextPolygon(pol);
-//            n.setNextLocation(new Point2D.Double(nextAnchor.getX()-EpsilonModel.localPanel.getLocation().getX(), nextAnchor.getY()-EpsilonModel.localPanel.getLocation().getY()));
-
-
-            n.showNextLocation = true;
-        } else {
-            n.showNextLocation = false;
+            boolean doesIntersect = findNextPos();
+            while (doesIntersect) {
+                doesIntersect = findNextPos();
+            }
         }
+
+        updateNecropick(id);
     }
+
+    private boolean findNextPos() {
+        isNextLocationCalculated = true;
+        Point2D dest = EpsilonModel.getINSTANCE().getAnchor();
+        nextAnchor = getRandomPoint(dest, NECROPICK_MIN_RADIUS, NECROPICK_MAX_RADIUS);
+        setAnchor(nextAnchor);
+
+        return checkIntersectionExistence();
+    }
+
 
     private void shootBullets(){
         new BulletModel(getAnchor(), new Direction(new Point2D.Double(0, -1)), false);

@@ -15,6 +15,7 @@ public class EpsilonView extends GeoShapeView{
     public EpsilonView(String id, Image image) {
         super(id, image);
         this.radius = Profile.getCurrent().EPSILON_RADIUS;
+
     }
 
     //

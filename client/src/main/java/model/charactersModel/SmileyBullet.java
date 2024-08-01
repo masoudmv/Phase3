@@ -36,6 +36,7 @@ public class SmileyBullet extends GeoShapeModel implements Collidable {
         smileyBullets.add(this);
         collidables.add(this);
         damageSize.put(AttackTypes.MELEE, 5);
+        this.health = Integer.MAX_VALUE;
     }
 
     void move(Direction direction) {

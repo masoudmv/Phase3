@@ -57,13 +57,6 @@ public class BlackOrb { // todo panels should be created with delay?
                 }
             }).start();
 
-//            initializedOrbs();
-            double a = System.currentTimeMillis();
-//            initializedOrbs();
-            double b = System.currentTimeMillis();
-
-            System.out.println("delay:  " + (b - a));
-
             numCreatedOrbs++;
         }
         if ( now - lastCreatedOrbTime < ORB_PANEL_CREATION_DELAY || numCreatedOrbs > 4) return;

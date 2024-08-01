@@ -15,6 +15,7 @@ public class SquarantineView extends GeoShapeView{
 
     public SquarantineView(String id) {
         super(id);
+        zOrder = 3;
     }
 
     public void eliminate(){

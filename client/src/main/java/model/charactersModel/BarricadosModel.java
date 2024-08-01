@@ -3,6 +3,7 @@ package model.charactersModel;
 import model.FinalPanelModel;
 import model.MyPolygon;
 import model.collision.Collidable;
+import org.example.GraphicalObject;
 
 import javax.swing.*;
 import java.awt.*;
@@ -14,19 +15,40 @@ import static model.imagetools.ToolBox.getBufferedImage;
 
 public class BarricadosModel extends GeoShapeModel implements Collidable {
     static BufferedImage image;
-    private final static Dimension panelSize = new Dimension(300, 300);
+
+    protected static MyPolygon pol;
+
+    private final static Dimension panelSize = new Dimension(400, 400);
 
     public static ArrayList<BarricadosModel> barricados = new ArrayList<>();
 
-    public BarricadosModel(Point2D anchor, MyPolygon myPolygon) {
-        super(anchor, image, myPolygon);
+    public BarricadosModel(Point2D anchor) {
+        super(anchor, image, pol, 1);
         Point2D location = new Point2D.Double(anchor.getX()-200, anchor.getY()-200);
         FinalPanelModel f = new FinalPanelModel(location, panelSize);
         f.setRigid(false);
         f.setIsometric(true);
         setMyPolygon();
+
+        updateMyPolygon();
+        this.health = Integer.MAX_VALUE;
+
         barricados.add(this);
         collidables.add(this);
+    }
+
+    private void updateMyPolygon(){
+        double halfEdgeLength = 95;
+        double x = anchor.getX();
+        double y = anchor.getY();
+
+        Point2D[] vertices = new Point2D[4];
+        vertices[0] = new Point2D.Double(x - halfEdgeLength, y - halfEdgeLength); // Top-left
+        vertices[1] = new Point2D.Double(x + halfEdgeLength, y - halfEdgeLength); // Top-right
+        vertices[2] = new Point2D.Double(x + halfEdgeLength, y + halfEdgeLength); // Bottom-right
+        vertices[3] = new Point2D.Double(x - halfEdgeLength, y + halfEdgeLength); // Bottom-left
+
+        myPolygon.setVertices(vertices);
     }
 
 
@@ -50,8 +72,13 @@ public class BarricadosModel extends GeoShapeModel implements Collidable {
 
 
     public static BufferedImage loadImage(){
-        Image img = new ImageIcon("./src/barricados.png").getImage();
+        Image img = new ImageIcon("./client/src/barricados.png").getImage();
         BarricadosModel.image = getBufferedImage(img);
+
+        GraphicalObject bowser = new GraphicalObject(image);
+        pol = bowser.getMyBoundingPolygon();
+
+
         return BarricadosModel.image;
     }
 //    @Override

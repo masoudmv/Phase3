@@ -10,6 +10,7 @@ public class CollectibleView extends GeoShapeView {
     public CollectibleView(String id) {
         super(id);
         this.radius = COLLECTABLE_RADIUS.getValue();
+        this.zOrder = 2;
     }
 
 

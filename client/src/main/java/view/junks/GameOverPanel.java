@@ -24,7 +24,6 @@ import static view.charactersView.BulletView.bulletViews;
 //import static view.charactersView.CollectibleView.collectibleViews;
 //import static view.MainPanel.nullifyMainPanel;
 import static view.junks.Menu.addMenu;
-import static view.charactersView.Drawable.drawables;
 //import static view.charactersView.SquarantineView.squarantineViews;
 //import static view.charactersView.TrigorathView.trigorathViews;
 
@@ -95,7 +94,6 @@ public class GameOverPanel extends JPanel implements MouseListener {
 //        trigorathViews.clear();
         squarantineModels.clear();
 //        squarantineViews.clear();
-        drawables.clear();
         bulletModels.clear();
         bulletViews.clear();
         collectibleModels.clear();

@@ -27,7 +27,7 @@ public class GeoShapeView {
     //    protected MyPolygon myPolygon;
     public volatile static CopyOnWriteArrayList<GeoShapeView> geoShapeViews = new CopyOnWriteArrayList<>();
     protected double angle;
-    protected int zOrder = 2;
+    protected int zOrder = 3;
 
     protected ConcurrentHashMap<String, Point2D> locations = new ConcurrentHashMap<>();
     protected ConcurrentHashMap<String, MyPolygon> myPolygons = new ConcurrentHashMap<>();
@@ -41,6 +41,16 @@ public class GeoShapeView {
         geoShapeViews.add(this);
 
         initiator(anchor, myPolygon);
+    }
+
+
+    public GeoShapeView(String id, Image image, int zOrder) {
+        this.id = id;
+        this.image = getBufferedImage(image);
+        this.imageWidth = this.image.getWidth();
+        this.imageHeight = this.image.getHeight();
+        geoShapeViews.add(this);
+        this.zOrder = zOrder;
     }
 
 
@@ -156,8 +166,8 @@ public class GeoShapeView {
             ypoints[i] = (int) myPolygon.ypoints[i];
         }
 
-        g2d.drawPolygon(xpoints, ypoints, myPolygon.npoints);
-
         g2d.drawImage(rotateImage(image, Math.toDegrees(-angle)), (int) (x - imageWidth/2), (int) (y - imageWidth/2), null);
+
+        g2d.drawPolygon(xpoints, ypoints, myPolygon.npoints);
     }
 }

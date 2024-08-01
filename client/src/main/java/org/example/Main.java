@@ -51,7 +51,7 @@ public class Main {
         BufferedImage b = EpsilonModel.loadImage();
         GraphicalObject bows = new GraphicalObject(b);
         MyPolygon pol = bows.myBoundingPolygon;
-        new EpsilonModel(new Point2D.Double(1000, 700), pol);
+        new EpsilonModel(new Point2D.Double(1000, 400), pol);
 
 
         MainFrame.getINSTANCE();
@@ -67,25 +67,14 @@ public class Main {
         BabyArchmire.loadImage();
         ArchmireModel.loadImage();
         Orb.loadImage();
-
-//        new Menu();
-
-//        new NecropickModel();
-//        new ArchmireModel(new Point2D.Double(500, 700));
+        BarricadosModel.loadImage();
 
 
-
-
-
-
-
+//        new SquarantineModel(new Point2D.Double(100, 100));
 //        new BlackOrb();
 
 
-        new SquarantineModel(new Point2D.Double(900, 600));
-        new SquarantineModel(new Point2D.Double(700, 600));
-
-
+    new BarricadosModel(new Point2D.Double(1500, 900));
 
 
         // don't touch the above lines for now!

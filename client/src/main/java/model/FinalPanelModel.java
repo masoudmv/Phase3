@@ -4,6 +4,7 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import controller.Utils;
 import model.charactersModel.BulletModel;
+import model.charactersModel.EpsilonModel;
 import model.collision.Collidable;
 import model.entities.Profile;
 
@@ -12,6 +13,7 @@ import java.awt.geom.Dimension2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.io.Serializable;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -19,6 +21,7 @@ import static controller.UserInterfaceController.*;
 import static controller.Utils.*;
 import static controller.constants.Constants.FRAME_DIMENSION;
 import static model.PanelManager.handlePanelPanelCollision;
+import static model.charactersModel.EpsilonModel.epsilons;
 
 public class FinalPanelModel implements Collidable, Serializable {
     @SerializedName("id")
@@ -57,6 +60,13 @@ public class FinalPanelModel implements Collidable, Serializable {
     private transient boolean moveRight = false;
     private transient boolean moveDown = false;
     private transient boolean moveLeft = false;
+
+
+
+    private boolean topIsBlocked = false;
+    private boolean rightIsBlocked = false;
+    private boolean bottomIsBlocked = false;
+    private boolean leftIsBlocked = false;
 
     @SerializedName("acceleration")
     @Expose
@@ -213,18 +223,19 @@ public class FinalPanelModel implements Collidable, Serializable {
 
     public void moveRight(){
         if (vertices.get(1).getX() + 1 < FRAME_DIMENSION.getWidth()) {
-            size.setSize(size.getWidth() + 3 * velocity / 4, size.getHeight());
+            if (!rightIsBlocked) size.setSize(size.getWidth() + 3 * velocity / 4, size.getHeight());
             Point2D movement = new Point2D.Double(velocity/4, 0);
+            if (!leftIsBlocked) moveLocation(movement);
             updateVertices();
-            moveLocation(movement);
         } if (velocity < 0) moveRight = false;
     }
 
     public void moveDown(){
         if (vertices.get(2).getY() < FRAME_DIMENSION.getHeight()) {
-            size.setSize(size.getWidth(), size.getHeight() + 3 * velocity / 4);
+            if (!bottomIsBlocked) size.setSize(size.getWidth(), size.getHeight() + 3 * velocity / 4);
             Point2D movement = new Point2D.Double(0, velocity/4);
-            moveLocation(movement);
+            if (!topIsBlocked) moveLocation(movement);
+//            else moveLocation(new Point2D.Double(0, 3*velocity/4));
             updateVertices();
         } if (velocity < 0) moveDown = false;
 
@@ -232,18 +243,20 @@ public class FinalPanelModel implements Collidable, Serializable {
 
     public void moveLeft(){
         if (vertices.get(0).getX() > 0) {
-            size.setSize(size.getWidth() + 3 * velocity / 4, size.getHeight());
+            if (!leftIsBlocked) size.setSize(size.getWidth() + 3 * velocity / 4, size.getHeight());
             Point2D movement = new Point2D.Double(-velocity, 0);
-            moveLocation(movement);
+            if (!rightIsBlocked) moveLocation(movement);
+            else moveLocation(new Point2D.Double(- 3 * velocity / 4, 0));
             updateVertices();
-        } if (velocity<0) moveLeft = false;
+        } if (velocity < 0) moveLeft = false;
     }
 
     public void moveUp(){
         if (vertices.get(0).getY() > 0) {
-            size.setSize(size.getWidth(), size.getHeight() + 3 * velocity / 4);
+            if (!bottomIsBlocked) size.setSize(size.getWidth(), size.getHeight() + 3 * velocity / 4);
+            else size.setSize(size.getWidth(), size.getHeight() + velocity);
             Point2D movement = new Point2D.Double(0, -velocity);
-            moveLocation(movement);
+            if (!topIsBlocked) moveLocation(movement);
             updateVertices();
         }  if (velocity<0) moveUp = false;
     }
@@ -299,6 +312,39 @@ public class FinalPanelModel implements Collidable, Serializable {
     }
 
     public void panelMotion(){
+        topIsBlocked = false;
+        rightIsBlocked = false;
+        bottomIsBlocked = false;
+        leftIsBlocked = false;
+
+        for (EpsilonModel epsilon : epsilons){
+            // todo terrible idea to make local panel static ...
+            if (EpsilonModel.localPanel == null){
+                /**
+                 *  checking for the intersections of epsilon with panel's original edges
+                 *  and cripple them accordingly ...
+                 */
+
+                Point2D anchor = epsilon.getAnchor();
+                Point2D closestPoint = closestPointOnPolygon(anchor, vertices.toArray(new Point2D[vertices.size()]));
+                double distance = anchor.distance(closestPoint);
+                if (distance <= epsilon.getRadius()){
+                    int index = Utils.findPanelEdgeIndex(vertices, closestPoint);
+                    System.out.println("BLOCKING ...");
+                    switch (index){
+                        case 0 -> topIsBlocked = true;
+                        case 1 -> rightIsBlocked = true;
+                        case 2 -> bottomIsBlocked = true;
+                        case 3 -> leftIsBlocked = true;
+                    }
+                }
+            }
+        }
+
+
+
+
+
         updateVertices();
         if (isIsometric) return;
         velocity = acceleration + velocity;
@@ -312,16 +358,11 @@ public class FinalPanelModel implements Collidable, Serializable {
         if (velocity > 4){
             acceleration = -0.45;
         }
+        if (!moveUp && !topIsBlocked) topShrink(Profile.getCurrent().PANEL_SHRINKAGE_COEFFICIENT);
+        if (!moveRight && !rightIsBlocked) rightShrink (Profile.getCurrent().PANEL_SHRINKAGE_COEFFICIENT);
+        if (!moveDown && !bottomIsBlocked) bottomShrink(Profile.getCurrent().PANEL_SHRINKAGE_COEFFICIENT);
+        if (!moveLeft && !leftIsBlocked) leftShrink(Profile.getCurrent().PANEL_SHRINKAGE_COEFFICIENT);
 
-        if (!moveRight&&!moveLeft){
-            leftShrink(Profile.getCurrent().PANEL_SHRINKAGE_COEFFICIENT); // TODO sth is wrong!
-            rightShrink(Profile.getCurrent().PANEL_SHRINKAGE_COEFFICIENT);
-        }
-
-        if (!moveDown && !moveUp) {
-            topShrink(Profile.getCurrent().PANEL_SHRINKAGE_COEFFICIENT);
-            bottomShrink(Profile.getCurrent().PANEL_SHRINKAGE_COEFFICIENT);
-        }
     }
 
     @Override

@@ -2,6 +2,7 @@
 package model.charactersModel;
 
 import model.MyPolygon;
+import model.charactersModel.blackOrb.Orb;
 import model.collision.Collidable;
 import model.collision.CollisionState;
 import model.collision.Impactable;
@@ -463,6 +464,7 @@ public class TrigorathModel extends GeoShapeModel implements Movable, Collidable
     @Override
     public void onCollision(Collidable other, Point2D intersection) {
         if (other instanceof EpsilonModel) impact(relativeLocation(intersection, anchor), intersection, other);
+        if (other instanceof Orb) impact(relativeLocation(intersection, anchor), intersection, other);
         if (other instanceof BulletModel) {
             impact(relativeLocation(intersection, anchor), intersection, other, 6200);
             createImpactWave(this, other, intersection);
@@ -471,9 +473,8 @@ public class TrigorathModel extends GeoShapeModel implements Movable, Collidable
 
     @Override
     public void onCollision(Collidable other, Point2D coll1, Point2D coll2) {
+        if (((GeoShapeModel) other).isHovering) return;
         ((Impactable) this).impact(coll1, coll2, other);
-
-
     }
 
 

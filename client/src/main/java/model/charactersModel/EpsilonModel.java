@@ -61,7 +61,7 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
 
 //    @SerializedName("localPanel")
 //    @Expose
-//    public static FinalPanelModel localPanel;
+    public static FinalPanelModel localPanel;
 
     public EpsilonModel(Point2D anchor, MyPolygon myPolygon) {
         super(anchor, image, myPolygon, true);
@@ -79,6 +79,7 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
 //        this.h = 100;
 //        damageSize.put(AttackTypes.AOE, 5);
         damageSize.put(AttackTypes.ASTRAPE, 0);
+        impactables.add(this);
 
         this.health = 50;
         epsilons.add(this);
@@ -184,6 +185,7 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
 
     @Override
     public void move(Direction direction) {
+        if (localPanel== null) System.out.println("null");
         Point2D movement = multiplyVector(direction.getNormalizedDirectionVector(), direction.getMagnitude());
         this.anchor = addVectors(anchor, movement);
         for (int i = 0; i < numberOfVertices; i++) {
@@ -194,10 +196,16 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
         if (isOnFall) updateVelocityOnFall();
     }
 
+    private void checkForDeath(){
+        if (isOnFall) System.out.println("YOU ARE DEAD!");
+    }
+
+
+
     @Override
     public void move() {
 //        System.out.println(Profile.getCurrent().PANEL_SHRINKAGE_COEFFICIENT);
-
+        updateLocalPanel();
 
 
         moveBabies(direction);
@@ -331,18 +339,18 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
 
 
 
-    public void damage(Entity entity, double damage) {
-        // maybe usable for melee damage of epsilon?
-        if (damage == 0) return;
-        this.health += (int) Profile.getCurrent().EPSILON_HEALTH_REGAIN;
-        System.out.println("DAMAGING ...");
-        if (entity.vulnerable) {
-            entity.health -= damageSize.get(damage);
-            if (entity.health <= 0) {
-                entity.eliminate();
-            }
-        }
-    }
+//    public void damage(Entity entity, double damage) {
+//        // maybe usable for melee damage of epsilon?
+//        if (damage == 0) return;
+//        this.health += (int) Profile.getCurrent().EPSILON_HEALTH_REGAIN;
+//        System.out.println("DAMAGING ...");
+//        if (entity.vulnerable) {
+//            entity.health -= damageSize.get(damage);
+//            if (entity.health <= 0) {
+//                entity.eliminate();
+//            }
+//        }
+//    }
 
 
 
@@ -433,6 +441,11 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
             if (!isOnFall) impact(new CollisionState(intersection));
             return;
         }
+
+        if (other instanceof CollectibleModel || other instanceof SmileyBullet){
+            return;
+        }
+
         // todo this may need to change
         damage((Entity) other, AttackTypes.ASTRAPE);
 

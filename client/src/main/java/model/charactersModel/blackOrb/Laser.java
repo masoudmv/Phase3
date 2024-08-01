@@ -2,8 +2,10 @@ package model.charactersModel.blackOrb;
 
 import controller.Game;
 import controller.Utils;
+import model.charactersModel.CollectibleModel;
 import model.charactersModel.GeoShapeModel;
 import model.MyPolygon;
+import model.charactersModel.SmileyBullet;
 import model.entities.AttackTypes;
 
 import java.awt.geom.Line2D;
@@ -25,6 +27,7 @@ public class Laser extends GeoShapeModel {
 
     public Laser(Orb orb1, Orb orb2) {
         super();
+        this.isHovering = true;
         OrbsOfALaser[0] = orb1; OrbsOfALaser[1] = orb2;
         Point2D o1 = new Point2D.Double(orb1.getCircle().getCenterX(), orb1.getCircle().getCenterY());
         Point2D o2 = new Point2D.Double(orb2.getCircle().getCenterX(), orb2.getCircle().getCenterY());
@@ -97,6 +100,7 @@ public class Laser extends GeoShapeModel {
 
     private boolean applyAvalanche(){
         for (GeoShapeModel model : entities){
+            // todo i think collectible does not have proper get bounds method ... fix it
             ArrayList<Point2D> bound = model.getBoundingPoints();
             boolean isInside = true;
             for (Point2D point : bound) {
@@ -114,18 +118,20 @@ public class Laser extends GeoShapeModel {
 
     private boolean applyAoEDamage(){
         for (GeoShapeModel model : entities){
-            ArrayList<Point2D> bound = model.getBoundingPoints();
-            boolean isInside = true;
+            if (!(model instanceof CollectibleModel) && !(model instanceof SmileyBullet)) {
+                ArrayList<Point2D> bound = model.getBoundingPoints();
+                boolean isInside = true;
 
-            for (Point2D point : bound) {
-                if (!isPointInPolygon(point, myPolygon.getVertices())){
-                    isInside = false;
+                for (Point2D point : bound) {
+                    if (!isPointInPolygon(point, myPolygon.getVertices())){
+                        isInside = false;
+                    }
                 }
-            }
 
-            if (isInside) {
-                this.damage(model, AttackTypes.AOE);
-                return true;
+                if (isInside) {
+                    this.damage(model, AttackTypes.AOE);
+                    return true;
+                }
             }
         }
 

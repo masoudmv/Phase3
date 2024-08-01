@@ -2,6 +2,8 @@ package model.charactersModel.blackOrb;
 
 import javafx.scene.shape.Circle;
 import model.charactersModel.BulletModel;
+import model.charactersModel.CollectibleModel;
+import model.charactersModel.EpsilonModel;
 import model.charactersModel.GeoShapeModel;
 import model.MyPolygon;
 import model.collision.Collidable;
@@ -17,6 +19,8 @@ import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import static controller.constants.EntityConstants.*;
+import static model.charactersModel.EpsilonModel.epsilons;
+import static model.charactersModel.blackOrb.BlackOrb.blackOrbs;
 import static model.charactersModel.blackOrb.BlackOrb.lasers;
 import static model.imagetools.ToolBox.getBufferedImage;
 
@@ -29,6 +33,23 @@ public class Orb extends GeoShapeModel implements Collidable {
         this.circle = new Circle(anchor.getX(), anchor.getY(), (double) image.getHeight() / 2);
         collidables.add(this);
         this.health = ORB_HEALTH.getValue();
+
+
+        /**
+         checking for intersection with epsilon
+         if it touches the orb in the creation process, YOU DIE!
+         */
+
+        for (EpsilonModel epsilon : epsilons){
+            for (GeoShapeModel model : entities){
+                if (model.intersects(this) && !model.equals(this)) model.eliminate();
+
+            }
+
+            if (epsilon.intersects(this)) System.out.println("YOU ARE DEAD!");
+            // todo show death panel ...
+        }
+
     }
 
     public static BufferedImage loadImage() {
@@ -36,8 +57,6 @@ public class Orb extends GeoShapeModel implements Collidable {
         Orb.image = getBufferedImage(img);
         return Orb.image;
     }
-
-
 
 
     public Circle getCircle() {
@@ -85,10 +104,10 @@ public class Orb extends GeoShapeModel implements Collidable {
     @Override
     public void eliminate() {
         super.eliminate();
+
+        CollectibleModel.dropCollectible(getAnchor(), ORB_NUM_OF_COLLECTIBLES.getValue(), ORB_COLLECTIBLES_XP.getValue());
+
         collidables.remove(this);
-
-//        CollectibleModel.dropCollectible(getAnchor(), ORB_NUM_OF_COLLECTIBLES.getValue(), ORB_COLLECTIBLES_XP.getValue());
-
         // List to collect lasers to be removed
         CopyOnWriteArrayList<Laser> lasersToRemove = new CopyOnWriteArrayList<>();
 

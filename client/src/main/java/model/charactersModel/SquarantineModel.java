@@ -1,6 +1,7 @@
 package model.charactersModel;
 
 import model.MyPolygon;
+import model.charactersModel.blackOrb.Orb;
 import model.collision.Collidable;
 import model.collision.CollisionState;
 import model.collision.Impactable;
@@ -394,6 +395,7 @@ public class SquarantineModel extends GeoShapeModel implements Movable, Collidab
     @Override
     public void onCollision(Collidable other, Point2D intersection) {
         if (other instanceof EpsilonModel) impact(relativeLocation(intersection, anchor), intersection, other);
+        if (other instanceof Orb) impact(relativeLocation(intersection, anchor), intersection, other);
         if (other instanceof BulletModel) {
             impact(relativeLocation(intersection, anchor), intersection, other, 7200);
             createImpactWave(this, other, intersection);

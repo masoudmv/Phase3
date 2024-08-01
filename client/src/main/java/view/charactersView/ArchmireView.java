@@ -16,7 +16,7 @@ public class ArchmireView extends GeoShapeView {
 
     public ArchmireView(String id, Image image) {
         super(id, image);
-        zOrder = 1;
+        zOrder = 2;
     }
 
     @Override

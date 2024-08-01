@@ -30,9 +30,12 @@ public class BulletModel extends GeoShapeModel implements Movable, Collidable, I
 
     public BulletModel(Point2D anchor, Direction direction) {
         super();
+
         this.radius = BULLET_RADIUS;
         this.anchor = anchor;
         this.direction = direction;
+        this.health = Integer.MAX_VALUE;
+
         // is needed? not think so!
         bulletModels.add(this);
 
@@ -81,20 +84,21 @@ public class BulletModel extends GeoShapeModel implements Movable, Collidable, I
 
     @Override
     public void bulletImpact(BulletModel bulletModel, Point2D collisionPoint) {
-        this.eliminate();
+//        this.eliminate();
     }
 
 
 
-    public void bulletImpact(BulletModel bulletModel, Point2D collisionPoint, Collidable collidable) {
-        ((Movable) collidable).bulletImpact(bulletModel, collisionPoint);
-        for (Movable movable : movables){
-            if (movable != this && movable != bulletModel && movable!= collidable){
-                ((Impactable)movable).impact(new CollisionState(collisionPoint));
-            }
-        }
-        this.eliminate();
-    }
+     // keeping this in case needed!
+//    public void bulletImpact(BulletModel bulletModel, Point2D collisionPoint, Collidable collidable) {
+//        ((Movable) collidable).bulletImpact(bulletModel, collisionPoint);
+//        for (Movable movable : movables){
+//            if (movable != this && movable != bulletModel && movable!= collidable){
+//                ((Impactable)movable).impact(new CollisionState(collisionPoint));
+//            }
+//        }
+//        this.eliminate();
+//    }
 
 
     @Override
@@ -182,14 +186,6 @@ public class BulletModel extends GeoShapeModel implements Movable, Collidable, I
 
     @Override
     public void onCollision(Collidable other, Point2D intersection) {
-        if (other instanceof EpsilonModel){
-            if (createdByEpsilon) return;
-            else {
-                this.damage((Entity) other, AttackTypes.MELEE);
-                eliminate();
-                return;
-            }
-        }
         if ( other instanceof CollectibleModel || other instanceof BulletModel) return;
         else if (other instanceof NecropickModel){
             if (((NecropickModel) other).isHovering()) return;
@@ -198,8 +194,17 @@ public class BulletModel extends GeoShapeModel implements Movable, Collidable, I
             }
         }
         else if (other instanceof FinalPanelModel) {
+            createImpactWave(this, other, intersection);
             eliminate();
             return;
+        }
+        if (other instanceof EpsilonModel){
+            if (createdByEpsilon) return;
+            else {
+                this.damage((Entity) other, AttackTypes.MELEE);
+                eliminate();
+                return;
+            }
         }
 
         // todo: change for multiplayer part ...

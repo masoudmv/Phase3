@@ -136,6 +136,7 @@ public interface Collidable {
             }
             if (minDistance < 5) {
                 if (collidable instanceof SquarantineModel) {
+                    // todo yum ...
 //                    ((SquarantineModel) collidable).damage(Profile.getCurrent().EPSILON_MELEE_DAMAGE);
                 } else if (collidable instanceof TrigorathModel) {
 //                    ((TrigorathModel) collidable).damage(Profile.getCurrent().EPSILON_MELEE_DAMAGE);
@@ -316,14 +317,12 @@ public interface Collidable {
     }
 
 
-    public default void createImpactWave(Collidable coll1, Collidable poly2, Point2D collisionPointOfPoly1){
+    default void createImpactWave(Collidable coll1, Collidable poly2, Point2D collisionPointOfPoly1){
         for (Impactable coll : impactables) {
-            if (!(coll instanceof CollectibleModel)) {
                 if (!(coll == poly2) && !(coll == this) ) {
-                    if (!(coll instanceof FinalPanelModel) && !(coll instanceof OmenoctModel))
-                        ((Impactable) coll).impact(new CollisionState(collisionPointOfPoly1));
+                        coll.impact(new CollisionState(collisionPointOfPoly1));
                 }
-            }
+
         }
     }
 

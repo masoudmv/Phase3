@@ -1,4 +1,5 @@
 package model.charactersModel;
+import controller.Game;
 import model.MyPolygon;
 import model.collision.Collidable;
 import model.movement.Direction;
@@ -39,6 +40,7 @@ public class CollectibleModel extends GeoShapeModel implements Collidable, Movab
         this.direction = new Direction(direction);
         this.direction.adjustDirectionMagnitude();
         this.collectibleXP = collectibleXP;
+        this.health = Integer.MAX_VALUE;
         impactInProgress = true;
         impactMaxVel = 1.75;
         setDummyPolygon();
@@ -157,6 +159,16 @@ public class CollectibleModel extends GeoShapeModel implements Collidable, Movab
         this.radius = radius;
     }
 
+    @Override
+    public ArrayList<Point2D> getBoundingPoints(){
+        ArrayList<Point2D> bound = new ArrayList<>();
+        bound.add(new Point2D.Double(getAnchor().getX() - getRadius(), getAnchor().getY()));
+        bound.add(new Point2D.Double(getAnchor().getX() + getRadius(), getAnchor().getY()));
+        bound.add(new Point2D.Double(getAnchor().getX(), getAnchor().getY() + getRadius()));
+        bound.add(new Point2D.Double(getAnchor().getX(), getAnchor().getY() - getRadius()));
+        return bound;
+    }
+
 
 
     public void eliminate(){
@@ -164,6 +176,7 @@ public class CollectibleModel extends GeoShapeModel implements Collidable, Movab
         collidables.remove(this);
         movables.remove(this);
         collectibleModels.remove(this);
+        Game.inGameXP += collectibleXP;
 //        findCollectibleView((this).getId()).remove();
     }
 
