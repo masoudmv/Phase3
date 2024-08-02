@@ -17,7 +17,7 @@ import static view.MainFrame.label;
 
 public class Game {
     private static Game INSTANCE;
-    public static int inGameXP;
+    public static int inGameXP = 1000;
     public static double ELAPSED_TIME =0;
     public static int wave;
     private boolean isPaused = false;

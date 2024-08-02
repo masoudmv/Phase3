@@ -1,8 +1,10 @@
 package model.charactersModel;
 
+import controller.Game;
 import model.FinalPanelModel;
 import model.MyPolygon;
 import model.entities.Entity;
+import model.entities.Profile;
 import model.movement.Direction;
 
 import java.awt.geom.Line2D;
@@ -343,5 +345,18 @@ public abstract class GeoShapeModel extends Entity {
             }
         }
         return new double[]{min, max};
+    }
+
+    public boolean dontUpdate(){
+        double now = Game.ELAPSED_TIME;
+        double slumberInitiation = Profile.getCurrent().slumberInitiationTime;
+        return now - slumberInitiation < 10;
+    }
+
+
+    public void update(){
+
+
+
     }
 }

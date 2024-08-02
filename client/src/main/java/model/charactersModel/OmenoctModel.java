@@ -1,6 +1,7 @@
 package model.charactersModel;
 
 import controller.Game;
+import controller.PolygonUtils;
 import model.FinalPanelModel;
 import model.MyPolygon;
 import model.collision.Collidable;
@@ -15,6 +16,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import static controller.UserInterfaceController.createOmenoctView;
 import static controller.constants.Constants.SPEED;
 import static controller.Utils.*;
 import static controller.constants.EntityConstants.*;
@@ -31,11 +33,34 @@ public class OmenoctModel extends GeoShapeModel implements Collidable {
     private double lastShotBullet = 0;
 
     public OmenoctModel(Point2D anchor){
-        super(anchor, image, pol);
+        super(anchor, image, pol, false);
         omenoctModels.add(this);
         collidables.add(this);
         this.health = OMENOCT_HEALTH.getValue();
+        initVertices();
+        createOmenoctView(id);
     }
+
+    private void initVertices() {
+        double edgeLength = 20;
+        double angle = Math.PI / 4; // 45 degrees in radians
+        double radius = edgeLength / (2 * Math.sin(angle / 2));
+
+        // Create an array to hold the x and y coordinates of the vertices
+        double[] xPoints = new double[8];
+        double[] yPoints = new double[8];
+
+        for (int i = 0; i < 8; i++) {
+            double theta = Math.PI / 8 + angle * i;
+            xPoints[i] = anchor.getX() + radius * Math.cos(theta);
+            yPoints[i] = anchor.getY() + radius * Math.sin(theta);
+        }
+
+        // Initialize the MyPolygon instance with the calculated vertices
+        pol = new MyPolygon(xPoints, yPoints, 8);
+        setMyPolygon(pol);
+    }
+
 
     private void shootNonRigidBullet(){
         double now = Game.ELAPSED_TIME;
@@ -94,9 +119,9 @@ public class OmenoctModel extends GeoShapeModel implements Collidable {
     }
 
     public void updateDirection() { // todo fix shaking with panel shrinkage
-        if (EpsilonModel.getINSTANCE().localPanel == null) return;
+        if (EpsilonModel.getINSTANCE().getLocalPanel() == null) return;
         if (!isOnEpsilonPanel) {
-            HashMap<Integer, Point2D> res = closestPointOnEdges(anchor, EpsilonModel.getINSTANCE().localPanel.getEdges());
+            HashMap<Integer, Point2D> res = closestPointOnEdges(anchor, EpsilonModel.getINSTANCE().getLocalPanel().getEdges());
             int edgeIndex = res.entrySet().iterator().next().getKey();
             Point2D closest = res.get(edgeIndex);
 
@@ -151,9 +176,15 @@ public class OmenoctModel extends GeoShapeModel implements Collidable {
         }
 
     }
-//    private Point2D findClosestPointOnPanel(MainPanel panel) {
-//        return closestPointOnPolygon(anchor, panel.getVertices());
-//    }
+
+
+    @Override
+    public void update(){
+        if (dontUpdate()) return;
+        setOnEpsilonPanel(EpsilonModel.getINSTANCE().getLocalPanel());
+        updateDirection();
+    }
+
 
     private Point2D findClosestPointToEpsilon(EpsilonModel epsilon, FinalPanelModel panel) {
         double minDistance = Double.MAX_VALUE;
@@ -201,12 +232,12 @@ public class OmenoctModel extends GeoShapeModel implements Collidable {
     }
 
     public String getRotationDirection() {
-        if (EpsilonModel.getINSTANCE().localPanel == null) return "";
-        Point2D[] corners = EpsilonModel.getINSTANCE().localPanel.getVertices();
+        if (EpsilonModel.getINSTANCE().getLocalPanel() == null) return "";
+        Point2D[] corners = EpsilonModel.getINSTANCE().getLocalPanel().getVertices();
 
 //        Point2D start = findClosestPointOnPanel(MainPanel.getINSTANCE());
-        Point2D start = findClosestPointOnEdges(getAnchor(), EpsilonModel.getINSTANCE().localPanel.getEdges());
-        Point2D destination = findClosestPointToEpsilon(EpsilonModel.getINSTANCE(), EpsilonModel.getINSTANCE().localPanel);
+        Point2D start = findClosestPointOnEdges(getAnchor(), EpsilonModel.getINSTANCE().getLocalPanel().getEdges());
+        Point2D destination = findClosestPointToEpsilon(EpsilonModel.getINSTANCE(), EpsilonModel.getINSTANCE().getLocalPanel());
 
         int startSide = omenoctEdgeIndex;
         int destSide = destinationEdgeIndex;
@@ -278,8 +309,62 @@ public class OmenoctModel extends GeoShapeModel implements Collidable {
 
     @Override
     public void onCollision(Collidable other, Point2D coll1, Point2D coll2) {
+        if (other instanceof BarricadosModel) {
+            BarricadosModel barricados = (BarricadosModel) other;
 
+            PolygonUtils.Result result = PolygonUtils.findSeparationVector(this.myPolygon, barricados.myPolygon);
+
+            if (result.distance > 0) {
+                // Move OmenoctModel by the minimum translation vector
+                Point2D movement = new Point2D.Double(-result.direction.x * result.distance, -result.direction.y * result.distance);
+                movePolygon(movement);
+            }
+        }
     }
+
+    private Point2D findClosestPointOnPolygon(MyPolygon polygon, Point2D[] vertices) {
+        Point2D closestPoint = null;
+        double minDistance = Double.MAX_VALUE;
+
+        for (int i = 0; i < vertices.length; i++) {
+            int nextIndex = (i + 1) % vertices.length;
+            Point2D p1 = vertices[i];
+            Point2D p2 = vertices[nextIndex];
+
+            Point2D closest = getClosestPointOnSegment(p1, p2, polygon.getCenter());
+            double distance = closest.distance(polygon.getCenter());
+
+            if (distance < minDistance) {
+                minDistance = distance;
+                closestPoint = closest;
+            }
+        }
+        return closestPoint;
+    }
+
+    private Point2D getClosestPointOnSegment(Point2D p1, Point2D p2, Point2D p) {
+        double xDelta = p2.getX() - p1.getX();
+        double yDelta = p2.getY() - p1.getY();
+
+        if ((xDelta == 0) && (yDelta == 0)) {
+            throw new IllegalArgumentException("p1 and p2 cannot be the same point");
+        }
+
+        double u = ((p.getX() - p1.getX()) * xDelta + (p.getY() - p1.getY()) * yDelta) / (xDelta * xDelta + yDelta * yDelta);
+
+        final Point2D closestPoint;
+        if (u < 0) {
+            closestPoint = p1;
+        } else if (u > 1) {
+            closestPoint = p2;
+        } else {
+            closestPoint = new Point2D.Double(p1.getX() + u * xDelta, p1.getY() + u * yDelta);
+        }
+
+        return closestPoint;
+    }
+
+
 
 
 }

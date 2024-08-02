@@ -96,4 +96,14 @@ public class MyPolygon extends Polygon { //todo remove inheritance
         }
     }
 
+    public Point2D getCenter(){
+        double x = 0;
+        double y = 0;
+        for (int i = 0; i < npoints; i++) {
+            x += xpoints[i];
+            y += ypoints[i];
+        }
+        return new Point2D.Double(x/npoints, y/npoints);
+    }
+
 }

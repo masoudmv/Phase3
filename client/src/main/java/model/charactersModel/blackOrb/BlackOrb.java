@@ -3,13 +3,11 @@ package model.charactersModel.blackOrb;
 import controller.Game;
 import model.FinalPanelModel;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import static controller.UserInterfaceController.updateGeoShapeViewProperties;
 import static controller.Utils.*;
 import static controller.constants.EntityConstants.ORB_PANEL_CREATION_DELAY;
 
@@ -42,7 +40,7 @@ public class BlackOrb { // todo panels should be created with delay?
         blackOrbs.add(this);
     }
 
-    public void initiateBlackOrb(){
+    public void update(){
         initiateAvalanche();
         Laser.performAoeDamage();
 
@@ -72,6 +70,7 @@ public class BlackOrb { // todo panels should be created with delay?
     private void initializedOrbs(){
         for (int i = 0; i < 5; i++) {
             orbs[i] = new Orb(addVectors(vertices[i], movePanelLocation));
+            orbs[i].setPanel(panels[i]);
 //            updateGeoShapeViewProperties();
 
         }

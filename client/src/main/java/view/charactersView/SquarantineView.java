@@ -23,13 +23,6 @@ public class SquarantineView extends GeoShapeView{
     }
 
 
-
-
-//    public String getId() {
-//        return id;
-//    }
-
-
     public void draw(Graphics g, String panelID){
         Graphics2D g2d = (Graphics2D) g;
 

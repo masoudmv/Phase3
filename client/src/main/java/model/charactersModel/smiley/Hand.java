@@ -92,7 +92,7 @@ public class Hand extends GeoShapeModel implements Collidable {
         squeezeInProgress = true;
         finalPanelModel.setRigid(true);
         beforeSlapPosition = new Point2D.Double(getAnchor().getX(), getAnchor().getY()); // Store exact position
-        FinalPanelModel epsilonPanel = EpsilonModel.getINSTANCE().localPanel;
+        FinalPanelModel epsilonPanel = EpsilonModel.getINSTANCE().getLocalPanel();
         double x = epsilonPanel.getLocation().getX() + (isRightHand() ? epsilonPanel.getSize().getWidth() + finalPanelModel.getSize().getWidth()/2 : -finalPanelModel.getSize().getWidth()/2);
         double y = epsilonPanel.getLocation().getY() + epsilonPanel.getSize().getHeight()/2;
         moveTo(new Point2D.Double(x, y));
@@ -162,9 +162,10 @@ public class Hand extends GeoShapeModel implements Collidable {
         return direction;
     }
 
-    public void move() {
+    public void update() {
+        if (dontUpdate()) return;
         updateDirection();
-        move(direction);
+        update(direction);
     }
 
     private void updateActions(){
@@ -182,7 +183,7 @@ public class Hand extends GeoShapeModel implements Collidable {
 
     }
 
-    private void move(Direction direction) {
+    private void update(Direction direction) {
         if (direction == null) return;
         Point2D movement = multiplyVector(direction.getNormalizedDirectionVector(), direction.getMagnitude());
         movePolygon(movement);
@@ -259,7 +260,7 @@ public class Hand extends GeoShapeModel implements Collidable {
 //            System.out.println("Moving ...");
             movementState.updateSpeed();
             direction.setMagnitude(movementState.getSpeed());
-            move(direction); // Ensure this method is called to apply movement
+            update(direction); // Ensure this method is called to apply movement
         }
 //
         else if (beforeSlapPosition != null) {

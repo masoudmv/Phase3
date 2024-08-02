@@ -19,8 +19,6 @@ import java.util.Random;
 
 import static controller.constants.Constants.*;
 import static controller.UserInterfaceController.*;
-import static controller.Sound.playDeathSound;
-import static controller.GameLoop.aliveEnemies;
 import static controller.Utils.*;
 import static controller.constants.EntityConstants.*;
 import static model.imagetools.ToolBox.getBufferedImage;
@@ -48,8 +46,8 @@ public class SquarantineModel extends GeoShapeModel implements Movable, Collidab
         collidables.add(this);
         movables.add(this);
         impactables.add(this);
-        createSquarantineView(id);
         this.health = 10;
+        createSquarantineView(id);
 
     }
 
@@ -181,16 +179,6 @@ public class SquarantineModel extends GeoShapeModel implements Movable, Collidab
     }
 
 
-
-
-
-    public void bulletImpact(BulletModel bulletModel, Point2D collisionPoint){
-        Point2D impactVector = bulletModel.getDirection().getDirectionVector();
-        impactMaxVelocity = 2 * IMPACT_COEFFICIENT / 5;
-        setImpactInProgress(true);
-        this.setDirection(new Direction(normalizeVector(impactVector)));
-
-    }
     private void updateNextDashTime(){
         Random random = new Random();
         nextDash = Math.abs(random.nextGaussian(0.5, 0.5));
@@ -262,7 +250,7 @@ public class SquarantineModel extends GeoShapeModel implements Movable, Collidab
     }
 
     @Override
-    public void move(Direction direction) {
+    public void update(Direction direction) {
         Point2D movement = multiplyVector(direction.getDirectionVector(), direction.getMagnitude());
         Random random = new Random();
         Point2D dir = normalizeVector(relativeLocation(EpsilonModel.getINSTANCE().getAnchor(), getAnchor()));
@@ -275,11 +263,15 @@ public class SquarantineModel extends GeoShapeModel implements Movable, Collidab
             setImpactInProgress(true);
         }
         movePolygon(movement);
+
+        friction();
+        rotate();
     }
 
     @Override
-    public void move() {
-        move(direction);
+    public void update() {
+        if (dontUpdate()) return;
+        update(direction);
     }
 
     @Override

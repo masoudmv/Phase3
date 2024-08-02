@@ -105,15 +105,15 @@ public interface Collidable {
         return findMidPoint(intersection1, intersection2);
     }
 
-    private void handleBulletImpact(Point2D intersection, Collidable collidable) {
-        // todo edit
+//    private void handleBulletImpact(Point2D intersection, Collidable collidable) {
+//        // todo edit
 //        if (collidable instanceof SquarantineModel) {
 //            ((SquarantineModel) collidable).damage(Profile.getCurrent().EPSILON_RANGED_DAMAGE);
 //        } else if (collidable instanceof TrigorathModel) {
 //            ((TrigorathModel) collidable).damage(Profile.getCurrent().EPSILON_RANGED_DAMAGE);
 //        }
 //        ((BulletModel) this).bulletImpact((BulletModel) this, intersection, collidable);
-    }
+//    }
 
     private void handleCirclePolygonImpact(Point2D intersection, Collidable collidable) {
         double minDistance = Double.MAX_VALUE;

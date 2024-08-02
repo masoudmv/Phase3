@@ -82,6 +82,15 @@ public class FinalPanelView extends JPanel {
 //        repaint();
     }
 
+
+
+    public void eliminate(){
+        MainFrame frame = MainFrame.getINSTANCE();
+        frame.remove(this);
+        finalPanelViews.remove(this);
+        System.out.println("ELIMINATED ... ");
+    }
+
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);

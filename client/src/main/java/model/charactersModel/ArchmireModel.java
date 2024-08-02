@@ -122,7 +122,7 @@ public class ArchmireModel extends GeoShapeModel implements Collidable {
     }
 
 
-    void move(Direction direction) {
+    void update(Direction direction) {
         Point2D movement = multiplyVector(direction.getNormalizedDirectionVector(), direction.getMagnitude());
         movePolygon(movement);
         updateLocation();
@@ -152,8 +152,9 @@ public class ArchmireModel extends GeoShapeModel implements Collidable {
 
     }
 
-    public void move() {
-        move(direction);
+    public void update() {
+        super.update();
+        update(direction);
     }
 
     @Override

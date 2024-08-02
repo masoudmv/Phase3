@@ -47,6 +47,7 @@ public class CollectibleModel extends GeoShapeModel implements Collidable, Movab
         collectibleModels.add(this);
         collidables.add(this);
         createCollectibleView(id);
+
     }
 
     public int getCollectibleXP() {
@@ -89,25 +90,21 @@ public class CollectibleModel extends GeoShapeModel implements Collidable, Movab
     }
 
     @Override
-    public void bulletImpact(BulletModel bulletModel, Point2D collisionPoint) {
-
-    }
-
-    @Override
     public Direction getDirection() {
         return this.direction;
     }
 
     @Override
-    public void move(Direction direction) {
+    public void update(Direction direction) {
         Point2D movement = multiplyVector(direction.getDirectionVector(), direction.getMagnitude());
         this.anchor = addVectors(anchor, movement);
-
+        friction();
     }
 
     @Override
-    public void move() {
-        move(direction);
+    public void update() {
+        super.update();
+        update(direction);
     }
 
     @Override

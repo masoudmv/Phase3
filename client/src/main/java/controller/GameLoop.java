@@ -100,7 +100,7 @@ public class GameLoop implements Runnable {
 
 
         ELAPSED_TIME = 0;
-        inGameXP = 0;
+        inGameXP = 1000;
         wave = 1;
         MainFrame frame = MainFrame.getINSTANCE();
         frame.addMouseListener(new MouseController());
@@ -163,26 +163,8 @@ public class GameLoop implements Runnable {
             lastUpdateTime = currentTime;
         }
 
-        for (Fist f : fists){
-            f.move();
-        }
-
-        for (Smiley smiley : Smiley.smilies){
-            smiley.move();
-        }
 
 
-        for (Hand h : hands){
-//            h.rot();
-            h.move();
-//            h.mySlapAttack();
-//            h.rotateTowardsTarget();
-//            if (ELAPSED_TIME > 3) h.rot();
-        }
-
-        for (SmileyBullet b : smileyBullets){
-            b.move();
-        }
 
 
 
@@ -240,9 +222,6 @@ public class GameLoop implements Runnable {
         }
 
 
-        for (int i = 0; i < BlackOrb.blackOrbs.size(); i++) {
-            BlackOrb.blackOrbs.get(i).initiateBlackOrb();
-        }
 
 //        MainPanel panel = MainPanel.getINSTANCE();
 //        if (ELAPSED_TIME < 2) panel.verticalShrink(2);
@@ -257,33 +236,63 @@ public class GameLoop implements Runnable {
 ////            movable.friction();
 //        }
 
+        for (int i = 0; i < BlackOrb.blackOrbs.size(); i++) {
+            BlackOrb.blackOrbs.get(i).update();
+        }
+
+        for (Fist f : fists){
+            f.update();
+        }
+
+        for (Smiley smiley : Smiley.smilies){
+            smiley.update();
+        }
+
+
+        for (Hand h : hands){
+//            h.rot();
+            h.update();
+//            h.mySlapAttack();
+//            h.rotateTowardsTarget();
+//            if (ELAPSED_TIME > 3) h.rot();
+        }
+
+        for (SmileyBullet b : smileyBullets){
+            b.update();
+        }
+
+
 
         for (OmenoctModel omenoctModel : OmenoctModel.omenoctModels) {
-            omenoctModel.setOnEpsilonPanel(EpsilonModel.getINSTANCE().localPanel);
+            omenoctModel.setOnEpsilonPanel(EpsilonModel.getINSTANCE().getLocalPanel());
             omenoctModel.updateDirection();
         }
 
 
         for (NecropickModel n : necropickModels) {   // todo revert
-            n.move();
+            n.update();
         }
 
 
         for (ArchmireModel archmireModel : ArchmireModel.archmireModels) {
-            archmireModel.move();
+            archmireModel.update();
+        }
 
-//            ArrayList<Polygon> polygons = new ArrayList<>();
-//            for (int i = 0; i < MainPanel.locationHistory.size(); i++) {
-//                polygons.add(MainPanel.locationHistory.get(i).getPolygon());
-//            }
-//            MainPanel.getINSTANCE().shapes.add(createSinglePolygon(polygons));
+        for (TrigorathModel t : trigorathModels) {
+            t.rotate();
+        }
+        for (SquarantineModel s : squarantineModels) {
+            s.rotate();
         }
 
 
-//        for (int i = 0; i < collectibleModels.size(); i++) {
-//            double age = ELAPSED_TIME - collectibleModels.get(i).birthTime;
-//            if (age >= 10) collectibleModels.get(i).remove();
-//        }
+
+        for (Movable movable: movables){
+            movable.update();
+            movable.friction();
+        }
+
+
 
         if (EpsilonModel.getINSTANCE().getHp() <= 0) {
 //            MainFrame.getINSTANCE().remove(MainPanel.getINSTANCE());
@@ -291,8 +300,9 @@ public class GameLoop implements Runnable {
             MainFrame.getINSTANCE().remove(label);
 //            gameLoop.stop();
             new GameOverPanel();
-
         }
+
+
         if (wave > 3) {
 //            MainFrame.getINSTANCE().removeKeyListener(this);
 //            MainFrame.getINSTANCE().removeMouseListener(MainPanel.getINSTANCE().getMouseController());
@@ -349,22 +359,12 @@ public class GameLoop implements Runnable {
                 }
             }
             collectibleModel.friction();
-            collectibleModel.move();
-        }
-        long currentTime = System.currentTimeMillis();
-        if (currentTime - lastUpdateTimeUPS >= 1000) {
-            System.out.println(updateCount); //FPS
-            updateCount = 0;
-            lastUpdateTimeUPS = currentTime;
+            collectibleModel.update();
         }
 
 
-        for (TrigorathModel t : trigorathModels) {
-            t.rotate();
-        }
-        for (SquarantineModel s : squarantineModels) {
-            s.rotate();
-        }
+
+        // TODO move these out of gameLoop ...
 
         if (ELAPSED_TIME > empowerEndTime) {
             empowerIsOn = false;
@@ -396,10 +396,7 @@ public class GameLoop implements Runnable {
         }
 
 
-        for (Movable movable: movables){
-            movable.move();
-            movable.friction();
-        }
+
 
     }
 

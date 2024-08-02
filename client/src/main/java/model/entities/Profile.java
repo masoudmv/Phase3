@@ -17,11 +17,16 @@ public class Profile {
     public double PANEL_SHRINKAGE_COEFFICIENT = 0.15;
     public double EPSILON_HEALTH_REGAIN = 0;
     public double EPSILON_VULNERABILITY_PROBABILITY = 100;
+    public int BULLET_DAMAGE = 5;
     public double EPSILON_AUTO_DAMAGE = 0;
     public String activeSkillSaveName = "";
     public CopyOnWriteArrayList<String> acquiredSkillsNames = new CopyOnWriteArrayList<>();
     public int totalXP = 0;
     public int currentGameXP = 0;
+
+    public double dismayInitiationTime = -Double.MAX_VALUE;
+    public double slumberInitiationTime = -Double.MAX_VALUE;
+    public double slaughterInitiationTime = -Double.MAX_VALUE;
 
     public static Profile getCurrent() {
         return current;

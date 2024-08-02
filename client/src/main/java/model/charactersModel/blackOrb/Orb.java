@@ -1,6 +1,7 @@
 package model.charactersModel.blackOrb;
 
 import javafx.scene.shape.Circle;
+import model.FinalPanelModel;
 import model.charactersModel.BulletModel;
 import model.charactersModel.CollectibleModel;
 import model.charactersModel.EpsilonModel;
@@ -27,6 +28,7 @@ import static model.imagetools.ToolBox.getBufferedImage;
 public class Orb extends GeoShapeModel implements Collidable {
     static BufferedImage image; // transient to avoid serialization
     private final Circle circle;
+    private FinalPanelModel panel;
 
     public Orb(Point2D anchor) {
         super(anchor, image);
@@ -101,6 +103,14 @@ public class Orb extends GeoShapeModel implements Collidable {
     @Override
     public void onCollision(Collidable other, Point2D coll1, Point2D coll2) {}
 
+    public FinalPanelModel getPanel() {
+        return panel;
+    }
+
+    public void setPanel(FinalPanelModel panel) {
+        this.panel = panel;
+    }
+
     @Override
     public void eliminate() {
         super.eliminate();
@@ -121,6 +131,9 @@ public class Orb extends GeoShapeModel implements Collidable {
 
         // Remove collected lasers from the list
         lasers.removeAll(lasersToRemove);
+
+
+        panel.eliminate();
 //        collidables.remove(this);
     }
 }

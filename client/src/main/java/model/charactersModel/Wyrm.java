@@ -44,9 +44,14 @@ public class Wyrm extends GeoShapeModel implements Collidable {
 
     }
 
-    void move() {
+    public void update() {
+        if (dontUpdate()) return;
+
+        // some other logic
 
     }
+
+
 
     @Override
     public boolean isCircular() {

@@ -6,7 +6,6 @@ import model.MyPolygon;
 import model.collision.Collidable;
 import model.movement.Direction;
 import org.example.GraphicalObject;
-import view.charactersView.NecropickView;
 
 import javax.swing.*;
 import java.awt.*;
@@ -79,7 +78,8 @@ public class NecropickModel extends GeoShapeModel implements Collidable {
         return new Point2D.Double(x, y);
     }
 
-    public void move() {
+    public void update() {
+        if (dontUpdate()) return;
         double elapsedTime = Game.ELAPSED_TIME;
 
         if (!isHovering && (elapsedTime - stateChangeTime) >= HOVER_DURATION) {

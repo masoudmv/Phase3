@@ -56,6 +56,12 @@ public class BabyEpsilon extends GeoShapeModel {
         return bound;
     }
 
+    @Override
+    public void update() {
+        super.update();
+
+    }
+
     private static Point2D[] calculateEquilateralTriangleVertices(Point2D center, double sideLength) {
         Point2D[] vertices = new Point2D[3];
         double height = (Math.sqrt(3) / 3) * sideLength;

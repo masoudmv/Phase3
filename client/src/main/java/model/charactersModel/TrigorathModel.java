@@ -8,7 +8,6 @@ import model.collision.CollisionState;
 import model.collision.Impactable;
 import model.movement.Direction;
 import model.movement.Movable;
-import view.charactersView.TrigorathView;
 
 import javax.swing.*;
 import java.awt.*;
@@ -18,13 +17,9 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.UUID;
 
 import static controller.constants.Constants.*;
 import static controller.UserInterfaceController.*;
-import static controller.Sound.playBubble;
-import static controller.Sound.playDeathSound;
-import static controller.GameLoop.aliveEnemies;
 import static controller.Utils.*;
 import static controller.constants.EntityConstants.*;
 import static model.imagetools.ToolBox.getBufferedImage;
@@ -137,7 +132,7 @@ public class TrigorathModel extends GeoShapeModel implements Movable, Collidable
 
     public void impact(Point2D normalVector, Point2D collisionPoint, Collidable polygon) {
         double distanceByEpsilon = getAnchor().distance(EpsilonModel.getINSTANCE().getAnchor());
-        if (distanceByEpsilon<TRIGORATH_MAX_VEL_RADIUS) {
+        if (distanceByEpsilon < TRIGORATH_MAX_VEL_RADIUS) {
             Point2D collisionRelativeVector = relativeLocation(this.getAnchor(), collisionPoint);
             double impactCoefficient = getImpactCoefficient(collisionRelativeVector);
             Point2D impactVector = relativeLocation(collisionPoint, polygon.getAnchor());
@@ -156,6 +151,7 @@ public class TrigorathModel extends GeoShapeModel implements Movable, Collidable
             this.setDirection(new Direction(normalizeTrigorathVector(impactVector)));
 
         }
+
         // Angular motion
         setAngularMotion(collisionPoint, polygon, 34000);
         createImpactWave(this, polygon, collisionPoint);
@@ -275,23 +271,6 @@ public class TrigorathModel extends GeoShapeModel implements Movable, Collidable
         }
     }
 
-    public void bulletImpact(BulletModel bulletModel, Point2D collisionPoint){
-        double distanceByEpsilon = getAnchor().distance(EpsilonModel.getINSTANCE().getAnchor());
-        if (distanceByEpsilon < TRIGORATH_MAX_VEL_RADIUS) {
-            Point2D impactVector = bulletModel.getDirection().getNormalizedDirectionVector();
-            impactMaxVelocity = 2 * BULLET_IMPACT_COEFFICIENT / 5;
-            setImpactInProgress(true);
-            this.setDirection(new Direction(impactVector));
-        }
-        else {
-            Point2D impactVector = bulletModel.getDirection().getTrigorathNormalizedDirectionVector();
-            impactMaxVelocity = 2 * BULLET_IMPACT_COEFFICIENT / 5;
-            setImpactInProgress(true);
-            this.setDirection(new Direction(impactVector));
-//            getDirection().adjustTrigorathDirectionMagnitude();
-        }
-    }
-
     @Override
     public Point2D[] getVertices() {
         return this.myPolygon.getVertices();
@@ -303,7 +282,7 @@ public class TrigorathModel extends GeoShapeModel implements Movable, Collidable
     } // todo implement
 
     @Override
-    public void move(Direction direction) {
+    public void update(Direction direction) {
         double distanceByEpsilon = getAnchor().distance(EpsilonModel.getINSTANCE().getAnchor());
         Point2D movement = multiplyVector(direction.getDirectionVector(), direction.getMagnitude());
         double magnitude = getDirection().getMagnitude();
@@ -316,11 +295,14 @@ public class TrigorathModel extends GeoShapeModel implements Movable, Collidable
         // TODO !isImpactInProgress???
 
         movePolygon(movement);
+//        rotate();
+//        friction();
     }
 
     @Override
-    public void move() {
-        move(direction);
+    public void update() {
+        if (dontUpdate()) return;
+        update(direction);
     }
 
     @Override
@@ -463,7 +445,10 @@ public class TrigorathModel extends GeoShapeModel implements Movable, Collidable
 
     @Override
     public void onCollision(Collidable other, Point2D intersection) {
-        if (other instanceof EpsilonModel) impact(relativeLocation(intersection, anchor), intersection, other);
+        if (other instanceof EpsilonModel) {
+            System.out.println("IMPACT");
+            impact(relativeLocation(intersection, anchor), intersection, other);
+        }
         if (other instanceof Orb) impact(relativeLocation(intersection, anchor), intersection, other);
         if (other instanceof BulletModel) {
             impact(relativeLocation(intersection, anchor), intersection, other, 6200);

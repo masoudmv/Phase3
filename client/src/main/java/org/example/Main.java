@@ -16,6 +16,7 @@ import view.*;
 
 import javax.imageio.ImageIO;
 import javax.sound.sampled.*;
+import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
@@ -23,6 +24,7 @@ import java.io.File;
 import java.io.IOException;
 
 import view.junks.Menu;
+
 
 public class Main {
     static BufferedImage bufferedImage;
@@ -51,7 +53,7 @@ public class Main {
         BufferedImage b = EpsilonModel.loadImage();
         GraphicalObject bows = new GraphicalObject(b);
         MyPolygon pol = bows.myBoundingPolygon;
-        new EpsilonModel(new Point2D.Double(1000, 400), pol);
+        new EpsilonModel(new Point2D.Double(1000, 700), pol);
 
 
         MainFrame.getINSTANCE();
@@ -69,12 +71,31 @@ public class Main {
         Orb.loadImage();
         BarricadosModel.loadImage();
 
+        new TrigorathModel(new Point2D.Double(400, 500));
 
-//        new SquarantineModel(new Point2D.Double(100, 100));
+
+
+
+
+
+
+//        createArchmire();
+
+//    new OmenoctModel(new Point2D.Double(400, 500));
+//    new BarricadosModel(new Point2D.Double(1400, 800));
+
+
+//        new OmenoctModel(new Point2D.Double(100, 410));
+//        new BarricadosModel(new Point2D.Double(400, 400));
+
+//        new ArchmireModel(new Point2D.Double(100, 510));
+//        new SquarantineModel(new Point2D.Double(200, 510));
+//        new SquarantineModel(new Point2D.Double(300, 510));
+//        new OmenoctModel(new Point2D.Double(300, 400));
+
+//
+//
 //        new BlackOrb();
-
-
-    new BarricadosModel(new Point2D.Double(1500, 900));
 
 
         // don't touch the above lines for now!

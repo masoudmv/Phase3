@@ -50,18 +50,19 @@ public class Fist extends GeoShapeModel implements Collidable {
     }
 
 
-    void move(Direction direction) {
+    void update(Direction direction) {
         if (direction == null) return;
         Point2D movement = multiplyVector(direction.getNormalizedDirectionVector(), direction.getMagnitude());
         movePolygon(movement);
         finalPanelModel.moveLocation(movement);
     }
 
-    public void move() {
+    public void update() {
+        if (dontUpdate()) return;
         if (!quakeInProgress) return;
         setBottomVertex();
         direction = new Direction(new Point2D.Double(0, getSpeed()));
-        move(direction);
+        update(direction);
 
     }
 

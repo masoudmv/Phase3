@@ -2,7 +2,6 @@ package model.charactersModel;
 
 import model.FinalPanelModel;
 import model.MyPolygon;
-import model.charactersModel.blackOrb.Orb;
 import model.collision.Collidable;
 import model.collision.CollisionState;
 import model.collision.Impactable;
@@ -11,7 +10,6 @@ import model.entities.Entity;
 import model.entities.Profile;
 import model.movement.Direction;
 import model.movement.Movable;
-import view.charactersView.NecropickView;
 
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
@@ -42,8 +40,18 @@ public class BulletModel extends GeoShapeModel implements Movable, Collidable, I
         movables.add(this);
         collidables.add(this);
         creatBulletView(id);
-        damageSize.put(AttackTypes.MELEE, 5);
+
+        int damage  = Profile.getCurrent().BULLET_DAMAGE;
+        damageSize.put(AttackTypes.MELEE, damage);
+        updateBulletDamage();
+
+
     }
+
+    private void updateBulletDamage(){
+        if (Profile.getCurrent().BULLET_DAMAGE > 5) Profile.getCurrent().BULLET_DAMAGE = 5;
+    }
+
 
     public BulletModel(Point2D anchor, Direction direction, boolean createdByEpsilon) {
         super();
@@ -59,6 +67,9 @@ public class BulletModel extends GeoShapeModel implements Movable, Collidable, I
         creatBulletView(id);
         damageSize.put(AttackTypes.MELEE, 5);
     }
+
+
+
 
 
     public String getId() {
@@ -82,14 +93,8 @@ public class BulletModel extends GeoShapeModel implements Movable, Collidable, I
     @Override
     public void setDirection(Direction direction) {}
 
-    @Override
-    public void bulletImpact(BulletModel bulletModel, Point2D collisionPoint) {
-//        this.eliminate();
-    }
 
-
-
-     // keeping this in case needed!
+    // keeping this in case needed!
 //    public void bulletImpact(BulletModel bulletModel, Point2D collisionPoint, Collidable collidable) {
 //        ((Movable) collidable).bulletImpact(bulletModel, collisionPoint);
 //        for (Movable movable : movables){
@@ -107,14 +112,15 @@ public class BulletModel extends GeoShapeModel implements Movable, Collidable, I
     }
 
     @Override
-    public void move(Direction direction) {
+    public void update(Direction direction) {
         Point2D movement = multiplyVector(direction.getNormalizedDirectionVector(), BULLET_VELOCITY);
         this.anchor = addVectors(anchor, movement);
     }
 
     @Override
-    public void move() {
-        move(direction);
+    public void update() {
+        super.update();
+        update(direction);
     }
 
     @Override

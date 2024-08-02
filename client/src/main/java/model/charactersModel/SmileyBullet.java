@@ -39,14 +39,15 @@ public class SmileyBullet extends GeoShapeModel implements Collidable {
         this.health = Integer.MAX_VALUE;
     }
 
-    void move(Direction direction) {
+    void update(Direction direction) {
         Point2D movement = multiplyVector(direction.getNormalizedDirectionVector(), direction.getMagnitude());
         movePolygon(movement);
     }
 
-    public void move() {
+    public void update() {
+        if (dontUpdate()) return;
         if (direction == null) return;
-        move(direction);
+        update(direction);
         if (isOutSide()) eliminate();
     }
 

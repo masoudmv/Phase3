@@ -59,9 +59,9 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
 
     public static List<EpsilonModel> epsilons = new CopyOnWriteArrayList<>();
 
-//    @SerializedName("localPanel")
+    //    @SerializedName("localPanel")
 //    @Expose
-    public static FinalPanelModel localPanel;
+    private FinalPanelModel localPanel;
 
     public EpsilonModel(Point2D anchor, MyPolygon myPolygon) {
         super(anchor, image, myPolygon, true);
@@ -107,10 +107,6 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
     @Override
     public void setDirection(Direction direction) {
         this.direction = direction;
-    }
-
-    @Override
-    public void bulletImpact(BulletModel bulletModel, Point2D collisionPoint) {
     }
 
     @Override
@@ -184,7 +180,7 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
     }
 
     @Override
-    public void move(Direction direction) {
+    public void update(Direction direction) {
         if (localPanel== null) System.out.println("null");
         Point2D movement = multiplyVector(direction.getNormalizedDirectionVector(), direction.getMagnitude());
         this.anchor = addVectors(anchor, movement);
@@ -192,8 +188,8 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
             vertices.set(i, addVectors(vertices.get(i), movement));
         }
 
-        friction();
         if (isOnFall) updateVelocityOnFall();
+        friction();
     }
 
     private void checkForDeath(){
@@ -203,13 +199,14 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
 
 
     @Override
-    public void move() {
+    public void update() {
+        applyDismay();
 //        System.out.println(Profile.getCurrent().PANEL_SHRINKAGE_COEFFICIENT);
         updateLocalPanel();
 
 
         moveBabies(direction);
-        move(direction);
+        update(direction);
 
         applyCerebrus();
     }
@@ -431,6 +428,46 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
                     }
                 }
 
+            }
+        }
+    }
+
+    public FinalPanelModel getLocalPanel() {
+        return localPanel;
+    }
+
+    public void setLocalPanel(FinalPanelModel localPanel) {
+        this.localPanel = localPanel;
+    }
+
+
+    private void applyDismay() {
+        double now = Game.ELAPSED_TIME;
+        double initiationTime = Profile.getCurrent().dismayInitiationTime;
+        if (now - initiationTime > 10) return;
+
+        double radius = 100;
+        for (GeoShapeModel nonHovering : entities){
+
+            boolean trig = nonHovering instanceof TrigorathModel;
+            boolean square = nonHovering instanceof SquarantineModel;
+            boolean Omen = nonHovering instanceof OmenoctModel;
+            boolean wyrm = nonHovering instanceof Wyrm;;
+
+            if (trig || square || Omen || wyrm) {
+                Point2D anchor = nonHovering.getAnchor();
+                // todo don't use singleton epsilon ...
+                Point2D epsilonAnchor = EpsilonModel.getINSTANCE().getAnchor();
+                double dis = anchor.distance(epsilonAnchor);
+
+                if (dis < radius){
+                    double offset = radius - dis;
+                    Point2D dir = relativeLocation(anchor, epsilonAnchor);
+                    dir = normalizeVector(dir);
+                    dir = multiplyVector(dir, offset);
+                    nonHovering.movePolygon(dir);
+
+                }
             }
         }
     }

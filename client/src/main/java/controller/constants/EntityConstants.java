@@ -21,7 +21,7 @@ public enum EntityConstants {
 
     public static final double ARCHMIRE_SPEED = 1;
     public static final double OMENOCT_NORMAL_SPEED = 1;
-    public static final double OMENOCT_PANEL_SPEED = 2;
+    public static final double OMENOCT_PANEL_SPEED = 1.5;
     public static final double NECROPICK_MIN_RADIUS = 100;
     public static final double NECROPICK_MAX_RADIUS = 200;
 
@@ -64,7 +64,7 @@ public enum EntityConstants {
             case SQUARANTINE_NUM_OF_COLLECTIBLES -> 1;
             case SQUARANTINE_COLLECTIBLES_XP -> 5;
             case ORB_HEALTH -> 30;
-            case ORB_NUM_OF_COLLECTIBLES -> 5;
+            case ORB_NUM_OF_COLLECTIBLES -> 1;
             case ORB_COLLECTIBLES_XP -> 30;
             case WYRM_HEALTH -> 12;
             case WYRM_NUM_OF_COLLECTIBLES -> 2;

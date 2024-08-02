@@ -15,7 +15,10 @@ import java.awt.geom.Point2D;
 import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import static controller.UserInterfaceController.*;
 import static controller.Utils.*;
@@ -42,7 +45,7 @@ public class FinalPanelModel implements Collidable, Serializable {
     @Expose
     protected Point2D location;
 
-    public static transient ArrayList<FinalPanelModel> finalPanelModels = new ArrayList<>();
+    public static List<FinalPanelModel> finalPanelModels = new ArrayList<>();
 
     @SerializedName("isIsometric")
     @Expose
@@ -67,6 +70,8 @@ public class FinalPanelModel implements Collidable, Serializable {
     private boolean rightIsBlocked = false;
     private boolean bottomIsBlocked = false;
     private boolean leftIsBlocked = false;
+
+    private boolean shallBeEliminated = false;
 
     @SerializedName("acceleration")
     @Expose
@@ -184,7 +189,17 @@ public class FinalPanelModel implements Collidable, Serializable {
     }
 
     public void eliminate(){
+        //TODO terrible idea to make local panel static!
+        for (EpsilonModel epsilon : epsilons) {
+            if (touchesPanel()) {
+                shallBeEliminated = true;
+                return;
+            }
+        }
 
+        finalPanelModels.remove(this);
+        collidables.remove(this);
+        removeFinalPanelView(id);
     }
 
     public ArrayList<Point2D> getArrayListVertices() {
@@ -311,7 +326,37 @@ public class FinalPanelModel implements Collidable, Serializable {
         }
     }
 
+
+    private boolean touchesPanel(){
+        for (EpsilonModel epsilon : epsilons) {
+            List<Point2D> bounds = epsilon.getBoundingPoints();
+            for (Point2D point : bounds){
+                Point2D[] list = vertices.toArray(new Point2D[vertices.size()]);
+                if (Utils.isPointInPolygon(point, list)){
+                    return true;
+                }
+            }
+        } return false;
+    }
+
     public void panelMotion(){
+        if (shallBeEliminated){
+            boolean cantDieYet = false;
+            for (EpsilonModel epsilon : epsilons){
+                // TODO FUCK WHOEVER MADE EPSILON STATIC!
+                if (touchesPanel()) {
+                    cantDieYet = true;
+                    break;
+                }
+            }
+
+            if (!cantDieYet) {
+                eliminate();
+//                shallBeEliminated = false;
+            }
+        }
+
+
         topIsBlocked = false;
         rightIsBlocked = false;
         bottomIsBlocked = false;
@@ -319,7 +364,7 @@ public class FinalPanelModel implements Collidable, Serializable {
 
         for (EpsilonModel epsilon : epsilons){
             // todo terrible idea to make local panel static ...
-            if (EpsilonModel.localPanel == null){
+            if (EpsilonModel.getINSTANCE().getLocalPanel() == null){
                 /**
                  *  checking for the intersections of epsilon with panel's original edges
                  *  and cripple them accordingly ...

@@ -5,6 +5,7 @@ import model.MyPolygon;
 import model.TimedLocation;
 import model.charactersModel.BulletModel;
 import model.charactersModel.*;
+import model.entities.Ability;
 import model.entities.Skill;
 import view.FinalPanelView;
 import view.charactersView.BulletView;
@@ -42,6 +43,7 @@ public abstract class UserInterfaceController {
         new SquarantineView(id);
     }
     public static void createTrigorathView(String id){ new TrigorathView(id); }
+    public static void createOmenoctView(String id){ new SquarantineView(id); }
 
     public static void creatBulletView(String id){ new BulletView(id); }
     public static void createCollectibleView(String id){ new CollectibleView(id); }
@@ -74,6 +76,7 @@ public abstract class UserInterfaceController {
         new GeoShapeView(id, image, anchor, myPolygon);
 
     }
+
 
 
     public static void createNecropickView(String id, Image image){
@@ -249,6 +252,7 @@ public abstract class UserInterfaceController {
 
 
 
+
 //    public static Point2D calculateViewLocationEntity(Component component, String id){
 //        EpsilonModel epsilonModel = findModel(id);
 //        Point corner = new Point(component.getX(),component.getY());
@@ -265,7 +269,6 @@ public abstract class UserInterfaceController {
 //        assert collectibleModel != null;
 //        return relativeLocation(collectibleModel.getAnchor(),corner);
 //    }
-
     public static Point2D calculateLocationOfFinalPanelView(String id){
         FinalPanelModel f = findFinalPanelModel(id);
         return f.getLocation();
@@ -289,6 +292,7 @@ public abstract class UserInterfaceController {
         Point2D point4 = relativeLocation(squarantineModel.getVertices()[3], corner);
         return new Point2D[]{point1, point2, point3, point4};
     }
+
     public static Point2D[] calculateViewLocationTrigorath(Component component, String id){
         TrigorathModel trigorathModel = findTrigorathModel(id);
         Point corner=new Point(component.getX(),component.getY());
@@ -340,10 +344,10 @@ public abstract class UserInterfaceController {
 //        }
 //        return null;
 //    }
-
     public static EpsilonModel findModel(String id){
         return EpsilonModel.getINSTANCE();
     }
+
     public static SquarantineModel findSquarantineModel(String id){
         for (SquarantineModel squarantineModel: squarantineModels){
             if (squarantineModel.getId().equals(id)) return squarantineModel;
@@ -380,7 +384,6 @@ public abstract class UserInterfaceController {
 //        return null;
 //    }
 
-
     public static FinalPanelModel findFinalPanelModel(String id){
         for (FinalPanelModel f: FinalPanelModel.finalPanelModels){
             if (f.getId().equals(id)) return f;
@@ -397,12 +400,17 @@ public abstract class UserInterfaceController {
 
 
 
+
 //    public static CollectibleView findCollectibleView(String id){
 //        for (CollectibleView collectibleView: collectibleViews){
 //            if (collectibleView.getId().equals(id)) return collectibleView;
 //        }
 //        return null;
 //    }
+    public static void removeFinalPanelView(String id){
+        FinalPanelView finalPanelView = findFinalPanelView(id);
+        finalPanelView.eliminate();
+    }
 
     public static BulletView findBulletView(String id){
         for (BulletView bulletView: bulletViews){
@@ -460,6 +468,13 @@ public abstract class UserInterfaceController {
     public static void fireSkill() {
         if (Skill.activeSkill != null) {
             Skill.activeSkill.fire();
+        }
+    }
+
+    public static void fireAbility() {
+        if (Ability.activeAbility != null) {
+            Ability.activeAbility.fire();
+            Ability.activeAbility = null;
         }
     }
 

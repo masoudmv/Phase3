@@ -129,7 +129,7 @@ public class Smiley extends GeoShapeModel implements Collidable {
         if (!leftHand.isAlive() || !rightHand.isAlive()) return;
         FinalPanelModel leftPanel = leftHand.getFinalPanelModel();
         FinalPanelModel rightPanel = rightHand.getFinalPanelModel();
-        FinalPanelModel epsilonPanel = EpsilonModel.getINSTANCE().localPanel;
+        FinalPanelModel epsilonPanel = EpsilonModel.getINSTANCE().getLocalPanel();
 
         boolean left = leftPanel.getLocation().getX() + leftPanel.getSize().getWidth() < epsilonPanel.getLocation().getX();
         boolean right = rightPanel.getLocation().getX() > epsilonPanel.getLocation().getX() + epsilonPanel.getSize().getWidth();
@@ -142,7 +142,8 @@ public class Smiley extends GeoShapeModel implements Collidable {
     }
 
 
-    public void move() {
+    public void update() {
+        if (dontUpdate()) return;
         checkForProjectileCoolDown();
         checkForSqueezeCoolDown();
 
