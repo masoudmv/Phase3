@@ -16,10 +16,9 @@ import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import static controller.UserInterfaceController.findBulletView;
+import static controller.UserInterfaceController.*;
 import static controller.constants.Constants.BULLET_RADIUS;
 import static controller.constants.Constants.BULLET_VELOCITY;
-import static controller.UserInterfaceController.creatBulletView;
 import static controller.Utils.*;
 
 public class BulletModel extends GeoShapeModel implements Movable, Collidable, Impactable {
@@ -187,7 +186,7 @@ public class BulletModel extends GeoShapeModel implements Movable, Collidable, I
 
         collidables.remove(this);
         movables.remove(this);
-        findBulletView((this).getId()).eliminate();
+        eliminateBulletView(id);
     }
 
     @Override

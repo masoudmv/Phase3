@@ -153,7 +153,7 @@ public class ArchmireModel extends GeoShapeModel implements Collidable {
     }
 
     public void update() {
-        super.update();
+        if (dontUpdate()) return;
         update(direction);
     }
 

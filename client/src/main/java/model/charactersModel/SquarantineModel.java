@@ -371,14 +371,6 @@ public class SquarantineModel extends GeoShapeModel implements Movable, Collidab
     }
 
 
-    public void dropCollectible() {
-        Point2D direction = relativeLocation(getAnchor(), EpsilonModel.getINSTANCE().getAnchor());
-        Random random = new Random();
-        double theta = random.nextGaussian(Math.PI, 1);
-        if (theta<PI/2) theta = PI/2;
-        if (theta>3*PI/2) theta = 3 * PI/2;
-        new CollectibleModel(getAnchor(), rotateVector(direction, theta), 2);  // TODO check xp
-    }
 
     public List<SquarantineModel> getModels() {
         return squarantineModels;

@@ -48,18 +48,10 @@ public class Main {
     public static boolean proteusIsActivated = false;
 
     public static void main(String[] args) throws LineUnavailableException, IOException, UnsupportedAudioFileException, InterruptedException {
+        LeftHand.loadImage();
+        Hand.loadImage();
 
-
-        BufferedImage b = EpsilonModel.loadImage();
-        GraphicalObject bows = new GraphicalObject(b);
-        MyPolygon pol = bows.myBoundingPolygon;
-        new EpsilonModel(new Point2D.Double(1000, 700), pol);
-
-
-        MainFrame.getINSTANCE();
-        new Profile();
-        new Game(); // uncoment this todo
-        Skill.initializeSkills();
+        Smiley.loadImage();
 
 
         SquarantineModel.loadImage();
@@ -71,7 +63,26 @@ public class Main {
         Orb.loadImage();
         BarricadosModel.loadImage();
 
-        new TrigorathModel(new Point2D.Double(400, 500));
+        BufferedImage b = EpsilonModel.loadImage();
+        GraphicalObject bows = new GraphicalObject(b);
+        MyPolygon pol = bows.myBoundingPolygon;
+        new EpsilonModel(new Point2D.Double(1000, 700), pol);
+
+        Hand l = new LeftHand(new Point2D.Double(500, 401));
+        Hand r = new Hand(new Point2D.Double(1500, 400));
+        new Smiley(new Point2D.Double(1000, 200), l , r);
+
+
+
+
+
+        MainFrame.getINSTANCE();
+        new Profile();
+        new Game(); // uncoment this todo
+        Skill.initializeSkills();
+
+
+//        new ArchmireModel(new Point2D.Double(400, 500));
 
 
 
@@ -217,10 +228,6 @@ public class Main {
 
 //        new Fist(new Point2D.Double(200, 200));
 
-
-//        Hand l = new LeftHand(new Point2D.Double(500, 401));
-//        Hand r = new Hand(new Point2D.Double(1500, 400));
-//        new Smiley(new Point2D.Double(1000, 200), l , r);
 
 
 

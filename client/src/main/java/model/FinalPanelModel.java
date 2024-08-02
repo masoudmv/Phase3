@@ -2,6 +2,7 @@ package model;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import controller.Game;
 import controller.Utils;
 import model.charactersModel.BulletModel;
 import model.charactersModel.EpsilonModel;
@@ -339,7 +340,14 @@ public class FinalPanelModel implements Collidable, Serializable {
         } return false;
     }
 
+    public boolean dontUpdate(){
+        double now = Game.ELAPSED_TIME;
+        double slumberInitiation = Profile.getCurrent().slumberInitiationTime;
+        return now - slumberInitiation < 10;
+    }
+
     public void panelMotion(){
+        if (dontUpdate()) return;
         if (shallBeEliminated){
             boolean cantDieYet = false;
             for (EpsilonModel epsilon : epsilons){

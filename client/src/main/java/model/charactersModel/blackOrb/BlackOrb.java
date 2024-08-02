@@ -2,6 +2,7 @@ package model.charactersModel.blackOrb;
 
 import controller.Game;
 import model.FinalPanelModel;
+import model.entities.Profile;
 
 import java.awt.*;
 import java.awt.geom.Point2D;
@@ -24,8 +25,7 @@ public class BlackOrb { // todo panels should be created with delay?
     private boolean avalancheIsSet = false;
     private double avalancheBirthTime;
 
-    public BlackOrb() throws InterruptedException {
-        super();
+    public BlackOrb() {
         this.avalancheBirthTime = random.nextInt((int) (Game.ELAPSED_TIME + 6), (int) (Game.ELAPSED_TIME + 15));
         Point2D pivot = new Point2D.Double(500, 400); // Center of the pentagon
         double edgeLength = 350; // Distance between adjacent vertices
@@ -40,7 +40,14 @@ public class BlackOrb { // todo panels should be created with delay?
         blackOrbs.add(this);
     }
 
+    public boolean dontUpdate(){
+        double now = Game.ELAPSED_TIME;
+        double slumberInitiation = Profile.getCurrent().slumberInitiationTime;
+        return now - slumberInitiation < 10;
+    }
+
     public void update(){
+        if (dontUpdate()) return;
         initiateAvalanche();
         Laser.performAoeDamage();
 

@@ -15,8 +15,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import static controller.UserInterfaceController.createGeoShapeView;
-import static controller.UserInterfaceController.findGeoShapeView;
+import static controller.UserInterfaceController.*;
 import static controller.Utils.*;
 
 public abstract class GeoShapeModel extends Entity {
@@ -155,7 +154,9 @@ public abstract class GeoShapeModel extends Entity {
 
     public synchronized void eliminate() {
         entities.remove(this);
-        findGeoShapeView(id).eliminate();
+        eliminateGeoShapeView(id);
+
+
     }
 
     public void setDirection(Direction direction) {

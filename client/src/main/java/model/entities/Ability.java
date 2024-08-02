@@ -43,7 +43,7 @@ public enum Ability {
     public ActionListener getAction() {
         return switch (this) {
             case BANISH -> null;
-            case EMPOWER -> null;
+            case EMPOWER -> e -> Profile.getCurrent().empowerInitiationTime = Game.ELAPSED_TIME;
             case HEAL -> e -> EpsilonModel.getINSTANCE().health += 10;
             case DISMAY -> e -> Profile.getCurrent().dismayInitiationTime = Game.ELAPSED_TIME;
             case SLUMBER -> e -> Profile.getCurrent().slumberInitiationTime = Game.ELAPSED_TIME;

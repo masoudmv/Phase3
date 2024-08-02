@@ -242,14 +242,19 @@ public class Utils {
     }
 
 
-    public static Point2D rotateVector(Point2D vector, double theta){
+    public static Point2D rotateVector(Point2D vector, double theta) {
         double x = vector.getX();
         double y = vector.getY();
-        double length = Math.sqrt(x*x + y*y);
-        double alpha = Math.atan(y/x);
-        double alphaPrime = alpha-theta;
-        return new Point2D.Double(length*Math.cos(alphaPrime), length*Math.sin(alphaPrime));
+
+        double cosTheta = Math.cos(theta);
+        double sinTheta = Math.sin(theta);
+
+        double rotatedX = x * cosTheta - y * sinTheta;
+        double rotatedY = x * sinTheta + y * cosTheta;
+
+        return new Point2D.Double(rotatedX, rotatedY);
     }
+
 
     public static void AABB(Rectangle2D rect1, Rectangle2D rect2){
 

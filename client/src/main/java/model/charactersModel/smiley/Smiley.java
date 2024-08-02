@@ -58,7 +58,6 @@ public class Smiley extends GeoShapeModel implements Collidable {
 
         collidables.add(this);
         smilies.add(this);
-
         this.rightHand = rightHand;
 
 
@@ -125,6 +124,7 @@ public class Smiley extends GeoShapeModel implements Collidable {
 
 
     private void initiateSqueeze(){
+        if (EpsilonModel.getINSTANCE().getLocalPanel() == null) return;
 //        lastSqueezeTime = Game.ELAPSED_TIME;
         if (!leftHand.isAlive() || !rightHand.isAlive()) return;
         FinalPanelModel leftPanel = leftHand.getFinalPanelModel();
@@ -209,7 +209,7 @@ public class Smiley extends GeoShapeModel implements Collidable {
 
 
     public static BufferedImage loadImage() {
-        Image img = new ImageIcon("./src/smiley.png").getImage();
+        Image img = new ImageIcon("./client/src/smiley.png").getImage();
 //        Smiley.image = getBufferedImage(img);
 
         Smiley.image = getBufferedImage(img);

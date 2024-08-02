@@ -12,7 +12,7 @@ import model.entities.Profile;
 import model.movement.Movable;
 import view.*;
 import view.junks.GameOverPanel;
-import view.junks.ShopPanel;
+
 import view.junks.VictoryPanel;
 
 import javax.swing.*;
@@ -29,6 +29,7 @@ import static model.FinalPanelModel.finalPanelModels;
 import static model.PanelManager.handlePanelPanelCollision;
 import static model.charactersModel.CollectibleModel.collectibleModels;
 //import static model.NonRigid.nonRigids;
+import static model.charactersModel.GeoShapeModel.entities;
 import static model.charactersModel.NecropickModel.necropickModels;
 import static model.charactersModel.SquarantineModel.squarantineModels;
 import static model.charactersModel.TrigorathModel.trigorathModels;
@@ -48,53 +49,37 @@ public class GameLoop implements Runnable {
     public static GameLoop INSTANCE;
     private final AtomicBoolean running = new AtomicBoolean(false);
     private final AtomicBoolean exit = new AtomicBoolean(false);
-    private long updateTimeDiffCapture = 0;
-    private long frameTimeDiffCapture = 0;
-    private long currentTime;
-    private long lastFrameTime;
+
     private long lastUpdateTime;
-    private long timeSaveDiffCapture = 0;
-    private long timeSave;
+
     private volatile String FPS_UPS = "";
     private long lastTickTime = System.currentTimeMillis();
     private int frameCount = 0;
-    private long lastUpdateTimeUPS = System.currentTimeMillis();
 
 
     private int updateCount = 0;
-//    private Set<Integer> keysPressed = new HashSet<>();
+
     public static boolean movementInProgress = false;
     private final int MOVEMENT_DELAY = 10; // Delay in milliseconds
-    private Timer movementTimer;
     private Timer gameLoop;
-    private ShopPanel shopPanel=null;
+
     private int extraBullet=0;
-    public static int EPSILON_MELEE_DAMAGE =10;
-    public static int EPSILON_RANGED_DAMAGE =5;
+
     double lastHpRegainTime=-1;
-    private double skillAbilityActivateTime=-1;
     private double hpRegainRate = Double.MAX_VALUE;
-    public static ShopAbility shopAbility=null;
-    private double lastCreatedEnemyTime=-1;
-    public static double lastShot = 0;
+
     public static boolean decreaseVelocities;
-    public static double decrementRation;
-    private static boolean firstLoop;
-    private static int createdNumberOfEnemies;
-    public static int aliveEnemies;
+
 
 
     private boolean acesoInProgress=false;
 
     public GameLoop() {
         decreaseVelocities=false;
-        decrementRation=1;
-        lastShot = 0;
-        shopAbility=null;
+
         movementInProgress = false;
-        firstLoop= true;
-        createdNumberOfEnemies=0;
-        aliveEnemies=0;
+
+
         playThemeSound();
 
 
@@ -235,62 +220,44 @@ public class GameLoop implements Runnable {
 //            movable.move();
 ////            movable.friction();
 //        }
-
         for (int i = 0; i < BlackOrb.blackOrbs.size(); i++) {
             BlackOrb.blackOrbs.get(i).update();
         }
-
-        for (Fist f : fists){
-            f.update();
-        }
-
-        for (Smiley smiley : Smiley.smilies){
-            smiley.update();
-        }
-
-
-        for (Hand h : hands){
-//            h.rot();
-            h.update();
-//            h.mySlapAttack();
-//            h.rotateTowardsTarget();
-//            if (ELAPSED_TIME > 3) h.rot();
-        }
-
-        for (SmileyBullet b : smileyBullets){
-            b.update();
-        }
-
-
-
-        for (OmenoctModel omenoctModel : OmenoctModel.omenoctModels) {
-            omenoctModel.setOnEpsilonPanel(EpsilonModel.getINSTANCE().getLocalPanel());
-            omenoctModel.updateDirection();
-        }
-
-
-        for (NecropickModel n : necropickModels) {   // todo revert
-            n.update();
-        }
-
-
-        for (ArchmireModel archmireModel : ArchmireModel.archmireModels) {
-            archmireModel.update();
-        }
-
-        for (TrigorathModel t : trigorathModels) {
-            t.rotate();
-        }
-        for (SquarantineModel s : squarantineModels) {
-            s.rotate();
-        }
-
-
-
-        for (Movable movable: movables){
-            movable.update();
-            movable.friction();
-        }
+//        for (Fist f : fists){
+//            f.update();
+//        }
+//        for (Smiley smiley : Smiley.smilies){
+//            smiley.update();
+//        }
+//        for (Hand h : hands){
+////            h.rot();
+//            h.update();
+////            h.mySlapAttack();
+////            h.rotateTowardsTarget();
+////            if (ELAPSED_TIME > 3) h.rot();
+//        }
+//        for (SmileyBullet b : smileyBullets){
+//            b.update();
+//        }
+//        for (OmenoctModel omenoctModel : OmenoctModel.omenoctModels) {
+//            omenoctModel.setOnEpsilonPanel(EpsilonModel.getINSTANCE().getLocalPanel());
+//            omenoctModel.updateDirection();
+//        }
+//        for (NecropickModel n : necropickModels) {   // todo revert
+//            n.update();
+//        }
+//        for (ArchmireModel archmireModel : ArchmireModel.archmireModels) {
+//            archmireModel.update();
+//        }
+//        for (TrigorathModel t : trigorathModels) {
+//            t.rotate();
+//        }
+//        for (SquarantineModel s : squarantineModels) {
+//            s.rotate();
+//        }
+//        for (Movable movable: movables){
+//            movable.update();
+//        }
 
 
 
@@ -364,25 +331,16 @@ public class GameLoop implements Runnable {
 
 
 
+        for (GeoShapeModel entity : entities){
+            entity.update();
+        }
+
+
+
         // TODO move these out of gameLoop ...
 
-        if (ELAPSED_TIME > empowerEndTime) {
-            empowerIsOn = false;
-            extraBullet = 0;
-            tripleShot = false;
-        }
-        if (empowerIsOn && tripleShot && mousePosition != null && extraBullet < 2 && lastShot > empowerStartTime) {
-            if (ELAPSED_TIME - lastShot > 0.05) {
-                new BulletModel(EpsilonModel.getINSTANCE().getAnchor(), lastBullet.getDirection());
-                extraBullet++;
-                lastShot = ELAPSED_TIME;
-            }
 
-        }
-        if (extraBullet == 2) {
-            extraBullet = 0;
-            tripleShot = false;
-        }
+
 
         if (acesoInProgress) {
             EpsilonModel epsilon = EpsilonModel.getINSTANCE();
@@ -524,11 +482,6 @@ public class GameLoop implements Runnable {
         return !exit.get();
     }
 
-    public enum ShopAbility{
-        heal,
-        empower,
-        banish
-    }
 }
 
 

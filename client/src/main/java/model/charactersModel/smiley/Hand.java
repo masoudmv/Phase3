@@ -306,7 +306,7 @@ public class Hand extends GeoShapeModel implements Collidable {
     }
 
     public static BufferedImage loadImage() {
-        Image img = new ImageIcon("./src/1.png").getImage();
+        Image img = new ImageIcon("./client/src/1.png").getImage();
         Hand.image = getBufferedImage(img);
         GraphicalObject bowser = new GraphicalObject(image);
         bowser.refine();

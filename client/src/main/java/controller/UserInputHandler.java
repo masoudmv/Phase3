@@ -5,7 +5,7 @@ import model.movement.Direction;
 import view.MainFrame;
 import view.junks.AbilityShopPanel;
 import view.junks.KeyBindingMenu;
-import view.junks.ShopPanel;
+
 
 import javax.swing.*;
 import java.awt.event.KeyEvent;
@@ -25,11 +25,14 @@ public class UserInputHandler implements KeyListener {
     private static UserInputHandler INSTANCE;
     public static Set<Integer> keysPressed = new HashSet<>();
     private Timer movementTimer;
-    private ShopPanel shopPanel = null;
+
     private AbilityShopPanel abilityShopPanel = null;
     private JFrame abilityShopFrame = null;
 
     public UserInputHandler() {
+
+
+
     }
 
     public static void updateMovement() {
@@ -42,10 +45,16 @@ public class UserInputHandler implements KeyListener {
         if (70 < sensitivity && sensitivity < 80) EPSILON_MAX_SPEED = 4.5;
         if (80 < sensitivity && sensitivity < 90) EPSILON_MAX_SPEED = 5;
         if (90 < sensitivity && sensitivity <= 100) EPSILON_MAX_SPEED = 5.5;
+
+
+
         if (keysPressed.contains(keyBindings.get("Move Right"))) deltaX += 0.7;
         if (keysPressed.contains(keyBindings.get("Move Left"))) deltaX -= 0.7;
         if (keysPressed.contains(keyBindings.get("Move Up"))) deltaY -= 0.7;
         if (keysPressed.contains(keyBindings.get("Move Down"))) deltaY += 0.7;
+
+
+
         Point2D.Double vector = new Point2D.Double(deltaX, deltaY);
         Point2D point = multiplyVector(EpsilonModel.getINSTANCE().getDirection().getNormalizedDirectionVector(),
                 EpsilonModel.getINSTANCE().getDirection().getMagnitude());

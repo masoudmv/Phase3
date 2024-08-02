@@ -13,7 +13,7 @@ import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 import java.util.List;
 
-import static controller.Game.activeAbility;
+
 
 public class SkillTreeMenu extends JPanel implements MouseListener, MouseMotionListener {
     JLabel backLabel = new JLabel("Back");
@@ -201,9 +201,7 @@ public class SkillTreeMenu extends JPanel implements MouseListener, MouseMotionL
     @Override
     public void mouseExited(MouseEvent e) {}
 
-    public Game.SkillTreeAbility getActiveAbility() {
-        return activeAbility;
-    }
+
 
     private void removeSkillTreeMenu() {
         MainFrame frame = MainFrame.getINSTANCE();

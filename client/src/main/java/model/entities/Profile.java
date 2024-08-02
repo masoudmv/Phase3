@@ -27,6 +27,7 @@ public class Profile {
     public double dismayInitiationTime = -Double.MAX_VALUE;
     public double slumberInitiationTime = -Double.MAX_VALUE;
     public double slaughterInitiationTime = -Double.MAX_VALUE;
+    public double empowerInitiationTime = -Double.MAX_VALUE;
 
     public static Profile getCurrent() {
         return current;

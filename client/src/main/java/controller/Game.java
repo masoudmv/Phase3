@@ -18,18 +18,12 @@ import static view.MainFrame.label;
 public class Game {
     private static Game INSTANCE;
     public static int inGameXP = 1000;
-    public static double ELAPSED_TIME =0;
+    public static double ELAPSED_TIME = 0;
     public static int wave;
     private boolean isPaused = false;
     private EpsilonModel epsilon;
-    public static SkillTreeAbility skillTreeAbility=null;
-    public static boolean empowerIsOn = false;
-    public static double empowerEndTime = Double.MAX_VALUE;
-    public static double empowerStartTime = Double.MAX_VALUE;
-    public static Clip clip;
-    public static BufferedImage bufferedImage;
-    public static Image bufferedImageResult;
-    public static SkillTreeAbility activeAbility;
+
+
     private static GameLoop gameLoop;
 
 
@@ -83,11 +77,6 @@ public class Game {
         this.inGameXP += xp;
     }
 
-    public enum SkillTreeAbility{
-        ares,
-        aceso,
-        proteus
-    }
 
     public static void nullifyGameInstance() {
         INSTANCE = null;
