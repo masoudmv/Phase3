@@ -1,8 +1,12 @@
 package server;
 
+import game.model.charactersModel.EpsilonModel;
+import game.model.movement.Direction;
 import server.socket.SocketResponseSender;
 import shared.Model.*;
 import shared.request.*;
+import shared.request.game.MoveRequest;
+import shared.request.game.StateRequest;
 import shared.request.leader.JoinDemandStatusReq;
 import shared.request.leader.KickPlayerReq;
 import shared.request.leader.PurchaseSkillRequest;
@@ -14,6 +18,13 @@ import shared.request.member.LeaveSquadReq;
 import shared.request.nonmember.GetSquadsListRequest;
 import shared.request.nonmember.JoinSquadReq;
 import shared.response.*;
+import shared.response.game.MoveResponse;
+import shared.response.game.StateResponse;
+
+import java.awt.geom.Point2D;
+
+import static game.controller.Utils.addVectors;
+import static game.controller.Utils.multiplyVector;
 
 public class ServersideReqHandler extends Thread implements RequestHandler {
     private SocketResponseSender socketResponseSender;
@@ -216,6 +227,45 @@ public class ServersideReqHandler extends Thread implements RequestHandler {
 //            System.out.println("Monomachia challenge request was accepted");
 //            return new MessageResponse("Monomachia challenge will start in 15 seconds!");
 //        }
+    }
+
+    @Override
+    public Response handleMoveReq(MoveRequest moveRequest) {
+
+        double deltaX = 0;
+        double deltaY = 0;
+
+        switch (moveRequest.getInput()){
+            case move_up -> deltaY -= 0.7;
+            case move_right -> deltaX += 0.7;
+            case move_down -> deltaY += 0.7;
+            case move_left -> deltaX -= 0.7;
+        }
+
+
+        System.out.println("moving ...");
+
+        Point2D.Double vector = new Point2D.Double(deltaX, deltaY);
+        Point2D point = multiplyVector(EpsilonModel.getINSTANCE().getDirection().getNormalizedDirectionVector(),
+                EpsilonModel.getINSTANCE().getDirection().getMagnitude());
+        Direction direction = new Direction(addVectors(point, vector));
+        direction.adjustEpsilonDirectionMagnitude();
+
+        EpsilonModel.getINSTANCE().setDirection(direction);
+
+
+        return new MoveResponse();
+    }
+
+    @Override
+    public Response handleStateRequest(StateRequest stateRequest) {
+        StateResponse stateResponse = new StateResponse();
+        stateResponse.setCreatedEntities(dataBase.getCreatedEntities());
+        stateResponse.setCreatedPanels(dataBase.getCreatedPanels());
+        stateResponse.setEliminatedEntities(dataBase.getEliminatedEntities());
+        stateResponse.setUpdatedModels(dataBase.getUpdatedModels());
+        stateResponse.setUpdatedPanels(dataBase.getUpdatedPanels());
+        return stateResponse;
     }
 
 }

@@ -2,13 +2,20 @@ package client.network;
 
 import client.network.containers.SquadListPanel;
 import client.network.containers.MainFrame;
-import shared.Model.NotificationType;
-import shared.Model.Player;
-import shared.Model.Squad;
+import client.network.game.view.FinalPanelView;
+import client.network.game.view.charactersView.*;
+import shared.Model.*;
+import shared.Model.dummies.DummyPanel;
 import shared.response.*;
+import shared.response.game.MoveResponse;
+import shared.response.game.StateResponse;
 
 import javax.swing.*;
+import java.awt.*;
+import java.awt.geom.Point2D;
 import java.util.List;
+
+import static client.network.game.controller.UserInterfaceController.updateGeoShapeViewProperties;
 
 public class ClientsideResHandler implements ResponseHandler {
 
@@ -237,6 +244,48 @@ public class ClientsideResHandler implements ResponseHandler {
                 JOptionPane.showMessageDialog(frame, message);
             }
         }
+
+    }
+
+    @Override
+    public void handleMoveResponse(MoveResponse moveResponse) {
+
+    }
+
+    @Override
+    public void handleStateResponse(StateResponse stateResponse) {
+        List<Pair<String, EntityType>> createdEntities = stateResponse.getCreatedEntities();
+        for (Pair<String, EntityType> createdEntity : createdEntities) {
+            EntityType type = createdEntity.getSecond();
+            String id = createdEntity.getFirst();
+            switch (type){
+                case bullet -> new BulletView(id);
+                case epsilon -> new EpsilonView(id);
+                case trigorath -> new TrigorathView(id);
+                case collectible -> new CollectibleView(id);
+                case squarantine -> new SquarantineView(id);
+            }
+        }
+
+        List<Pair<String, DummyPanel>> createdPanels = stateResponse.getCreatedPanels();
+        for (Pair<String, DummyPanel> createdPanel : createdPanels) {
+            String id = createdPanel.getFirst();
+            DummyPanel panel = createdPanel.getSecond();
+            Point2D location = panel.getLocation();
+            Dimension dimension = (Dimension) panel.getDimension();
+            new FinalPanelView(id, location, dimension);
+        }
+
+        updateGeoShapeViewProperties();
+
+
+        System.out.println("HERE");
+
+
+
+
+
+
 
     }
 

@@ -1,5 +1,7 @@
 package shared.request;
 
+import shared.request.game.StateRequest;
+import shared.request.game.MoveRequest;
 import shared.request.leader.JoinDemandStatusReq;
 import shared.request.leader.KickPlayerReq;
 import shared.request.leader.PurchaseSkillRequest;
@@ -26,4 +28,6 @@ public interface RequestHandler {
     Response handleKickPlayerReq(KickPlayerReq kickPlayerReq);
     Response handleAskForSthReq(AskForSthRequest askForSthRequest);
     Response handleReportAskedPleaReq(ReportAskedPleaRequest reportAskedPleaRequest);
+    Response handleMoveReq(MoveRequest moveRequest);
+    Response handleStateRequest(StateRequest stateRequest);
 }

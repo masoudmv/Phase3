@@ -17,7 +17,7 @@ public class SocketRequestSender {
 
     public SocketRequestSender() {
         try {
-            this.socket = new Socket("192.168.1.101", 8080);
+            this.socket = new Socket("192.168.77.109", 8080);
             printStream = new PrintStream(socket.getOutputStream());
             scanner = new Scanner(socket.getInputStream());
             objectMapper = new ObjectMapper();

@@ -1,25 +1,39 @@
 package server;
 
 import shared.Model.*;
+import shared.Model.dummies.DummyModel;
+import shared.Model.dummies.DummyPanel;
 import shared.response.MessageResponse;
 import shared.response.Response;
 import shared.response.TransferReqToClientResponse;
 
+import java.awt.*;
+import java.awt.geom.Point2D;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class DataBase {
+    private static DataBase dataBase;
+
     private volatile List<Squad> squads = new CopyOnWriteArrayList<>();
     private volatile List<Player> players = new CopyOnWriteArrayList<>();
     private final List<Pair<Squad, Squad>> squadPairs = new CopyOnWriteArrayList<>();
     private final List<Pair<Player, Player>> monomachiaPairs = new CopyOnWriteArrayList<>();
     private final List<Pair<Player, Player>> colosseumPairs = new CopyOnWriteArrayList<>();
     // todo update playerPairs based on summons ...
-
     private boolean squadBattleInitiated = false;
 
+
+    private List<Pair<String, EntityType>> createdEntities = new CopyOnWriteArrayList<>();
+    private List<String> eliminatedEntities = new CopyOnWriteArrayList<>();
+    private List<DummyModel> updatedModels = new CopyOnWriteArrayList<>();
+    private List<Pair<String, DummyPanel>> createdPanels = new CopyOnWriteArrayList<>();
+    private List<DummyPanel> updatedPanels = new CopyOnWriteArrayList<>();
+
+
     public DataBase() {
+        dataBase = this;
 //        Squad squad = new Squad(new Player("Mahmood"));
 //        squad.addMember(new Player("Mahmut"));
 //        squad.addMember(new Player("Mah"));
@@ -388,5 +402,60 @@ public class DataBase {
                 }
             }
         }
+    }
+
+    public void createEntity(String id, EntityType entityType){
+        createdEntities.add(new Pair<>(id, entityType));
+    }
+
+    public void createPanel(String id, Point2D location, Dimension dimension){
+        DummyPanel panel = new DummyPanel(id, location, dimension);
+        createdPanels.add(new Pair<>(id, panel));
+    }
+
+    public void eliminateEntity(String id){
+        eliminatedEntities.add(id);
+    }
+
+
+    public void clearModels(){
+        updatedModels.clear();
+    }
+
+    public void addUpdatedModels(DummyModel model){
+        updatedModels.add(model);
+    }
+
+    public void clearPanels(){
+        updatedPanels.clear();
+    }
+
+    public void addUpdatedPanels(DummyPanel panel){
+        updatedPanels.add(panel);
+    }
+
+    public List<DummyPanel> getUpdatedPanels() {
+        return updatedPanels;
+    }
+
+    public List<Pair<String, DummyPanel>> getCreatedPanels() {
+        return createdPanels;
+    }
+
+    public List<DummyModel> getUpdatedModels() {
+        return updatedModels;
+    }
+
+    public List<String> getEliminatedEntities() {
+        return eliminatedEntities;
+    }
+
+    public List<Pair<String, EntityType>> getCreatedEntities() {
+        return createdEntities;
+    }
+
+    public static DataBase getDataBase(){
+        if (dataBase == null) System.out.println("initialize database first ...");
+        return dataBase;
     }
 }

@@ -2,9 +2,12 @@ package client.network;
 
 import client.network.socket.SocketRequestSender;
 
+import shared.Model.Input;
 import shared.Model.NotificationType;
 import shared.Model.Skill;
 import shared.request.*;
+import shared.request.game.MoveRequest;
+import shared.request.game.StateRequest;
 import shared.request.leader.JoinDemandStatusReq;
 import shared.request.leader.KickPlayerReq;
 import shared.request.leader.PurchaseSkillRequest;
@@ -141,5 +144,27 @@ public class RequestFactory {
             throw new RuntimeException(e);
         }
     }
+
+    public static void createMoveRequest(Input input){
+        socketRequestSender = status.getSocket();
+        try {
+            socketRequestSender.sendRequest(new MoveRequest(macAddress, input)).run(requestHandler);
+            System.out.println("REQUEST WAS SENT!");
+        } catch (IOException e) {
+            System.out.println("Move Req was not sent ... ")  ;
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static void createStateRequest(){
+        socketRequestSender = status.getSocket();
+        try {
+            socketRequestSender.sendRequest(new StateRequest(macAddress)).run(requestHandler);
+        } catch (IOException e) {
+            System.out.println("State Request was not sent ... ")  ;
+            throw new RuntimeException(e);
+        }
+    }
+
 
 }
