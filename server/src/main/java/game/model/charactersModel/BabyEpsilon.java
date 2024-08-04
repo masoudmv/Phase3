@@ -2,7 +2,7 @@ package game.model.charactersModel;
 
 import game.controller.UserInterfaceController;
 import game.controller.Utils;
-import game.controller.constants.EntityConstants;
+import shared.constants.EntityConstants;
 import shared.Model.MyPolygon;
 import game.model.entities.AttackTypes;
 import game.model.movement.Direction;
@@ -15,7 +15,7 @@ public class BabyEpsilon extends GeoShapeModel {
         super();
         this.anchor = anchor;
         this.radius = EntityConstants.BABY_EPSILON_RADIUS.getValue();
-        UserInterfaceController.createBabyEpsilonView(id);
+//        UserInterfaceController.createBabyEpsilonView(id);
         damageSize.put(AttackTypes.MELEE, 10);
     }
 

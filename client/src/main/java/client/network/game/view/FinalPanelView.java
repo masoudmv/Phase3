@@ -18,9 +18,6 @@ public class FinalPanelView extends JPanel {
     private Point2D Location; // absolute location of the frame
     private Dimension size;
     public static List<FinalPanelView> finalPanelViews = new CopyOnWriteArrayList<>();
-//    private JLayeredPane layeredPane;
-
-    public FinalPanelView() {}
 
     public FinalPanelView(String id, Point2D Location, Dimension size){
         this.id = id;
@@ -37,20 +34,10 @@ public class FinalPanelView extends JPanel {
         frame.add(this);
         finalPanelViews.add(this);
 
-        frame.repaint();
 
+    }
 
-
-//        MainFrame frame = MainFrame.getINSTANCE();
-//        frame.setLayout(null); // Absolute layout
-//        layeredPane = new JLayeredPane();
-//        layeredPane.setBounds(0, 0, frame.getWidth(), frame.getHeight());
-//        frame.add(layeredPane);
-//        layeredPane.add(this, JLayeredPane.DEFAULT_LAYER);
-//        finalPanelViews.add(this);
-//        repaint();
-
-//        this.setDoubleBuffered(true);
+    public FinalPanelView() {
 
     }
 
@@ -78,7 +65,6 @@ public class FinalPanelView extends JPanel {
     public void setDimension(Dimension size) {
         this.size = size;
         setSize(size);
-//        repaint();
     }
 
 
@@ -94,31 +80,6 @@ public class FinalPanelView extends JPanel {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
 
-//        updateGeoShapeViewsLocations(this);
-
-//        for (EpsilonView epsilonView : EpsilonView.epsilonViews) {
-//            epsilonView.setCurrentLocation(
-//                    calculateViewLocationEpsilon(this, epsilonView.getId())
-//            );
-//            epsilonView.setVertices(
-//                    calculateViewLocationOfEpsilonVertices(this, epsilonView.getId())
-//            );
-//        }
-
-//        for (BulletView bulletView : bulletViews) {
-//            bulletView.setCurrentLocation(calculateViewLocationBullet(this, bulletView.getId()));
-//        }
-
-        // Collect all drawable objects
-//        ArrayList<GeoShapeView> drawableObjects = new ArrayList<>();
-//        GeoShapeView.geoShapeViews.addAll(GeoShapeView.geoShapeVdwiews);
-//        GeoShapeView.geoShapeViews.addAll(drawables);
-
-//        for (Drawable drawable : drawables){
-//            drawable.draw(g);
-//        }
-
-
         // Sort the objects by z-order
         GeoShapeView.geoShapeViews.sort(Comparator.comparingInt(GeoShapeView::getZOrder));
 
@@ -127,7 +88,5 @@ public class FinalPanelView extends JPanel {
             String panelID = getId();
             obj.draw(g, panelID);
         }
-
-//        System.out.println(SwingUtilities.isEventDispatchThread());
     }
 }

@@ -1,6 +1,6 @@
 package game.model.charactersModel.blackOrb;
 
-import game.controller.constants.EntityConstants;
+import shared.constants.EntityConstants;
 import game.model.FinalPanelModel;
 import shared.Model.MyPolygon;
 import javafx.scene.shape.Circle;

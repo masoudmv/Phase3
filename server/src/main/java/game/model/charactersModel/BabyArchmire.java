@@ -1,6 +1,6 @@
 package game.model.charactersModel;
 
-import game.controller.constants.EntityConstants;
+import shared.constants.EntityConstants;
 import game.example.GraphicalObject;
 import shared.Model.MyPolygon;
 import game.model.collision.Collidable;

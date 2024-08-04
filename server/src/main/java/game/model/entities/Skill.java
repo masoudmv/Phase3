@@ -2,8 +2,8 @@ package game.model.entities;
 
 import game.controller.Game;
 import game.controller.UserInterfaceController;
-import game.controller.constants.EntityConstants;
-import game.controller.constants.SkillConstants;
+import shared.constants.EntityConstants;
+import shared.constants.SkillConstants;
 import game.model.charactersModel.EpsilonModel;
 
 import javax.swing.*;
@@ -71,7 +71,7 @@ public enum Skill {
             case CHIRON -> e -> Profile.getCurrent().EPSILON_HEALTH_REGAIN = 3;
             case ATHENA -> e -> Profile.getCurrent().PANEL_SHRINKAGE_COEFFICIENT *= 0.80;
             case PROTEUS -> e -> EpsilonModel.getINSTANCE().addVertex();
-            case EMPUSA -> e -> EpsilonModel.getINSTANCE().empusa();
+            case EMPUSA -> e -> System.out.println();
             case DOLUS -> null;
         };
     }

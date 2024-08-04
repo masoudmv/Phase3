@@ -1,31 +1,25 @@
 package game.controller;
 
 import game.example.Main;
-import game.model.charactersModel.EpsilonModel;
-import game.model.movement.Direction;
-import game.view.junks.AbilityShopPanel;
-import game.view.junks.KeyBindingMenu;
+
 
 
 import javax.swing.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.geom.Point2D;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 import static game.controller.GameLoop.movementInProgress;
-import static game.controller.Utils.addVectors;
-import static game.controller.Utils.multiplyVector;
-import static game.controller.constants.Constants.EPSILON_MAX_SPEED;
+import static shared.constants.Constants.EPSILON_MAX_SPEED;
 
 public class UserInputHandler implements KeyListener {
     private static UserInputHandler INSTANCE;
     public static Set<Integer> keysPressed = new HashSet<>();
     private Timer movementTimer;
 
-    private AbilityShopPanel abilityShopPanel = null;
+//    private AbilityShopPanel abilityShopPanel = null;
     private JFrame abilityShopFrame = null;
 
     public UserInputHandler() {
@@ -37,7 +31,7 @@ public class UserInputHandler implements KeyListener {
     public static void updateMovement() {
         double deltaX = 0;
         double deltaY = 0;
-        Map<String, Integer> keyBindings = KeyBindingMenu.getINSTANCE().getKeyBindings();
+//        Map<String, Integer> keyBindings = KeyBindingMenu.getINSTANCE().getKeyBindings();
         if (Main.sensitivity < 50) EPSILON_MAX_SPEED = 3;
         if (50 <= Main.sensitivity && Main.sensitivity < 60) EPSILON_MAX_SPEED = 3.5;
         if (60 < Main.sensitivity && Main.sensitivity < 70) EPSILON_MAX_SPEED = 4;
@@ -70,11 +64,11 @@ public class UserInputHandler implements KeyListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
-        Map<String, Integer> keyBindings = KeyBindingMenu.getINSTANCE().getKeyBindings();
+//        Map<String, Integer> keyBindings = KeyBindingMenu.getINSTANCE().getKeyBindings();
 
-        if (e.getKeyCode() == keyBindings.get("Open Shop")) {
-            handleAbilityShopPanelToggle();
-        }
+//        if (e.getKeyCode() == keyBindings.get("Open Shop")) {
+//            handleAbilityShopPanelToggle();
+//        }
 
         if (GameLoop.getINSTANCE().isRunning()) {
             if (e.getKeyCode() == KeyEvent.VK_G) UserInterfaceController.fireAbility();
@@ -118,15 +112,15 @@ public class UserInputHandler implements KeyListener {
             abilityShopFrame.setSize(400, 600);
             abilityShopFrame.setLocationRelativeTo(null); // Center the frame on the screen
             abilityShopFrame.setAlwaysOnTop(true); // Ensure the frame is always on top
-            abilityShopPanel = new AbilityShopPanel(abilityShopFrame);
-            abilityShopFrame.add(abilityShopPanel);
+//            abilityShopPanel = new AbilityShopPanel(abilityShopFrame);
+//            abilityShopFrame.add(abilityShopPanel);
             abilityShopFrame.setVisible(true);
             abilityShopFrame.toFront(); // Bring the frame to the front
             abilityShopFrame.requestFocus(); // Request focus
         } else {
             abilityShopFrame.dispose();
             abilityShopFrame = null;
-            abilityShopPanel = null;
+//            abilityShopPanel = null;
         }
     }
 

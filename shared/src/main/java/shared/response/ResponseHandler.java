@@ -1,6 +1,6 @@
 package shared.response;
 
-import shared.response.game.MoveResponse;
+import shared.response.game.NullResponse;
 import shared.response.game.StateResponse;
 
 public interface ResponseHandler {
@@ -13,6 +13,7 @@ public interface ResponseHandler {
     void handleLeaveSquadResponse(LeaveSquadResponse leaveSquadResponse);
     void handleJoinDemandResponse(JoinDemandResponse joinDemandResponse);
     void handleTransferReqToClientResponse(TransferReqToClientResponse monomachiaInvitationResponse);
-    void handleMoveResponse(MoveResponse moveResponse);
+
+    void handleNullResponse(NullResponse nullResponse);
     void handleStateResponse(StateResponse stateResponse);
 }

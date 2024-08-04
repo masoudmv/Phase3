@@ -2,8 +2,8 @@ package game.model.charactersModel.smiley;
 
 import game.controller.Game;
 import game.controller.Utils;
-import game.controller.constants.EntityConstants;
-import game.controller.constants.SmileyConstants;
+import shared.constants.EntityConstants;
+import shared.constants.SmileyConstants;
 import game.example.GraphicalObject;
 import game.model.FinalPanelModel;
 import shared.Model.MyPolygon;

@@ -14,7 +14,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static client.network.RequestFactory.createMoveRequest;
-import static client.network.game.controller.onlineGame.OnlineGameLoop.movementInProgress;
+import static client.network.game.controller.onlineGame.ClientGameLoop.movementInProgress;
 
 
 public class UserInputHandler implements KeyListener {

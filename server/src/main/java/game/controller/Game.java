@@ -1,14 +1,7 @@
 package game.controller;
 
-import game.controller.constants.Constants;
+import shared.constants.Constants;
 import game.model.charactersModel.EpsilonModel;
-//import view.MainPanel;
-import game.view.MainFrame;
-//import view.MainPanel;
-
-import javax.swing.*;
-
-import static game.view.MainFrame.label;
 
 
 public class Game {
@@ -31,24 +24,11 @@ public class Game {
         inGameXP=0;
         wave=1;
         Constants.RADIUS = 15;
-        MainFrame frame = MainFrame.getINSTANCE();
-        frame.addMouseListener(new MouseController());
-        frame.addMouseMotionListener(new MouseController());
 
 
-        SwingUtilities.invokeLater(() -> {
-            MainFrame.getINSTANCE().add(label);
+        new GameLoop();
 
-//            MainPanel.getINSTANCE();
-//            gameLoop = new GameLoop();
-            MainFrame.getINSTANCE().addKeyListener(UserInputHandler.getINSTANCE());
-            new GameLoop();
-//            GameLoop.getINSTANCE().initializeGame();
-//            GameLoop.getINSTANCE().start();
-//            GameLoop.getINSTANCE();
-//            gameLoop.run(); // todo change the logic of game loop
 
-        });
     }
 
     public static Game getINSTANCE() {
@@ -76,7 +56,8 @@ public class Game {
 
     public static void nullifyGameInstance() {
         INSTANCE = null;
-//        MainFrame.getINSTANCE().removeKeyListener(gameLoop); // todo: now the gameLoop doesnt contain KeyLister
+//        MainFrame.getINSTANCE().removeKeyListener(gameLoop);
+// todo: now the gameLoop doesnt contain KeyLister
         gameLoop =null;
     }
 }

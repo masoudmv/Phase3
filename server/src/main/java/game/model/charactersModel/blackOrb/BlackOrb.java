@@ -2,7 +2,7 @@ package game.model.charactersModel.blackOrb;
 
 import game.controller.Game;
 import game.controller.Utils;
-import game.controller.constants.EntityConstants;
+import shared.constants.EntityConstants;
 import game.model.FinalPanelModel;
 import game.model.entities.Profile;
 

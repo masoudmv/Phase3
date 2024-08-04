@@ -1,10 +1,10 @@
 package client.network;
 
 
-import client.network.game.controller.onlineGame.OnlineGame;
+import client.network.game.controller.MouseController;
+import client.network.game.controller.onlineGame.ClientGame;
 import client.network.game.view.MainFrame;
 import client.network.game.view.charactersView.EpsilonView;
-import client.network.game.view.charactersView.SquarantineView;
 import client.network.socket.SocketRequestSender;
 //import controller..UserInputHandler;
 
@@ -26,7 +26,7 @@ public class Main {
         EpsilonView.loadImage();
 
 
-        MainFrame.getINSTANCE();
-        new OnlineGame();
+        MainFrame.getINSTANCE().addMouseListener(new MouseController());
+        new ClientGame();
     }
 }

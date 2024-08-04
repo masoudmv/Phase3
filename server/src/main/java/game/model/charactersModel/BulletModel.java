@@ -2,7 +2,9 @@ package game.model.charactersModel;
 
 import game.controller.UserInterfaceController;
 import game.controller.Utils;
-import game.controller.constants.Constants;
+import server.DataBase;
+import shared.Model.dummies.DummyModel;
+import shared.constants.Constants;
 import game.model.FinalPanelModel;
 import shared.Model.MyPolygon;
 import game.model.entities.AttackTypes;
@@ -14,10 +16,14 @@ import game.model.collision.Impactable;
 import game.model.movement.Direction;
 import game.model.movement.Movable;
 
+import java.awt.*;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
+
+import static game.controller.UserInterfaceController.creatBulletView;
+import static game.controller.UserInterfaceController.eliminateBulletView;
 
 public class BulletModel extends GeoShapeModel implements Movable, Collidable, Impactable {
     public static CopyOnWriteArrayList<BulletModel> bulletModels = new CopyOnWriteArrayList<>();
@@ -36,13 +42,22 @@ public class BulletModel extends GeoShapeModel implements Movable, Collidable, I
 
         movables.add(this);
         collidables.add(this);
-        UserInterfaceController.creatBulletView(id);
 
         int damage  = Profile.getCurrent().BULLET_DAMAGE;
         damageSize.put(AttackTypes.MELEE, damage);
         updateBulletDamage();
 
 
+        creatBulletView(id);
+
+
+        // todo move to another method ...
+        DummyModel model = new DummyModel();
+        model.setId(id);
+        model.setAnchor(new Point((int) anchor.getX(), (int) anchor.getY()));
+        model.setAngle(angle);
+        model.setMyPolygon(myPolygon);
+        DataBase.getDataBase().addUpdatedModels(model);
     }
 
     private void updateBulletDamage(){
@@ -61,7 +76,7 @@ public class BulletModel extends GeoShapeModel implements Movable, Collidable, I
 
         movables.add(this);
         collidables.add(this);
-        UserInterfaceController.creatBulletView(id);
+        creatBulletView(id);
         damageSize.put(AttackTypes.MELEE, 5);
     }
 
@@ -179,12 +194,14 @@ public class BulletModel extends GeoShapeModel implements Movable, Collidable, I
 
     @Override
     public void eliminate(){
+        super.eliminate();
         // is needed?
         bulletModels.remove(this);
-
         collidables.remove(this);
         movables.remove(this);
-        UserInterfaceController.eliminateBulletView(id);
+
+        eliminateBulletView(id);
+
     }
 
     @Override
@@ -213,8 +230,12 @@ public class BulletModel extends GeoShapeModel implements Movable, Collidable, I
         // todo: change for multiplayer part ...
         EpsilonModel epsilon = EpsilonModel.getINSTANCE();
         epsilon.health += (int) Profile.getCurrent().EPSILON_HEALTH_REGAIN;
+
         this.damage((Entity) other, AttackTypes.MELEE);
         eliminate();
+
+
+
 
     }
 

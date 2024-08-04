@@ -2,8 +2,8 @@ package game.model.charactersModel;
 
 import game.controller.UserInterfaceController;
 import game.controller.Utils;
-import game.controller.constants.Constants;
-import game.controller.constants.EntityConstants;
+import shared.constants.Constants;
+import shared.constants.EntityConstants;
 import shared.Model.MyPolygon;
 import game.model.charactersModel.blackOrb.Orb;
 import game.model.collision.Collidable;
@@ -22,6 +22,8 @@ import java.util.List;
 import java.util.Random;
 
 import static shared.Model.imagetools.ToolBox.getBufferedImage;
+import static shared.constants.EntityConstants.SQUARANTINE_COLLECTIBLES_XP;
+import static shared.constants.EntityConstants.SQUARANTINE_NUM_OF_COLLECTIBLES;
 
 public class SquarantineModel extends GeoShapeModel implements Movable, Collidable, Impactable {
     static BufferedImage image;
@@ -251,6 +253,7 @@ public class SquarantineModel extends GeoShapeModel implements Movable, Collidab
 
     @Override
     public void update(Direction direction) {
+//        System.out.println("HP:  " + health);
         Point2D movement = Utils.multiplyVector(direction.getDirectionVector(), direction.getMagnitude());
         Random random = new Random();
         Point2D dir = Utils.normalizeVector(Utils.relativeLocation(EpsilonModel.getINSTANCE().getAnchor(), getAnchor()));
@@ -363,10 +366,11 @@ public class SquarantineModel extends GeoShapeModel implements Movable, Collidab
         squarantineModels.remove(this);
 
 //        aliveEnemies--;
-
-        CollectibleModel.dropCollectible(getAnchor(), EntityConstants.SQUARANTINE_NUM_OF_COLLECTIBLES.getValue(), EntityConstants.SQUARANTINE_COLLECTIBLES_XP.getValue());
-
-
+        CollectibleModel.dropCollectible(
+                getAnchor(),
+                SQUARANTINE_NUM_OF_COLLECTIBLES.getValue(),
+                SQUARANTINE_COLLECTIBLES_XP.getValue()
+        );
 
     }
 

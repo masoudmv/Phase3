@@ -3,7 +3,7 @@ package game.model.charactersModel.blackOrb;
 import game.controller.Game;
 import game.controller.Utils;
 import game.controller.UserInterfaceController;
-import game.controller.constants.Constants;
+import shared.constants.Constants;
 import shared.Model.MyPolygon;
 import game.model.entities.AttackTypes;
 import game.model.charactersModel.CollectibleModel;
@@ -32,7 +32,7 @@ public class Laser extends GeoShapeModel {
         findLaserBoundary(laserCenterLine);
         setAnchor();
         BlackOrb.lasers.add(this);
-        UserInterfaceController.createLaserView(id);
+//        UserInterfaceController.createLaserView(id);
         damageSize.put(AttackTypes.AOE, 12);
     }
 

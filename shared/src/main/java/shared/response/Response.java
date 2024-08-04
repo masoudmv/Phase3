@@ -3,7 +3,7 @@ package shared.response;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import shared.response.game.MoveResponse;
+import shared.response.game.NullResponse;
 import shared.response.game.StateResponse;
 
 @JsonTypeInfo(
@@ -21,7 +21,8 @@ import shared.response.game.StateResponse;
         @JsonSubTypes.Type(value = LeaveSquadResponse.class, name = "LeaveSquadResponse"),
         @JsonSubTypes.Type(value = JoinDemandResponse.class, name = "JoinDemandResponse"),
         @JsonSubTypes.Type(value = TransferReqToClientResponse.class, name = "TransferReqToClientResponse"),
-        @JsonSubTypes.Type(value = MoveResponse.class, name = "InputResponse"),
+
+        @JsonSubTypes.Type(value = NullResponse.class, name = "NullResponse"),
         @JsonSubTypes.Type(value = StateResponse.class, name = "StateResponse"),
 
 })

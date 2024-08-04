@@ -1,10 +1,14 @@
 package server;
 
+import game.controller.Utils;
+import game.model.charactersModel.BulletModel;
 import game.model.charactersModel.EpsilonModel;
+import game.model.entities.Profile;
 import game.model.movement.Direction;
 import server.socket.SocketResponseSender;
 import shared.Model.*;
 import shared.request.*;
+import shared.request.game.ClickedRequest;
 import shared.request.game.MoveRequest;
 import shared.request.game.StateRequest;
 import shared.request.leader.JoinDemandStatusReq;
@@ -18,14 +22,15 @@ import shared.request.member.LeaveSquadReq;
 import shared.request.nonmember.GetSquadsListRequest;
 import shared.request.nonmember.JoinSquadReq;
 import shared.response.*;
-import shared.response.game.MoveResponse;
+import shared.response.game.NullResponse;
 import shared.response.game.StateResponse;
 
 import java.awt.geom.Point2D;
-import java.util.ArrayList;
 
+import static game.controller.Game.ELAPSED_TIME;
 import static game.controller.Utils.addVectors;
 import static game.controller.Utils.multiplyVector;
+import static shared.constants.Constants.BULLET_VELOCITY;
 
 public class ServersideReqHandler extends Thread implements RequestHandler {
     private SocketResponseSender socketResponseSender;
@@ -232,49 +237,80 @@ public class ServersideReqHandler extends Thread implements RequestHandler {
 
     @Override
     public Response handleMoveReq(MoveRequest moveRequest) {
+        synchronized (dataBase){
+            double deltaX = 0;
+            double deltaY = 0;
 
-        double deltaX = 0;
-        double deltaY = 0;
+            switch (moveRequest.getInput()){
+                case move_up -> deltaY -= 0.7;
+                case move_right -> deltaX += 0.7;
+                case move_down -> deltaY += 0.7;
+                case move_left -> deltaX -= 0.7;
+            }
 
-        switch (moveRequest.getInput()){
-            case move_up -> deltaY -= 0.7;
-            case move_right -> deltaX += 0.7;
-            case move_down -> deltaY += 0.7;
-            case move_left -> deltaX -= 0.7;
+            Point2D.Double vector = new Point2D.Double(deltaX, deltaY);
+            Point2D point = multiplyVector(EpsilonModel.getINSTANCE().getDirection().getNormalizedDirectionVector(),
+                    EpsilonModel.getINSTANCE().getDirection().getMagnitude());
+            Direction direction = new Direction(addVectors(point, vector));
+            direction.adjustEpsilonDirectionMagnitude();
+
+            EpsilonModel.getINSTANCE().setDirection(direction);
+
+
+            return new NullResponse();
         }
-
-
-        System.out.println("moving ...");
-
-        Point2D.Double vector = new Point2D.Double(deltaX, deltaY);
-        Point2D point = multiplyVector(EpsilonModel.getINSTANCE().getDirection().getNormalizedDirectionVector(),
-                EpsilonModel.getINSTANCE().getDirection().getMagnitude());
-        Direction direction = new Direction(addVectors(point, vector));
-        direction.adjustEpsilonDirectionMagnitude();
-
-        EpsilonModel.getINSTANCE().setDirection(direction);
-
-
-        return new MoveResponse();
     }
 
     @Override
     public Response handleStateRequest(StateRequest stateRequest) {
-        StateResponse stateResponse = new StateResponse();
-
-        // Copy the lists to avoid clearing the original list references
-        stateResponse.setCreatedEntities(new ArrayList<>(dataBase.getCreatedEntities()));
-        stateResponse.setCreatedPanels(new ArrayList<>(dataBase.getCreatedPanels()));
-        stateResponse.setEliminatedEntities(dataBase.getEliminatedEntities());
-        stateResponse.setUpdatedModels(dataBase.getUpdatedModels());
-        stateResponse.setUpdatedPanels(dataBase.getUpdatedPanels());
-
-        // Clear the original lists after copying them
-        dataBase.getCreatedEntities().clear();
-        dataBase.getCreatedPanels().clear();
-
-        return stateResponse;
+        synchronized (dataBase){
+            StateResponse stateResponse = new StateResponse();
+            stateResponse.setCreatedEntities(dataBase.getCreatedEntities());
+            stateResponse.setCreatedPanels(dataBase.getCreatedPanels());
+            stateResponse.setUpdatedModels(dataBase.getUpdatedModels());
+            stateResponse.setUpdatedPanels(dataBase.getUpdatedPanels());
+            stateResponse.setEliminatedEntities(dataBase.getEliminatedEntities());
+            System.out.println("CREATED NUM: " + stateResponse.getEliminatedEntities().size());
+            return stateResponse;
+        }
     }
 
+    @Override
+    public Response handleClickedRequest(ClickedRequest clickedRequest) {
+        synchronized (dataBase){
+            EpsilonModel epsilon = EpsilonModel.getINSTANCE();
 
+            double startX = epsilon.getAnchor().getX();
+            double startY = epsilon.getAnchor().getY();
+
+            double mouseX = clickedRequest.getPosition().getX();
+            double mouseY = clickedRequest.getPosition().getY();
+
+            double deltaX = mouseX - startX;
+            double deltaY = mouseY - startY;
+            double pot = Math.hypot(deltaX, deltaY);
+
+            double velX = deltaX * (BULLET_VELOCITY / pot);
+            double velY = deltaY * (BULLET_VELOCITY / pot);
+            Point2D direction = new Point2D.Double(velX, velY);
+
+
+//            double now = ELAPSED_TIME;
+//            double empowerInitTime = Profile.getCurrent().empowerInitiationTime;
+
+            new BulletModel(epsilon.getAnchor(), new Direction(direction));
+
+//            if (now - empowerInitTime < 10){
+//                double angle = 10;
+//                Point2D right = Utils.rotateVector(direction, Math.toRadians(angle));
+//                new BulletModel(epsilon.getAnchor(), new Direction(right));
+//                Point2D left = Utils.rotateVector(direction, -Math.toRadians(angle));
+//                new BulletModel(epsilon.getAnchor(), new Direction(left));
+//            }
+            System.out.println("GGG");
+
+
+            return new NullResponse();
+        }
+    }
 }

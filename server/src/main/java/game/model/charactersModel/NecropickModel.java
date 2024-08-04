@@ -2,7 +2,7 @@ package game.model.charactersModel;
 
 import game.controller.Game;
 import game.controller.UserInterfaceController;
-import game.controller.constants.EntityConstants;
+import shared.constants.EntityConstants;
 import game.example.GraphicalObject;
 import shared.Model.MyPolygon;
 //import view.MainPanel;
@@ -35,7 +35,7 @@ public class NecropickModel extends GeoShapeModel implements Collidable {
         stateChangeTime = Game.ELAPSED_TIME; // Initialize state change time
         isHovering = true; // Start in hovering state
         collidables.add(this);
-        UserInterfaceController.createNecropickView(id, image);
+//        UserInterfaceController.createNecropickView(id, image);
         this.health = EntityConstants.NECROPICK_HEALTH.getValue();
     }
 
@@ -126,7 +126,7 @@ public class NecropickModel extends GeoShapeModel implements Collidable {
             }
         }
 
-        UserInterfaceController.updateNecropick(id);
+//        UserInterfaceController.updateNecropick(id);
     }
 
     private boolean findNextPos() {

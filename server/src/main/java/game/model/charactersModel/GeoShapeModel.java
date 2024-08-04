@@ -17,6 +17,8 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import static game.controller.UserInterfaceController.eliminateGeoShapeView;
+
 public abstract class GeoShapeModel extends Entity {
 
     protected String id;
@@ -38,7 +40,7 @@ public abstract class GeoShapeModel extends Entity {
         Point2D img = new Point2D.Double((double) -image.getWidth() / 2, (double) -image.getHeight() / 2);
         moveVertices(Utils.addVectors(anchor, img));
         entities.add(this);
-        UserInterfaceController.createGeoShapeView(id, image);
+//        UserInterfaceController.createGeoShapeView(id, image);
     }
 
 
@@ -51,7 +53,7 @@ public abstract class GeoShapeModel extends Entity {
         Point2D img = new Point2D.Double((double) -image.getWidth() / 2, (double) -image.getHeight() / 2);
         moveVertices(Utils.addVectors(anchor, img));
         entities.add(this);
-        UserInterfaceController.createGeoShapeView(id, image, zOrder);
+//        UserInterfaceController.createGeoShapeView(id, image, zOrder);
     }
 
     public GeoShapeModel(Point2D anchor, BufferedImage image, MyPolygon myPolygon, boolean necropick) {
@@ -68,7 +70,7 @@ public abstract class GeoShapeModel extends Entity {
         this.id = UUID.randomUUID().toString();
         this.myPolygon = myPolygon;
         entities.add(this);
-        UserInterfaceController.createGeoShapeView(id, image);
+//        UserInterfaceController.createGeoShapeView(id, image);
     }
 
     public GeoShapeModel(Point2D anchor, BufferedImage image) {
@@ -77,14 +79,14 @@ public abstract class GeoShapeModel extends Entity {
         this.anchor = new Point2D.Double(anchor.getX(), anchor.getY());
         radius = (double) image.getHeight() / 2;
         entities.add(this);
-        UserInterfaceController.createGeoShapeView(id, image);
+//        UserInterfaceController.createGeoShapeView(id, image);
     }
 
     public GeoShapeModel(Point2D anchor) {
         this.anchor = anchor;
         this.id = UUID.randomUUID().toString();
         entities.add(this);
-        UserInterfaceController.createGeoShapeView(id);
+//        UserInterfaceController.createGeoShapeView(id);
     }
 
     public GeoShapeModel() {
@@ -153,8 +155,9 @@ public abstract class GeoShapeModel extends Entity {
 
     public synchronized void eliminate() {
         entities.remove(this);
-        UserInterfaceController.eliminateGeoShapeView(id);
+//        eliminateGeoShapeView(id);
 
+        eliminateGeoShapeView(id);
 
     }
 

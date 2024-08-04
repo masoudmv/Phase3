@@ -6,7 +6,7 @@ import game.model.charactersModel.GeoShapeModel;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import static game.controller.constants.Constants.AOE_COOLDOWN;
+import static shared.constants.Constants.AOE_COOLDOWN;
 
 public abstract class Entity {
     public int health;
@@ -20,7 +20,7 @@ public abstract class Entity {
         // todo
         // implement melampus ...
         double now = Game.ELAPSED_TIME;
-        if (now - lastAoeTime >= AOE_COOLDOWN) {
+//        if (now - lastAoeTime >= AOE_COOLDOWN) {
             if (entity.vulnerable) {
                 entity.health -= damageSize.get(attackType);
                 if (entity.health <= 0) {
@@ -28,7 +28,7 @@ public abstract class Entity {
                 }
             }
             lastAoeTime = now;
-        }
+//        }
     }
 
     public void addHealth(int units) {

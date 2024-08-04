@@ -25,11 +25,11 @@ public class DataBase {
     private final List<Pair<Player, Player>> colosseumPairs = new CopyOnWriteArrayList<>();
     // todo update playerPairs based on summons ...
     private boolean squadBattleInitiated = false;
-
-
-    private List<Pair<String, EntityType>> createdEntities = new CopyOnWriteArrayList<>();
     private List<String> eliminatedEntities = new CopyOnWriteArrayList<>();
-    private List<Pair<String, DummyPanel>> createdPanels = new CopyOnWriteArrayList<>();
+
+
+    private Map<String, EntityType> createdEntities = new ConcurrentHashMap<>();
+    private Map<String, DummyPanel> createdPanels = new ConcurrentHashMap<>();
 
     private Map<String, DummyModel> updatedModels = new ConcurrentHashMap<>();
     private Map<String, DummyPanel> updatedPanels = new ConcurrentHashMap<>();
@@ -406,61 +406,61 @@ public class DataBase {
         }
     }
 
-    public void createEntity(String id, EntityType entityType){
-        createdEntities.add(new Pair<>(id, entityType));
+    public synchronized void createEntity(String id, EntityType entityType){
+        createdEntities.put(id, entityType);
     }
 
-    public void createPanel(String id, Point2D location, Dimension dimension){
+    public synchronized void createPanel(String id, Point2D location, Dimension dimension){
         int x = (int) location.getX();
         int y = (int) location.getY();
         DummyPanel panel = new DummyPanel(id, new Point(x, y), dimension);
-        createdPanels.add(new Pair<>(id, panel));
+        createdPanels.put(id, panel);
     }
 
-    public void eliminateEntity(String id){
+    public synchronized void eliminateEntity(String id){
         eliminatedEntities.add(id);
     }
 
 
-    public void clearModels(){
+    public synchronized void clearModels(){
         updatedModels.clear();
     }
 
-    public void addUpdatedModels(DummyModel model){
+    public synchronized void addUpdatedModels(DummyModel model){
         updatedModels.put(model.getId(), model);
     }
 
-    public void clearPanels(){
+    public synchronized void clearPanels(){
         updatedPanels.clear();
     }
 
-    public void addUpdatedPanels(DummyPanel panel){
+    public synchronized void addUpdatedPanels(DummyPanel panel){
         updatedPanels.put(panel.getId(), panel);
     }
 
-
-    public List<Pair<String, DummyPanel>> getCreatedPanels() {
+    public synchronized Map<String, DummyPanel> getCreatedPanels() {
         return createdPanels;
     }
 
-
-    public Map<String, DummyPanel> getUpdatedPanels() {
-        return updatedPanels;
-    }
-
-    public Map<String, DummyModel> getUpdatedModels() {
-        return updatedModels;
-    }
-
-    public List<String> getEliminatedEntities() {
-        return eliminatedEntities;
-    }
-
-    public List<Pair<String, EntityType>> getCreatedEntities() {
+    public synchronized Map<String, EntityType> getCreatedEntities() {
         return createdEntities;
     }
 
-    public static DataBase getDataBase(){
+    public synchronized Map<String, DummyPanel> getUpdatedPanels() {
+        return updatedPanels;
+    }
+
+    public synchronized Map<String, DummyModel> getUpdatedModels() {
+        return updatedModels;
+    }
+
+    public synchronized List<String> getEliminatedEntities() {
+        return eliminatedEntities;
+    }
+
+
+
+    public synchronized static DataBase getDataBase(){
         if (dataBase == null) System.out.println("initialize database first ...");
         return dataBase;
     }

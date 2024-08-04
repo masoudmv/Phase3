@@ -6,7 +6,6 @@ import game.model.FinalPanelModel;
 import shared.Model.MyPolygon;
 import game.model.entities.AttackTypes;
 import game.model.entities.Entity;
-import game.view.MainFrame;
 import game.model.collision.Collidable;
 import game.model.movement.Direction;
 
@@ -17,6 +16,7 @@ import java.awt.image.BufferedImage;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import static shared.Model.imagetools.ToolBox.getBufferedImage;
+import static shared.constants.Constants.FRAME_DIMENSION;
 
 public class SmileyBullet extends GeoShapeModel implements Collidable {
 
@@ -88,9 +88,9 @@ public class SmileyBullet extends GeoShapeModel implements Collidable {
 
     private boolean isOutSide(){
         boolean top = getAnchor().getY() + getRadius() < 0;
-        boolean bottom = getAnchor().getY() - getRadius() > MainFrame.getINSTANCE().getHeight();
+        boolean bottom = getAnchor().getY() - getRadius() > FRAME_DIMENSION.getHeight();
         boolean right = getAnchor().getX() + getRadius() < 0;
-        boolean left = getAnchor().getX() - getRadius() > MainFrame.getINSTANCE().getWidth();
+        boolean left = getAnchor().getX() - getRadius() > FRAME_DIMENSION.getWidth();
 
 
          if (top || bottom || right || left) return true;

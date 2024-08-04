@@ -1,19 +1,15 @@
 package client.network.game.controller;
 
-import client.network.game.controller.onlineGame.OnlineGame;
-import client.network.game.controller.onlineGame.OnlineGameLoop;
 import client.network.game.view.ClientDataBase;
 import client.network.game.view.FinalPanelView;
 import client.network.game.view.charactersView.*;
 
 import shared.Model.MyPolygon;
-import shared.Model.TimedLocation;
 import shared.Model.dummies.DummyModel;
 import shared.Model.dummies.DummyPanel;
 
 import java.awt.*;
 import java.awt.geom.Point2D;
-import java.util.LinkedList;
 
 import static client.network.game.view.FinalPanelView.finalPanelViews;
 import static client.network.game.view.charactersView.BulletView.bulletViews;
@@ -21,15 +17,14 @@ import static client.network.game.view.charactersView.GeoShapeView.geoShapeViews
 
 
 public abstract class UserInterfaceController {
-    public static void createSquarantineView(String id){
-        new SquarantineView(id);
+    public static void createPolygonView(String id){
+        new PolygonView(id);
     }
 
     public static void creatBulletView(String id){ new BulletView(id); }
 
     public static void createCollectibleView(String id){ new CollectibleView(id); }
 
-    public static void createTrigorathView(String id){ new TrigorathView(id); }
 
     public static void createFinalPanelView(String id, Point2D location, Dimension size){ new FinalPanelView(id, location, size); } // todo edit parameters
 
@@ -49,7 +44,7 @@ public abstract class UserInterfaceController {
 
 
 
-    public static void createOmenoctView(String id){ new SquarantineView(id); }
+    public static void createOmenoctView(String id){ new PolygonView(id); }
     public static void createBabyEpsilonView(String id){ new BabyEpsilonView(id); }
     public static void createSmileyAOEView(String id){ new SmileyAOE(id); }
     public static void createLaserView(String id){ new LaserView(id); }
@@ -123,6 +118,8 @@ public abstract class UserInterfaceController {
 
 
     public static void updateGeoShapeViewProperties(){
+
+
         for (FinalPanelView f : finalPanelViews){
             f.setLocation(calculateLocationOfFinalPanelView(f.getId()));
             f.setSize(calculateDimensionOfFinalPanelView(f.getId()));
@@ -131,17 +128,25 @@ public abstract class UserInterfaceController {
 
         for (FinalPanelView finalPanelView : finalPanelViews){
             for (GeoShapeView geoShapeView : geoShapeViews){
-                Point2D currentLocation = calculateViewLocationPolygonalEnemy(finalPanelView, geoShapeView.getId());
-                String panelID = finalPanelView.getId();
-                geoShapeView.setCurrentLocation(panelID, currentLocation);
-                geoShapeView.setMyPolygon(panelID, calculateEntityView(finalPanelView, geoShapeView.getId()));
+                DummyModel m = findGeoShapeModel(geoShapeView.getId());
+                // TODO remove the following if ...
+                if (! (m== null)){
+                    Point2D currentLocation = calculateViewLocationPolygonalEnemy(finalPanelView, geoShapeView.getId());
+                    String panelID = finalPanelView.getId();
+                    geoShapeView.setCurrentLocation(panelID, currentLocation);
+                    geoShapeView.setMyPolygon(panelID, calculateEntityView(finalPanelView, geoShapeView.getId()));
 //                geoShapeView.setHistory(panelID, calculateLocationHistory(finalPanelView, geoShapeView.getId()));
+
+                } else System.out.println("null geoshapemodel!!!!");
             }
         }
 
         for (GeoShapeView geoShapeView : geoShapeViews){
             geoShapeView.setAngle(calculateGeoShapeViewAngle(geoShapeView.getId()));
         }
+
+
+
     }
 
 

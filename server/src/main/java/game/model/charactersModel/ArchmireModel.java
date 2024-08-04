@@ -3,7 +3,7 @@ package game.model.charactersModel;
 import game.controller.Game;
 import game.controller.UserInterfaceController;
 import game.controller.Utils;
-import game.controller.constants.EntityConstants;
+import shared.constants.EntityConstants;
 import game.example.GraphicalObject;
 import shared.Model.MyPolygon;
 import shared.Model.TimedLocation;
@@ -33,7 +33,7 @@ public class ArchmireModel extends GeoShapeModel implements Collidable {
         this.health = EntityConstants.ARCHMIRE_HEALTH.getValue();
         this.isHovering = true;
         updateDirection();
-        UserInterfaceController.createArchmireView(id, ArchmireModel.image);
+//        UserInterfaceController.createArchmireView(id, ArchmireModel.image);
         archmireModels.add(this);
         collidables.add(this);
         damageSize.put(AttackTypes.DROWN, 10);
@@ -44,7 +44,7 @@ public class ArchmireModel extends GeoShapeModel implements Collidable {
     public ArchmireModel(Point2D anchor, MyPolygon myPolygon) {
         super(anchor, BabyArchmire.image, myPolygon, true);
         updateDirection();
-        UserInterfaceController.createArchmireView(id, BabyArchmire.image);
+//        UserInterfaceController.createArchmireView(id, BabyArchmire.image);
 
         archmireModels.add(this);
         collidables.add(this);

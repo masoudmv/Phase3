@@ -1,7 +1,7 @@
 package game.model.movement;
 
 import game.controller.Utils;
-import game.controller.constants.Constants;
+import shared.constants.Constants;
 
 import java.awt.*;
 import java.awt.geom.Point2D;

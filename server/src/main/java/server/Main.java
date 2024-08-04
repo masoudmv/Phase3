@@ -10,7 +10,7 @@ import game.model.charactersModel.smiley.LeftHand;
 import game.model.charactersModel.smiley.Smiley;
 import game.model.entities.Profile;
 import game.model.entities.Skill;
-import game.view.MainFrame;
+
 import picocli.CommandLine;
 import server.cli.ServerCli;
 import server.socket.SocketStarter;
@@ -44,13 +44,11 @@ public class Main {
         new EpsilonModel(new Point2D.Double(1000, 700), pol);
 
         new SquarantineModel(new Point2D.Double(400, 500));
+        new OmenoctModel(new Point2D.Double(1400, 500));
 
 
 
 
-
-
-        MainFrame.getINSTANCE();
         new Profile();
         new Game(); // uncoment this todo
         Skill.initializeSkills();

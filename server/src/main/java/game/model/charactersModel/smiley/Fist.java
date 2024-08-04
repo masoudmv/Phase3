@@ -1,7 +1,7 @@
 package game.model.charactersModel.smiley;
 
 import game.controller.Utils;
-import game.controller.constants.SmileyConstants;
+import shared.constants.SmileyConstants;
 import game.example.GraphicalObject;
 import game.model.FinalPanelModel;
 import shared.Model.MyPolygon;

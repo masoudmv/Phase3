@@ -2,7 +2,7 @@ package game.model.charactersModel;
 
 import game.controller.UserInterfaceController;
 import game.controller.Utils;
-import game.controller.constants.EntityConstants;
+import shared.constants.EntityConstants;
 import shared.Model.MyPolygon;
 import game.model.collision.Collidable;
 import game.model.movement.Direction;
@@ -24,7 +24,7 @@ public class Wyrm extends GeoShapeModel implements Collidable {
         super(anchor, image, pol, true);
         wyrms.add(this);
         updateDirection();
-        UserInterfaceController.createArchmireView(id, ArchmireModel.image);
+//        UserInterfaceController.createArchmireView(id, ArchmireModel.image);
         collidables.add(this);
         this.health = EntityConstants.WYRM_HEALTH.getValue();
     }

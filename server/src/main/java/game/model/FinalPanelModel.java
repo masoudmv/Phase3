@@ -19,7 +19,7 @@ import java.util.UUID;
 
 import static game.controller.UserInterfaceController.*;
 import static game.controller.Utils.*;
-import static game.controller.constants.Constants.FRAME_DIMENSION;
+import static shared.constants.Constants.FRAME_DIMENSION;
 import static game.model.charactersModel.EpsilonModel.epsilons;
 
 public class FinalPanelModel implements Collidable, Serializable {

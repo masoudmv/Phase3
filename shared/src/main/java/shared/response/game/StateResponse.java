@@ -16,27 +16,31 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 @JsonTypeName("StateResponse")
 public class StateResponse implements Response {
-    private List<Pair<String, EntityType>> createdEntities = new CopyOnWriteArrayList<>();
-    private List<Pair<String, DummyPanel>> createdPanels = new CopyOnWriteArrayList<>();
-    private List<String> eliminatedEntities = new CopyOnWriteArrayList<>();
+    private Map<String, EntityType> createdEntities = new ConcurrentHashMap<>();
+    private Map<String, DummyPanel> createdPanels = new ConcurrentHashMap<>();
     private Map<String, DummyModel> updatedModels = new ConcurrentHashMap<>();
     private Map<String, DummyPanel> updatedPanels = new ConcurrentHashMap<>();
 
+    private List<String> eliminatedEntities = new CopyOnWriteArrayList<>();
 
 
     public StateResponse() {
     }
 
-    public List<Pair<String, EntityType>> getCreatedEntities() {
+    public Map<String, EntityType> getCreatedEntities() {
         return createdEntities;
     }
 
-    public void setCreatedEntities(List<Pair<String, EntityType>> createdEntities) {
+    public void setCreatedEntities(Map<String, EntityType> createdEntities) {
         this.createdEntities = createdEntities;
     }
 
-    public List<Pair<String, DummyPanel>> getCreatedPanels() {
+    public Map<String, DummyPanel> getCreatedPanels() {
         return createdPanels;
+    }
+
+    public void setCreatedPanels(Map<String, DummyPanel> createdPanels) {
+        this.createdPanels = createdPanels;
     }
 
     public List<String> getEliminatedEntities() {
@@ -61,10 +65,6 @@ public class StateResponse implements Response {
 
     public void setUpdatedPanels(Map<String, DummyPanel> updatedPanels) {
         this.updatedPanels = updatedPanels;
-    }
-
-    public void setCreatedPanels(List<Pair<String, DummyPanel>> createdPanels) {
-        this.createdPanels = createdPanels;
     }
 
     @Override

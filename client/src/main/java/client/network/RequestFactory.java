@@ -6,6 +6,7 @@ import shared.Model.Input;
 import shared.Model.NotificationType;
 import shared.Model.Skill;
 import shared.request.*;
+import shared.request.game.ClickedRequest;
 import shared.request.game.MoveRequest;
 import shared.request.game.StateRequest;
 import shared.request.leader.JoinDemandStatusReq;
@@ -18,7 +19,10 @@ import shared.request.member.LeaveSquadReq;
 import shared.request.nonmember.GetSquadsListRequest;
 import shared.request.nonmember.JoinSquadReq;
 
+import java.awt.*;
 import java.io.IOException;
+
+import static java.awt.desktop.UserSessionEvent.Reason.LOCK;
 
 public class RequestFactory {
     private static final Status status = Status.getINSTANCE();
@@ -146,25 +150,39 @@ public class RequestFactory {
     }
 
     public static void createMoveRequest(Input input){
-        socketRequestSender = status.getSocket();
-        try {
-            socketRequestSender.sendRequest(new MoveRequest(macAddress, input)).run(requestHandler);
-            System.out.println("REQUEST WAS SENT!");
-        } catch (IOException e) {
-            System.out.println("Move Req was not sent ... ")  ;
-            throw new RuntimeException(e);
+        synchronized (LOCK){
+            socketRequestSender = status.getSocket();
+            try {
+                socketRequestSender.sendRequest(new MoveRequest(macAddress, input)).run(requestHandler);
+            } catch (IOException e) {
+                System.out.println("Move Req was not sent ... ")  ;
+                throw new RuntimeException(e);
+            }
         }
     }
 
     public static void createStateRequest(){
-        socketRequestSender = status.getSocket();
-        try {
-            socketRequestSender.sendRequest(new StateRequest()).run(requestHandler);
-        } catch (IOException e) {
-            System.out.println("State Request was not sent ... ");
-            throw new RuntimeException(e);
+        synchronized (LOCK){
+            socketRequestSender = status.getSocket();
+            try {
+                socketRequestSender.sendRequest(new StateRequest()).run(requestHandler);
+            } catch (IOException e) {
+                System.out.println("State Request was not sent ... ");
+                throw new RuntimeException(e);
+            }
         }
     }
 
-
+    public static void createClickedRequest(Point position){
+        synchronized (LOCK){
+            socketRequestSender = status.getSocket();
+            try {
+                socketRequestSender.sendRequest(new ClickedRequest(position)).run(requestHandler);
+                System.out.println("Clicked Req was sent ... ");
+            } catch (IOException e) {
+                System.out.println("Clicked Request was not sent ... ");
+                throw new RuntimeException(e);
+            }
+        }
+    }
 }

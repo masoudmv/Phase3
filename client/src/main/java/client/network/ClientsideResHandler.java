@@ -9,18 +9,18 @@ import shared.Model.*;
 import shared.Model.dummies.DummyModel;
 import shared.Model.dummies.DummyPanel;
 import shared.response.*;
-import shared.response.game.MoveResponse;
+import shared.response.game.NullResponse;
 import shared.response.game.StateResponse;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.Point2D;
-import java.awt.image.ImageProducer;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static client.network.game.controller.UserInterfaceController.createPolygonView;
 import static client.network.game.controller.UserInterfaceController.updateGeoShapeViewProperties;
+import static client.network.game.view.charactersView.GeoShapeView.geoShapeViews;
 
 public class ClientsideResHandler implements ResponseHandler {
 
@@ -253,48 +253,71 @@ public class ClientsideResHandler implements ResponseHandler {
     }
 
     @Override
-    public void handleMoveResponse(MoveResponse moveResponse) {
+    public void handleNullResponse(NullResponse nullResponse) {
 
     }
 
     @Override
     public void handleStateResponse(StateResponse stateResponse) {
-        List<Pair<String, EntityType>> createdEntities = stateResponse.getCreatedEntities();
-        for (Pair<String, EntityType> createdEntity : createdEntities) {
-            EntityType type = createdEntity.getSecond();
-            String id = createdEntity.getFirst();
-            switch (type) {
-                case bullet -> new BulletView(id);
-                case epsilon -> new EpsilonView(id);
-                case trigorath -> new TrigorathView(id);
-                case collectible -> new CollectibleView(id);
-                case squarantine -> new SquarantineView(id);
+        Map<String, EntityType> createdEntities = stateResponse.getCreatedEntities();
+        List<String> eliminates = stateResponse.getEliminatedEntities();
+
+
+        for (Map.Entry<String, EntityType> createdEntity : createdEntities.entrySet()) {
+            String id = createdEntity.getKey();
+            EntityType type = createdEntity.getValue();
+            if (!ClientDataBase.models.containsKey(id)) {
+                SwingUtilities.invokeLater(() ->  {
+                    switch (type) {
+                        case bullet -> new BulletView(id);
+                        case epsilon -> new EpsilonView(id);
+                        case collectible -> new CollectibleView(id);
+                        case trigorath, squarantine, simplePolygon -> createPolygonView(id);
+                    }
+                }) ;
             }
-        }
-
-        List<Pair<String, DummyPanel>> createdPanels = stateResponse.getCreatedPanels();
-        for (Pair<String, DummyPanel> createdPanel : createdPanels) {
-            String id = createdPanel.getFirst();
-            DummyPanel panel = createdPanel.getSecond();
-            Point2D location = panel.getLocation();
-            Dimension dimension = panel.getDimension();
-            System.out.println("panel created");
-
-            // Ensure Swing components are manipulated on the EDT
-            SwingUtilities.invokeLater(() -> {
-                new FinalPanelView(id, location, dimension);
-            });
         }
 
         Map<String, DummyModel> models = stateResponse.getUpdatedModels();
         ClientDataBase.models.putAll(models);
 
-        System.out.println("entities:  " + stateResponse.getUpdatedModels().size());
+        Map<String, DummyPanel> createdPanels = stateResponse.getCreatedPanels();
+        for (Map.Entry<String, DummyPanel> createdPanel : createdPanels.entrySet()) {
+            String id = createdPanel.getKey();
+            if (!ClientDataBase.panels.containsKey(id)) {
+
+                DummyPanel panel = createdPanel.getValue();
+                Point2D location = panel.getLocation();
+                Dimension dimension = panel.getDimension();
+
+                // Ensure Swing components are manipulated on the EDT
+                SwingUtilities.invokeLater(() -> new FinalPanelView(id, location, dimension));
+            }
+        }
+
+
 
         Map<String, DummyPanel> panels = stateResponse.getUpdatedPanels();
         ClientDataBase.panels.putAll(panels);
 
-         updateGeoShapeViewProperties(); // Uncomment and implement if necessary
+
+        for (DummyModel model : ClientDataBase.models.values()) {
+            if (eliminates.contains(model.getId())) {
+                ClientDataBase.models.values().remove(model.getId());
+            }
+        }
+
+        for (GeoShapeView view : geoShapeViews){
+            if (eliminates.contains(view.getId())) {
+                view.eliminate();
+                System.out.println("eliminated " + view.getId());
+            }
+        }
+
+        System.out.println(eliminates.size());
+
+
+        updateGeoShapeViewProperties();
         SwingUtilities.invokeLater(client.network.game.view.MainFrame.getINSTANCE()::repaint);
     }
 

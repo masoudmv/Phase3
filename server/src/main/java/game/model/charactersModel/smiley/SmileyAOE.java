@@ -3,7 +3,7 @@ package game.model.charactersModel.smiley;
 import game.controller.Game;
 import game.controller.UserInterfaceController;
 import game.controller.Utils;
-import game.controller.constants.EntityConstants;
+import shared.constants.EntityConstants;
 import shared.Model.MyPolygon;
 import game.model.charactersModel.EpsilonModel;
 import game.model.charactersModel.GeoShapeModel;
@@ -28,7 +28,7 @@ public class SmileyAOE extends GeoShapeModel {
         this.radius = EntityConstants.SMILEY_AOE_RADIUS.getValue();
 
         setDummyPolygon();
-        UserInterfaceController.createSmileyAOEView(id);
+//        UserInterfaceController.createSmileyAOEView(id);
     }
 
     public static void updateAll(){

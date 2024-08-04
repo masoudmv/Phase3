@@ -6,8 +6,7 @@ import shared.Model.MyPolygon;
 import game.model.charactersModel.*;
 import game.model.entities.Profile;
 import game.model.charactersModel.blackOrb.Orb;
-import game.view.MainFrame;
-//import model.charactersModel.*;
+
 import game.model.charactersModel.smiley.Hand;
 import game.model.charactersModel.smiley.LeftHand;
 import game.model.charactersModel.smiley.Smiley;
@@ -67,7 +66,7 @@ public class Main {
 
 
 
-        MainFrame.getINSTANCE();
+//        MainFrame.getINSTANCE();
         new Profile();
         new Game(); // uncoment this todo
         Skill.initializeSkills();

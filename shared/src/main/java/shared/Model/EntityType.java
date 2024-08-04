@@ -1,5 +1,5 @@
 package shared.Model;
 
 public enum EntityType {
-    trigorath, squarantine, epsilon, bullet, collectible;
+    trigorath, squarantine, epsilon, bullet, collectible, simplePolygon;
 }

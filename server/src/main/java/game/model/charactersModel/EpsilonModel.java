@@ -4,7 +4,7 @@ package game.model.charactersModel;
 import game.controller.Game;
 import game.controller.UserInterfaceController;
 import game.controller.Utils;
-import game.controller.constants.Constants;
+import shared.constants.Constants;
 import game.model.DoubleDimension2D;
 import game.model.FinalPanelModel;
 import shared.Model.MyPolygon;
@@ -15,7 +15,6 @@ import game.model.charactersModel.smiley.Smiley;
 import game.model.entities.AttackTypes;
 import game.model.entities.Entity;
 import game.model.entities.Profile;
-import game.view.charactersView.GeoShapeView;
 import game.model.collision.Collidable;
 import game.model.collision.CollisionState;
 import game.model.collision.Impactable;
@@ -209,14 +208,14 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
         }
     }
 
-    public void empusa(){
-        Image img = new ImageIcon("./client/src/epsilon2.png").getImage();
-        EpsilonModel.image = getBufferedImage(img);
-        GeoShapeView view = UserInterfaceController.findGeoShapeView(id);
-        view.setImage(image);
-        Profile.getCurrent().EPSILON_RADIUS = 18;
-        this.radius *= 0.90;
-    }
+//    public void empusa(){
+//        Image img = new ImageIcon("./client/src/epsilon2.png").getImage();
+//        EpsilonModel.image = getBufferedImage(img);
+//        GeoShapeView view = UserInterfaceController.findGeoShapeView(id);
+//        view.setImage(image);
+//        Profile.getCurrent().EPSILON_RADIUS = 18;
+//        this.radius *= 0.90;
+//    }
 
     @Override
     public boolean isCircular() {

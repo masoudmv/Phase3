@@ -4,9 +4,9 @@ import game.controller.Game;
 import game.controller.PolygonUtils;
 import game.controller.UserInterfaceController;
 import game.controller.Utils;
-import game.controller.constants.Constants;
-import game.controller.constants.EntityConstants;
-import game.controller.constants.SmileyConstants;
+import shared.constants.Constants;
+import shared.constants.EntityConstants;
+import shared.constants.SmileyConstants;
 import game.example.GraphicalObject;
 import game.model.FinalPanelModel;
 import shared.Model.MyPolygon;
@@ -21,6 +21,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import static game.controller.UserInterfaceController.createOmenoctView;
 import static game.controller.Utils.*;
 import static shared.Model.imagetools.ToolBox.getBufferedImage;
 
@@ -39,7 +40,7 @@ public class OmenoctModel extends GeoShapeModel implements Collidable {
         collidables.add(this);
         this.health = EntityConstants.OMENOCT_HEALTH.getValue();
         initVertices();
-        UserInterfaceController.createOmenoctView(id);
+        createOmenoctView(id);
     }
 
     private void initVertices() {
