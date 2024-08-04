@@ -19,7 +19,7 @@ public class EpsilonView extends GeoShapeView {
 
     public static void loadImage(){
         Image img = new ImageIcon("./client/src/epsilon.png").getImage();
-        img = getBufferedImage(img);
+        EpsilonView.img = getBufferedImage(img);
     }
 
 

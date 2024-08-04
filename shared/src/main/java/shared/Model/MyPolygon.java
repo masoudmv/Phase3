@@ -1,11 +1,15 @@
 package shared.Model;
 
-import java.awt.*;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.awt.geom.Point2D;
+import java.awt.geom.Point2D.Double;
 import java.util.Arrays;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class MyPolygon extends Polygon { //todo remove inheritance
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class MyPolygon {
     public int npoints;
     public double[] xpoints;
     public double[] ypoints;
@@ -18,19 +22,13 @@ public class MyPolygon extends Polygon { //todo remove inheritance
     }
 
     public MyPolygon(double[] xpoints, double[] ypoints, int npoints) {
-        // Fix 4489009: should throw IndexOutOfBoundsException instead
-        // of OutOfMemoryError if npoints is huge and > {x,y}points.length
         if (npoints > xpoints.length || npoints > ypoints.length) {
             throw new IndexOutOfBoundsException("npoints > xpoints.length || "+
                     "npoints > ypoints.length");
         }
-        // Fix 6191114: should throw NegativeArraySizeException with
-        // negative npoints
         if (npoints < 0) {
             throw new NegativeArraySizeException("npoints < 0");
         }
-        // Fix 6343431: Applet compatibility problems if arrays are not
-        // exactly npoints in length
         this.npoints = npoints;
         this.xpoints = Arrays.copyOf(xpoints, npoints);
         this.ypoints = Arrays.copyOf(ypoints, npoints);
@@ -38,10 +36,10 @@ public class MyPolygon extends Polygon { //todo remove inheritance
     }
 
     private void setBoundingPointIndexes(){
-        double xMin = Double.MAX_VALUE;
-        double xMax = Double.MIN_VALUE;
-        double yMin = Double.MAX_VALUE;
-        double yMax = Double.MIN_VALUE;
+        double xMin = java.lang.Double.MAX_VALUE;
+        double xMax = java.lang.Double.MAX_VALUE;
+        double yMin = java.lang.Double.MAX_VALUE;
+        double yMax = java.lang.Double.MAX_VALUE;
 
         int xMinIndex = -1;
         int xMaxIndex = -1;
@@ -68,7 +66,6 @@ public class MyPolygon extends Polygon { //todo remove inheritance
             }
         }
 
-        // TODO remove redundant indexes!
         boundingPointIndexes.add(xMinIndex);
         boundingPointIndexes.add(xMaxIndex);
         boundingPointIndexes.add(yMinIndex);
@@ -79,14 +76,15 @@ public class MyPolygon extends Polygon { //todo remove inheritance
         return boundingPointIndexes;
     }
 
-    public Point2D[] getVertices(){
-        Point2D[] point2DS = new Point2D[npoints];
+    public Point2D.Double[] getVertices(){
+        Point2D.Double[] point2DS = new Point2D.Double[npoints];
         for (int i = 0; i < npoints; i++) {
             point2DS[i] = new Point2D.Double(xpoints[i], ypoints[i]);
-        } return point2DS;
+        }
+        return point2DS;
     }
 
-    public void setVertices(Point2D[] points) {
+    public void setVertices(Point2D.Double[] points) {
         npoints = points.length;
         for (int i = 0; i < points.length; i++) {
             xpoints[i] = points[i].getX();
@@ -94,7 +92,7 @@ public class MyPolygon extends Polygon { //todo remove inheritance
         }
     }
 
-    public Point2D getCenter(){
+    public Point2D.Double getCenter(){
         double x = 0;
         double y = 0;
         for (int i = 0; i < npoints; i++) {
@@ -103,5 +101,4 @@ public class MyPolygon extends Polygon { //todo remove inheritance
         }
         return new Point2D.Double(x/npoints, y/npoints);
     }
-
 }

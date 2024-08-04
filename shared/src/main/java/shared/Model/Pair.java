@@ -5,13 +5,20 @@ import java.util.Objects;
 
 public class Pair<T, U> implements Serializable {
     private static final long serialVersionUID = 1L;
-    private final T first;
-    private final U second;
+    private T first;
+    private U second;
+
+    public Pair() {
+        // Default constructor needed by Jackson
+    }
 
     public Pair(T first, U second) {
         this.first = first;
         this.second = second;
     }
+
+
+
 
     public T getFirst() {
         return first;

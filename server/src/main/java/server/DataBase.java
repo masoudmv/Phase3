@@ -11,6 +11,8 @@ import java.awt.*;
 import java.awt.geom.Point2D;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class DataBase {
@@ -27,10 +29,10 @@ public class DataBase {
 
     private List<Pair<String, EntityType>> createdEntities = new CopyOnWriteArrayList<>();
     private List<String> eliminatedEntities = new CopyOnWriteArrayList<>();
-    private List<DummyModel> updatedModels = new CopyOnWriteArrayList<>();
     private List<Pair<String, DummyPanel>> createdPanels = new CopyOnWriteArrayList<>();
-    private List<DummyPanel> updatedPanels = new CopyOnWriteArrayList<>();
 
+    private Map<String, DummyModel> updatedModels = new ConcurrentHashMap<>();
+    private Map<String, DummyPanel> updatedPanels = new ConcurrentHashMap<>();
 
     public DataBase() {
         dataBase = this;
@@ -409,7 +411,9 @@ public class DataBase {
     }
 
     public void createPanel(String id, Point2D location, Dimension dimension){
-        DummyPanel panel = new DummyPanel(id, location, dimension);
+        int x = (int) location.getX();
+        int y = (int) location.getY();
+        DummyPanel panel = new DummyPanel(id, new Point(x, y), dimension);
         createdPanels.add(new Pair<>(id, panel));
     }
 
@@ -423,7 +427,7 @@ public class DataBase {
     }
 
     public void addUpdatedModels(DummyModel model){
-        updatedModels.add(model);
+        updatedModels.put(model.getId(), model);
     }
 
     public void clearPanels(){
@@ -431,18 +435,20 @@ public class DataBase {
     }
 
     public void addUpdatedPanels(DummyPanel panel){
-        updatedPanels.add(panel);
+        updatedPanels.put(panel.getId(), panel);
     }
 
-    public List<DummyPanel> getUpdatedPanels() {
-        return updatedPanels;
-    }
 
     public List<Pair<String, DummyPanel>> getCreatedPanels() {
         return createdPanels;
     }
 
-    public List<DummyModel> getUpdatedModels() {
+
+    public Map<String, DummyPanel> getUpdatedPanels() {
+        return updatedPanels;
+    }
+
+    public Map<String, DummyModel> getUpdatedModels() {
         return updatedModels;
     }
 

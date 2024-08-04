@@ -159,9 +159,9 @@ public class RequestFactory {
     public static void createStateRequest(){
         socketRequestSender = status.getSocket();
         try {
-            socketRequestSender.sendRequest(new StateRequest(macAddress)).run(requestHandler);
+            socketRequestSender.sendRequest(new StateRequest()).run(requestHandler);
         } catch (IOException e) {
-            System.out.println("State Request was not sent ... ")  ;
+            System.out.println("State Request was not sent ... ");
             throw new RuntimeException(e);
         }
     }

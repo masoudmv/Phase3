@@ -20,6 +20,10 @@ import shared.Model.dummies.DummyPanel;
 import javax.swing.*;
 import javax.swing.Timer;
 
+import java.awt.*;
+import java.awt.geom.Dimension2D;
+
+import java.awt.geom.Point2D;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static game.controller.Game.*;
@@ -349,10 +353,14 @@ public class GameLoop implements Runnable {
 
         DataBase dataBase = DataBase.getDataBase();
         dataBase.clearModels();
+
         for (GeoShapeModel entity : entities) {
             DummyModel model = new DummyModel();
             model.setId(entity.getId());
-            model.setAnchor(entity.getAnchor());
+
+            Point2D anchor = entity.getAnchor();
+            model.setAnchor(new Point((int) anchor.getX(), (int) anchor.getY()));
+
             model.setMyPolygon(entity.myPolygon);
             model.setAngle(entity.getAngle());
             dataBase.addUpdatedModels(model);
@@ -360,8 +368,17 @@ public class GameLoop implements Runnable {
 
         for (FinalPanelModel panelModel : finalPanelModels){
             DummyPanel panel = new DummyPanel();
-            panel.setLocation(panelModel.getLocation());
-            panel.setDimension(panelModel.getSize());
+
+            panel.setId(panelModel.getId());
+
+            int x = (int) panelModel.getLocation().getX();
+            int y = (int) panelModel.getLocation().getY();
+            panel.setLocation(new Point(x,y));
+
+            Dimension2D size = panelModel.getSize();
+            Dimension dimension = new Dimension((int) size.getWidth(), (int) size.getHeight());
+
+            panel.setDimension(dimension);
             dataBase.addUpdatedPanels(panel);
         }
 

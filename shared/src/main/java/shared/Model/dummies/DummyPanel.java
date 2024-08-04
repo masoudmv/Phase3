@@ -1,15 +1,14 @@
 package shared.Model.dummies;
 
 import java.awt.*;
-import java.awt.geom.Dimension2D;
-import java.awt.geom.Point2D;
+
 
 public class DummyPanel {
     private String id;
-    private Point2D location;
-    private Dimension2D dimension;
+    private Point location;
+    private Dimension dimension;
 
-    public DummyPanel(String id, Point2D location, Dimension2D dimension) {
+    public DummyPanel(String id, Point location, Dimension dimension) {
         this.id = id;
         this.location = location;
         this.dimension = dimension;
@@ -18,19 +17,19 @@ public class DummyPanel {
     public DummyPanel() {
     }
 
-    public Point2D getLocation() {
+    public Point getLocation() {
         return location;
     }
 
-    public void setLocation(Point2D location) {
+    public void setLocation(Point location) {
         this.location = location;
     }
 
-    public Dimension2D getDimension() {
+    public Dimension getDimension() {
         return dimension;
     }
 
-    public void setDimension(Dimension2D dimension) {
+    public void setDimension(Dimension dimension) {
         this.dimension = dimension;
     }
 

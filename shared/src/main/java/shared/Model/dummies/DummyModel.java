@@ -1,16 +1,16 @@
 package shared.Model.dummies;
 
 import shared.Model.MyPolygon;
+import java.awt.*;
 
-import java.awt.geom.Point2D;
 
 public class DummyModel {
     private String id;
-    private Point2D anchor;
+    private Point anchor;
     private double angle;
     private MyPolygon myPolygon;
 
-    public DummyModel(String id, Point2D anchor, double angle, MyPolygon myPolygon) {
+    public DummyModel(String id, Point anchor, double angle, MyPolygon myPolygon) {
         this.id = id;
         this.anchor = anchor;
         this.angle = angle;
@@ -29,11 +29,11 @@ public class DummyModel {
         this.id = id;
     }
 
-    public Point2D getAnchor() {
+    public Point getAnchor() {
         return anchor;
     }
 
-    public void setAnchor(Point2D anchor) {
+    public void setAnchor(Point anchor) {
         this.anchor = anchor;
     }
 

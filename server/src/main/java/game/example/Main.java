@@ -81,6 +81,8 @@ public class Main {
 
 //        new ArchmireModel(new Point2D.Double(400, 500));
 
+        new SquarantineModel(new Point2D.Double(600, 400));
+
 
 
 

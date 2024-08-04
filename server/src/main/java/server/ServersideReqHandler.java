@@ -22,6 +22,7 @@ import shared.response.game.MoveResponse;
 import shared.response.game.StateResponse;
 
 import java.awt.geom.Point2D;
+import java.util.ArrayList;
 
 import static game.controller.Utils.addVectors;
 import static game.controller.Utils.multiplyVector;
@@ -260,12 +261,20 @@ public class ServersideReqHandler extends Thread implements RequestHandler {
     @Override
     public Response handleStateRequest(StateRequest stateRequest) {
         StateResponse stateResponse = new StateResponse();
-        stateResponse.setCreatedEntities(dataBase.getCreatedEntities());
-        stateResponse.setCreatedPanels(dataBase.getCreatedPanels());
+
+        // Copy the lists to avoid clearing the original list references
+        stateResponse.setCreatedEntities(new ArrayList<>(dataBase.getCreatedEntities()));
+        stateResponse.setCreatedPanels(new ArrayList<>(dataBase.getCreatedPanels()));
         stateResponse.setEliminatedEntities(dataBase.getEliminatedEntities());
         stateResponse.setUpdatedModels(dataBase.getUpdatedModels());
         stateResponse.setUpdatedPanels(dataBase.getUpdatedPanels());
+
+        // Clear the original lists after copying them
+        dataBase.getCreatedEntities().clear();
+        dataBase.getCreatedPanels().clear();
+
         return stateResponse;
     }
+
 
 }

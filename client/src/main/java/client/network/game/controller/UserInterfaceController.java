@@ -106,10 +106,12 @@ public abstract class UserInterfaceController {
 
 
     public static DummyModel findGeoShapeModel(String id){
-        for (DummyModel geoShapeModel : ClientDataBase.models){
-            if (geoShapeModel.getId().equals(id)) return geoShapeModel;
-        }
-        return null;
+//        for (DummyModel geoShapeModel : ClientDataBase.models){
+//            if (geoShapeModel.getId().equals(id)) return geoShapeModel;
+//        }
+
+        return ClientDataBase.models.get(id);
+//        return null;
     }
 
     public static GeoShapeView findGeoShapeView(String id){
@@ -121,6 +123,12 @@ public abstract class UserInterfaceController {
 
 
     public static void updateGeoShapeViewProperties(){
+        for (FinalPanelView f : finalPanelViews){
+            f.setLocation(calculateLocationOfFinalPanelView(f.getId()));
+            f.setSize(calculateDimensionOfFinalPanelView(f.getId()));
+        }
+
+
         for (FinalPanelView finalPanelView : finalPanelViews){
             for (GeoShapeView geoShapeView : geoShapeViews){
                 Point2D currentLocation = calculateViewLocationPolygonalEnemy(finalPanelView, geoShapeView.getId());
@@ -191,10 +199,12 @@ public abstract class UserInterfaceController {
 
 
     public static DummyPanel findFinalPanelModel(String id){
-        for (DummyPanel f: ClientDataBase.panels){
-            if (f.getId().equals(id)) return f;
-        }
-        return null;
+//        for (DummyPanel f: ClientDataBase.panels){
+//            if (f.getId().equals(id)) return f;
+//        }
+
+        return ClientDataBase.panels.get(id);
+//        return null;
     }
 
 

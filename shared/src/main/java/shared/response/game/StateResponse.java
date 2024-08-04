@@ -9,6 +9,8 @@ import shared.response.ResponseHandler;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 
@@ -17,59 +19,52 @@ public class StateResponse implements Response {
     private List<Pair<String, EntityType>> createdEntities = new CopyOnWriteArrayList<>();
     private List<Pair<String, DummyPanel>> createdPanels = new CopyOnWriteArrayList<>();
     private List<String> eliminatedEntities = new CopyOnWriteArrayList<>();
-    private List<DummyModel> updatedModels = new CopyOnWriteArrayList<>();
-    private List<DummyPanel> updatedPanels = new CopyOnWriteArrayList<>();
+    private Map<String, DummyModel> updatedModels = new ConcurrentHashMap<>();
+    private Map<String, DummyPanel> updatedPanels = new ConcurrentHashMap<>();
 
-    public StateResponse(List<DummyPanel> updatedPanels, List<Pair<String, DummyPanel>> createdPanels, List<DummyModel> updatedModels, List<String> eliminatedEntities, List<Pair<String, EntityType>> createdEntities) {
-        this.updatedPanels = updatedPanels;
-        this.createdPanels = createdPanels;
-        this.updatedModels = updatedModels;
-        this.eliminatedEntities = eliminatedEntities;
-        this.createdEntities = createdEntities;
-    }
+
 
     public StateResponse() {
+    }
+
+    public List<Pair<String, EntityType>> getCreatedEntities() {
+        return createdEntities;
     }
 
     public void setCreatedEntities(List<Pair<String, EntityType>> createdEntities) {
         this.createdEntities = createdEntities;
     }
 
-    public void setEliminatedEntities(List<String> eliminatedEntities) {
-        this.eliminatedEntities = eliminatedEntities;
-    }
-
-    public void setUpdatedModels(List<DummyModel> updatedModels) {
-        this.updatedModels = updatedModels;
-    }
-
-    public void setCreatedPanels(List<Pair<String, DummyPanel>> createdPanels) {
-        this.createdPanels = createdPanels;
-    }
-
-    public void setUpdatedPanels(List<DummyPanel> updatedPanels) {
-        this.updatedPanels = updatedPanels;
-    }
-
-
-    public List<Pair<String, EntityType>> getCreatedEntities() {
-        return createdEntities;
+    public List<Pair<String, DummyPanel>> getCreatedPanels() {
+        return createdPanels;
     }
 
     public List<String> getEliminatedEntities() {
         return eliminatedEntities;
     }
 
-    public List<DummyModel> getUpdatedModels() {
+    public void setEliminatedEntities(List<String> eliminatedEntities) {
+        this.eliminatedEntities = eliminatedEntities;
+    }
+
+    public Map<String, DummyModel> getUpdatedModels() {
         return updatedModels;
     }
 
-    public List<Pair<String, DummyPanel>> getCreatedPanels() {
-        return createdPanels;
+    public void setUpdatedModels(Map<String, DummyModel> updatedModels) {
+        this.updatedModels = updatedModels;
     }
 
-    public List<DummyPanel> getUpdatedPanels() {
+    public Map<String, DummyPanel> getUpdatedPanels() {
         return updatedPanels;
+    }
+
+    public void setUpdatedPanels(Map<String, DummyPanel> updatedPanels) {
+        this.updatedPanels = updatedPanels;
+    }
+
+    public void setCreatedPanels(List<Pair<String, DummyPanel>> createdPanels) {
+        this.createdPanels = createdPanels;
     }
 
     @Override

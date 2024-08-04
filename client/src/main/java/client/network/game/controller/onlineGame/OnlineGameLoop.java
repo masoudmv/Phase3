@@ -46,7 +46,6 @@ public class OnlineGameLoop implements Runnable{
 
     public OnlineGameLoop() {
         decreaseVelocities=false;
-
         movementInProgress = false;
 
 
@@ -117,13 +116,9 @@ public class OnlineGameLoop implements Runnable{
         }
 
 //
-        for (FinalPanelView f : finalPanelViews){
-            f.setLocation(calculateLocationOfFinalPanelView(f.getId()));
-            f.setSize(calculateDimensionOfFinalPanelView(f.getId()));
-        }
+
 //
 //        updateGeoShapeViewProperties();
-//        SwingUtilities.invokeLater(MainFrame.getINSTANCE()::repaint);
         createStateRequest();
     }
 

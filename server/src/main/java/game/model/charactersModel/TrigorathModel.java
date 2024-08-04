@@ -49,10 +49,10 @@ public class TrigorathModel extends GeoShapeModel implements Movable, Collidable
 
     private void initVertices(){
         double radius = edgeLength / Math.sqrt(3);
-        Point2D point1 = new Point2D.Double(anchor.getX(), anchor.getY()-radius);
-        Point2D point2 = new Point2D.Double(anchor.getX()+ radius*Math.cos(Math.PI/6), anchor.getY()+radius/2);
-        Point2D point3 = new Point2D.Double(anchor.getX()-radius*Math.cos(Math.PI/6), anchor.getY()+radius/2);
-        Point2D[] vertices = new Point2D[]{point1, point2, point3};
+        Point2D.Double point1 = new Point2D.Double(anchor.getX(), anchor.getY()-radius);
+        Point2D.Double point2 = new Point2D.Double(anchor.getX()+ radius*Math.cos(Math.PI/6), anchor.getY()+radius/2);
+        Point2D.Double point3 = new Point2D.Double(anchor.getX()-radius*Math.cos(Math.PI/6), anchor.getY()+radius/2);
+        Point2D.Double[] vertices = new Point2D.Double[]{point1, point2, point3};
         myPolygon.setVertices(vertices);
     }
 

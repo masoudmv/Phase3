@@ -43,6 +43,8 @@ public class Main {
         MyPolygon pol = bows.getMyBoundingPolygon();
         new EpsilonModel(new Point2D.Double(1000, 700), pol);
 
+        new SquarantineModel(new Point2D.Double(400, 500));
+
 
 
 

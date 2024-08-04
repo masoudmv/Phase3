@@ -16,7 +16,7 @@ public enum Skill {
     ACESO, MELAMPUS, CHIRON, ATHENA,
     PROTEUS, EMPUSA, DOLUS;
 
-    public static Skill activeSkill = EMPUSA;
+    public static Skill activeSkill = null;
     public boolean acquired = true;
     public double lastSkillTime = -Double.MAX_VALUE;
 

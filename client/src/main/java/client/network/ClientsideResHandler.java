@@ -2,9 +2,11 @@ package client.network;
 
 import client.network.containers.SquadListPanel;
 import client.network.containers.MainFrame;
+import client.network.game.view.ClientDataBase;
 import client.network.game.view.FinalPanelView;
 import client.network.game.view.charactersView.*;
 import shared.Model.*;
+import shared.Model.dummies.DummyModel;
 import shared.Model.dummies.DummyPanel;
 import shared.response.*;
 import shared.response.game.MoveResponse;
@@ -13,7 +15,10 @@ import shared.response.game.StateResponse;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.Point2D;
+import java.awt.image.ImageProducer;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static client.network.game.controller.UserInterfaceController.updateGeoShapeViewProperties;
 
@@ -258,7 +263,7 @@ public class ClientsideResHandler implements ResponseHandler {
         for (Pair<String, EntityType> createdEntity : createdEntities) {
             EntityType type = createdEntity.getSecond();
             String id = createdEntity.getFirst();
-            switch (type){
+            switch (type) {
                 case bullet -> new BulletView(id);
                 case epsilon -> new EpsilonView(id);
                 case trigorath -> new TrigorathView(id);
@@ -272,22 +277,27 @@ public class ClientsideResHandler implements ResponseHandler {
             String id = createdPanel.getFirst();
             DummyPanel panel = createdPanel.getSecond();
             Point2D location = panel.getLocation();
-            Dimension dimension = (Dimension) panel.getDimension();
-            new FinalPanelView(id, location, dimension);
+            Dimension dimension = panel.getDimension();
+            System.out.println("panel created");
+
+            // Ensure Swing components are manipulated on the EDT
+            SwingUtilities.invokeLater(() -> {
+                new FinalPanelView(id, location, dimension);
+            });
         }
 
-        updateGeoShapeViewProperties();
+        Map<String, DummyModel> models = stateResponse.getUpdatedModels();
+        ClientDataBase.models.putAll(models);
 
+        System.out.println("entities:  " + stateResponse.getUpdatedModels().size());
 
-        System.out.println("HERE");
+        Map<String, DummyPanel> panels = stateResponse.getUpdatedPanels();
+        ClientDataBase.panels.putAll(panels);
 
-
-
-
-
-
-
+         updateGeoShapeViewProperties(); // Uncomment and implement if necessary
+        SwingUtilities.invokeLater(client.network.game.view.MainFrame.getINSTANCE()::repaint);
     }
+
 
 
 }

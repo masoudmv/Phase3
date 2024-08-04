@@ -56,7 +56,7 @@ public class SquarantineModel extends GeoShapeModel implements Movable, Collidab
         double x = anchor.getX();
         double y = anchor.getY();
 
-        Point2D[] vertices = new Point2D[4];
+        Point2D.Double[] vertices = new Point2D.Double[4];
         vertices[0] = new Point2D.Double(x - halfEdgeLength, y - halfEdgeLength); // Top-left
         vertices[1] = new Point2D.Double(x + halfEdgeLength, y - halfEdgeLength); // Top-right
         vertices[2] = new Point2D.Double(x + halfEdgeLength, y + halfEdgeLength); // Bottom-right

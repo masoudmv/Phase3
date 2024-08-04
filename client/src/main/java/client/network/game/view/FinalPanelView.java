@@ -37,6 +37,8 @@ public class FinalPanelView extends JPanel {
         frame.add(this);
         finalPanelViews.add(this);
 
+        frame.repaint();
+
 
 
 //        MainFrame frame = MainFrame.getINSTANCE();

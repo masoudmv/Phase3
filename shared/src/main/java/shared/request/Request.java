@@ -34,6 +34,7 @@ import shared.response.Response;
         @JsonSubTypes.Type(value = KickPlayerReq.class, name = "KickPlayerReq"),
         @JsonSubTypes.Type(value = AskForSthRequest.class, name = "AskForSthRequest"),
         @JsonSubTypes.Type(value = ReportAskedPleaRequest.class, name = "ReportAskedPleaRequest"),
+
         @JsonSubTypes.Type(value = MoveRequest.class, name = "MoveRequest"),
         @JsonSubTypes.Type(value = StateRequest.class, name = "StateRequest"),
 })
