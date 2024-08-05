@@ -176,17 +176,21 @@ public abstract class UserInterfaceController {
         return null;
     }
 
-    public static void fireSkill() {
-        if (Skill.activeSkill != null) {
-            Skill.activeSkill.fire();
+    public static void fireSkill(String gameID, String macAddress) {
+        if (findGame(gameID).getProfile().activeAbilities.get(macAddress) != null) {
+            Skill.activeSkill.fire(gameID, macAddress);
         }
     }
 
-    public static void fireAbility() {
-        if (Ability.activeAbility != null) {
-            Ability.activeAbility.fire();
-            Ability.activeAbility = null;
+    public static void fireAbility(String gamID, String macAddress) {
+        if (findGame(gamID).getProfile().activeAbilities.get(macAddress) != null) {
+            findGame(gamID).getProfile().activeAbilities.get(macAddress).fire(gamID, macAddress);
+            findGame(gamID).getProfile().activeAbilities.put(macAddress, null);
         }
+    }
+
+    private static Game findGame(String gameID){
+        return DataBase.getDataBase().findGame(gameID);
     }
 
 //    public static boolean isGameRunning() {
@@ -196,7 +200,6 @@ public abstract class UserInterfaceController {
 //    public static boolean isGameOn() {
 //        return GameLoop.getINSTANCE().isOn();
 //    }
-
 
 
 

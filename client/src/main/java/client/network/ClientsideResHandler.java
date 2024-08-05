@@ -343,7 +343,7 @@ public class ClientsideResHandler implements ResponseHandler {
 
     @Override
     public void handlePauseResponse(PauseResponse pauseResponse) {
-
+        client.network.game.view.MainFrame.getINSTANCE().handleAbilityShopPanelToggle();
     }
 
 

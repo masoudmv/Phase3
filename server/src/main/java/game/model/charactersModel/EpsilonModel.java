@@ -4,8 +4,8 @@ package game.model.charactersModel;
 import game.controller.Game;
 import game.controller.UserInterfaceController;
 import game.controller.Utils;
+import game.model.entities.Ability;
 import shared.constants.Constants;
-import game.model.DoubleDimension2D;
 import game.model.FinalPanelModel;
 import shared.Model.MyPolygon;
 import game.model.charactersModel.blackOrb.Orb;
@@ -14,7 +14,6 @@ import game.model.charactersModel.smiley.Hand;
 import game.model.charactersModel.smiley.Smiley;
 import game.model.entities.AttackTypes;
 import game.model.entities.Entity;
-import game.model.entities.Profile;
 import game.model.collision.Collidable;
 import game.model.collision.CollisionState;
 import game.model.collision.Impactable;
@@ -426,10 +425,10 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
                 for (int i = 0; i < babies.length; i++) {
                     List<Point2D> points = babies[i].getBoundingPoints();
                     boolean apply = babies[i].isInside(enemy.myPolygon.getVertices());
-                    double now = Game.ELAPSED_TIME;
+                    double now = findGame(gameID).ELAPSED_TIME;
                     if (apply && now - lastCerebrus > 15) {
                         babies[i].damage(enemy, AttackTypes.MELEE);
-                        lastCerebrus = Game.ELAPSED_TIME;
+                        lastCerebrus = findGame(gameID).ELAPSED_TIME;
                     }
                 }
 
@@ -447,10 +446,11 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
 
 
     private void applyDismay() {
-        double now = Game.ELAPSED_TIME;
-        double initiationTime = Profile.getCurrent().dismayInitiationTime;
+        double now = findGame(gameID).ELAPSED_TIME;
+        double initiationTime = findGame(gameID).getProfile().dismayInitiationTime;
         if (now - initiationTime > 10) return;
-
+        Ability ability = findGame(gameID).getProfile().activatedAbilities.get(macAddress);
+        if (ability != Ability.DISMAY) return;
         double radius = 100;
         for (GeoShapeModel nonHovering : findGame(gameID).entities){
 
@@ -464,7 +464,7 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
             if (trig || square || Omen) {
                 Point2D anchor = nonHovering.getAnchor();
                 // todo don't use singleton epsilon ...
-                Point2D epsilonAnchor = EpsilonModel.getINSTANCE().getAnchor();
+                Point2D epsilonAnchor = this.getAnchor();
                 double dis = anchor.distance(epsilonAnchor);
 
                 if (dis < radius){

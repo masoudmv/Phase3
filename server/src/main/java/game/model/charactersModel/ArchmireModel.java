@@ -105,7 +105,7 @@ public class ArchmireModel extends GeoShapeModel implements Collidable {
 
 
     public void updateLocation() {
-        double now = Game.ELAPSED_TIME;
+        double now = findGame(gameID).ELAPSED_TIME;
         updateDirection();
         if (now - lastUpdatedLocation > 0.5){
             locationHistory.addLast(new TimedLocation(myPolygon, now));

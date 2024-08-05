@@ -359,8 +359,8 @@ public abstract class GeoShapeModel extends Entity {
     }
 
     public boolean dontUpdate(){
-        double now = Game.ELAPSED_TIME;
-        double slumberInitiation = Profile.getCurrent().slumberInitiationTime;
+        double now = findGame(gameID).ELAPSED_TIME;
+        double slumberInitiation = findGame(gameID).getProfile().slumberInitiationTime;
         return now - slumberInitiation < 10;
     }
 

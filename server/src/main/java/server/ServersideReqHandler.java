@@ -6,15 +6,13 @@ import game.controller.Game;
 import game.controller.Utils;
 import game.model.charactersModel.BulletModel;
 import game.model.charactersModel.EpsilonModel;
+import game.model.entities.Ability;
 import game.model.entities.Profile;
 import game.model.movement.Direction;
 import server.socket.SocketResponseSender;
 import shared.Model.*;
 import shared.request.*;
-import shared.request.game.ClickedRequest;
-import shared.request.game.MoveRequest;
-import shared.request.game.PauseRequest;
-import shared.request.game.StateRequest;
+import shared.request.game.*;
 import shared.request.leader.JoinDemandStatusReq;
 import shared.request.leader.KickPlayerReq;
 import shared.request.leader.PurchaseSkillRequest;
@@ -27,11 +25,14 @@ import shared.request.nonmember.GetSquadsListRequest;
 import shared.request.nonmember.JoinSquadReq;
 import shared.response.*;
 import shared.response.game.NullResponse;
+import shared.response.game.PauseResponse;
 import shared.response.game.StateResponse;
 
+import javax.swing.*;
 import java.awt.geom.Point2D;
 
-import static game.controller.Game.ELAPSED_TIME;
+
+import static game.controller.UserInterfaceController.fireAbility;
 import static game.controller.Utils.addVectors;
 import static game.controller.Utils.multiplyVector;
 import static shared.constants.Constants.BULLET_VELOCITY;
@@ -332,13 +333,18 @@ public class ServersideReqHandler extends Thread implements RequestHandler {
 
                     Point2D direction = calculateDirection(clickedRequest, epsilon);
 
-                    double now = ELAPSED_TIME;
-                    double empowerInitTime = Profile.getCurrent().empowerInitiationTime;
-                    boolean isBlack = epsilon.isBlackTeam();
+                    double now = dataBase.findGame(gameID).ELAPSED_TIME;
+                    double empowerInitTime = dataBase.findGame(gameID).getProfile().empowerInitiationTime;
 
-                    new BulletModel(epsilon.getAnchor(), new Direction(direction), gameID, macAddress);
+                    Ability ability = dataBase.findGame(gameID).getProfile().activatedAbilities.get(macAddress);
+                    if (ability == Ability.SLAUGHTER){
+                        new BulletModel(epsilon.getAnchor(), new Direction(direction), gameID, macAddress, 50);
+                        dataBase.findGame(gameID).getProfile().activatedAbilities.put(macAddress, null);
+                    } else new BulletModel(epsilon.getAnchor(), new Direction(direction), gameID, macAddress);
+
+                    boolean a = Ability.EMPOWER == dataBase.findGame(gameID).getProfile().activatedAbilities.get(macAddress);
 //
-                    if (now - empowerInitTime < 10){
+                    if (now - empowerInitTime < 10 && a){
                         double angle = 10;
                         Point2D right = Utils.rotateVector(direction, Math.toRadians(angle));
                         new BulletModel(epsilon.getAnchor(), new Direction(right), gameID, macAddress);
@@ -374,8 +380,47 @@ public class ServersideReqHandler extends Thread implements RequestHandler {
             game.setPaused(false);
         }
 
+        return new PauseResponse(true);
+    }
+
+    @Override
+    public Response handleBuyAbilityRequest(BuyAbilityRequest buyAbilityRequest) {
+
+//        if (ability == Ability.SLAUGHTER){
+//            double now = Game.ELAPSED_TIME;
+//            double initiation = Profile.getCurrent().slaughterInitiationTime;
+//            if (now - initiation < 120) {
+//                JOptionPane.showMessageDialog(frame, "You should wait at least 120 seconds after your previous slaughter!");
+//                return;
+//            }
+//        }
+//        int currentXP = Game.inGameXP;
+//        if (currentXP >= ability.getCost()) {
+//            Game.inGameXP -= ability.getCost();
+//            Ability.activeAbility = ability;
+//            if (ability == Ability.SLAUGHTER) Profile.getCurrent().slaughterInitiationTime = Game.ELAPSED_TIME;
+//            JOptionPane.showMessageDialog(frame, ability.getName() + " was successfully activated");
+//        } else {
+//            JOptionPane.showMessageDialog(frame, "You don't have enough XP!", "Error", JOptionPane.ERROR_MESSAGE);
+//        }
+
+
+        return null;
+    }
+
+    @Override
+    public Response handleActivateAbilityRequest(ActivateAbilityRequest activateAbilityRequest) {
+        System.out.println("ability Req");
+
+        String gameID = "1";
+        String macAddress = "1";
+
+        fireAbility(gameID, macAddress);
+
         return new NullResponse();
     }
+
+
 
     private static Point2D calculateDirection(ClickedRequest clickedRequest, EpsilonModel epsilon) {
         double startX = epsilon.getAnchor().getX();

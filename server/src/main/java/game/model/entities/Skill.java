@@ -2,6 +2,7 @@ package game.model.entities;
 
 import game.controller.Game;
 import game.controller.UserInterfaceController;
+import server.DataBase;
 import shared.constants.EntityConstants;
 import shared.constants.SkillConstants;
 import game.model.charactersModel.EpsilonModel;
@@ -16,15 +17,15 @@ public enum Skill {
     ACESO, MELAMPUS, CHIRON, ATHENA,
     PROTEUS, EMPUSA, DOLUS;
 
-    public static Skill activeSkill = null;
+    public static Skill activeSkill = ASTRAPE;
     public boolean acquired = true;
     public double lastSkillTime = -Double.MAX_VALUE;
 
     public static void initializeSkills() {
-        activeSkill = ASTRAPE;
-        CopyOnWriteArrayList<Skill> acquiredSkillSave = new CopyOnWriteArrayList<>();
-        for (String skillName : Profile.getCurrent().acquiredSkillsNames) acquiredSkillSave.add(findSkill(skillName));
-        for (Skill skill : acquiredSkillSave) skill.acquired = true;
+//        activeSkill = ASTRAPE;
+//        CopyOnWriteArrayList<Skill> acquiredSkillSave = new CopyOnWriteArrayList<>();
+//        for (String skillName : Profile.getCurrent().acquiredSkillsNames) acquiredSkillSave.add(findSkill(skillName));
+//        for (Skill skill : acquiredSkillSave) skill.acquired = true;
     }
 
     public String getName() {
@@ -50,15 +51,16 @@ public enum Skill {
         };
     }
 
-    public ActionListener getAction() {
+    public ActionListener getAction(String gameID, String macAddress) {
         return switch (this) {
             case ARES -> e -> {
 
-                Profile.getCurrent().EPSILON_MELEE_DAMAGE += (int) SkillConstants.WRIT_OF_ARES_BUFF_AMOUNT.getValue();
-                Profile.getCurrent().EPSILON_RANGED_DAMAGE += (int) SkillConstants.WRIT_OF_ARES_BUFF_AMOUNT.getValue();
+                findGame(gameID).getProfile().EPSILON_MELEE_DAMAGE += (int) SkillConstants.WRIT_OF_ARES_BUFF_AMOUNT.getValue();
+                findGame(gameID).getProfile().EPSILON_RANGED_DAMAGE += (int) SkillConstants.WRIT_OF_ARES_BUFF_AMOUNT.getValue();
             };
-            case ASTRAPE -> e -> EpsilonModel.getINSTANCE().damageSize.put(AttackTypes.ASTRAPE, 2);
-            case CERBERUS -> e -> EpsilonModel.getINSTANCE().cerebrus();
+            case ASTRAPE -> e -> findEpsilonModel(gameID, macAddress).damageSize.put(AttackTypes.ASTRAPE, 2);
+
+            case CERBERUS -> e -> findEpsilonModel(gameID, macAddress).cerebrus();
             case ACESO -> e -> {
 //                Timer healthTimer = new Timer((int) SkillConstants.WRIT_OF_ACESO_HEALING_FREQUENCY.getValue(), null);
 //                healthTimer.addActionListener(e1 -> {
@@ -67,19 +69,19 @@ public enum Skill {
 //                });
 //                healthTimer.start();
             };
-            case MELAMPUS -> e -> Profile.getCurrent().EPSILON_VULNERABILITY_PROBABILITY = 95;
-            case CHIRON -> e -> Profile.getCurrent().EPSILON_HEALTH_REGAIN = 3;
-            case ATHENA -> e -> Profile.getCurrent().PANEL_SHRINKAGE_COEFFICIENT *= 0.80;
-            case PROTEUS -> e -> EpsilonModel.getINSTANCE().addVertex();
+            case MELAMPUS -> e -> findGame(gameID).getProfile().EPSILON_VULNERABILITY_PROBABILITY = 95;
+            case CHIRON -> e -> findGame(gameID).getProfile().EPSILON_HEALTH_REGAIN = 3;
+            case ATHENA -> e -> findGame(gameID).getProfile().PANEL_SHRINKAGE_COEFFICIENT *= 0.80;
+            case PROTEUS -> e -> findEpsilonModel(gameID, macAddress).addVertex();
             case EMPUSA -> e -> System.out.println();
             case DOLUS -> null;
         };
     }
 
-    public void fire() {
-        double now = Game.ELAPSED_TIME;
+    public void fire(String gameID, String macAddress) {
+        double now = findGame(gameID).ELAPSED_TIME;
         if (now - lastSkillTime >= EntityConstants.SKILL_COOLDOWN_IN_SECONDS.getValue()) {
-            ActionListener action = getAction();
+            ActionListener action = getAction(gameID, macAddress);
             if (action != null) {
                 action.actionPerformed(new ActionEvent(new Object(), ActionEvent.ACTION_PERFORMED, null));
             } else {
@@ -102,6 +104,21 @@ public enum Skill {
                 return skill;
             }
         }
+        return null;
+    }
+
+    private Game findGame(String gameID){
+        return DataBase.getDataBase().findGame(gameID);
+    }
+
+    private EpsilonModel findEpsilonModel(String gameID, String macAddress) {
+        Game game = findGame(gameID);
+        for (EpsilonModel epsilon : game.epsilons){
+            if (epsilon.getMacAddress().equals(macAddress)) {
+                return epsilon;
+            }
+        }
+
         return null;
     }
 }

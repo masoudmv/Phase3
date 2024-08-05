@@ -3,6 +3,8 @@ package game.controller;
 import game.model.DoubleDimension2D;
 import game.model.FinalPanelModel;
 import game.model.charactersModel.*;
+import game.model.entities.Ability;
+import game.model.entities.Profile;
 import server.DataBase;
 import server.GameData;
 import shared.constants.Constants;
@@ -27,7 +29,7 @@ public class Game {
     public List<TrigorathModel> trigorathModels = new ArrayList<>();
 
     public static int inGameXP = 1000;
-    public static double ELAPSED_TIME = 0;
+    public double ELAPSED_TIME = 0;
     public static int wave;
     private boolean isPaused = false;
 
@@ -35,10 +37,12 @@ public class Game {
     private GameLoop gameLoop;
     private long pausedTime = 0;
 
+    private Profile profile;
 
     public Game(GameType gameType) {
         this.gameType = gameType;
         this.gameID = "1";
+        profile = new Profile();
         GameData gameData = new GameData(gameID);
         DataBase.getDataBase().getGameData().add(gameData);
         DataBase.getDataBase().addGame(this);
@@ -83,6 +87,12 @@ public class Game {
             }
         }
 
+        profile.activeAbilities.put("1", Ability.EMPOWER);
+
+
+        new TrigorathModel(new Point2D.Double(300, 200), gameID);
+        new TrigorathModel(new Point2D.Double(300, 1000), gameID);
+
 
     }
 
@@ -121,6 +131,14 @@ public class Game {
 
     public void setPausedTime(long pausedTime) {
         this.pausedTime = pausedTime;
+    }
+
+    public Profile getProfile() {
+        return profile;
+    }
+
+    public void setProfile(Profile profile) {
+        this.profile = profile;
     }
 }
 

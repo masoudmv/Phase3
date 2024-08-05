@@ -54,7 +54,6 @@ public class GameLoop implements Runnable {
         this.gameID = gameID;
         decreaseVelocities=false;
         movementInProgress = false;
-        ELAPSED_TIME = 0;
         inGameXP = 1000;
         wave = 1;
         this.start();
@@ -103,11 +102,11 @@ public class GameLoop implements Runnable {
             }
         }
 
-        if (ELAPSED_TIME > 2 && ELAPSED_TIME < 10) {
-            // panel.expansion();
-        }
+//        if (ELAPSED_TIME > 2 && ELAPSED_TIME < 10) {
+//            // panel.expansion();
+//        }
 
-        ELAPSED_TIME += 0.0167;
+        findGame(gameID).ELAPSED_TIME += 0.0167;
 
         for (int i = 0; i < BlackOrb.blackOrbs.size(); i++) {
             BlackOrb.blackOrbs.get(i).update();
@@ -165,7 +164,7 @@ public class GameLoop implements Runnable {
         GameData gameData = dataBase.findGameData(gameID);
         gameData.clearModels();
 
-        for (GeoShapeModel entity : DataBase.getDataBase().findGame(gameID).entities) {
+        for (GeoShapeModel entity : findGame(gameID).entities) {
             String id = entity.getId();
             Point2D anchor = entity.getAnchor();
             Point point = new Point((int) anchor.getX(), (int) anchor.getY());
@@ -214,12 +213,14 @@ public class GameLoop implements Runnable {
             panel.setDimension(dimension);
             gameData.addUpdatedPanels(panel);
         }
+
+
     }
 
     @Override
     public void run() {
         long initialTime = System.nanoTime();
-        final double timeU = (double) 1000000000 / Profile.getCurrent().UPS;
+        final double timeU = (double) 1000000000 / findGame(gameID).getProfile().UPS;
         double deltaU = 0;
         int ticks = 0;
         long timer = System.currentTimeMillis();
@@ -241,5 +242,9 @@ public class GameLoop implements Runnable {
                 timer += 1000;
             }
         }
+    }
+
+    private Game findGame(String gameID){
+        return DataBase.getDataBase().findGame(gameID);
     }
 }

@@ -1,9 +1,6 @@
 package shared.request;
 
-import shared.request.game.ClickedRequest;
-import shared.request.game.PauseRequest;
-import shared.request.game.StateRequest;
-import shared.request.game.MoveRequest;
+import shared.request.game.*;
 import shared.request.leader.JoinDemandStatusReq;
 import shared.request.leader.KickPlayerReq;
 import shared.request.leader.PurchaseSkillRequest;
@@ -35,4 +32,6 @@ public interface RequestHandler {
     Response handleStateRequest(StateRequest stateRequest);
     Response handleClickedRequest(ClickedRequest clickedRequest);
     Response handlePauseRequest(PauseRequest pauseRequest);
+    Response handleBuyAbilityRequest(BuyAbilityRequest buyAbilityRequest);
+    Response handleActivateAbilityRequest(ActivateAbilityRequest activateAbilityRequest);
 }

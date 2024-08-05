@@ -334,8 +334,8 @@ public class FinalPanelModel implements Collidable, Serializable {
     }
 
     public boolean dontUpdate(){
-        double now = Game.ELAPSED_TIME;
-        double slumberInitiation = Profile.getCurrent().slumberInitiationTime;
+        double now = findGame(gameID).ELAPSED_TIME;
+        double slumberInitiation = findGame(gameID).getProfile().slumberInitiationTime;
         return now - slumberInitiation < 10;
     }
 
@@ -404,10 +404,12 @@ public class FinalPanelModel implements Collidable, Serializable {
         if (velocity > 4){
             acceleration = -0.45;
         }
-        if (!moveUp && !topIsBlocked) topShrink(Profile.getCurrent().PANEL_SHRINKAGE_COEFFICIENT);
-        if (!moveRight && !rightIsBlocked) rightShrink (Profile.getCurrent().PANEL_SHRINKAGE_COEFFICIENT);
-        if (!moveDown && !bottomIsBlocked) bottomShrink(Profile.getCurrent().PANEL_SHRINKAGE_COEFFICIENT);
-        if (!moveLeft && !leftIsBlocked) leftShrink(Profile.getCurrent().PANEL_SHRINKAGE_COEFFICIENT);
+
+        double panelShrinkageCoefficient = findGame(gameID).getProfile().PANEL_SHRINKAGE_COEFFICIENT;
+        if (!moveUp && !topIsBlocked) topShrink(panelShrinkageCoefficient);
+        if (!moveRight && !rightIsBlocked) rightShrink (panelShrinkageCoefficient);
+        if (!moveDown && !bottomIsBlocked) bottomShrink(panelShrinkageCoefficient);
+        if (!moveLeft && !leftIsBlocked) leftShrink(panelShrinkageCoefficient);
 
     }
 

@@ -5,6 +5,7 @@ import client.network.game.controller.MouseController;
 import client.network.game.controller.onlineGame.ClientGame;
 import client.network.game.view.MainFrame;
 import client.network.game.view.charactersView.*;
+import client.network.game.view.junks.AbilityShopPanel;
 import client.network.socket.SocketRequestSender;
 
 
@@ -27,6 +28,8 @@ public class Main {
         BarricadosView.loadImage();
         NecropickView.loadImage();
         NonrigidBulletView.loadImage();
+
+//        MainFrame.getINSTANCE().handleAbilityShopPanelToggle();
 
 
         MainFrame.getINSTANCE().addMouseListener(new MouseController());

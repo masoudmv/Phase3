@@ -30,7 +30,7 @@ public class CollectibleModel extends GeoShapeModel implements Collidable, Movab
 
     public CollectibleModel(Point2D anchor, Point2D direction, int collectibleXP, String gameID) {
         super(gameID);
-        birthTime = Game.ELAPSED_TIME;
+        birthTime = findGame(gameID).ELAPSED_TIME;
         this.radius = EntityConstants.COLLECTABLE_RADIUS.getValue();
 //        this.id= UUID.randomUUID().toString();
         this.anchor = anchor;
@@ -59,7 +59,7 @@ public class CollectibleModel extends GeoShapeModel implements Collidable, Movab
 
 
     public static void dropCollectible(Point2D anchor, int numOfCollectibles, int xp, String gameID) {
-        Point2D direction = Utils.relativeLocation(anchor, EpsilonModel.getINSTANCE().getAnchor());
+        Point2D direction = new Point2D.Double(1, 0);
         for (int i = 0; i < numOfCollectibles; i++) {
             double theta = random.nextDouble(0, 2 * Constants.PI);
             new CollectibleModel(anchor, Utils.rotateVector(direction, theta), xp, gameID);

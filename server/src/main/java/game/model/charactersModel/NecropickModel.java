@@ -31,7 +31,7 @@ public class NecropickModel extends GeoShapeModel implements Collidable {
 
     public NecropickModel(String gameID) {
         super(new Point2D.Double(-100, -100), image, pol, gameID);
-        stateChangeTime = Game.ELAPSED_TIME; // Initialize state change time
+        stateChangeTime = findGame(gameID).ELAPSED_TIME; // Initialize state change time
         isHovering = true; // Start in hovering state
         collidables.add(this);
         this.health = EntityConstants.NECROPICK_HEALTH.getValue();
@@ -80,7 +80,7 @@ public class NecropickModel extends GeoShapeModel implements Collidable {
 
     public void update() {
         if (dontUpdate()) return;
-        double elapsedTime = Game.ELAPSED_TIME;
+        double elapsedTime = findGame(gameID).ELAPSED_TIME;
 
         if (!isHovering && (elapsedTime - stateChangeTime) >= EntityConstants.HOVER_DURATION) {
             hideUnderGround();

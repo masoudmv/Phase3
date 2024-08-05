@@ -2,6 +2,7 @@ package game.model.charactersModel.blackOrb;
 
 import game.controller.Game;
 import game.controller.Utils;
+import server.DataBase;
 import shared.constants.EntityConstants;
 import game.model.FinalPanelModel;
 import game.model.entities.Profile;
@@ -27,7 +28,7 @@ public class BlackOrb { // todo panels should be created with delay?
 
     public BlackOrb(String gameID) {
         this.gameID = gameID;
-        this.avalancheBirthTime = random.nextInt((int) (Game.ELAPSED_TIME + 6), (int) (Game.ELAPSED_TIME + 15));
+        this.avalancheBirthTime = random.nextInt((int) (findGame(gameID).ELAPSED_TIME + 6), (int) (findGame(gameID).ELAPSED_TIME + 15));
         Point2D pivot = new Point2D.Double(500, 400); // Center of the pentagon
         double edgeLength = 350; // Distance between adjacent vertices
         double radius = edgeLength / (2 * Math.sin(Math.PI / 5)); // Circumradius of the pentagon
@@ -41,9 +42,13 @@ public class BlackOrb { // todo panels should be created with delay?
         blackOrbs.add(this);
     }
 
+    private Game findGame(String gameID){
+        return DataBase.getDataBase().findGame(gameID);
+    }
+
     public boolean dontUpdate(){
-        double now = Game.ELAPSED_TIME;
-        double slumberInitiation = Profile.getCurrent().slumberInitiationTime;
+        double now = findGame(gameID).ELAPSED_TIME;
+        double slumberInitiation = findGame(gameID).getProfile().slumberInitiationTime;
         return now - slumberInitiation < 10;
     }
 
@@ -51,7 +56,7 @@ public class BlackOrb { // todo panels should be created with delay?
         if (dontUpdate()) return;
 //        Laser.performAoeDamage();
 
-        double now = Game.ELAPSED_TIME;
+        double now = findGame(gameID).ELAPSED_TIME;
         if (now - lastCreatedOrbTime > EntityConstants.ORB_PANEL_CREATION_DELAY && numCreatedOrbs == 5) {
             // Run initializeOrbs in a separate thread
 //            executorService.submit(this::initializedOrbs); // TODO ADD CONURENCY TO REQUIRED METHODS IN GAMELOOP.

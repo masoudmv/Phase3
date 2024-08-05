@@ -68,7 +68,7 @@ public class Smiley extends GeoShapeModel implements Collidable {
     }
 
     private void checkForProjectileCoolDown(){
-        double now = Game.ELAPSED_TIME;
+        double now = findGame(gameID).ELAPSED_TIME;
         if (!rightHand.projectileInProgress && now - rightHand.lastProjectileTime > EntityConstants.SMILEY_PROJECTILE_DURATION.getValue() + EntityConstants.SMILEY_PROJECTILE_COOLDOWN.getValue()) {
             if (Hand.slapInProgress) return;
             rightHand.initializeProjectile();
@@ -78,7 +78,7 @@ public class Smiley extends GeoShapeModel implements Collidable {
 
 
     private void checkForSqueezeCoolDown(){
-        double now = Game.ELAPSED_TIME;
+        double now = findGame(gameID).ELAPSED_TIME;
         if (!rightHand.squeezeInProgress && now - rightHand.lastSqueezeTime > EntityConstants.SMILEY_SQUEEZE_DURATION.getValue() + EntityConstants.SMILEY_SQUEEZE_COOLDOWN.getValue()) {
             if (Hand.slapInProgress) return;
             initiateSqueeze();

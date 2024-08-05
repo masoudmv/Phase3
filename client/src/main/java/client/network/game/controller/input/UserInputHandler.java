@@ -13,8 +13,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import static client.network.RequestFactory.createMoveRequest;
-import static client.network.RequestFactory.createPauseRequest;
+import static client.network.RequestFactory.*;
 import static client.network.game.controller.onlineGame.ClientGameLoop.movementInProgress;
 
 
@@ -24,10 +23,9 @@ public class UserInputHandler implements KeyListener {
     private Timer movementTimer;
 
 //    private AbilityShopPanel abilityShopPanel = null;
-    private JFrame abilityShopFrame = null;
+
 
     public UserInputHandler() {
-
 
 
     }
@@ -37,13 +35,10 @@ public class UserInputHandler implements KeyListener {
         Map<String, Integer> keyBindings = KeyBindingMenu.getINSTANCE().getKeyBindings();
 
 
-
         if (keysPressed.contains(keyBindings.get("Move Up"))) createMoveRequest(Input.move_up);
         if (keysPressed.contains(keyBindings.get("Move Right"))) createMoveRequest(Input.move_right);
         if (keysPressed.contains(keyBindings.get("Move Down"))) createMoveRequest(Input.move_down);
         if (keysPressed.contains(keyBindings.get("Move Left"))) createMoveRequest(Input.move_left);
-
-
 
 
     }
@@ -62,7 +57,7 @@ public class UserInputHandler implements KeyListener {
         }
 
 //        if (GameLoop.getINSTANCE().isRunning()) {
-//            if (e.getKeyCode() == KeyEvent.VK_G) UserInterfaceController.fireAbility();
+        if (e.getKeyCode() == KeyEvent.VK_R) createActivateAbilityRequest();
 //        }
 
 //        if (GameLoop.getINSTANCE().isRunning()) {
@@ -95,31 +90,16 @@ public class UserInputHandler implements KeyListener {
             movementTimer = null;
         }
     }
-
-    private void handleAbilityShopPanelToggle() {
-        if (abilityShopFrame == null) {
-            abilityShopFrame = new JFrame("Ability Shop");
-            abilityShopFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-            abilityShopFrame.setSize(400, 600);
-            abilityShopFrame.setLocationRelativeTo(null); // Center the frame on the screen
-            abilityShopFrame.setAlwaysOnTop(true); // Ensure the frame is always on top
-//            abilityShopPanel = new AbilityShopPanel(abilityShopFrame);
-//            abilityShopFrame.add(abilityShopPanel);
-            abilityShopFrame.setVisible(true);
-            abilityShopFrame.toFront(); // Bring the frame to the front
-            abilityShopFrame.requestFocus(); // Request focus
-        } else {
-            abilityShopFrame.dispose();
-            abilityShopFrame = null;
-//            abilityShopPanel = null;
-        }
-    }
-
-    public JFrame getAbilityShopFrame() {
-        return abilityShopFrame;
-    }
-
-    public void setAbilityShopFrame(JFrame abilityShopFrame) {
-        this.abilityShopFrame = abilityShopFrame;
-    }
 }
+
+
+
+
+//    public JFrame getAbilityShopFrame() {
+//        return abilityShopFrame;
+//    }
+//
+//    public void setAbilityShopFrame(JFrame abilityShopFrame) {
+//        this.abilityShopFrame = abilityShopFrame;
+//    }
+//}

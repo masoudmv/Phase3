@@ -63,7 +63,7 @@ public class OmenoctModel extends GeoShapeModel implements Collidable {
 
 
     private void shootNonRigidBullet(){
-        double now = Game.ELAPSED_TIME;
+        double now = findGame(gameID).ELAPSED_TIME;
         if (now - lastShotBullet < EntityConstants.OMENOCT_SHOT_DELAY) return;
         BufferedImage ba = NonrigidBullet.loadImage();
         GraphicalObject bos = new GraphicalObject(ba);

@@ -71,7 +71,7 @@ public class Hand extends GeoShapeModel implements Collidable {
         if (Utils.findDistance(getAnchor(), EpsilonModel.getINSTANCE().getAnchor()) > 400) return;
         if (projectileInProgress || squeezeInProgress || slapInProgress) return;
         slapInProgress = true;
-        lastSlapTime = Game.ELAPSED_TIME;
+        lastSlapTime = findGame(gameID).ELAPSED_TIME;
         rotationState.startRotation(pointToEpsilon());
         beforeSlapPosition = new Point2D.Double(getAnchor().getX(), getAnchor().getY()); // Store exact position
         moveTo(EpsilonModel.getINSTANCE().getAnchor());
@@ -80,7 +80,7 @@ public class Hand extends GeoShapeModel implements Collidable {
 
     public void initializeProjectile() {
         if (squeezeInProgress || slapInProgress) return;
-        lastProjectileTime = Game.ELAPSED_TIME;
+        lastProjectileTime = findGame(gameID).ELAPSED_TIME;
         projectileInProgress = true;
         rotationState.startRotation(pointToEpsilon());
         beforeSlapPosition = new Point2D.Double(getAnchor().getX(), getAnchor().getY()); // Store exact position
@@ -89,7 +89,7 @@ public class Hand extends GeoShapeModel implements Collidable {
 
     public void initializeSqueeze() {
         if (projectileInProgress || squeezeInProgress) return;
-        lastSqueezeTime = Game.ELAPSED_TIME;
+        lastSqueezeTime = findGame(gameID).ELAPSED_TIME;
         squeezeInProgress = true;
         finalPanelModel.setRigid(true);
         beforeSlapPosition = new Point2D.Double(getAnchor().getX(), getAnchor().getY()); // Store exact position
@@ -146,14 +146,14 @@ public class Hand extends GeoShapeModel implements Collidable {
     }
 
     private void creatBulletFromPointingVertex() {
-        if (Game.ELAPSED_TIME - projectileState.getLastShotBulletTime() < 0.5) return;
+        if (findGame(gameID).ELAPSED_TIME - projectileState.getLastShotBulletTime() < 0.5) return;
         BufferedImage ba = NonrigidBullet.loadImage();
         GraphicalObject bos = new GraphicalObject(ba);
         MyPolygon pl = bos.getMyBoundingPolygon();
         Point2D startPos = getPointingVertexPoint2D();
         new NonrigidBullet(startPos, gameID)
                 .setDirection(findBulletDirection(startPos));
-        projectileState.updateLastShotBulletTime(Game.ELAPSED_TIME);
+        projectileState.updateLastShotBulletTime(findGame(gameID).ELAPSED_TIME);
     }
 
     private Direction findBulletDirection(Point2D startPos) {
@@ -171,7 +171,7 @@ public class Hand extends GeoShapeModel implements Collidable {
     }
 
     private void updateActions(){
-        double now = Game.ELAPSED_TIME;
+        double now = findGame(gameID).ELAPSED_TIME;
         if (squeezeInProgress && now - lastSqueezeTime > EntityConstants.SMILEY_SQUEEZE_DURATION.getValue())  {
             squeezeInProgress = false;
             finalPanelModel.setRigid(false);
@@ -227,7 +227,7 @@ public class Hand extends GeoShapeModel implements Collidable {
 //            checkForProjectileCoolDown();
 //        }
 
-        double now = Game.ELAPSED_TIME;
+        double now = findGame(gameID).ELAPSED_TIME;
 
 
 

@@ -1,7 +1,7 @@
 package game.model.entities;
 
-//import model.entities.Skill;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -29,9 +29,12 @@ public class Profile {
     public double slaughterInitiationTime = -Double.MAX_VALUE;
     public double empowerInitiationTime = -Double.MAX_VALUE;
 
-    public static Profile getCurrent() {
-        return current;
-    }
+    public HashMap<String, Ability> activeAbilities = new HashMap<>();
+    public HashMap<String, Ability> activatedAbilities = new HashMap<>();
+
+//    public static Profile getCurrent() {
+//        return current;
+//    }
 
     public static void setCurrent(Profile current) {
         Profile.current = current;
@@ -42,8 +45,8 @@ public class Profile {
         this.acquiredSkillsNames.clear();
     }
 
-    public void saveXP() {
-        totalXP += Profile.getCurrent().currentGameXP;
-        currentGameXP = 0;
-    }
+//    public void saveXP() {
+//        totalXP += Profile.getCurrent().currentGameXP;
+//        currentGameXP = 0;
+//    }
 }

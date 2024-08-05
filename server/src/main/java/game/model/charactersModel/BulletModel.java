@@ -30,6 +30,23 @@ public class BulletModel extends GeoShapeModel implements Movable, Collidable, I
     private boolean createdByEpsilon = true;
     private String creatorMacAddress;
 
+
+    public BulletModel(Point2D anchor, Direction direction, String gameID, String creatorMacAddress, int damage) {
+        super(gameID);
+        this.creatorMacAddress = creatorMacAddress;
+        this.radius = Constants.BULLET_RADIUS;
+        this.anchor = anchor;
+        this.direction = direction;
+        this.health = Integer.MAX_VALUE;
+        movables.add(this);
+        collidables.add(this);
+        damageSize.put(AttackTypes.MELEE, damage);
+        updateBulletDamage();
+        creatBulletView(id, gameID);
+        createDummyModel();
+
+    }
+
     public BulletModel(Point2D anchor, Direction direction, String gameID, String creatorMacAddress) {
         super(gameID);
         this.creatorMacAddress = creatorMacAddress;
@@ -38,21 +55,13 @@ public class BulletModel extends GeoShapeModel implements Movable, Collidable, I
         this.anchor = anchor;
         this.direction = direction;
         this.health = Integer.MAX_VALUE;
-
         movables.add(this);
         collidables.add(this);
-
-        int damage  = Profile.getCurrent().BULLET_DAMAGE;
+        int damage  = findGame(gameID).getProfile().BULLET_DAMAGE;
         damageSize.put(AttackTypes.MELEE, damage);
         updateBulletDamage();
-
-
         creatBulletView(id, gameID);
-
-
-        // todo move to another method ...
         createDummyModel();
-
     }
 
 
@@ -69,7 +78,7 @@ public class BulletModel extends GeoShapeModel implements Movable, Collidable, I
 
 
     private void updateBulletDamage(){
-        if (Profile.getCurrent().BULLET_DAMAGE > 5) Profile.getCurrent().BULLET_DAMAGE = 5;
+        if (findGame(gameID).getProfile().BULLET_DAMAGE > 5) findGame(gameID).getProfile().BULLET_DAMAGE = 5;
     }
 
 
@@ -232,8 +241,8 @@ public class BulletModel extends GeoShapeModel implements Movable, Collidable, I
         }
 
         // todo: change for multiplayer part ...
-        EpsilonModel epsilon = EpsilonModel.getINSTANCE();
-        epsilon.health += (int) Profile.getCurrent().EPSILON_HEALTH_REGAIN;
+//        EpsilonModel epsilon = EpsilonModel.getINSTANCE();
+//        epsilon.health += (int) findGame(gameID).getProfile().EPSILON_HEALTH_REGAIN;
 
         this.damage((Entity) other, AttackTypes.MELEE);
         eliminate();

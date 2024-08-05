@@ -6,10 +6,7 @@ import shared.Model.Input;
 import shared.Model.NotificationType;
 import shared.Model.Skill;
 import shared.request.*;
-import shared.request.game.ClickedRequest;
-import shared.request.game.MoveRequest;
-import shared.request.game.PauseRequest;
-import shared.request.game.StateRequest;
+import shared.request.game.*;
 import shared.request.leader.JoinDemandStatusReq;
 import shared.request.leader.KickPlayerReq;
 import shared.request.leader.PurchaseSkillRequest;
@@ -198,6 +195,19 @@ public class RequestFactory {
                 socketRequestSender.sendRequest(new PauseRequest(macAddress)).run(requestHandler);
             } catch (IOException e) {
                 System.out.println("Pause Request was not sent ... ");
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    public static void createActivateAbilityRequest(){
+        synchronized (LOCK){
+            socketRequestSender = status.getSocket();
+            try {
+                socketRequestSender.sendRequest(new ActivateAbilityRequest(macAddress)).run(requestHandler);
+                System.out.println("Activate Ability Request was sent ... ");
+            } catch (IOException e) {
+                System.out.println("Activate Ability Request was not sent ... ");
                 throw new RuntimeException(e);
             }
         }
