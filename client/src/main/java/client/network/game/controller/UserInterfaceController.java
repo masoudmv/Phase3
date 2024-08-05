@@ -21,6 +21,13 @@ public abstract class UserInterfaceController {
         new PolygonView(id);
     }
 
+    public static void createBabyEpsilonView(String id){
+        new BabyEpsilonView(id);
+    }
+
+
+
+
     public static void creatBulletView(String id){ new BulletView(id); }
 
     public static void createCollectibleView(String id){ new CollectibleView(id); }
@@ -38,16 +45,22 @@ public abstract class UserInterfaceController {
 
     public static void eliminateBulletView(String id){ findBulletView(id).eliminate(); }
 
+    public static void createLaserView(String id){
+        new LaserView(id);
+    }
 
+//    public static void createGeoShapeView(String id, Image image){
+//        new GeoShapeView(id, image);
+//    }
 
-
+    public static void createOrbView(String id){
+        new OrbView(id);
+    }
 
 
 
     public static void createOmenoctView(String id){ new PolygonView(id); }
-    public static void createBabyEpsilonView(String id){ new BabyEpsilonView(id); }
     public static void createSmileyAOEView(String id){ new SmileyAOE(id); }
-    public static void createLaserView(String id){ new LaserView(id); }
     public static void createGeoShapeView(String id){ new GeoShapeView(id); }
     public static void createNecropickView(String id){
         new NecropickView(id);
@@ -55,9 +68,6 @@ public abstract class UserInterfaceController {
     public static void createArchmireView(String id){ new ArchmireView(id); }
     public static void createGeoShapeView(String id, Image image, int zOrder){
         new GeoShapeView(id, image, zOrder);
-    }
-    public static void createGeoShapeView(String id, Image image){
-        new GeoShapeView(id, image);
     }
 
 
@@ -77,17 +87,19 @@ public abstract class UserInterfaceController {
         Point corner = new Point(component.getX(),component.getY());
         assert geoShapeModel != null;
 
-        MyPolygon myPolygon = geoShapeModel.getMyPolygon();
+        int[] xpoints = geoShapeModel.getxPoints();
+        int[] ypoints = geoShapeModel.getyPoints();
+        int numPoints = geoShapeModel.getnPoints();
 
-        double[] xpoints = new double[myPolygon.npoints];
-        double[] ypoints = new double[myPolygon.npoints];
+        double[] xs = new double[numPoints];
+        double[] ys = new double[numPoints];
 
-        for (int i = 0; i < myPolygon.npoints; i++) {
-            xpoints[i] = myPolygon.xpoints[i] - component.getX();
-            ypoints[i] = myPolygon.ypoints[i] - component.getY();
+        for (int i = 0; i < numPoints; i++) {
+            xs[i] = xpoints[i] - component.getX();
+            ys[i] = ypoints[i] - component.getY();
         }
 
-        return new MyPolygon(xpoints, ypoints, myPolygon.npoints);
+        return new MyPolygon(xs, ys, numPoints);
     }
 
 
@@ -118,6 +130,7 @@ public abstract class UserInterfaceController {
 
 
     public static void updateGeoShapeViewProperties(){
+//        System.out.println(SwingUtilities.isEventDispatchThread());
 
 
         for (FinalPanelView f : finalPanelViews){
@@ -141,9 +154,9 @@ public abstract class UserInterfaceController {
             }
         }
 
-        for (GeoShapeView geoShapeView : geoShapeViews){
-            geoShapeView.setAngle(calculateGeoShapeViewAngle(geoShapeView.getId()));
-        }
+//        for (GeoShapeView geoShapeView : geoShapeViews){
+//            geoShapeView.setAngle(calculateGeoShapeViewAngle(geoShapeView.getId()));
+//        }
 
 
 

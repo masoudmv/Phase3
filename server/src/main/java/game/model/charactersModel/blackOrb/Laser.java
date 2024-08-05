@@ -3,24 +3,26 @@ package game.model.charactersModel.blackOrb;
 import game.controller.Game;
 import game.controller.Utils;
 import game.controller.UserInterfaceController;
+import game.model.charactersModel.*;
+import server.DataBase;
+import shared.Model.Squad;
+import shared.Model.dummies.DummyModel;
 import shared.constants.Constants;
 import shared.Model.MyPolygon;
 import game.model.entities.AttackTypes;
-import game.model.charactersModel.CollectibleModel;
-import game.model.charactersModel.GeoShapeModel;
-import game.model.charactersModel.SmileyBullet;
 
+import java.awt.*;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
+import static game.controller.UserInterfaceController.createLaserView;
 import static game.controller.Utils.*;
 
 public class Laser extends GeoShapeModel {
     private double laserThickness = 60;
     private Orb[] OrbsOfALaser = new Orb[2];
     private boolean isAvalanche = false;
-    private double avalancheInitiation;
 
     public Laser(Orb orb1, Orb orb2) {
         super();
@@ -32,9 +34,10 @@ public class Laser extends GeoShapeModel {
         findLaserBoundary(laserCenterLine);
         setAnchor();
         BlackOrb.lasers.add(this);
-//        UserInterfaceController.createLaserView(id);
+        createLaserView(id);
         damageSize.put(AttackTypes.AOE, 12);
     }
+
 
 
     private void findLaserBoundary(Line2D laserCenterLine){
@@ -82,41 +85,11 @@ public class Laser extends GeoShapeModel {
     }
 
 
-    public boolean isAvalanche() {
-        return isAvalanche;
-    }
-
-    public void setAvalanche(boolean avalanche) {
-        isAvalanche = avalanche;
-        avalancheInitiation = Game.ELAPSED_TIME + Constants.AVALANCHE_INITIATION_DELAY;
-    }
-
-    public double getAvalancheInitiation() {
-        return avalancheInitiation;
-    }
-
-    private boolean applyAvalanche(){
-        for (GeoShapeModel model : entities){
-            // todo i think collectible does not have proper get bounds method ... fix it
-            ArrayList<Point2D> bound = model.getBoundingPoints();
-            boolean isInside = true;
-            for (Point2D point : bound) {
-                if (!isPointInPolygon(point, myPolygon.getVertices())){
-                    isInside = false;
-                }
-            }
-            if (isInside) {
-                model.initiateFall();
-                return true;
-            }
-        }
-        return false;
-    }
 
     private boolean applyAoEDamage(){
         for (GeoShapeModel model : entities){
-            if (!(model instanceof CollectibleModel) && !(model instanceof SmileyBullet)) {
-                ArrayList<Point2D> bound = model.getBoundingPoints();
+//            if (model instanceof SquarantineModel) {
+                Point2D.Double[] bound = model.myPolygon.getVertices();
                 boolean isInside = true;
 
                 for (Point2D point : bound) {
@@ -130,22 +103,13 @@ public class Laser extends GeoShapeModel {
                     return true;
                 }
             }
-        }
+//        }
 
         return false;
     }
 
     private boolean executeAoe() {
-        if (isAvalanche) {
-            double now = Game.ELAPSED_TIME;
-            double avalancheStart = avalancheInitiation;
-            double avalancheEnd = avalancheStart + Constants.AVALANCHE_DURATION;
-
-            if (avalancheStart < now && now < avalancheEnd) return applyAvalanche();
-            else return applyAoEDamage();
-        }
-
-        else return applyAoEDamage();
+         return applyAoEDamage();
     }
 
     public static void performAoeDamage(){

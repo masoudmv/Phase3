@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import static game.controller.UserInterfaceController.createGeoShapeView;
 import static game.controller.UserInterfaceController.eliminateGeoShapeView;
 
 public abstract class GeoShapeModel extends Entity {
@@ -79,7 +80,7 @@ public abstract class GeoShapeModel extends Entity {
         this.anchor = new Point2D.Double(anchor.getX(), anchor.getY());
         radius = (double) image.getHeight() / 2;
         entities.add(this);
-//        UserInterfaceController.createGeoShapeView(id, image);
+        createGeoShapeView(id);
     }
 
     public GeoShapeModel(Point2D anchor) {

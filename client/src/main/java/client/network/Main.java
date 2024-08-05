@@ -5,6 +5,7 @@ import client.network.game.controller.MouseController;
 import client.network.game.controller.onlineGame.ClientGame;
 import client.network.game.view.MainFrame;
 import client.network.game.view.charactersView.EpsilonView;
+import client.network.game.view.charactersView.OrbView;
 import client.network.socket.SocketRequestSender;
 //import controller..UserInputHandler;
 
@@ -24,6 +25,7 @@ public class Main {
 
 
         EpsilonView.loadImage();
+        OrbView.loadImage();
 
 
         MainFrame.getINSTANCE().addMouseListener(new MouseController());

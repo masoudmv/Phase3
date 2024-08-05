@@ -4,28 +4,15 @@ package client.network.game.view.charactersView;
 import shared.Model.MyPolygon;
 
 import java.awt.*;
-import java.util.ArrayList;
 
 public class LaserView extends GeoShapeView {
-    public boolean showNextLocation = false;
-    public static ArrayList<LaserView> laserViews = new ArrayList<>();
-    private boolean isAvalanche = false;
-    private double avalancheInitiation = -1;
 
     public LaserView(String id) {
         super(id);
         this.zOrder = 1;
     }
 
-    // TODO
 
-//    @Override
-//    public void update(Component component){
-//        super.update(component);
-//        GeoShapeModel geoShapeModel = findGeoShapeModel(id);
-//        this.isAvalanche = ((Laser) geoShapeModel).isAvalanche();
-//        this.avalancheInitiation = ((Laser) geoShapeModel).getAvalancheInitiation();
-//    }
 
     public void eliminate(){
         super.eliminate();
@@ -37,9 +24,11 @@ public class LaserView extends GeoShapeView {
         Graphics2D g2d = (Graphics2D) g;
         g2d.setColor(Color.WHITE);
 
-
         MyPolygon myPolygon = myPolygons.get(panelID);
-        if (myPolygon == null) return;
+        if (myPolygon == null) {
+            System.out.println("IS nuL");
+            return;
+        }
 
         int[] xpoints = new int[myPolygon.npoints];
         int[] ypoints = new int[myPolygon.npoints];
@@ -49,21 +38,6 @@ public class LaserView extends GeoShapeView {
             ypoints[i] = (int) myPolygon.ypoints[i];
         }
 
-//        if (isAvalanche) {
-//            double now = Game.ELAPSED_TIME;
-//            double avalancheStart = avalancheInitiation;
-//            double avalancheEnd = avalancheStart + Constants.AVALANCHE_DURATION;
-//            if (now < avalancheStart) {
-//                g2d.fillPolygon(xpoints, ypoints, myPolygon.npoints);
-//            }
-//            else if (avalancheStart < now && now < avalancheEnd) {
-////                    g2d.fillPolygon(xpoints, ypoints, myPolygon.npoints);
-//            }
-//            else {
-//                g2d.drawPolygon(xpoints, ypoints, myPolygon.npoints);
-//            }
-//        }
-//        else g2d.drawPolygon(xpoints, ypoints, myPolygon.npoints);
-
+        g2d.drawPolygon(xpoints, ypoints, xpoints.length);
     }
 }

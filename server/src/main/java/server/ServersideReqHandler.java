@@ -1,5 +1,7 @@
 package server;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import game.controller.Utils;
 import game.model.charactersModel.BulletModel;
 import game.model.charactersModel.EpsilonModel;
@@ -263,14 +265,19 @@ public class ServersideReqHandler extends Thread implements RequestHandler {
 
     @Override
     public Response handleStateRequest(StateRequest stateRequest) {
-        synchronized (dataBase){
+
+//        long stateRequestStartTime = System.currentTimeMillis();
+        synchronized (dataBase) {
             StateResponse stateResponse = new StateResponse();
+
+
             stateResponse.setCreatedEntities(dataBase.getCreatedEntities());
             stateResponse.setCreatedPanels(dataBase.getCreatedPanels());
-            stateResponse.setUpdatedModels(dataBase.getUpdatedModels());
-            stateResponse.setUpdatedPanels(dataBase.getUpdatedPanels());
             stateResponse.setEliminatedEntities(dataBase.getEliminatedEntities());
-            System.out.println("CREATED NUM: " + stateResponse.getEliminatedEntities().size());
+            stateResponse.setUpdatedPanels(dataBase.getUpdatedPanels());
+
+
+            stateResponse.setUpdatedModels(dataBase.getUpdatedModels());
             return stateResponse;
         }
     }
@@ -307,7 +314,7 @@ public class ServersideReqHandler extends Thread implements RequestHandler {
 //                Point2D left = Utils.rotateVector(direction, -Math.toRadians(angle));
 //                new BulletModel(epsilon.getAnchor(), new Direction(left));
 //            }
-            System.out.println("GGG");
+
 
 
             return new NullResponse();

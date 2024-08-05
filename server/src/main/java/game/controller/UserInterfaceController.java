@@ -51,43 +51,48 @@ public abstract class UserInterfaceController {
     }
 
 
-    public static void eliminateGeoShapeView(String id){
-        DataBase dataBase = DataBase.getDataBase();
-        dataBase.eliminateEntity(id);
-        dataBase.getCreatedEntities().remove(id);
-    }
 
-    public static void removeFinalPanelView(String id){
-        DataBase dataBase = DataBase.getDataBase();
-        dataBase.eliminateEntity(id);
-        dataBase.getCreatedPanels().remove(id);
-
-    }
-
-    public static void eliminateBulletView(String id){
-//        DataBase dataBase = DataBase.getDataBase();
-//        dataBase.eliminateEntity(id);
-//        dataBase.getCreatedEntities().remove(id);
-
-    }
 
     public static void createOmenoctView(String id){
         DataBase dataBase = DataBase.getDataBase();
         dataBase.createEntity(id, simplePolygon);
     }
 
-//
-//
-//    public static void createBabyEpsilonView(String id){ new BabyEpsilonView(id); }
+
+    public static void createBabyEpsilonView(String id){
+        DataBase dataBase = DataBase.getDataBase();
+        dataBase.createEntity(id, babyEpsilon);
+    }
+
+
+    public static void createLaserView(String id){
+        DataBase dataBase = DataBase.getDataBase();
+        dataBase.createEntity(id, laser);
+    }
+
+
+    public static void createGeoShapeView(String id){
+        DataBase dataBase = DataBase.getDataBase();
+        dataBase.createEntity(id, orb);
+    }
+
+
+
+
+
+    public static void eliminateGeoShapeView(String id){
+        DataBase dataBase = DataBase.getDataBase();
+        dataBase.eliminateEntity(id);
+        dataBase.getCreatedEntities().remove(id);
+    }
+    public static void removeFinalPanelView(String id){
+        DataBase dataBase = DataBase.getDataBase();
+        dataBase.eliminateEntity(id);
+        dataBase.getCreatedPanels().remove(id);
+
+    }
 //
 //    public static void createSmileyAOEView(String id){ new SmileyAOE(id); }
-//
-//
-//
-//    public static void createGeoShapeView(String id, Image image){
-//        new GeoShapeView(id, image);
-//    }
-//
 //    public static void createGeoShapeView(String id, Image image, int zOrder){
 //        new GeoShapeView(id, image, zOrder);
 //    }
@@ -100,9 +105,6 @@ public abstract class UserInterfaceController {
 //        new ArchmireView(id, image);
 //    }
 //
-//    public static void createLaserView(String id){
-//        new LaserView(id);
-//    }
 //
 //    public static void createGeoShapeView(String id){ new GeoShapeView(id); }
 //

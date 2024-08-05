@@ -17,7 +17,7 @@ public class SocketRequestSender {
 
     public SocketRequestSender() {
         try {
-            this.socket = new Socket("192.168.77.109", 8080);
+            this.socket = new Socket("127.0.0.1", 8080);
             printStream = new PrintStream(socket.getOutputStream());
             scanner = new Scanner(socket.getInputStream());
             objectMapper = new ObjectMapper();
@@ -30,14 +30,21 @@ public class SocketRequestSender {
 
     public Response sendRequest(Request request) throws IOException {
         try {
-            printStream.println(objectMapper.writeValueAsString(request));
-            return objectMapper.readValue(scanner.nextLine(), Response.class);
+            String req = objectMapper.writeValueAsString(request);
+            printStream.println(req);
+            String res = scanner.nextLine();
+//            System.out.println("length:   " + res.length());
+
+            Object object = objectMapper.readValue(res, Response.class);
+
+            return objectMapper.convertValue(object, Response.class);
         } catch (Exception e) {
             System.out.println(e);
             close();
             throw e;
         }
     }
+
 
     public void close() {
         try {

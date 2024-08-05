@@ -1,25 +1,34 @@
 package shared.Model.dummies;
 
-import shared.Model.MyPolygon;
 import java.awt.*;
+import java.io.Serializable;
 
-
-public class DummyModel {
+public class DummyModel implements Serializable {
+    private static final long serialVersionUID = 1L; // Add a unique identifier for serialization
     private String id;
     private Point anchor;
     private double angle;
-    private MyPolygon myPolygon;
+    private int[] xPoints;
+    private int[] yPoints;
+    private int nPoints;
 
-    public DummyModel(String id, Point anchor, double angle, MyPolygon myPolygon) {
+    public DummyModel(String id, Point anchor, double angle, int[] xPoints, int[] yPoints, int nPoints) {
         this.id = id;
         this.anchor = anchor;
         this.angle = angle;
-        this.myPolygon = myPolygon;
+        this.xPoints = xPoints;
+        this.yPoints = yPoints;
+        this.nPoints = nPoints;
+    }
+
+    public DummyModel(String id, Point anchor, double angle) {
+        this.id = id;
+        this.anchor = anchor;
+        this.angle = angle;
     }
 
     public DummyModel() {
     }
-
 
     public String getId() {
         return id;
@@ -45,11 +54,19 @@ public class DummyModel {
         this.angle = angle;
     }
 
-    public MyPolygon getMyPolygon() {
-        return myPolygon;
+    public int[] getxPoints() {
+        return xPoints;
     }
 
-    public void setMyPolygon(MyPolygon myPolygon) {
-        this.myPolygon = myPolygon;
+    public int[] getyPoints() {
+        return yPoints;
     }
+
+    public int getnPoints() {
+        return nPoints;
+    }
+
+    //    public Polygon getPolygon() {
+//        return new Polygon(xPoints, yPoints, nPoints);
+//    }
 }

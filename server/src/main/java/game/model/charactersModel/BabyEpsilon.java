@@ -9,14 +9,16 @@ import game.model.movement.Direction;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 
+import static game.controller.UserInterfaceController.createBabyEpsilonView;
+
 public class BabyEpsilon extends GeoShapeModel {
 
     BabyEpsilon(Point2D anchor) {
         super();
         this.anchor = anchor;
         this.radius = EntityConstants.BABY_EPSILON_RADIUS.getValue();
-//        UserInterfaceController.createBabyEpsilonView(id);
         damageSize.put(AttackTypes.MELEE, 10);
+        createBabyEpsilonView(id);
     }
 
     public void move(Direction direction) {

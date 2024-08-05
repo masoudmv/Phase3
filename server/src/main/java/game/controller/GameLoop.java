@@ -96,6 +96,7 @@ public class GameLoop implements Runnable {
     public void updateModel() {
 
 
+
         for (int i = 0; i < finalPanelModels.size(); i++) {
             finalPanelModels.get(i).panelMotion();  // todo
         }
@@ -122,6 +123,8 @@ public class GameLoop implements Runnable {
         if (ELAPSED_TIME > 2 && ELAPSED_TIME < 10) {
 //            panel.expansion();
         }
+
+        ELAPSED_TIME += 0.0167;
 
 
 //        for (Movable movable : movables) {
@@ -244,14 +247,27 @@ public class GameLoop implements Runnable {
         dataBase.clearModels();
 
         for (GeoShapeModel entity : entities) {
-            DummyModel model = new DummyModel();
-            model.setId(entity.getId());
 
+            String id = entity.getId();
             Point2D anchor = entity.getAnchor();
-            model.setAnchor(new Point((int) anchor.getX(), (int) anchor.getY()));
+            Point point = new Point((int) anchor.getX(), (int) anchor.getY());
 
-            model.setMyPolygon(entity.myPolygon);
-            model.setAngle(entity.getAngle());
+            int[] xPoints = new int[entity.myPolygon.npoints];
+            int[] yPoints = new int[entity.myPolygon.npoints];
+            for (int i = 0; i < entity.myPolygon.npoints; i++) {
+                xPoints[i] = (int) entity.myPolygon.xpoints[i];
+                yPoints[i] = (int) entity.myPolygon.ypoints[i];
+            }
+
+            int nPoints = entity.myPolygon.npoints;
+            double angle = entity.getAngle();
+
+
+
+            DummyModel model = new DummyModel(id, point, angle, xPoints, yPoints, nPoints);
+
+
+//            model.setAngle(entity.getAngle());
             dataBase.addUpdatedModels(model);
         }
 

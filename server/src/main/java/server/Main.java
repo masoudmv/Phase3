@@ -2,6 +2,7 @@ package server;
 
 import game.controller.Game;
 import game.example.GraphicalObject;
+import game.model.charactersModel.blackOrb.BlackOrb;
 import shared.Model.MyPolygon;
 import game.model.charactersModel.*;
 import game.model.charactersModel.blackOrb.Orb;
@@ -43,8 +44,8 @@ public class Main {
         MyPolygon pol = bows.getMyBoundingPolygon();
         new EpsilonModel(new Point2D.Double(1000, 700), pol);
 
-        new SquarantineModel(new Point2D.Double(400, 500));
-        new OmenoctModel(new Point2D.Double(1400, 500));
+//        new SquarantineModel(new Point2D.Double(400, 500));
+//        new OmenoctModel(new Point2D.Double(1400, 500));
 
 
 
@@ -54,6 +55,8 @@ public class Main {
         Skill.initializeSkills();
 
 
+        new BlackOrb();
+        new SquarantineModel(new Point2D.Double(200, 500));
 
 
 

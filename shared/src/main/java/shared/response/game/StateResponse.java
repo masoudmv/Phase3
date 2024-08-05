@@ -8,6 +8,7 @@ import shared.response.Response;
 import shared.response.ResponseHandler;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -16,12 +17,14 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 @JsonTypeName("StateResponse")
 public class StateResponse implements Response {
-    private Map<String, EntityType> createdEntities = new ConcurrentHashMap<>();
-    private Map<String, DummyPanel> createdPanels = new ConcurrentHashMap<>();
-    private Map<String, DummyModel> updatedModels = new ConcurrentHashMap<>();
-    private Map<String, DummyPanel> updatedPanels = new ConcurrentHashMap<>();
+    private Map<String, EntityType> createdEntities = new HashMap<>();
+    private Map<String, DummyPanel> createdPanels = new HashMap<>();
+    private Map<String, DummyModel> updatedModels = new HashMap<>();
+    private Map<String, DummyPanel> updatedPanels = new HashMap<>();
 
     private List<String> eliminatedEntities = new CopyOnWriteArrayList<>();
+
+//    private long sentTime;
 
 
     public StateResponse() {
@@ -66,6 +69,14 @@ public class StateResponse implements Response {
     public void setUpdatedPanels(Map<String, DummyPanel> updatedPanels) {
         this.updatedPanels = updatedPanels;
     }
+
+//    public long getSentTime() {
+//        return sentTime;
+//    }
+//
+//    public void setSentTime(long sentTime) {
+//        this.sentTime = sentTime;
+//    }
 
     @Override
     public void run(ResponseHandler responseHandler) {

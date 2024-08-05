@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import static game.controller.UserInterfaceController.createSquarantineView;
 import static shared.Model.imagetools.ToolBox.getBufferedImage;
 import static shared.constants.EntityConstants.SQUARANTINE_COLLECTIBLES_XP;
 import static shared.constants.EntityConstants.SQUARANTINE_NUM_OF_COLLECTIBLES;
@@ -49,7 +50,7 @@ public class SquarantineModel extends GeoShapeModel implements Movable, Collidab
         movables.add(this);
         impactables.add(this);
         this.health = 10;
-        UserInterfaceController.createSquarantineView(id);
+        createSquarantineView(id);
 
     }
 

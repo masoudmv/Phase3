@@ -18,8 +18,8 @@ import java.awt.geom.Point2D;
 import java.util.List;
 import java.util.Map;
 
-import static client.network.game.controller.UserInterfaceController.createPolygonView;
-import static client.network.game.controller.UserInterfaceController.updateGeoShapeViewProperties;
+import static client.network.game.controller.UserInterfaceController.*;
+import static client.network.game.view.FinalPanelView.finalPanelViews;
 import static client.network.game.view.charactersView.GeoShapeView.geoShapeViews;
 
 public class ClientsideResHandler implements ResponseHandler {
@@ -259,6 +259,7 @@ public class ClientsideResHandler implements ResponseHandler {
 
     @Override
     public void handleStateResponse(StateResponse stateResponse) {
+
         Map<String, EntityType> createdEntities = stateResponse.getCreatedEntities();
         List<String> eliminates = stateResponse.getEliminatedEntities();
 
@@ -272,11 +273,18 @@ public class ClientsideResHandler implements ResponseHandler {
                         case bullet -> new BulletView(id);
                         case epsilon -> new EpsilonView(id);
                         case collectible -> new CollectibleView(id);
-                        case trigorath, squarantine, simplePolygon -> createPolygonView(id);
+                        case trigorath, squarantine, simplePolygon -> {
+                            new TrigorathView(id);
+                        }
+                        case babyEpsilon -> createBabyEpsilonView(id);
+                        case orb -> createOrbView(id);
+                        case laser -> createLaserView(id);
                     }
                 }) ;
             }
         }
+
+
 
         Map<String, DummyModel> models = stateResponse.getUpdatedModels();
         ClientDataBase.models.putAll(models);
@@ -291,7 +299,7 @@ public class ClientsideResHandler implements ResponseHandler {
                 Dimension dimension = panel.getDimension();
 
                 // Ensure Swing components are manipulated on the EDT
-                SwingUtilities.invokeLater(() -> new FinalPanelView(id, location, dimension));
+                 SwingUtilities.invokeLater(() -> new FinalPanelView(id, location, dimension));
             }
         }
 
@@ -310,14 +318,35 @@ public class ClientsideResHandler implements ResponseHandler {
         for (GeoShapeView view : geoShapeViews){
             if (eliminates.contains(view.getId())) {
                 view.eliminate();
-                System.out.println("eliminated " + view.getId());
             }
         }
 
-        System.out.println(eliminates.size());
-
+        for (FinalPanelView panelView : finalPanelViews){
+            if (eliminates.contains(panelView.getId())) {
+                panelView.eliminate();
+            }
+        }
 
         updateGeoShapeViewProperties();
+
+
+//        double b = System.currentTimeMillis();
+//        System.out.println("models size  " + ClientDataBase.models.size());
+//        System.out.println("panels size  " + ClientDataBase.panels.size());
+//        System.out.println("views  " + geoShapeViews.size());
+//        System.out.println("panelVies  " + finalPanelViews.size());
+//        System.out.println("eliminates  " + stateResponse.getEliminatedEntities().size());
+//        System.out.println("created  " + stateResponse.getCreatedPanels().size());
+//        System.out.println("updates models " + stateResponse.getUpdatedModels().size());
+//        System.out.println("update panels  " + stateResponse.getUpdatedPanels().size());
+
+
+//        long b = System.currentTimeMillis();
+//
+//        System.out.println("User Input Handling Time: " + (b - a) + " ms");
+//        client.network.game.view.MainFrame.getINSTANCE().repaint();
+
+//        SwingUtilities.invokeLater(client.network.game.view.MainFrame.getINSTANCE()::revalidate);
         SwingUtilities.invokeLater(client.network.game.view.MainFrame.getINSTANCE()::repaint);
     }
 

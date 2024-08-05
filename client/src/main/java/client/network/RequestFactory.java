@@ -18,6 +18,7 @@ import shared.request.nonmember.CreateSquadRequest;
 import shared.request.member.LeaveSquadReq;
 import shared.request.nonmember.GetSquadsListRequest;
 import shared.request.nonmember.JoinSquadReq;
+import shared.response.Response;
 
 import java.awt.*;
 import java.io.IOException;
@@ -165,7 +166,16 @@ public class RequestFactory {
         synchronized (LOCK){
             socketRequestSender = status.getSocket();
             try {
-                socketRequestSender.sendRequest(new StateRequest()).run(requestHandler);
+
+//                long a = System.currentTimeMillis();
+
+                Response response = socketRequestSender.sendRequest(new StateRequest());
+//                long b = System.currentTimeMillis();
+//
+//                System.out.println("User Input Handling Time: " + (b - a) + " ms");
+
+                response.run(requestHandler);
+
             } catch (IOException e) {
                 System.out.println("State Request was not sent ... ");
                 throw new RuntimeException(e);

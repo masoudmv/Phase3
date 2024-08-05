@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import static game.controller.UserInterfaceController.creatBulletView;
-import static game.controller.UserInterfaceController.eliminateBulletView;
+
 
 public class BulletModel extends GeoShapeModel implements Movable, Collidable, Impactable {
     public static CopyOnWriteArrayList<BulletModel> bulletModels = new CopyOnWriteArrayList<>();
@@ -52,11 +52,17 @@ public class BulletModel extends GeoShapeModel implements Movable, Collidable, I
 
 
         // todo move to another method ...
+        createDummyModel();
+
+    }
+
+
+    private void createDummyModel(){
         DummyModel model = new DummyModel();
         model.setId(id);
         model.setAnchor(new Point((int) anchor.getX(), (int) anchor.getY()));
         model.setAngle(angle);
-        model.setMyPolygon(myPolygon);
+//        model.setMyPolygon(myPolygon);
         DataBase.getDataBase().addUpdatedModels(model);
     }
 
@@ -199,9 +205,6 @@ public class BulletModel extends GeoShapeModel implements Movable, Collidable, I
         bulletModels.remove(this);
         collidables.remove(this);
         movables.remove(this);
-
-        eliminateBulletView(id);
-
     }
 
     @Override

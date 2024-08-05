@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 
-@JsonIgnoreProperties(ignoreUnknown = true)
+//@JsonIgnoreProperties(ignoreUnknown = true)
 public class MyPolygon {
     public int npoints;
     public double[] xpoints;
@@ -73,6 +73,7 @@ public class MyPolygon {
     }
 
     public CopyOnWriteArrayList<Integer> getBoundingPointIndexes() {
+        setBoundingPointIndexes();
         return boundingPointIndexes;
     }
 

@@ -7,10 +7,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ClientDataBase {
-    public static Map<String, DummyModel> models = new HashMap<>();
-    public static Map<String, DummyPanel> panels = new HashMap<>();
+    public static Map<String, DummyModel> models = new ConcurrentHashMap<>();
+    public static Map<String, DummyPanel> panels = new ConcurrentHashMap<>();
 
 
 

@@ -10,10 +10,16 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 
 public class StateRequest implements Request {
     private String macAddress;
+//    private long creationTime;
 
     public StateRequest(String macAddress) {
         this.macAddress = macAddress;
+//        creationTime = System.currentTimeMillis();
     }
+
+//    public StateRequest(long creationTime) {
+//        this.creationTime = creationTime;
+//    }
 
     public StateRequest() {
     }
@@ -25,6 +31,13 @@ public class StateRequest implements Request {
     public void setMacAddress(String macAddress) {
         this.macAddress = macAddress;
     }
+
+
+//    public long getCreationTime() {
+//        return creationTime;
+//    }
+
+
 
     @Override
     public Response run(RequestHandler requestHandler) {

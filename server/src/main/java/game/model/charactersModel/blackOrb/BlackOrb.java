@@ -47,8 +47,7 @@ public class BlackOrb { // todo panels should be created with delay?
 
     public void update(){
         if (dontUpdate()) return;
-        initiateAvalanche();
-        Laser.performAoeDamage();
+//        Laser.performAoeDamage();
 
         double now = Game.ELAPSED_TIME;
         if (now - lastCreatedOrbTime > EntityConstants.ORB_PANEL_CREATION_DELAY && numCreatedOrbs == 5) {
@@ -100,11 +99,5 @@ public class BlackOrb { // todo panels should be created with delay?
         }
     }
 
-    public void initiateAvalanche(){
-        double now = Game.ELAPSED_TIME;
-        if (now - lastCreatedOrbTime < avalancheBirthTime || avalancheIsSet) return;
-        int index = random.nextInt(lasers.size());
-        lasers.get(index).setAvalanche(true);
-        avalancheIsSet = true;
-    }
+
 }

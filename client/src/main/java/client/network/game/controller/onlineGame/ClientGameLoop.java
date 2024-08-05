@@ -116,6 +116,7 @@ public class ClientGameLoop implements Runnable{
 
 //
 //        updateGeoShapeViewProperties();
+
         createStateRequest();
     }
 
