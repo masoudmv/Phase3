@@ -28,7 +28,7 @@ import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
+
 
 import static shared.Model.imagetools.ToolBox.getBufferedImage;
 
@@ -36,6 +36,9 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
     static transient BufferedImage image; // transient to avoid serialization
     private static transient EpsilonModel INSTANCE;
     private double lastCerebrus = -Double.MAX_VALUE;
+
+    private boolean isBlackTeam = true;
+
 
 
 
@@ -47,32 +50,46 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
 
     BabyEpsilon[] babies = new BabyEpsilon[3];
 
-    public static List<EpsilonModel> epsilons = new CopyOnWriteArrayList<>();
+
 
     //    @SerializedName("localPanel")
 //    @Expose
     private FinalPanelModel localPanel;
 
-    public EpsilonModel(Point2D anchor, MyPolygon myPolygon) {
-        super(anchor, image, myPolygon, true);
+
+
+//    public EpsilonModel(double x, double y, boolean isBlackTeam, String gameID) {
+//        Point2D point = new Point2D.Double(x, y);
+//        this.isBlackTeam = isBlackTeam;
+//        new EpsilonModel(point, gameID);
+//    }
+
+
+
+    public EpsilonModel(Point2D anchor, String gameID) {
+        super(anchor, image, new MyPolygon(), gameID);
         INSTANCE = this;
         Point2D loc = new Point2D.Double(getAnchor().getX() - 250, getAnchor().getY() - 250); // todo spawn epsilon in the middle of screen
         DoubleDimension2D size = new DoubleDimension2D(500, 500);
-        localPanel = new FinalPanelModel(loc, size);
+        localPanel = new FinalPanelModel(loc, size, gameID);
         localPanel.setIsometric(false);
         Point vector = new Point(0, 0); //todo shitty design
         this.direction = new Direction(vector);
 //        epsilonModels.add(this);
         collidables.add(this);
         movables.add(this);
-        UserInterfaceController.createEpsilonView(id, image);
+        UserInterfaceController.createEpsilonView(id, gameID);
 //        this.h = 100;
 //        damageSize.put(AttackTypes.AOE, 5);
         damageSize.put(AttackTypes.ASTRAPE, 0);
         impactables.add(this);
 
+        setDummyPolygon();
+
         this.health = 50;
-        epsilons.add(this);
+
+        Game game = findGame(gameID);
+        game.epsilons.add(this);
 
     }
 
@@ -311,7 +328,7 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
     }
 
     public void cerebrus(){
-        BabyEpsilon.createBabies();
+        BabyEpsilon.createBabies(gameID);
     }
 
     @Override
@@ -384,6 +401,14 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
         return new Point2D.Double(closestX, closestY);
     }
 
+    public boolean isBlackTeam() {
+        return isBlackTeam;
+    }
+
+    public void setBlackTeam(boolean blackTeam) {
+        isBlackTeam = blackTeam;
+    }
+
     // todo change name:
     private void transferOutside(Point2D intersection){
         Point2D closestPointOnCircumference = getClosestPointOnCircumference(getAnchor(), intersection);
@@ -403,7 +428,7 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
     private void applyCerebrus(){
         if (babies[0] == null) return;
 
-        for (GeoShapeModel enemy : entities){
+        for (GeoShapeModel enemy : findGame(gameID).entities){
             if (enemy instanceof EpsilonModel || enemy instanceof BabyEpsilon) {
 
             }
@@ -437,14 +462,16 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
         if (now - initiationTime > 10) return;
 
         double radius = 100;
-        for (GeoShapeModel nonHovering : entities){
+        for (GeoShapeModel nonHovering : findGame(gameID).entities){
 
             boolean trig = nonHovering instanceof TrigorathModel;
             boolean square = nonHovering instanceof SquarantineModel;
             boolean Omen = nonHovering instanceof OmenoctModel;
-            boolean wyrm = nonHovering instanceof Wyrm;;
+//            boolean wyrm = nonHovering instanceof Wyrm;;
 
-            if (trig || square || Omen || wyrm) {
+            // todo add wyrm
+
+            if (trig || square || Omen) {
                 Point2D anchor = nonHovering.getAnchor();
                 // todo don't use singleton epsilon ...
                 Point2D epsilonAnchor = EpsilonModel.getINSTANCE().getAnchor();
@@ -472,7 +499,7 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
             return;
         }
 
-        if (other instanceof CollectibleModel || other instanceof SmileyBullet){
+        if (other instanceof CollectibleModel || other instanceof NonrigidBullet){
             return;
         }
 
@@ -502,7 +529,7 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
         if (other instanceof NecropickModel) if (!((NecropickModel) other).isHovering()) impact(new CollisionState(intersection)); // :)
         if (other instanceof CollectibleModel) Game.inGameXP += ((CollectibleModel) other).getCollectibleXP();
         if (other instanceof BulletModel) ;
-        if (other instanceof SmileyBullet) ;
+        if (other instanceof NonrigidBullet) ;
 
     }
 

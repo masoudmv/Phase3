@@ -40,10 +40,11 @@ public class EpsilonView extends GeoShapeView {
         int y = (int) locations.get(panelID).getY();
 
 
-        g2d.drawImage(image, (int) (x - imageWidth/2), (int) (y - imageWidth/2), null);
-
+//        g2d.drawImage(image, (int) (x - imageWidth/2), (int) (y - imageWidth/2), null);
+        float thickness = 5.0f; // Thickness of the edges
+        g2d.setStroke(new BasicStroke(thickness));
 //        g2d.setColor(Color.red);
-//        g2d.drawOval( (x - 20), (y - 20), 40, 40);
+        g2d.drawOval( (int) (x - imageWidth/2), (int) (y - imageWidth/2), 40, 40);
 
     }
 

@@ -28,8 +28,8 @@ public class CollectibleModel extends GeoShapeModel implements Collidable, Movab
     private int collectibleXP;
 
 
-    public CollectibleModel(Point2D anchor, Point2D direction, int collectibleXP) {
-        super();
+    public CollectibleModel(Point2D anchor, Point2D direction, int collectibleXP, String gameID) {
+        super(gameID);
         birthTime = Game.ELAPSED_TIME;
         this.radius = EntityConstants.COLLECTABLE_RADIUS.getValue();
 //        this.id= UUID.randomUUID().toString();
@@ -43,7 +43,7 @@ public class CollectibleModel extends GeoShapeModel implements Collidable, Movab
         setDummyPolygon();
         collectibleModels.add(this);
         collidables.add(this);
-        UserInterfaceController.createCollectibleView(id);
+        UserInterfaceController.createCollectibleView(id, gameID);
 
     }
 
@@ -56,18 +56,13 @@ public class CollectibleModel extends GeoShapeModel implements Collidable, Movab
     }
 
 
-    private void setDummyPolygon(){
-        double[] x = {0, 0, 0};
-        double[] y = {0, 0, 0};
-        myPolygon = new MyPolygon(x, y, 3);
-    }
 
 
-    public static void dropCollectible(Point2D anchor, int numOfCollectibles, int xp) {
+    public static void dropCollectible(Point2D anchor, int numOfCollectibles, int xp, String gameID) {
         Point2D direction = Utils.relativeLocation(anchor, EpsilonModel.getINSTANCE().getAnchor());
         for (int i = 0; i < numOfCollectibles; i++) {
             double theta = random.nextDouble(0, 2 * Constants.PI);
-            new CollectibleModel(anchor, Utils.rotateVector(direction, theta), xp);
+            new CollectibleModel(anchor, Utils.rotateVector(direction, theta), xp, gameID);
         }
     }
 

@@ -1,5 +1,6 @@
 package game.model.charactersModel.blackOrb;
 
+import game.controller.Game;
 import shared.constants.EntityConstants;
 import game.model.FinalPanelModel;
 import shared.Model.MyPolygon;
@@ -17,7 +18,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import static game.model.charactersModel.EpsilonModel.epsilons;
+
 import static game.model.charactersModel.blackOrb.BlackOrb.lasers;
 import static shared.Model.imagetools.ToolBox.getBufferedImage;
 
@@ -26,11 +27,12 @@ public class Orb extends GeoShapeModel implements Collidable {
     private final Circle circle;
     private FinalPanelModel panel;
 
-    public Orb(Point2D anchor) {
+    public Orb(Point2D anchor, String gameID) {
         super(anchor, image);
         this.circle = new Circle(anchor.getX(), anchor.getY(), (double) image.getHeight() / 2);
         collidables.add(this);
         this.health = EntityConstants.ORB_HEALTH.getValue();
+        this.gameID = gameID;
 
 
         /**
@@ -38,8 +40,11 @@ public class Orb extends GeoShapeModel implements Collidable {
          if it touches the orb in the creation process, YOU DIE!
          */
 
-        for (EpsilonModel epsilon : epsilons){
-            for (GeoShapeModel model : entities){
+
+        Game game = findGame(gameID);
+
+        for (EpsilonModel epsilon : game.epsilons){
+            for (GeoShapeModel model : findGame(gameID).entities){
                 if (model.intersects(this) && !model.equals(this)) model.eliminate();
 
             }
@@ -111,7 +116,11 @@ public class Orb extends GeoShapeModel implements Collidable {
     public void eliminate() {
         super.eliminate();
 
-        CollectibleModel.dropCollectible(getAnchor(), EntityConstants.ORB_NUM_OF_COLLECTIBLES.getValue(), EntityConstants.ORB_COLLECTIBLES_XP.getValue());
+        CollectibleModel.dropCollectible(getAnchor(),
+                EntityConstants.ORB_NUM_OF_COLLECTIBLES.getValue(),
+                EntityConstants.ORB_COLLECTIBLES_XP.getValue(),
+                gameID
+        );
 
         collidables.remove(this);
         // List to collect lasers to be removed

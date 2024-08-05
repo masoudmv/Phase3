@@ -9,7 +9,7 @@ import shared.Model.MyPolygon;
 import game.model.charactersModel.EpsilonModel;
 import game.model.charactersModel.GeoShapeModel;
 //import model.collision.Coll;
-import game.model.charactersModel.SmileyBullet;
+import game.model.charactersModel.NonrigidBullet;
 import game.model.collision.Collidable;
 import game.model.movement.Direction;
 
@@ -48,12 +48,13 @@ public class Smiley extends GeoShapeModel implements Collidable {
 
 
 
-    public Smiley(Point2D anchor, Hand leftHand, Hand rightHand) {
+    public Smiley(Point2D anchor, Hand leftHand, Hand rightHand, String gameID) {
         super(anchor, image, pol);
+        this.gameID = gameID;
         this.leftHand = leftHand;
         Point2D loc = new Point2D.Double(getAnchor().getX() - 150, getAnchor().getY() - 150);
         Dimension size = new Dimension(300, 300);
-        finalPanelModel = new FinalPanelModel(loc, size);
+        finalPanelModel = new FinalPanelModel(loc, size, gameID);
 
         collidables.add(this);
         smilies.add(this);
@@ -109,7 +110,7 @@ public class Smiley extends GeoShapeModel implements Collidable {
         super(anchor, image, pol);
         Point2D loc = new Point2D.Double(getAnchor().getX() - 150, getAnchor().getY() - 150);
         Dimension size = new Dimension(300, 300);
-        finalPanelModel = new FinalPanelModel(loc, size);
+        finalPanelModel = new FinalPanelModel(loc, size, gameID);
 
         collidables.add(this);
         smilies.add(this);
@@ -118,7 +119,7 @@ public class Smiley extends GeoShapeModel implements Collidable {
 
 
     private void vomit(){
-        SmileyAOE.createVomitAOEs();
+        SmileyAOE.createVomitAOEs(gameID);
     }
 
 
@@ -176,7 +177,7 @@ public class Smiley extends GeoShapeModel implements Collidable {
 
             Point2D firingPoint = new Point2D.Double(anchor.getX(), anchor.getY()); //todo edit
 
-            SmileyBullet b = new SmileyBullet(firingPoint);
+            NonrigidBullet b = new NonrigidBullet(firingPoint, gameID);
 
             direction = Utils.adjustVectorMagnitude(direction, 5);
             b.setDirection(new Direction(direction));

@@ -18,8 +18,8 @@ public class LeftHand extends Hand{
     static BufferedImage image;
     static MyPolygon polygon;
 
-    public LeftHand(Point2D anchor) {
-        super(anchor, polygon);
+    public LeftHand(Point2D anchor, String gameID) {
+        super(anchor, polygon, gameID);
     }
 
 

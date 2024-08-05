@@ -266,18 +266,30 @@ public class ServersideReqHandler extends Thread implements RequestHandler {
     @Override
     public Response handleStateRequest(StateRequest stateRequest) {
 
-//        long stateRequestStartTime = System.currentTimeMillis();
         synchronized (dataBase) {
             StateResponse stateResponse = new StateResponse();
 
 
-            stateResponse.setCreatedEntities(dataBase.getCreatedEntities());
-            stateResponse.setCreatedPanels(dataBase.getCreatedPanels());
-            stateResponse.setEliminatedEntities(dataBase.getEliminatedEntities());
-            stateResponse.setUpdatedPanels(dataBase.getUpdatedPanels());
+//            String macAddress = stateRequest.getMacAddress();
+//            Player player = dataBase.findPlayer(macAddress);
+            String gameID = "1";
 
 
-            stateResponse.setUpdatedModels(dataBase.getUpdatedModels());
+
+            GameData gameData = dataBase.findGameData(gameID);
+
+
+            stateResponse.setCreatedEntities(gameData.getCreatedEntities());
+            stateResponse.setCreatedPanels(gameData.getCreatedPanels());
+            stateResponse.setEliminatedEntities(gameData.getEliminatedEntities());
+            stateResponse.setUpdatedPanels(gameData.getUpdatedPanels());
+            stateResponse.setUpdatedModels(gameData.getUpdatedModels());
+
+//            stateResponse.setHealth(EpsilonModel.getINSTANCE().health);
+
+            System.out.println("SIZE:  " + stateResponse.getCreatedPanels().size());
+
+
             return stateResponse;
         }
     }
@@ -302,18 +314,23 @@ public class ServersideReqHandler extends Thread implements RequestHandler {
             Point2D direction = new Point2D.Double(velX, velY);
 
 
-//            double now = ELAPSED_TIME;
-//            double empowerInitTime = Profile.getCurrent().empowerInitiationTime;
+            double now = ELAPSED_TIME;
+            double empowerInitTime = Profile.getCurrent().empowerInitiationTime;
 
-            new BulletModel(epsilon.getAnchor(), new Direction(direction));
+            // todo find real gameID
+            String gameID = "1";
 
-//            if (now - empowerInitTime < 10){
-//                double angle = 10;
-//                Point2D right = Utils.rotateVector(direction, Math.toRadians(angle));
-//                new BulletModel(epsilon.getAnchor(), new Direction(right));
-//                Point2D left = Utils.rotateVector(direction, -Math.toRadians(angle));
-//                new BulletModel(epsilon.getAnchor(), new Direction(left));
-//            }
+
+
+            new BulletModel(epsilon.getAnchor(), new Direction(direction), gameID);
+
+            if (now - empowerInitTime < 10){
+                double angle = 10;
+                Point2D right = Utils.rotateVector(direction, Math.toRadians(angle));
+                new BulletModel(epsilon.getAnchor(), new Direction(right), gameID);
+                Point2D left = Utils.rotateVector(direction, -Math.toRadians(angle));
+                new BulletModel(epsilon.getAnchor(), new Direction(left), gameID);
+            }
 
 
 

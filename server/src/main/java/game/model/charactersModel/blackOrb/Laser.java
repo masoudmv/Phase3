@@ -24,8 +24,8 @@ public class Laser extends GeoShapeModel {
     private Orb[] OrbsOfALaser = new Orb[2];
     private boolean isAvalanche = false;
 
-    public Laser(Orb orb1, Orb orb2) {
-        super();
+    public Laser(Orb orb1, Orb orb2, String gameID) {
+        super(gameID);
         this.isHovering = true;
         OrbsOfALaser[0] = orb1; OrbsOfALaser[1] = orb2;
         Point2D o1 = new Point2D.Double(orb1.getCircle().getCenterX(), orb1.getCircle().getCenterY());
@@ -34,7 +34,7 @@ public class Laser extends GeoShapeModel {
         findLaserBoundary(laserCenterLine);
         setAnchor();
         BlackOrb.lasers.add(this);
-        createLaserView(id);
+        createLaserView(id, gameID);
         damageSize.put(AttackTypes.AOE, 12);
     }
 
@@ -87,29 +87,29 @@ public class Laser extends GeoShapeModel {
 
 
     private boolean applyAoEDamage(){
-        for (GeoShapeModel model : entities){
+        for (GeoShapeModel model : findGame(gameID).entities){
 //            if (model instanceof SquarantineModel) {
-                Point2D.Double[] bound = model.myPolygon.getVertices();
-                boolean isInside = true;
+            Point2D.Double[] bound = model.myPolygon.getVertices();
+            boolean isInside = true;
 
-                for (Point2D point : bound) {
-                    if (!isPointInPolygon(point, myPolygon.getVertices())){
-                        isInside = false;
-                    }
-                }
-
-                if (isInside) {
-                    this.damage(model, AttackTypes.AOE);
-                    return true;
+            for (Point2D point : bound) {
+                if (!isPointInPolygon(point, myPolygon.getVertices())){
+                    isInside = false;
                 }
             }
+
+            if (isInside) {
+                this.damage(model, AttackTypes.AOE);
+                return true;
+            }
+        }
 //        }
 
         return false;
     }
 
     private boolean executeAoe() {
-         return applyAoEDamage();
+        return applyAoEDamage();
     }
 
     public static void performAoeDamage(){

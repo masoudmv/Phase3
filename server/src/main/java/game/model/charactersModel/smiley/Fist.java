@@ -41,7 +41,7 @@ public class Fist extends GeoShapeModel implements Collidable {
 
         Point2D loc = new Point2D.Double(anchor.getX()-90, anchor.getY()-90);
         Dimension size = new Dimension(200, 200);
-        finalPanelModel = new FinalPanelModel(loc, size);
+        finalPanelModel = new FinalPanelModel(loc, size, gameID);
 
         collidables.add(this);
         

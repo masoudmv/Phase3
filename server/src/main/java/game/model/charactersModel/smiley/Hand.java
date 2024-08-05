@@ -9,7 +9,7 @@ import game.model.FinalPanelModel;
 import shared.Model.MyPolygon;
 import game.model.charactersModel.EpsilonModel;
 import game.model.charactersModel.GeoShapeModel;
-import game.model.charactersModel.SmileyBullet;
+import game.model.charactersModel.NonrigidBullet;
 import game.model.collision.Collidable;
 import game.model.movement.Direction;
 
@@ -41,14 +41,16 @@ public class Hand extends GeoShapeModel implements Collidable {
     public double lastSqueezeTime = -1;
     public double lastProjectileTime = -1;
 
-    public Hand(Point2D anchor) {
+    public Hand(Point2D anchor, String gameID) {
         super(anchor, image, Hand.pol);
+        this.gameID = gameID;
         init();
 //        initializeProjectile();
     }
 
-    public Hand(Point2D anchor, MyPolygon pol) {
+    public Hand(Point2D anchor, MyPolygon pol, String gameID) {
         super(anchor, LeftHand.image, pol);
+        this.gameID = gameID;
         init();
 //        initializeProjectile();
 
@@ -133,7 +135,7 @@ public class Hand extends GeoShapeModel implements Collidable {
     private void setFinalPanelModel() {
         Dimension size = new Dimension(300, 300);
         Point2D loc = new Point2D.Double(getAnchor().getX() - size.getWidth()/2, getAnchor().getY() - size.getHeight()/2);
-        finalPanelModel = new FinalPanelModel(loc, size);
+        finalPanelModel = new FinalPanelModel(loc, size, gameID);
         finalPanelModel.setRigid(false);
     }
 
@@ -145,11 +147,12 @@ public class Hand extends GeoShapeModel implements Collidable {
 
     private void creatBulletFromPointingVertex() {
         if (Game.ELAPSED_TIME - projectileState.getLastShotBulletTime() < 0.5) return;
-        BufferedImage ba = SmileyBullet.loadImage();
+        BufferedImage ba = NonrigidBullet.loadImage();
         GraphicalObject bos = new GraphicalObject(ba);
         MyPolygon pl = bos.getMyBoundingPolygon();
         Point2D startPos = getPointingVertexPoint2D();
-        new SmileyBullet(startPos).setDirection(findBulletDirection(startPos));
+        new NonrigidBullet(startPos, gameID)
+                .setDirection(findBulletDirection(startPos));
         projectileState.updateLastShotBulletTime(Game.ELAPSED_TIME);
     }
 

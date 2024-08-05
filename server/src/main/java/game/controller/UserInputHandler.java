@@ -70,13 +70,13 @@ public class UserInputHandler implements KeyListener {
 //            handleAbilityShopPanelToggle();
 //        }
 
-        if (GameLoop.getINSTANCE().isRunning()) {
-            if (e.getKeyCode() == KeyEvent.VK_G) UserInterfaceController.fireAbility();
-        }
+//        if (GameLoop.getINSTANCE().isRunning()) {
+//            if (e.getKeyCode() == KeyEvent.VK_G) UserInterfaceController.fireAbility();
+//        }
 
-        if (GameLoop.getINSTANCE().isRunning()) {
-            if (e.getKeyCode() == KeyEvent.VK_R) UserInterfaceController.fireSkill();
-        }
+//        if (GameLoop.getINSTANCE().isRunning()) {
+//            if (e.getKeyCode() == KeyEvent.VK_R) UserInterfaceController.fireSkill();
+//        }
 
         keysPressed.add(e.getKeyCode());
         if (!movementInProgress) {

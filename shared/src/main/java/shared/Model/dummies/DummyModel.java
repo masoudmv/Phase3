@@ -16,6 +16,8 @@ public class DummyModel implements Serializable {
 
 
     private List<Polygon> polygons = new ArrayList<>();
+    private boolean showNextLoc = false;
+
 
     public DummyModel(String id, Point anchor, double angle, int[] xPoints, int[] yPoints, int nPoints) {
         this.id = id;
@@ -77,5 +79,13 @@ public class DummyModel implements Serializable {
 
     public void setPolygons(List<Polygon> polygons) {
         this.polygons = polygons;
+    }
+
+    public boolean isShowNextLoc() {
+        return showNextLoc;
+    }
+
+    public void setShowNextLoc(boolean showNextLoc) {
+        this.showNextLoc = showNextLoc;
     }
 }

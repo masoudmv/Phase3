@@ -7,6 +7,7 @@ import game.model.entities.Profile;
 import game.model.charactersModel.BulletModel;
 import game.model.charactersModel.EpsilonModel;
 import game.model.collision.Collidable;
+import server.DataBase;
 
 import java.awt.*;
 import java.awt.geom.Dimension2D;
@@ -17,10 +18,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+//import static game.controller.Game.epsilons;
 import static game.controller.UserInterfaceController.*;
 import static game.controller.Utils.*;
 import static shared.constants.Constants.FRAME_DIMENSION;
-import static game.model.charactersModel.EpsilonModel.epsilons;
 
 public class FinalPanelModel implements Collidable, Serializable {
 
@@ -65,8 +66,12 @@ public class FinalPanelModel implements Collidable, Serializable {
 
     private double velocity;
 
-    public FinalPanelModel(Point2D location, Dimension2D size) {
+
+    private String gameID;
+
+    public FinalPanelModel(Point2D location, Dimension2D size, String gameID) {
         this.id = UUID.randomUUID().toString();
+        this.gameID = gameID;
         this.location = location;
         this.size = size;
         this.vertices = new ArrayList<>();
@@ -74,8 +79,12 @@ public class FinalPanelModel implements Collidable, Serializable {
         updateVertices();
         finalPanelModels.add(this);
 
-        createFinalPanelView(id, location, new Dimension((int) size.getWidth(), (int) size.getHeight()));
+        createFinalPanelView(id, location, new Dimension((int) size.getWidth(), (int) size.getHeight()), gameID);
         collidables.add(this);
+    }
+
+    protected Game findGame(String gameID){
+        return DataBase.getDataBase().findGame(gameID);
     }
 
     public void setRigid(boolean rigid) {
@@ -174,7 +183,7 @@ public class FinalPanelModel implements Collidable, Serializable {
 
     public void eliminate(){
         //TODO terrible idea to make local panel static!
-        for (EpsilonModel epsilon : epsilons) {
+        for (EpsilonModel epsilon : findGame(gameID).epsilons) {
             if (touchesPanel()) {
                 shallBeEliminated = true;
                 return;
@@ -183,7 +192,7 @@ public class FinalPanelModel implements Collidable, Serializable {
 
         finalPanelModels.remove(this);
         collidables.remove(this);
-        removeFinalPanelView(id);
+        removeFinalPanelView(id, gameID);
     }
 
     public ArrayList<Point2D> getArrayListVertices() {
@@ -312,7 +321,7 @@ public class FinalPanelModel implements Collidable, Serializable {
 
 
     private boolean touchesPanel(){
-        for (EpsilonModel epsilon : epsilons) {
+        for (EpsilonModel epsilon : findGame(gameID).epsilons) {
             List<Point2D> bounds = epsilon.getBoundingPoints();
             for (Point2D point : bounds){
                 Point2D[] list = vertices.toArray(new Point2D[vertices.size()]);
@@ -333,7 +342,7 @@ public class FinalPanelModel implements Collidable, Serializable {
         if (dontUpdate()) return;
         if (shallBeEliminated){
             boolean cantDieYet = false;
-            for (EpsilonModel epsilon : epsilons){
+            for (EpsilonModel epsilon : findGame(gameID).epsilons){
                 // TODO FUCK WHOEVER MADE EPSILON STATIC!
                 if (touchesPanel()) {
                     cantDieYet = true;
@@ -353,7 +362,7 @@ public class FinalPanelModel implements Collidable, Serializable {
         bottomIsBlocked = false;
         leftIsBlocked = false;
 
-        for (EpsilonModel epsilon : epsilons){
+        for (EpsilonModel epsilon : findGame(gameID).epsilons){
             // todo terrible idea to make local panel static ...
             if (EpsilonModel.getINSTANCE().getLocalPanel() == null){
                 /**

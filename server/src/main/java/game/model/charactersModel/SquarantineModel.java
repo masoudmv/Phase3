@@ -37,22 +37,27 @@ public class SquarantineModel extends GeoShapeModel implements Movable, Collidab
     public double impactMaxVelocity;
     private double angularVelocity;
     private double angularAcceleration;
-    public static List<SquarantineModel> squarantineModels = new ArrayList<>();
+
     private static double edgeLength;
 
 
-    public SquarantineModel(Point2D anchor) {
-        super(anchor, image, new MyPolygon(new double[4], new double[4], 4), true);
+    public SquarantineModel(Point2D anchor, String gameID) {
+        super(anchor, image, new MyPolygon(new double[4], new double[4], 4), gameID);
+        this.gameID = gameID;
         initMyPolygon();
         updateNextDashTime();
-        squarantineModels.add(this);
+        findGame(gameID).squarantineModels.add(this);
         collidables.add(this);
         movables.add(this);
         impactables.add(this);
         this.health = 10;
-        createSquarantineView(id);
+        createSquarantineView(id, gameID);
+        setTarget();
 
     }
+
+
+
 
     private void initMyPolygon() {
         double halfEdgeLength = edgeLength / 2;
@@ -145,7 +150,7 @@ public class SquarantineModel extends GeoShapeModel implements Movable, Collidab
 
     //todo duplicated version. needs to be eiminated ...
     public void impact(Point2D normalVector, Point2D collisionPoint, Collidable polygon, double inertia) {
-        double distanceByEpsilon = getAnchor().distance(EpsilonModel.getINSTANCE().getAnchor());
+        double distanceByEpsilon = getAnchor().distance(target.getAnchor());
         if (distanceByEpsilon< Constants.TRIGORATH_MAX_VEL_RADIUS) {
             Point2D collisionRelativeVector = Utils.relativeLocation(this.getAnchor(), collisionPoint);
             double impactCoefficient = getImpactCoefficient(collisionRelativeVector);
@@ -213,7 +218,7 @@ public class SquarantineModel extends GeoShapeModel implements Movable, Collidab
 
     @Override
     public void banish() {
-        Point2D collisionPoint = EpsilonModel.getINSTANCE().getAnchor();
+        Point2D collisionPoint = target.getAnchor();
         Point2D collisionRelativeVector = Utils.relativeLocation(this.getAnchor(), collisionPoint);
         double distance = Math.hypot(collisionRelativeVector.getX(), collisionRelativeVector.getY());
         double impactCoefficient;
@@ -257,7 +262,7 @@ public class SquarantineModel extends GeoShapeModel implements Movable, Collidab
 //        System.out.println("HP:  " + health);
         Point2D movement = Utils.multiplyVector(direction.getDirectionVector(), direction.getMagnitude());
         Random random = new Random();
-        Point2D dir = Utils.normalizeVector(Utils.relativeLocation(EpsilonModel.getINSTANCE().getAnchor(), getAnchor()));
+        Point2D dir = Utils.normalizeVector(Utils.relativeLocation(target.getAnchor(), getAnchor()));
         double angle = Utils.findAngleBetweenTwoVectors(dir, getDirection().getDirectionVector());
         nextDash -= 0.010;
 
@@ -297,7 +302,7 @@ public class SquarantineModel extends GeoShapeModel implements Movable, Collidab
         direction.setMagnitude(direction.getMagnitude() * 0.97);
         if (direction.getMagnitude() < 1){
             setDirection(
-                    new Direction(Utils.relativeLocation(EpsilonModel.getINSTANCE().getAnchor(), getAnchor())));
+                    new Direction(Utils.relativeLocation(target.getAnchor(), getAnchor())));
             getDirection().adjustDirectionMagnitude();
         }
     }
@@ -364,22 +369,21 @@ public class SquarantineModel extends GeoShapeModel implements Movable, Collidab
         super.eliminate();
         collidables.remove(this);
         movables.remove(this);
-        squarantineModels.remove(this);
+        findGame(gameID).squarantineModels.remove(this);
 
 //        aliveEnemies--;
         CollectibleModel.dropCollectible(
                 getAnchor(),
                 SQUARANTINE_NUM_OF_COLLECTIBLES.getValue(),
-                SQUARANTINE_COLLECTIBLES_XP.getValue()
+                SQUARANTINE_COLLECTIBLES_XP.getValue(),
+                gameID
         );
 
     }
 
 
 
-    public List<SquarantineModel> getModels() {
-        return squarantineModels;
-    }
+
 
     @Override
     public void onCollision(Collidable other, Point2D intersection) {

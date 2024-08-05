@@ -42,7 +42,7 @@ public class Main {
         BufferedImage b = EpsilonModel.loadImage();
         GraphicalObject bows = new GraphicalObject(b);
         MyPolygon pol = bows.getMyBoundingPolygon();
-        new EpsilonModel(new Point2D.Double(1000, 700), pol);
+
 
 //        new SquarantineModel(new Point2D.Double(400, 500));
 //        new OmenoctModel(new Point2D.Double(1400, 500));
@@ -56,7 +56,7 @@ public class Main {
 
 
 //        new BlackOrb();
-        new BarricadosModel(new Point2D.Double(200, 500));
+//        new OmenoctModel(new Point2D.Double(200, 500));
 
 
 

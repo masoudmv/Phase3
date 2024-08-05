@@ -1,18 +1,13 @@
 package server;
 
+import game.controller.Game;
 import shared.Model.*;
-import shared.Model.dummies.DummyModel;
-import shared.Model.dummies.DummyPanel;
 import shared.response.MessageResponse;
 import shared.response.Response;
 import shared.response.TransferReqToClientResponse;
 
-import java.awt.*;
-import java.awt.geom.Point2D;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class DataBase {
@@ -25,14 +20,10 @@ public class DataBase {
     private final List<Pair<Player, Player>> colosseumPairs = new CopyOnWriteArrayList<>();
     // todo update playerPairs based on summons ...
     private boolean squadBattleInitiated = false;
-    private List<String> eliminatedEntities = new CopyOnWriteArrayList<>();
 
 
-    private Map<String, EntityType> createdEntities = new ConcurrentHashMap<>();
-    private Map<String, DummyPanel> createdPanels = new ConcurrentHashMap<>();
-
-    private Map<String, DummyModel> updatedModels = new ConcurrentHashMap<>();
-    private Map<String, DummyPanel> updatedPanels = new ConcurrentHashMap<>();
+    private List<GameData> gameData = new CopyOnWriteArrayList<>();
+    private List<Game> games = new CopyOnWriteArrayList<>();
 
     public DataBase() {
         dataBase = this;
@@ -406,62 +397,35 @@ public class DataBase {
         }
     }
 
-    public synchronized void createEntity(String id, EntityType entityType){
-        createdEntities.put(id, entityType);
+
+    public GameData findGameData(String id){
+        for (GameData gameData : gameData){
+            if (gameData.id.equals(id)) return gameData;
+        }
+        return null;
     }
-
-    public synchronized void createPanel(String id, Point2D location, Dimension dimension){
-        int x = (int) location.getX();
-        int y = (int) location.getY();
-        DummyPanel panel = new DummyPanel(id, new Point(x, y), dimension);
-        createdPanels.put(id, panel);
-    }
-
-    public synchronized void eliminateEntity(String id){
-        eliminatedEntities.add(id);
-    }
-
-
-    public synchronized void clearModels(){
-        updatedModels.clear();
-    }
-
-    public synchronized void addUpdatedModels(DummyModel model){
-        updatedModels.put(model.getId(), model);
-    }
-
-    public synchronized void clearPanels(){
-        updatedPanels.clear();
-    }
-
-    public synchronized void addUpdatedPanels(DummyPanel panel){
-        updatedPanels.put(panel.getId(), panel);
-    }
-
-    public synchronized Map<String, DummyPanel> getCreatedPanels() {
-        return createdPanels;
-    }
-
-    public synchronized Map<String, EntityType> getCreatedEntities() {
-        return createdEntities;
-    }
-
-    public synchronized Map<String, DummyPanel> getUpdatedPanels() {
-        return updatedPanels;
-    }
-
-    public synchronized Map<String, DummyModel> getUpdatedModels() {
-        return updatedModels;
-    }
-
-    public synchronized List<String> getEliminatedEntities() {
-        return eliminatedEntities;
-    }
-
-
 
     public synchronized static DataBase getDataBase(){
         if (dataBase == null) System.out.println("initialize database first ...");
         return dataBase;
+    }
+
+    public List<GameData> getGameData() {
+        return gameData;
+    }
+
+    public void setGameData(List<GameData> gameData) {
+        this.gameData = gameData;
+    }
+
+    public void addGame(Game game){
+        games.add(game);
+    }
+
+    public Game findGame(String id){
+        for (Game game : games){
+            if (game.getGameID().equals(id)) return game;
+        }
+        return null;
     }
 }

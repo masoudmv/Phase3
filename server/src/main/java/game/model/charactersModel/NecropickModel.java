@@ -16,12 +16,12 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Random;
 
+import static game.controller.UserInterfaceController.createNecropickView;
 import static shared.Model.imagetools.ToolBox.getBufferedImage;
 
 public class NecropickModel extends GeoShapeModel implements Collidable {
     static BufferedImage image;
     protected static MyPolygon pol;
-    public static ArrayList<NecropickModel> necropickModels = new ArrayList<>();
 //    public Polygon polygon;
     private boolean isHovering; // equals isUnderGround!
     private double stateChangeTime = 0; // the last Time necropick changed its state
@@ -29,14 +29,14 @@ public class NecropickModel extends GeoShapeModel implements Collidable {
     private boolean isNextLocationCalculated = false; // flag to check if next location is calculated
     private static final Random random = new Random();
 
-    public NecropickModel() {
-        super(new Point2D.Double(-100, -100), image, pol, true);
-        necropickModels.add(this);
+    public NecropickModel(String gameID) {
+        super(new Point2D.Double(-100, -100), image, pol, gameID);
         stateChangeTime = Game.ELAPSED_TIME; // Initialize state change time
         isHovering = true; // Start in hovering state
         collidables.add(this);
-//        UserInterfaceController.createNecropickView(id, image);
         this.health = EntityConstants.NECROPICK_HEALTH.getValue();
+        setTarget();
+        createNecropickView(id, gameID);
     }
 
     public static BufferedImage loadImage() {
@@ -109,10 +109,9 @@ public class NecropickModel extends GeoShapeModel implements Collidable {
     public void eliminate() {
         super.eliminate();
         collidables.remove(this);
-        necropickModels.remove(this);
 
         CollectibleModel.dropCollectible(
-                getAnchor(), EntityConstants.NECROPICK_NUM_OF_COLLECTIBLES.getValue(), EntityConstants.NECROPICK_COLLECTIBLES_XP.getValue()
+                getAnchor(), EntityConstants.NECROPICK_NUM_OF_COLLECTIBLES.getValue(), EntityConstants.NECROPICK_COLLECTIBLES_XP.getValue(), gameID
         );
     }
 
@@ -131,7 +130,7 @@ public class NecropickModel extends GeoShapeModel implements Collidable {
 
     private boolean findNextPos() {
         isNextLocationCalculated = true;
-        Point2D dest = EpsilonModel.getINSTANCE().getAnchor();
+        Point2D dest = target.getAnchor();
         nextAnchor = getRandomPoint(dest, EntityConstants.NECROPICK_MIN_RADIUS, EntityConstants.NECROPICK_MAX_RADIUS);
         setAnchor(nextAnchor);
 
@@ -140,14 +139,14 @@ public class NecropickModel extends GeoShapeModel implements Collidable {
 
 
     private void shootBullets(){
-        new BulletModel(getAnchor(), new Direction(new Point2D.Double(0, -1)), false);
-        new BulletModel(getAnchor(), new Direction(new Point2D.Double(0, +1)), false);
-        new BulletModel(getAnchor(), new Direction(new Point2D.Double(+1, 0)), false);
-        new BulletModel(getAnchor(), new Direction(new Point2D.Double(-1, 0)), false);
-        new BulletModel(getAnchor(), new Direction(new Point2D.Double(+1, -1)), false);
-        new BulletModel(getAnchor(), new Direction(new Point2D.Double(-1, -1)), false);
-        new BulletModel(getAnchor(), new Direction(new Point2D.Double(+1, +1)), false);
-        new BulletModel(getAnchor(), new Direction(new Point2D.Double(-1, +1)), false);
+        new BulletModel(getAnchor(), new Direction(new Point2D.Double(0, -1)), false, gameID);
+        new BulletModel(getAnchor(), new Direction(new Point2D.Double(0, +1)), false, gameID);
+        new BulletModel(getAnchor(), new Direction(new Point2D.Double(+1, 0)), false, gameID);
+        new BulletModel(getAnchor(), new Direction(new Point2D.Double(-1, 0)), false, gameID);
+        new BulletModel(getAnchor(), new Direction(new Point2D.Double(+1, -1)), false, gameID);
+        new BulletModel(getAnchor(), new Direction(new Point2D.Double(-1, -1)), false, gameID);
+        new BulletModel(getAnchor(), new Direction(new Point2D.Double(+1, +1)), false, gameID);
+        new BulletModel(getAnchor(), new Direction(new Point2D.Double(-1, +1)), false, gameID);
 
     }
 

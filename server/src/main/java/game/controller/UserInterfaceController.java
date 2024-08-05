@@ -1,6 +1,7 @@
 package game.controller;
 
 import game.model.FinalPanelModel;
+import server.GameData;
 import shared.Model.MyPolygon;
 import shared.Model.TimedLocation;
 import game.model.charactersModel.*;
@@ -14,95 +15,125 @@ import server.DataBase;
 
 import java.awt.*;
 import java.awt.geom.Point2D;
+import java.util.UUID;
+
 import static shared.Model.EntityType.*;
 
 public abstract class UserInterfaceController {
 
 
-    public static void createEpsilonView(String id, Image image){
+    public static void createEpsilonView(String id, String gameID){
         DataBase dataBase = DataBase.getDataBase();
-        dataBase.createEntity(id, epsilon);
+        GameData gameData = dataBase.findGameData(gameID);
+
+        gameData.createEntity(id, epsilon);
     }
 
-    public static void createSquarantineView(String id){
+    public static void createSquarantineView(String id, String gameID){
         DataBase dataBase = DataBase.getDataBase();
-        dataBase.createEntity(id, squarantine);
+        GameData gameData = dataBase.findGameData(gameID);
+        gameData.createEntity(id, squarantine);
     }
 
-    public static void createTrigorathView(String id){
+    public static void createTrigorathView(String id, String gameID){
         DataBase dataBase = DataBase.getDataBase();
-        dataBase.createEntity(id, trigorath);
+        GameData gameData = dataBase.findGameData(gameID);
+        gameData.createEntity(id, trigorath);
     }
 
-    public static void creatBulletView(String id){
+    public static void creatBulletView(String id, String gameID){
         DataBase dataBase = DataBase.getDataBase();
-        dataBase.createEntity(id, bullet);
-    }
-
-
-    public static void createCollectibleView(String id){
-        DataBase dataBase = DataBase.getDataBase();
-        dataBase.createEntity(id, collectible);
-    }
-
-    public static void createFinalPanelView(String id, Point2D location, Dimension size){
-        DataBase dataBase = DataBase.getDataBase();
-        dataBase.createPanel(id, location, size);
-    }
-
-    public static void createBarricadosView(String id){
-        DataBase dataBase = DataBase.getDataBase();
-        dataBase.createEntity(id, barricados);
+        GameData gameData = dataBase.findGameData(gameID);
+        gameData.createEntity(id, bullet);
     }
 
 
-
-
-    public static void createOmenoctView(String id){
+    public static void createCollectibleView(String id, String gameID){
         DataBase dataBase = DataBase.getDataBase();
-        dataBase.createEntity(id, simplePolygon);
+        GameData gameData = dataBase.findGameData(gameID);
+        gameData.createEntity(id, collectible);
     }
 
-
-    public static void createBabyEpsilonView(String id){
+    public static void createFinalPanelView(String id, Point2D location, Dimension size, String gameID){
         DataBase dataBase = DataBase.getDataBase();
-        dataBase.createEntity(id, babyEpsilon);
+        GameData gameData = dataBase.findGameData(gameID);
+        gameData.createPanel(id, location, size);
     }
 
-
-    public static void createLaserView(String id){
+    public static void createBarricadosView(String id, String gameID){
         DataBase dataBase = DataBase.getDataBase();
-        dataBase.createEntity(id, laser);
-    }
-
-    public static void createArchmireView(String id){
-        DataBase dataBase = DataBase.getDataBase();
-        dataBase.createEntity(id, archmire);
-    }
-
-    public static void createBabyArchmireView(String id){
-        DataBase dataBase = DataBase.getDataBase();
-        dataBase.createEntity(id, babyArchmire);
-    }
-
-
-    public static void createGeoShapeView(String id){
-        DataBase dataBase = DataBase.getDataBase();
-        dataBase.createEntity(id, orb);
+        GameData gameData = dataBase.findGameData(gameID);
+        gameData.createEntity(id, barricados);
     }
 
 
 
 
-    public static void eliminateGeoShapeView(String id){
+    public static void createOmenoctView(String id, String gameID){
         DataBase dataBase = DataBase.getDataBase();
-        dataBase.eliminateEntity(id);
-        dataBase.getCreatedEntities().remove(id);
+        GameData gameData = dataBase.findGameData(gameID);
+        gameData.createEntity(id, simplePolygon);
     }
-    public static void removeFinalPanelView(String id){
+
+
+    public static void createBabyEpsilonView(String id, String gameID){
         DataBase dataBase = DataBase.getDataBase();
-        dataBase.eliminateEntity(id);
-        dataBase.getCreatedPanels().remove(id);
+        GameData gameData = dataBase.findGameData(gameID);
+        gameData.createEntity(id, babyEpsilon);
+    }
+
+
+    public static void createLaserView(String id, String gameID){
+        DataBase dataBase = DataBase.getDataBase();
+        GameData gameData = dataBase.findGameData(gameID);
+        gameData.createEntity(id, laser);
+    }
+
+    public static void createArchmireView(String id, String gameID){
+        DataBase dataBase = DataBase.getDataBase();
+        GameData gameData = dataBase.findGameData(gameID);
+        gameData.createEntity(id, archmire);
+    }
+
+    public static void createNecropickView(String id, String gameID){
+        DataBase dataBase = DataBase.getDataBase();
+        GameData gameData = dataBase.findGameData(gameID);
+        gameData.createEntity(id, necropick);
+    }
+
+    public static void createBabyArchmireView(String id, String gameID){
+        DataBase dataBase = DataBase.getDataBase();
+        GameData gameData = dataBase.findGameData(gameID);
+        gameData.createEntity(id, babyArchmire);
+    }
+
+
+    public static void createGeoShapeView(String id, String gameID){
+        DataBase dataBase = DataBase.getDataBase();
+        GameData gameData = dataBase.findGameData(gameID);
+        gameData.createEntity(id, orb);
+    }
+
+    public static void createNonrigidBulletView(String id, String gameID){
+        DataBase dataBase = DataBase.getDataBase();
+        GameData gameData = dataBase.findGameData(gameID);
+        gameData.createEntity(id, nonrigidBullet);
+    }
+
+
+
+
+    public static void eliminateGeoShapeView(String id, String gameID){
+        DataBase dataBase = DataBase.getDataBase();
+        GameData gameData = dataBase.findGameData(gameID);
+        gameData.eliminateEntity(id);
+        gameData.getCreatedEntities().remove(id);
+    }
+    public static void removeFinalPanelView(String id, String gameID){
+        DataBase dataBase = DataBase.getDataBase();
+        GameData gameData = dataBase.findGameData(gameID);
+        gameData.eliminateEntity(id);
+        gameData.getCreatedPanels().remove(id);
 
     }
 //
@@ -133,7 +164,6 @@ public abstract class UserInterfaceController {
 //        assert v != null;
 //        v.showNextLocation = m.isHovering();
 //    }
-//
 
 
 
@@ -159,13 +189,13 @@ public abstract class UserInterfaceController {
         }
     }
 
-    public static boolean isGameRunning() {
-        return GameLoop.getINSTANCE().isRunning();
-    }
-
-    public static boolean isGameOn() {
-        return GameLoop.getINSTANCE().isOn();
-    }
+//    public static boolean isGameRunning() {
+//        return GameLoop.getINSTANCE().isRunning();
+//    }
+//
+//    public static boolean isGameOn() {
+//        return GameLoop.getINSTANCE().isOn();
+//    }
 
 
 

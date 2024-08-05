@@ -4,6 +4,7 @@ import game.controller.Game;
 import game.controller.UserInterfaceController;
 import game.controller.Utils;
 import game.model.FinalPanelModel;
+import server.DataBase;
 import shared.Model.MyPolygon;
 import game.model.entities.Entity;
 import game.model.entities.Profile;
@@ -15,7 +16,6 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 import static game.controller.UserInterfaceController.createGeoShapeView;
 import static game.controller.UserInterfaceController.eliminateGeoShapeView;
@@ -31,7 +31,9 @@ public abstract class GeoShapeModel extends Entity {
     protected double angle;
     protected boolean isOnFall = false;
     protected boolean isHovering = false;
-    public static List<GeoShapeModel> entities = new CopyOnWriteArrayList<>();
+
+    protected EpsilonModel target;
+    protected String gameID;
 
     public GeoShapeModel(Point2D anchor, BufferedImage image, MyPolygon myPolygon) {
         this.id = UUID.randomUUID().toString();
@@ -40,28 +42,41 @@ public abstract class GeoShapeModel extends Entity {
         radius = (double) image.getWidth() / 2;
         Point2D img = new Point2D.Double((double) -image.getWidth() / 2, (double) -image.getHeight() / 2);
         moveVertices(Utils.addVectors(anchor, img));
-        entities.add(this);
+        findGame(gameID).entities.add(this);
 //        UserInterfaceController.createGeoShapeView(id, image);
+    }
+
+    protected void setTarget(){
+        double minDistance = Double.MAX_VALUE;
+        EpsilonModel target = null;
+        for (EpsilonModel epsilon : findGame(gameID).epsilons){
+            double distance = epsilon.getAnchor().distance(anchor);
+            if (distance < minDistance) {
+                target = epsilon;
+            }
+        }
+        this.target = target;
     }
 
 
 
 
 
-    public GeoShapeModel(Point2D anchor, BufferedImage image, MyPolygon myPolygon, boolean necropick) {
+    public GeoShapeModel(Point2D anchor, BufferedImage image, MyPolygon myPolygon, String gameID) {
         this.id = UUID.randomUUID().toString();
+        this.gameID = gameID;
         this.anchor = new Point2D.Double(anchor.getX(), anchor.getY());
         this.myPolygon = myPolygon;
         radius = (double) image.getHeight() / 2;
         Point2D img = new Point2D.Double((double) -image.getWidth() / 2, (double) -image.getHeight() / 2);
         moveVertices(Utils.addVectors(anchor, img));
-        entities.add(this);
+        findGame(gameID).entities.add(this);
     }
 
     public GeoShapeModel(BufferedImage image, MyPolygon myPolygon) {
         this.id = UUID.randomUUID().toString();
         this.myPolygon = myPolygon;
-        entities.add(this);
+        findGame(gameID).entities.add(this);
 //        UserInterfaceController.createGeoShapeView(id, image);
     }
 
@@ -70,24 +85,25 @@ public abstract class GeoShapeModel extends Entity {
         this.id = UUID.randomUUID().toString();
         this.anchor = new Point2D.Double(anchor.getX(), anchor.getY());
         radius = (double) image.getHeight() / 2;
-        entities.add(this);
-        createGeoShapeView(id);
+        findGame(gameID).entities.add(this);
+        createGeoShapeView(id, gameID);
     }
 
     public GeoShapeModel(Point2D anchor) {
         this.anchor = anchor;
         this.id = UUID.randomUUID().toString();
-        entities.add(this);
+        findGame(gameID).entities.add(this);
 //        UserInterfaceController.createGeoShapeView(id);
     }
 
-    public GeoShapeModel() {
+    public GeoShapeModel(String gameID) {
         this.id = UUID.randomUUID().toString();
-        entities.add(this);
+        this.gameID = gameID;
+        findGame(gameID).entities.add(this);
         setDummyPolygon();
     }
 
-    private void setDummyPolygon() {
+    protected void setDummyPolygon() {
         double[] x = {1, 2, 3};
         double[] y = {4, 5, 6};
         myPolygon = new MyPolygon(x, y, 3);
@@ -146,10 +162,10 @@ public abstract class GeoShapeModel extends Entity {
     }
 
     public synchronized void eliminate() {
-        entities.remove(this);
+        findGame(gameID).entities.remove(this);
 //        eliminateGeoShapeView(id);
 
-        eliminateGeoShapeView(id);
+        eliminateGeoShapeView(id, gameID);
 
     }
 
@@ -162,7 +178,7 @@ public abstract class GeoShapeModel extends Entity {
     }
 
     protected boolean checkIntersectionExistence(){
-        for (GeoShapeModel geoShapeModel : entities) {
+        for (GeoShapeModel geoShapeModel : findGame(gameID).entities) {
             if (!geoShapeModel.isHovering && this.intersects(geoShapeModel) && !geoShapeModel.equals(this)) {
                 return true; // Intersection found, next position is not valid
             }
@@ -353,5 +369,17 @@ public abstract class GeoShapeModel extends Entity {
 
 
 
+    }
+
+    public String getGameID() {
+        return gameID;
+    }
+
+    public void setGameID(String gameID) {
+        this.gameID = gameID;
+    }
+
+    protected Game findGame(String gameID){
+        return DataBase.getDataBase().findGame(gameID);
     }
 }

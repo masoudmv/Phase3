@@ -13,7 +13,7 @@ public abstract class Entity {
     public int fullHealth;
     public boolean vulnerable = true;
     public ConcurrentHashMap<AttackTypes, Integer> damageSize = new ConcurrentHashMap<>();
-    public static CopyOnWriteArrayList<GeoShapeModel> entities = new CopyOnWriteArrayList<>();
+//    public static CopyOnWriteArrayList<GeoShapeModel> entities = new CopyOnWriteArrayList<>();
     private double lastAoeTime = 0;
 
     public void damage(Entity entity, AttackTypes attackType) {

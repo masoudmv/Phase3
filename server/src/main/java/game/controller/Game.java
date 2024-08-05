@@ -1,16 +1,33 @@
 package game.controller;
 
+import game.model.charactersModel.*;
+import server.DataBase;
+import server.GameData;
 import shared.constants.Constants;
-import game.model.charactersModel.EpsilonModel;
+
+import java.awt.geom.Point2D;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 
 public class Game {
+    private String gameID;
+
+
+    public List<EpsilonModel> epsilons = new CopyOnWriteArrayList<>();
+    public List<GeoShapeModel> entities = new CopyOnWriteArrayList<>();
+    public List<SquarantineModel> squarantineModels = new ArrayList<>();
+    public List<TrigorathModel> trigorathModels =new ArrayList<>();
+
+
     private static Game INSTANCE;
     public static int inGameXP = 1000;
     public static double ELAPSED_TIME = 0;
     public static int wave;
     private boolean isPaused = false;
-    private EpsilonModel epsilon;
+//    private EpsilonModel epsilon;
 
 
     private static GameLoop gameLoop;
@@ -18,7 +35,20 @@ public class Game {
 
 
 
+
     public Game (){
+        this.gameID = "1";
+        GameData gameData = new GameData(gameID);
+        DataBase.getDataBase().getGameData().add(gameData);
+        DataBase.getDataBase().addGame(this);
+
+
+
+
+
+        new EpsilonModel(new Point2D.Double(1000, 700), gameID);
+        new TrigorathModel(new Point2D.Double(1000, 500), gameID);
+
         INSTANCE = this;
         ELAPSED_TIME =0;
         inGameXP=0;
@@ -26,7 +56,7 @@ public class Game {
         Constants.RADIUS = 15;
 
 
-        new GameLoop();
+        new GameLoop(gameID);
 
 
     }
@@ -59,5 +89,14 @@ public class Game {
 //        MainFrame.getINSTANCE().removeKeyListener(gameLoop);
 // todo: now the gameLoop doesnt contain KeyLister
         gameLoop =null;
+    }
+
+
+    public String getGameID() {
+        return gameID;
+    }
+
+    public void setGameID(String gameID) {
+        this.gameID = gameID;
     }
 }

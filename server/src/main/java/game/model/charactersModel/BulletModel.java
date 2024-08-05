@@ -26,19 +26,15 @@ import static game.controller.UserInterfaceController.creatBulletView;
 
 
 public class BulletModel extends GeoShapeModel implements Movable, Collidable, Impactable {
-    public static CopyOnWriteArrayList<BulletModel> bulletModels = new CopyOnWriteArrayList<>();
     private boolean createdByEpsilon = true;
 
-    public BulletModel(Point2D anchor, Direction direction) {
-        super();
+    public BulletModel(Point2D anchor, Direction direction, String gameID) {
+        super(gameID);
 
         this.radius = Constants.BULLET_RADIUS;
         this.anchor = anchor;
         this.direction = direction;
         this.health = Integer.MAX_VALUE;
-
-        // is needed? not think so!
-        bulletModels.add(this);
 
         movables.add(this);
         collidables.add(this);
@@ -48,7 +44,7 @@ public class BulletModel extends GeoShapeModel implements Movable, Collidable, I
         updateBulletDamage();
 
 
-        creatBulletView(id);
+        creatBulletView(id, gameID);
 
 
         // todo move to another method ...
@@ -63,26 +59,28 @@ public class BulletModel extends GeoShapeModel implements Movable, Collidable, I
         model.setAnchor(new Point((int) anchor.getX(), (int) anchor.getY()));
         model.setAngle(angle);
 //        model.setMyPolygon(myPolygon);
-        DataBase.getDataBase().addUpdatedModels(model);
+        // todo
+//        DataBase.getDataBase().findGameData().addUpdatedModels(model);
     }
+
+
 
     private void updateBulletDamage(){
         if (Profile.getCurrent().BULLET_DAMAGE > 5) Profile.getCurrent().BULLET_DAMAGE = 5;
     }
 
 
-    public BulletModel(Point2D anchor, Direction direction, boolean createdByEpsilon) {
-        super();
+    public BulletModel(Point2D anchor, Direction direction, boolean createdByEpsilon, String gameID) {
+        super(gameID);
         this.radius = Constants.BULLET_RADIUS;
         this.anchor = anchor;
         this.direction = direction;
         // is needed? not think so!
         this.createdByEpsilon = createdByEpsilon;
-        bulletModels.add(this);
 
         movables.add(this);
         collidables.add(this);
-        creatBulletView(id);
+        creatBulletView(id, gameID);
         damageSize.put(AttackTypes.MELEE, 5);
     }
 
@@ -201,8 +199,7 @@ public class BulletModel extends GeoShapeModel implements Movable, Collidable, I
     @Override
     public void eliminate(){
         super.eliminate();
-        // is needed?
-        bulletModels.remove(this);
+
         collidables.remove(this);
         movables.remove(this);
     }

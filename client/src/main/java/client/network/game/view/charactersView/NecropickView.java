@@ -18,6 +18,7 @@ public class NecropickView extends GeoShapeView {
     private Point2D nextLocation;
     private static Image img;
 
+
     public NecropickView(String id) {
         super(id, img);
         necropickViews.add(this);
@@ -26,7 +27,7 @@ public class NecropickView extends GeoShapeView {
 
     public static void loadImage(){
         Image img = new ImageIcon("./client/src/necropick.png").getImage();
-        img = getBufferedImage(img);
+        NecropickView.img = getBufferedImage(img);
     }
 
 

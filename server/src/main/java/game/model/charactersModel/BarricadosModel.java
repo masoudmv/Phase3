@@ -21,12 +21,10 @@ public class BarricadosModel extends GeoShapeModel implements Collidable {
 
     private final static Dimension panelSize = new Dimension(400, 400);
 
-    public static ArrayList<BarricadosModel> barricados = new ArrayList<>();
-
-    public BarricadosModel(Point2D anchor) {
-        super(anchor, image, pol, true);
+    public BarricadosModel(Point2D anchor, String gameID) {
+        super(anchor, image, pol, gameID);
         Point2D location = new Point2D.Double(anchor.getX()-200, anchor.getY()-200);
-        FinalPanelModel f = new FinalPanelModel(location, panelSize);
+        FinalPanelModel f = new FinalPanelModel(location, panelSize, gameID);
         f.setRigid(false);
         f.setIsometric(true);
         setMyPolygon();
@@ -34,9 +32,9 @@ public class BarricadosModel extends GeoShapeModel implements Collidable {
         updateMyPolygon();
         this.health = Integer.MAX_VALUE;
 
-        barricados.add(this);
+
         collidables.add(this);
-        createBarricadosView(id);
+        createBarricadosView(id, gameID);
     }
 
     private void updateMyPolygon(){

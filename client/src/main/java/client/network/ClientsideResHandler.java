@@ -282,6 +282,8 @@ public class ClientsideResHandler implements ResponseHandler {
                         case archmire -> createArchmireView(id);
                         case babyArchmire -> createBabyArchmireView(id);
                         case barricados -> createBarricadosView(id);
+                        case necropick -> createNecropickView(id);
+                        case nonrigidBullet -> createNonrigidBulletView(id);
                     }
                 }) ;
             }
@@ -332,27 +334,12 @@ public class ClientsideResHandler implements ResponseHandler {
             }
         }
 
+        System.out.println(stateResponse.getCreatedEntities().size());
+
+
         updateGeoShapeViewProperties();
-
-
-//        double b = System.currentTimeMillis();
-//        System.out.println("models size  " + ClientDataBase.models.size());
-//        System.out.println("panels size  " + ClientDataBase.panels.size());
-//        System.out.println("views  " + geoShapeViews.size());
-//        System.out.println("panelVies  " + finalPanelViews.size());
-//        System.out.println("eliminates  " + stateResponse.getEliminatedEntities().size());
-//        System.out.println("created  " + stateResponse.getCreatedPanels().size());
-//        System.out.println("updates models " + stateResponse.getUpdatedModels().size());
-//        System.out.println("update panels  " + stateResponse.getUpdatedPanels().size());
-
-
-//        long b = System.currentTimeMillis();
-//
-//        System.out.println("User Input Handling Time: " + (b - a) + " ms");
-//        client.network.game.view.MainFrame.getINSTANCE().repaint();
-
-//        SwingUtilities.invokeLater(client.network.game.view.MainFrame.getINSTANCE()::revalidate);
         SwingUtilities.invokeLater(client.network.game.view.MainFrame.getINSTANCE()::repaint);
+
     }
 
 

@@ -7,6 +7,7 @@ import game.model.entities.Profile;
 import game.model.charactersModel.blackOrb.BlackOrb;
 import javafx.scene.SpotLight;
 import server.DataBase;
+import server.GameData;
 import shared.Model.TimedLocation;
 import shared.Model.dummies.DummyModel;
 import shared.Model.dummies.DummyPanel;
@@ -26,13 +27,13 @@ import static game.controller.Game.*;
 
 import static game.model.FinalPanelModel.finalPanelModels;
 import static game.model.charactersModel.CollectibleModel.collectibleModels;
-import static game.model.charactersModel.GeoShapeModel.entities;
-import static game.model.charactersModel.SquarantineModel.squarantineModels;
-import static game.model.charactersModel.TrigorathModel.trigorathModels;
 import static game.model.collision.Collidable.collidables;
 import static shared.Model.TimedLocation.myPolToPolygon;
 
 public class GameLoop implements Runnable {
+
+    private String gameID;
+
 
     public static GameLoop INSTANCE;
     private final AtomicBoolean running = new AtomicBoolean(false);
@@ -62,7 +63,8 @@ public class GameLoop implements Runnable {
 
     private boolean acesoInProgress=false;
 
-    public GameLoop() {
+    public GameLoop(String gameID) {
+        this.gameID = gameID;
         decreaseVelocities=false;
 
         movementInProgress = false;
@@ -182,6 +184,7 @@ public class GameLoop implements Runnable {
 
         updateCount++;
 
+        List<SquarantineModel> squarantineModels = DataBase.getDataBase().findGame(gameID).squarantineModels;
 
         for (int i = 0; i < squarantineModels.size(); i++) {
             if (squarantineModels.get(i).isImpactInProgress()) {
@@ -195,6 +198,9 @@ public class GameLoop implements Runnable {
 
 
         }
+
+        List<TrigorathModel> trigorathModels = DataBase.getDataBase().findGame(gameID).trigorathModels;
+
         for (int i = 0; i < trigorathModels.size(); i++) {
             if (trigorathModels.get(i).isImpactInProgress()) {
                 trigorathModels.get(i).getDirection().accelerateDirection(trigorathModels.get(i).impactMaxVelocity);
@@ -226,7 +232,7 @@ public class GameLoop implements Runnable {
 
 
 
-        for (GeoShapeModel entity : entities){
+        for (GeoShapeModel entity : DataBase.getDataBase().findGame(gameID).entities){
             entity.update();
         }
 
@@ -250,9 +256,10 @@ public class GameLoop implements Runnable {
 
 
         DataBase dataBase = DataBase.getDataBase();
-        dataBase.clearModels();
+        GameData gameData = dataBase.findGameData(gameID);
+        gameData.clearModels();
 
-        for (GeoShapeModel entity : entities) {
+        for (GeoShapeModel entity : DataBase.getDataBase().findGame(gameID).entities) {
 
             String id = entity.getId();
             Point2D anchor = entity.getAnchor();
@@ -268,6 +275,8 @@ public class GameLoop implements Runnable {
             int nPoints = entity.myPolygon.npoints;
             double angle = entity.getAngle();
 
+            DummyModel model = new DummyModel(id, point, angle, xPoints, yPoints, nPoints);
+
             List<Polygon> polygons = new ArrayList<>();
             if (entity instanceof ArchmireModel){
                 LinkedList<TimedLocation> timedLocation = ((ArchmireModel)entity).getLocationHistory();
@@ -276,11 +285,15 @@ public class GameLoop implements Runnable {
                 }
             }
 
+            if (entity instanceof NecropickModel){
+                boolean res = ((NecropickModel) entity).isHovering();
+                model.setShowNextLoc(res);
+            }
 
 
-            DummyModel model = new DummyModel(id, point, angle, xPoints, yPoints, nPoints);
+
             model.setPolygons(polygons);
-            dataBase.addUpdatedModels(model);
+            gameData.addUpdatedModels(model);
         }
 
         for (FinalPanelModel panelModel : finalPanelModels){
@@ -296,8 +309,9 @@ public class GameLoop implements Runnable {
             Dimension dimension = new Dimension((int) size.getWidth(), (int) size.getHeight());
 
             panel.setDimension(dimension);
-            dataBase.addUpdatedPanels(panel);
+            gameData.addUpdatedPanels(panel);
         }
+
 
 
     }
@@ -341,10 +355,10 @@ public class GameLoop implements Runnable {
     }
 
 
-    public static GameLoop getINSTANCE() {
-        if (INSTANCE == null) INSTANCE = new GameLoop();
-        return INSTANCE;
-    }
+//    public static GameLoop getINSTANCE() {
+//        if (INSTANCE == null) INSTANCE = new GameLoop();
+//        return INSTANCE;
+//    }
 
     public boolean isRunning() {
         return running.get();

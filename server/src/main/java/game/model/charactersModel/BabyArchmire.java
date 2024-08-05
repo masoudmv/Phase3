@@ -17,8 +17,8 @@ public class BabyArchmire extends ArchmireModel {
     static BufferedImage image;
     protected static MyPolygon poly;
 
-    public BabyArchmire(Point2D anchor) {
-        super(anchor, poly);
+    public BabyArchmire(Point2D anchor, String gameID) {
+        super(anchor, poly, gameID);
         this.health = EntityConstants.BABY_ARCHMIRE_HEALTH.getValue();
 
     }
@@ -29,10 +29,9 @@ public class BabyArchmire extends ArchmireModel {
     public void eliminate(){
         super.eli();
         collidables.remove(this);
-        archmireModels.remove(this);
 
         CollectibleModel.dropCollectible(
-                getAnchor(), EntityConstants.BABY_ARCHMIRE_NUM_OF_COLLECTIBLES.getValue(), EntityConstants.BABY_ARCHMIRE_COLLECTIBLES_XP.getValue()
+                getAnchor(), EntityConstants.BABY_ARCHMIRE_NUM_OF_COLLECTIBLES.getValue(), EntityConstants.BABY_ARCHMIRE_COLLECTIBLES_XP.getValue(), gameID
         );
     }
 

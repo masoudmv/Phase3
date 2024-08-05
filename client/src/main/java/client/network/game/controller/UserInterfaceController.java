@@ -5,19 +5,18 @@ import client.network.game.view.FinalPanelView;
 import client.network.game.view.charactersView.*;
 
 import shared.Model.MyPolygon;
-import shared.Model.TimedLocation;
 import shared.Model.dummies.DummyModel;
 import shared.Model.dummies.DummyPanel;
 
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 import static client.network.game.view.FinalPanelView.finalPanelViews;
 import static client.network.game.view.charactersView.BulletView.bulletViews;
 import static client.network.game.view.charactersView.GeoShapeView.geoShapeViews;
+import static client.network.game.view.charactersView.NecropickView.necropickViews;
 
 
 public abstract class UserInterfaceController {
@@ -55,6 +54,10 @@ public abstract class UserInterfaceController {
 
     public static void createBarricadosView(String id){
         new BarricadosView(id);
+    }
+
+    public static void createNonrigidBulletView(String id){
+        new NonrigidBulletView(id);
     }
 
 //    public static void createGeoShapeView(String id, Image image){
@@ -155,6 +158,15 @@ public abstract class UserInterfaceController {
 
         for (FinalPanelView finalPanelView : finalPanelViews){
             for (GeoShapeView geoShapeView : geoShapeViews){
+
+
+
+                if (geoShapeView instanceof NecropickView){
+                    updateNecropick(geoShapeView.getId());
+                }
+
+
+
                 DummyModel m = findGeoShapeModel(geoShapeView.getId());
                 // TODO remove the following if ...
                 if (! (m== null)){
@@ -163,6 +175,12 @@ public abstract class UserInterfaceController {
                     geoShapeView.setCurrentLocation(panelID, currentLocation);
                     geoShapeView.setMyPolygon(panelID, calculateEntityView(finalPanelView, geoShapeView.getId()));
                     geoShapeView.setHistory(panelID, calculateLocationHistory(finalPanelView, geoShapeView.getId()));
+
+
+
+
+
+
 
                 } else System.out.println("null geoshapemodel!!!!");
             }
@@ -177,13 +195,13 @@ public abstract class UserInterfaceController {
     }
 
 
-//    public static void updateNecropick(String id){
-//        NecropickModel m = findNecropickModel(id);
-//        NecropickView v = findNecropickView(id);
-//        assert m != null;
-//        assert v != null;
-//        v.showNextLocation = m.isHovering();
-//    }
+    public static void updateNecropick(String id){
+        DummyModel m = findGeoShapeModel(id);
+        NecropickView v = findNecropickView(id);
+        assert m != null;
+        assert v != null;
+        v.showNextLocation = m.isShowNextLoc();
+    }
 
     public static List<Polygon> calculateLocationHistory(FinalPanelView component, String id){
         DummyModel geoShapeModel = findGeoShapeModel(id);
@@ -247,12 +265,12 @@ public abstract class UserInterfaceController {
 
 
     // todo wtf?
-//    public static NecropickView findNecropickView(String id){
-//        for (NecropickView n : necropickViews){
-//            if (n.getId().equals(id)) return n;
-//        }
-//        return null;
-//    }
+    public static NecropickView findNecropickView(String id){
+        for (NecropickView n : necropickViews){
+            if (n.getId().equals(id)) return n;
+        }
+        return null;
+    }
 
 //    public static NecropickModel findNecropickModel(String id){
 //        for (NecropickModel m: NecropickModel.necropickModels){

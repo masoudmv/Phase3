@@ -24,7 +24,11 @@ public class StateResponse implements Response {
 
     private List<String> eliminatedEntities = new CopyOnWriteArrayList<>();
 
-//    private long sentTime;
+
+    private int health = 0;
+    private int XP = 0;
+    private int elapsedTime = 0;
+
 
 
     public StateResponse() {
@@ -70,13 +74,29 @@ public class StateResponse implements Response {
         this.updatedPanels = updatedPanels;
     }
 
-//    public long getSentTime() {
-//        return sentTime;
-//    }
-//
-//    public void setSentTime(long sentTime) {
-//        this.sentTime = sentTime;
-//    }
+    public int getHealth() {
+        return health;
+    }
+
+    public void setHealth(int health) {
+        this.health = health;
+    }
+
+    public int getXP() {
+        return XP;
+    }
+
+    public void setXP(int XP) {
+        this.XP = XP;
+    }
+
+    public int getElapsedTime() {
+        return elapsedTime;
+    }
+
+    public void setElapsedTime(int elapsedTime) {
+        this.elapsedTime = elapsedTime;
+    }
 
     @Override
     public void run(ResponseHandler responseHandler) {

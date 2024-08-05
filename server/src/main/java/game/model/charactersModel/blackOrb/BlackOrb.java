@@ -23,8 +23,10 @@ public class BlackOrb { // todo panels should be created with delay?
     public static CopyOnWriteArrayList<BlackOrb> blackOrbs = new CopyOnWriteArrayList<>();
     private boolean avalancheIsSet = false;
     private double avalancheBirthTime;
+    private String gameID;
 
-    public BlackOrb() {
+    public BlackOrb(String gameID) {
+        this.gameID = gameID;
         this.avalancheBirthTime = random.nextInt((int) (Game.ELAPSED_TIME + 6), (int) (Game.ELAPSED_TIME + 15));
         Point2D pivot = new Point2D.Double(500, 400); // Center of the pentagon
         double edgeLength = 350; // Distance between adjacent vertices
@@ -63,7 +65,7 @@ public class BlackOrb { // todo panels should be created with delay?
             numCreatedOrbs++;
         }
         if ( now - lastCreatedOrbTime < EntityConstants.ORB_PANEL_CREATION_DELAY || numCreatedOrbs > 4) return;
-        FinalPanelModel p = new FinalPanelModel(vertices[numCreatedOrbs], getPanelDimension());
+        FinalPanelModel p = new FinalPanelModel(vertices[numCreatedOrbs], getPanelDimension(), gameID);
         p.setIsometric(true);
         panels[numCreatedOrbs] = p;
         lastCreatedOrbTime = now;
@@ -74,7 +76,7 @@ public class BlackOrb { // todo panels should be created with delay?
 
     private void initializedOrbs(){
         for (int i = 0; i < 5; i++) {
-            orbs[i] = new Orb(Utils.addVectors(vertices[i], movePanelLocation));
+            orbs[i] = new Orb(Utils.addVectors(vertices[i], movePanelLocation), gameID);
             orbs[i].setPanel(panels[i]);
 //            updateGeoShapeViewProperties();
 
@@ -92,7 +94,7 @@ public class BlackOrb { // todo panels should be created with delay?
     private void setLasers() {
         for (int i = 0; i < 5; i++) {
             for (int j = i+1; j < 5; j++) {
-                new Laser(orbs[i], orbs[j]);
+                new Laser(orbs[i], orbs[j], gameID);
 //                updateGeoShapeViewProperties();
 
             }

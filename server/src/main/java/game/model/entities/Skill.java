@@ -60,12 +60,12 @@ public enum Skill {
             case ASTRAPE -> e -> EpsilonModel.getINSTANCE().damageSize.put(AttackTypes.ASTRAPE, 2);
             case CERBERUS -> e -> EpsilonModel.getINSTANCE().cerebrus();
             case ACESO -> e -> {
-                Timer healthTimer = new Timer((int) SkillConstants.WRIT_OF_ACESO_HEALING_FREQUENCY.getValue(), null);
-                healthTimer.addActionListener(e1 -> {
-                    if (UserInterfaceController.isGameRunning()) EpsilonModel.getINSTANCE().addHealth((int) SkillConstants.WRIT_OF_ACESO_HEALING_AMOUNT.getValue());
-                    if (!UserInterfaceController.isGameOn()) healthTimer.stop();
-                });
-                healthTimer.start();
+//                Timer healthTimer = new Timer((int) SkillConstants.WRIT_OF_ACESO_HEALING_FREQUENCY.getValue(), null);
+//                healthTimer.addActionListener(e1 -> {
+//                    if (UserInterfaceController.isGameRunning()) EpsilonModel.getINSTANCE().addHealth((int) SkillConstants.WRIT_OF_ACESO_HEALING_AMOUNT.getValue());
+//                    if (!UserInterfaceController.isGameOn()) healthTimer.stop();
+//                });
+//                healthTimer.start();
             };
             case MELAMPUS -> e -> Profile.getCurrent().EPSILON_VULNERABILITY_PROBABILITY = 95;
             case CHIRON -> e -> Profile.getCurrent().EPSILON_HEALTH_REGAIN = 3;

@@ -18,6 +18,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
+
 import static game.controller.UserInterfaceController.createArchmireView;
 import static game.controller.UserInterfaceController.createBabyArchmireView;
 import static shared.Model.imagetools.ToolBox.getBufferedImage;
@@ -25,30 +26,29 @@ import static shared.Model.imagetools.ToolBox.getBufferedImage;
 public class ArchmireModel extends GeoShapeModel implements Collidable {
     static BufferedImage image;
     protected static MyPolygon pol;
-    public static ArrayList<ArchmireModel> archmireModels = new ArrayList<>();
     private LinkedList<TimedLocation> locationHistory = new LinkedList<>();
     private double lastUpdatedLocation = 0;
     public Polygon polygon;
 
-    public ArchmireModel(Point2D anchor) {
-        super(anchor, image, pol, true);
+    public ArchmireModel(Point2D anchor, String gameID) {
+        super(anchor, image, pol, gameID);
+        setTarget();
         this.health = EntityConstants.ARCHMIRE_HEALTH.getValue();
         this.isHovering = true;
         updateDirection();
-        createArchmireView(id);
-        archmireModels.add(this);
+        createArchmireView(id, gameID);
         collidables.add(this);
         damageSize.put(AttackTypes.DROWN, 10);
         damageSize.put(AttackTypes.AOE, 2);
     }
 
     // BabyArchmire:
-    public ArchmireModel(Point2D anchor, MyPolygon myPolygon) {
-        super(anchor, BabyArchmire.image, myPolygon, true);
+    public ArchmireModel(Point2D anchor, MyPolygon myPolygon, String gameID) {
+        super(anchor, BabyArchmire.image, myPolygon, gameID);
+        setTarget();
         updateDirection();
-        createBabyArchmireView(id);
+        createBabyArchmireView(id, gameID);
 
-        archmireModels.add(this);
         collidables.add(this);
         damageSize.put(AttackTypes.DROWN, 5);
         damageSize.put(AttackTypes.AOE, 1);
@@ -57,7 +57,7 @@ public class ArchmireModel extends GeoShapeModel implements Collidable {
 
 
     private void updateDirection(){
-        Point2D destination = EpsilonModel.getINSTANCE().getAnchor();
+        Point2D destination = target.getAnchor();
         Point2D newDirection = Utils.relativeLocation(destination, getAnchor());
         this.direction = new Direction(newDirection);
         this.direction.setMagnitude(EntityConstants.ARCHMIRE_SPEED);
@@ -83,12 +83,15 @@ public class ArchmireModel extends GeoShapeModel implements Collidable {
     public void eliminate() {
         super.eliminate();
         collidables.remove(this);
-        archmireModels.remove(this);
 
-        CollectibleModel.dropCollectible(getAnchor(), EntityConstants.ARCHMIRE_NUM_OF_COLLECTIBLES.getValue(), EntityConstants.ARCHMIRE_COLLECTIBLES_XP.getValue());
+        CollectibleModel.dropCollectible(getAnchor(),
+                EntityConstants.ARCHMIRE_NUM_OF_COLLECTIBLES.getValue(),
+                EntityConstants.ARCHMIRE_COLLECTIBLES_XP.getValue(),
+                gameID
+        );
 
-        new BabyArchmire(new Point2D.Double(anchor.getX(), anchor.getY() + 40));
-        new BabyArchmire(new Point2D.Double(anchor.getX(), anchor.getY() - 40));
+        new BabyArchmire(new Point2D.Double(anchor.getX(), anchor.getY() + 40), gameID);
+        new BabyArchmire(new Point2D.Double(anchor.getX(), anchor.getY() - 40), gameID);
         // TODO: REAL ELIMINATE
 
     }
@@ -98,7 +101,6 @@ public class ArchmireModel extends GeoShapeModel implements Collidable {
     public void eli() {
         super.eliminate();
         collidables.remove(this);
-        archmireModels.remove(this);
     }
 
 
@@ -132,7 +134,7 @@ public class ArchmireModel extends GeoShapeModel implements Collidable {
 
 
     private void applyAOE(){
-        for (EpsilonModel model : EpsilonModel.epsilons){
+        for (EpsilonModel model : findGame(gameID).epsilons){
             boolean isInside = model.isInside(myPolygon.getVertices());
             if (isInside) {
                 this.damage(model, AttackTypes.DROWN);
@@ -147,10 +149,7 @@ public class ArchmireModel extends GeoShapeModel implements Collidable {
                 }
             }
 
-
         }
-
-
     }
 
     public void update() {

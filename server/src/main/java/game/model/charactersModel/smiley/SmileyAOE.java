@@ -22,8 +22,8 @@ public class SmileyAOE extends GeoShapeModel {
     private static boolean isActivated;
 
 
-    public SmileyAOE(Point2D anchor) {
-        super();
+    public SmileyAOE(Point2D anchor, String gameID) {
+        super(gameID);
         this.anchor = anchor;
         this.radius = EntityConstants.SMILEY_AOE_RADIUS.getValue();
 
@@ -63,7 +63,7 @@ public class SmileyAOE extends GeoShapeModel {
 
 
 
-    public static void createVomitAOEs(){
+    public static void createVomitAOEs(String gameID){
         if (birthTime != Double.MAX_VALUE) return;
 
         birthTime = Game.ELAPSED_TIME;
@@ -87,17 +87,13 @@ public class SmileyAOE extends GeoShapeModel {
         double y3 = random.nextDouble(yMin, yMax);
 
 
-        a1 = new SmileyAOE(new Point2D.Double(x1, y1));
-        a2 = new SmileyAOE(new Point2D.Double(x2, y2));
-        a3 = new SmileyAOE(new Point2D.Double(x3, y3));
+        a1 = new SmileyAOE(new Point2D.Double(x1, y1), gameID);
+        a2 = new SmileyAOE(new Point2D.Double(x2, y2), gameID);
+        a3 = new SmileyAOE(new Point2D.Double(x3, y3), gameID);
     }
 
 
-    private void setDummyPolygon(){
-        double[] x = {0,0,0};
-        double[] y = {0,0,0};
-        myPolygon = new MyPolygon(x, y, 3);
-    }
+
 
     @Override
     public void setMyPolygon(MyPolygon myPolygon) {

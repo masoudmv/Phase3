@@ -15,14 +15,14 @@ import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import static game.controller.UserInterfaceController.createNonrigidBulletView;
 import static shared.Model.imagetools.ToolBox.getBufferedImage;
 import static shared.constants.Constants.FRAME_DIMENSION;
 
-public class SmileyBullet extends GeoShapeModel implements Collidable {
+public class NonrigidBullet extends GeoShapeModel implements Collidable {
 
 
     static BufferedImage image;
-    public static CopyOnWriteArrayList<SmileyBullet> smileyBullets = new CopyOnWriteArrayList<>();
     private FinalPanelModel finalPanelModel;
     protected static MyPolygon pol;
 
@@ -30,12 +30,12 @@ public class SmileyBullet extends GeoShapeModel implements Collidable {
 //    double angleToEpsilon;
 
 
-    public SmileyBullet(Point2D anchor) {
-        super(anchor, image, pol);
-        smileyBullets.add(this);
+    public NonrigidBullet(Point2D anchor, String gameID) {
+        super(anchor, image, pol, gameID);
         collidables.add(this);
         damageSize.put(AttackTypes.MELEE, 5);
         this.health = Integer.MAX_VALUE;
+        createNonrigidBulletView(id, gameID);
     }
 
     void update(Direction direction) {
@@ -65,11 +65,10 @@ public class SmileyBullet extends GeoShapeModel implements Collidable {
 
             Point2D firingPoint = new Point2D.Double(130, 130); //todo edit
 
-            SmileyBullet b = new SmileyBullet(firingPoint);
+            NonrigidBullet b = new NonrigidBullet(firingPoint, gameID);
 
             direction = Utils.adjustVectorMagnitude(direction, 5);
             b.setDirection(new Direction(direction));
-            smileyBullets.add(b);
         }
     }
 
@@ -77,13 +76,13 @@ public class SmileyBullet extends GeoShapeModel implements Collidable {
         Image img = new ImageIcon("./client/src/bullet.png").getImage();
 //        SmileyBullet.image = getBufferedImage(img);
 
-        SmileyBullet.image = getBufferedImage(img);
+        NonrigidBullet.image = getBufferedImage(img);
 
         GraphicalObject bowser = new GraphicalObject(image);
         pol = bowser.getMyBoundingPolygon();
 
 
-        return SmileyBullet.image;
+        return NonrigidBullet.image;
     }
 
     private boolean isOutSide(){
@@ -93,8 +92,8 @@ public class SmileyBullet extends GeoShapeModel implements Collidable {
         boolean left = getAnchor().getX() - getRadius() > FRAME_DIMENSION.getWidth();
 
 
-         if (top || bottom || right || left) return true;
-         return false;
+        if (top || bottom || right || left) return true;
+        return false;
     }
 
 
@@ -107,7 +106,6 @@ public class SmileyBullet extends GeoShapeModel implements Collidable {
     public void eliminate() {
         super.eliminate();
         collidables.remove(this);
-        smileyBullets.remove(this);
 
     }
 

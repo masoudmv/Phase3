@@ -2,7 +2,6 @@ package game.model.charactersModel;
 
 import game.controller.Game;
 import game.controller.PolygonUtils;
-import game.controller.UserInterfaceController;
 import game.controller.Utils;
 import shared.constants.Constants;
 import shared.constants.EntityConstants;
@@ -31,16 +30,15 @@ public class OmenoctModel extends GeoShapeModel implements Collidable {
     static BufferedImage image;
     private int omenoctEdgeIndex = -1;
     private int destinationEdgeIndex = -1;
-    public static ArrayList<OmenoctModel> omenoctModels = new ArrayList<>();
     private double lastShotBullet = 0;
 
-    public OmenoctModel(Point2D anchor){
-        super(anchor, image, pol, false);
-        omenoctModels.add(this);
+    public OmenoctModel(Point2D anchor, String gameID){
+        super(anchor, image, pol, gameID);
         collidables.add(this);
         this.health = EntityConstants.OMENOCT_HEALTH.getValue();
         initVertices();
-        createOmenoctView(id);
+        createOmenoctView(id, gameID);
+        setTarget();
     }
 
     private void initVertices() {
@@ -67,16 +65,17 @@ public class OmenoctModel extends GeoShapeModel implements Collidable {
     private void shootNonRigidBullet(){
         double now = Game.ELAPSED_TIME;
         if (now - lastShotBullet < EntityConstants.OMENOCT_SHOT_DELAY) return;
-        BufferedImage ba = SmileyBullet.loadImage();
+        BufferedImage ba = NonrigidBullet.loadImage();
         GraphicalObject bos = new GraphicalObject(ba);
         MyPolygon pl = bos.getMyBoundingPolygon();
         Point2D startPos = getAnchor();
-        new SmileyBullet(startPos).setDirection(findBulletDirection(startPos));
+        new NonrigidBullet(startPos, gameID)
+                .setDirection(findBulletDirection(startPos));
         lastShotBullet = now;
     }
 
     private Direction findBulletDirection(Point2D startPos){
-        Point2D dest = EpsilonModel.getINSTANCE().getAnchor();
+        Point2D dest = target.getAnchor();
         Point2D vec = Utils.relativeLocation(dest, startPos);
         Direction direction = new Direction(vec);
         direction.setMagnitude(SmileyConstants.BULLET_SPEED);
@@ -87,10 +86,9 @@ public class OmenoctModel extends GeoShapeModel implements Collidable {
     public void eliminate() {
         super.eliminate();
         collidables.remove(this);
-        omenoctModels.remove(this);
 
         CollectibleModel.dropCollectible(
-                getAnchor(), EntityConstants.OMENOCT_NUM_OF_COLLECTIBLES.getValue(), EntityConstants.OMENOCT_COLLECTIBLES_XP.getValue()
+                getAnchor(), EntityConstants.OMENOCT_NUM_OF_COLLECTIBLES.getValue(), EntityConstants.OMENOCT_COLLECTIBLES_XP.getValue(), gameID
         );
     }
 
@@ -121,9 +119,9 @@ public class OmenoctModel extends GeoShapeModel implements Collidable {
     }
 
     public void updateDirection() { // todo fix shaking with panel shrinkage
-        if (EpsilonModel.getINSTANCE().getLocalPanel() == null) return;
+        if (target.getLocalPanel() == null) return;
         if (!isOnEpsilonPanel) {
-            HashMap<Integer, Point2D> res = Utils.closestPointOnEdges(anchor, EpsilonModel.getINSTANCE().getLocalPanel().getEdges());
+            HashMap<Integer, Point2D> res = Utils.closestPointOnEdges(anchor, target.getLocalPanel().getEdges());
             int edgeIndex = res.entrySet().iterator().next().getKey();
             Point2D closest = res.get(edgeIndex);
 
@@ -183,7 +181,7 @@ public class OmenoctModel extends GeoShapeModel implements Collidable {
     @Override
     public void update(){
         if (dontUpdate()) return;
-        setOnEpsilonPanel(EpsilonModel.getINSTANCE().getLocalPanel());
+        setOnEpsilonPanel(target.getLocalPanel());
         updateDirection();
     }
 
@@ -234,12 +232,12 @@ public class OmenoctModel extends GeoShapeModel implements Collidable {
     }
 
     public String getRotationDirection() {
-        if (EpsilonModel.getINSTANCE().getLocalPanel() == null) return "";
-        Point2D[] corners = EpsilonModel.getINSTANCE().getLocalPanel().getVertices();
+        if (target.getLocalPanel() == null) return "";
+        Point2D[] corners = target.getLocalPanel().getVertices();
 
-//        Point2D start = findClosestPointOnPanel(MainPanel.getINSTANCE());
-        Point2D start = Utils.findClosestPointOnEdges(getAnchor(), EpsilonModel.getINSTANCE().getLocalPanel().getEdges());
-        Point2D destination = findClosestPointToEpsilon(EpsilonModel.getINSTANCE(), EpsilonModel.getINSTANCE().getLocalPanel());
+
+        Point2D start = Utils.findClosestPointOnEdges(getAnchor(), target.getLocalPanel().getEdges());
+        Point2D destination = findClosestPointToEpsilon(target, target.getLocalPanel());
 
         int startSide = omenoctEdgeIndex;
         int destSide = destinationEdgeIndex;

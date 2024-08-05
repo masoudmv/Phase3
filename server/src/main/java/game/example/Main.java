@@ -59,7 +59,7 @@ public class Main {
         BufferedImage b = EpsilonModel.loadImage();
         GraphicalObject bows = new GraphicalObject(b);
         MyPolygon pol = bows.myBoundingPolygon;
-        new EpsilonModel(new Point2D.Double(1000, 700), pol);
+//        new EpsilonModel(new Point2D.Double(1000, 700));
 
 
 
@@ -80,7 +80,7 @@ public class Main {
 
 //        new ArchmireModel(new Point2D.Double(400, 500));
 
-        new SquarantineModel(new Point2D.Double(600, 400));
+//        new SquarantineModel(new Point2D.Double(600, 400), id);
 
 
 
