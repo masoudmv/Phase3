@@ -8,6 +8,7 @@ import shared.Model.Skill;
 import shared.request.*;
 import shared.request.game.ClickedRequest;
 import shared.request.game.MoveRequest;
+import shared.request.game.PauseRequest;
 import shared.request.game.StateRequest;
 import shared.request.leader.JoinDemandStatusReq;
 import shared.request.leader.KickPlayerReq;
@@ -166,14 +167,7 @@ public class RequestFactory {
         synchronized (LOCK){
             socketRequestSender = status.getSocket();
             try {
-
-//                long a = System.currentTimeMillis();
-
                 Response response = socketRequestSender.sendRequest(new StateRequest());
-//                long b = System.currentTimeMillis();
-//
-//                System.out.println("User Input Handling Time: " + (b - a) + " ms");
-
                 response.run(requestHandler);
 
             } catch (IOException e) {
@@ -188,9 +182,22 @@ public class RequestFactory {
             socketRequestSender = status.getSocket();
             try {
                 socketRequestSender.sendRequest(new ClickedRequest(position)).run(requestHandler);
-                System.out.println("Clicked Req was sent ... ");
             } catch (IOException e) {
                 System.out.println("Clicked Request was not sent ... ");
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+
+
+    public static void createPauseRequest(){
+        synchronized (LOCK){
+            socketRequestSender = status.getSocket();
+            try {
+                socketRequestSender.sendRequest(new PauseRequest(macAddress)).run(requestHandler);
+            } catch (IOException e) {
+                System.out.println("Pause Request was not sent ... ");
                 throw new RuntimeException(e);
             }
         }

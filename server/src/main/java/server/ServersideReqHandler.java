@@ -2,6 +2,7 @@ package server;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import game.controller.Game;
 import game.controller.Utils;
 import game.model.charactersModel.BulletModel;
 import game.model.charactersModel.EpsilonModel;
@@ -12,6 +13,7 @@ import shared.Model.*;
 import shared.request.*;
 import shared.request.game.ClickedRequest;
 import shared.request.game.MoveRequest;
+import shared.request.game.PauseRequest;
 import shared.request.game.StateRequest;
 import shared.request.leader.JoinDemandStatusReq;
 import shared.request.leader.KickPlayerReq;
@@ -240,6 +242,10 @@ public class ServersideReqHandler extends Thread implements RequestHandler {
     @Override
     public Response handleMoveReq(MoveRequest moveRequest) {
         synchronized (dataBase){
+            Game game  = dataBase.findGame("1");
+            if (game.isPaused()) return new NullResponse();
+
+
             double deltaX = 0;
             double deltaY = 0;
 
@@ -250,13 +256,29 @@ public class ServersideReqHandler extends Thread implements RequestHandler {
                 case move_left -> deltaX -= 0.7;
             }
 
-            Point2D.Double vector = new Point2D.Double(deltaX, deltaY);
-            Point2D point = multiplyVector(EpsilonModel.getINSTANCE().getDirection().getNormalizedDirectionVector(),
-                    EpsilonModel.getINSTANCE().getDirection().getMagnitude());
-            Direction direction = new Direction(addVectors(point, vector));
-            direction.adjustEpsilonDirectionMagnitude();
 
-            EpsilonModel.getINSTANCE().setDirection(direction);
+
+            String macAddress = "1";
+
+
+
+            for (EpsilonModel epsilon : game.epsilons){
+
+                System.out.println("EPSILON: " + epsilon.getMacAddress());
+                if (epsilon.getMacAddress().equals("1")){
+
+                    Point2D.Double vector = new Point2D.Double(deltaX, deltaY);
+                    Point2D point = multiplyVector(epsilon.getDirection().getNormalizedDirectionVector(),
+                            epsilon.getDirection().getMagnitude());
+                    Direction direction = new Direction(addVectors(point, vector));
+                    direction.adjustEpsilonDirectionMagnitude();
+
+
+                    epsilon.setDirection(direction);
+                    System.out.println("found epsilon");
+                }
+            }
+
 
 
             return new NullResponse();
@@ -285,9 +307,6 @@ public class ServersideReqHandler extends Thread implements RequestHandler {
             stateResponse.setUpdatedPanels(gameData.getUpdatedPanels());
             stateResponse.setUpdatedModels(gameData.getUpdatedModels());
 
-//            stateResponse.setHealth(EpsilonModel.getINSTANCE().health);
-
-            System.out.println("SIZE:  " + stateResponse.getCreatedPanels().size());
 
 
             return stateResponse;
@@ -297,44 +316,81 @@ public class ServersideReqHandler extends Thread implements RequestHandler {
     @Override
     public Response handleClickedRequest(ClickedRequest clickedRequest) {
         synchronized (dataBase){
-            EpsilonModel epsilon = EpsilonModel.getINSTANCE();
 
-            double startX = epsilon.getAnchor().getX();
-            double startY = epsilon.getAnchor().getY();
-
-            double mouseX = clickedRequest.getPosition().getX();
-            double mouseY = clickedRequest.getPosition().getY();
-
-            double deltaX = mouseX - startX;
-            double deltaY = mouseY - startY;
-            double pot = Math.hypot(deltaX, deltaY);
-
-            double velX = deltaX * (BULLET_VELOCITY / pot);
-            double velY = deltaY * (BULLET_VELOCITY / pot);
-            Point2D direction = new Point2D.Double(velX, velY);
-
-
-            double now = ELAPSED_TIME;
-            double empowerInitTime = Profile.getCurrent().empowerInitiationTime;
+            String gameID = "1";
+            Game game  = dataBase.findGame(gameID);
+            if (game.isPaused()) return new NullResponse();
 
             // todo find real gameID
-            String gameID = "1";
+
+            String macAddress = "1";
 
 
+            for (EpsilonModel epsilon : game.epsilons){
+                if (epsilon.getMacAddress().equals(macAddress)){
 
-            new BulletModel(epsilon.getAnchor(), new Direction(direction), gameID);
 
-            if (now - empowerInitTime < 10){
-                double angle = 10;
-                Point2D right = Utils.rotateVector(direction, Math.toRadians(angle));
-                new BulletModel(epsilon.getAnchor(), new Direction(right), gameID);
-                Point2D left = Utils.rotateVector(direction, -Math.toRadians(angle));
-                new BulletModel(epsilon.getAnchor(), new Direction(left), gameID);
+                    Point2D direction = calculateDirection(clickedRequest, epsilon);
+
+                    double now = ELAPSED_TIME;
+                    double empowerInitTime = Profile.getCurrent().empowerInitiationTime;
+                    boolean isBlack = epsilon.isBlackTeam();
+
+                    new BulletModel(epsilon.getAnchor(), new Direction(direction), gameID, macAddress);
+//
+                    if (now - empowerInitTime < 10){
+                        double angle = 10;
+                        Point2D right = Utils.rotateVector(direction, Math.toRadians(angle));
+                        new BulletModel(epsilon.getAnchor(), new Direction(right), gameID, macAddress);
+                        Point2D left = Utils.rotateVector(direction, -Math.toRadians(angle));
+                        new BulletModel(epsilon.getAnchor(), new Direction(left), gameID, macAddress);
+                    }
+                }
+
             }
-
-
 
             return new NullResponse();
         }
+    }
+
+    @Override
+    public Response handlePauseRequest(PauseRequest pauseRequest) {
+//        String macAddress = pauseRequest.getMacAddress();
+//        Player player = dataBase.findPlayer(macAddress);
+//        int inMenu = player.getInMenuTime();
+
+
+        // todo use real gameID
+        Game game = dataBase.findGame("1");
+
+        if (!game.isPaused()){
+            game.setPaused(true);
+        } else {
+            long pausedTime = game.getPausedTime();
+            long now = System.currentTimeMillis();
+            long pauseDuration = pausedTime - now;
+            // todo add duration to player
+
+            game.setPaused(false);
+        }
+
+        return new NullResponse();
+    }
+
+    private static Point2D calculateDirection(ClickedRequest clickedRequest, EpsilonModel epsilon) {
+        double startX = epsilon.getAnchor().getX();
+        double startY = epsilon.getAnchor().getY();
+
+        double mouseX = clickedRequest.getPosition().getX();
+        double mouseY = clickedRequest.getPosition().getY();
+
+        double deltaX = mouseX - startX;
+        double deltaY = mouseY - startY;
+        double pot = Math.hypot(deltaX, deltaY);
+
+        double velX = deltaX * (BULLET_VELOCITY / pot);
+        double velY = deltaY * (BULLET_VELOCITY / pot);
+        Point2D direction = new Point2D.Double(velX, velY);
+        return direction;
     }
 }

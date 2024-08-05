@@ -10,6 +10,7 @@ import shared.Model.dummies.DummyModel;
 import shared.Model.dummies.DummyPanel;
 import shared.response.*;
 import shared.response.game.NullResponse;
+import shared.response.game.PauseResponse;
 import shared.response.game.StateResponse;
 
 import javax.swing.*;
@@ -334,14 +335,16 @@ public class ClientsideResHandler implements ResponseHandler {
             }
         }
 
-        System.out.println(stateResponse.getCreatedEntities().size());
-
 
         updateGeoShapeViewProperties();
         SwingUtilities.invokeLater(client.network.game.view.MainFrame.getINSTANCE()::repaint);
 
     }
 
+    @Override
+    public void handlePauseResponse(PauseResponse pauseResponse) {
+
+    }
 
 
 }

@@ -1,6 +1,7 @@
 package shared.response;
 
 import shared.response.game.NullResponse;
+import shared.response.game.PauseResponse;
 import shared.response.game.StateResponse;
 
 public interface ResponseHandler {
@@ -16,4 +17,5 @@ public interface ResponseHandler {
 
     void handleNullResponse(NullResponse nullResponse);
     void handleStateResponse(StateResponse stateResponse);
+    void handlePauseResponse(PauseResponse pauseResponse);
 }

@@ -4,6 +4,7 @@ package shared.response;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import shared.response.game.NullResponse;
+import shared.response.game.PauseResponse;
 import shared.response.game.StateResponse;
 
 @JsonTypeInfo(
@@ -24,6 +25,7 @@ import shared.response.game.StateResponse;
 
         @JsonSubTypes.Type(value = NullResponse.class, name = "NullResponse"),
         @JsonSubTypes.Type(value = StateResponse.class, name = "StateResponse"),
+        @JsonSubTypes.Type(value = PauseResponse.class, name = "PauseResponse"),
 
 })
 public interface Response {

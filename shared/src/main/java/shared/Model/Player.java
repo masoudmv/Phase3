@@ -26,7 +26,10 @@ public class Player extends Model {
 
     private boolean isInBattle = false;
 
+    // todo change
     private String battleID = "1";
+
+    private int inMenuTime = 0;
 
     // todo a thread in server side to check connection status
     // todo remove set message, has message ...
@@ -198,6 +201,16 @@ public class Player extends Model {
 
     public void setBattleID(String battleID) {
         this.battleID = battleID;
+    }
+
+
+
+    public int getInMenuTime() {
+        return inMenuTime;
+    }
+
+    public void setInMenuTime(int inMenuTime) {
+        this.inMenuTime = inMenuTime;
     }
 }
 

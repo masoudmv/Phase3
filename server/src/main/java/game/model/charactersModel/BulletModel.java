@@ -1,5 +1,6 @@
 package game.model.charactersModel;
 
+import game.controller.Game;
 import game.controller.UserInterfaceController;
 import game.controller.Utils;
 import server.DataBase;
@@ -27,9 +28,11 @@ import static game.controller.UserInterfaceController.creatBulletView;
 
 public class BulletModel extends GeoShapeModel implements Movable, Collidable, Impactable {
     private boolean createdByEpsilon = true;
+    private String creatorMacAddress;
 
-    public BulletModel(Point2D anchor, Direction direction, String gameID) {
+    public BulletModel(Point2D anchor, Direction direction, String gameID, String creatorMacAddress) {
         super(gameID);
+        this.creatorMacAddress = creatorMacAddress;
 
         this.radius = Constants.BULLET_RADIUS;
         this.anchor = anchor;
@@ -204,9 +207,14 @@ public class BulletModel extends GeoShapeModel implements Movable, Collidable, I
         movables.remove(this);
     }
 
+    public String getCreatorMacAddress() {
+        return creatorMacAddress;
+    }
+
     @Override
     public void onCollision(Collidable other, Point2D intersection) {
         if ( other instanceof CollectibleModel || other instanceof BulletModel) return;
+
         else if (other instanceof NecropickModel){
             if (((NecropickModel) other).isHovering()) return;
             if (!createdByEpsilon) {
@@ -219,12 +227,8 @@ public class BulletModel extends GeoShapeModel implements Movable, Collidable, I
             return;
         }
         if (other instanceof EpsilonModel){
-            if (createdByEpsilon) return;
-            else {
-                this.damage((Entity) other, AttackTypes.MELEE);
-                eliminate();
-                return;
-            }
+            handleEpsilonCollision(other, intersection);
+            return;
         }
 
         // todo: change for multiplayer part ...
@@ -234,6 +238,43 @@ public class BulletModel extends GeoShapeModel implements Movable, Collidable, I
         this.damage((Entity) other, AttackTypes.MELEE);
         eliminate();
 
+
+
+
+    }
+
+
+    private void handleEpsilonCollision(Collidable other, Point2D intersection){
+        Game game = findGame(gameID);
+        EpsilonModel creator = null;
+
+        for (EpsilonModel epsilon : game.epsilons){
+            if (epsilon.getMacAddress().equals(creatorMacAddress)) creator = epsilon;
+        }
+
+        if (creator.equals(other)) return;
+
+        boolean creatorIsBlack = creator.isBlackTeam();
+        boolean otherIsBlack = ((EpsilonModel)other).isBlackTeam();
+
+        boolean effectDamage = (creatorIsBlack && !otherIsBlack) || (otherIsBlack && !creatorIsBlack);
+
+        if (!createdByEpsilon){
+            this.damage((Entity) other, AttackTypes.MELEE);
+            createImpactWave(this, other, intersection);
+            eliminate();
+        }
+
+        else if (effectDamage){
+            this.damage((Entity) other, AttackTypes.MELEE);
+            createImpactWave(this, other, intersection);
+            eliminate();
+        }
+
+        else {
+            createImpactWave(this, other, intersection);
+            eliminate();
+        }
 
 
 

@@ -6,6 +6,7 @@ import game.model.charactersModel.CollectibleModel;
 import game.model.charactersModel.EpsilonModel;
 import game.model.charactersModel.SquarantineModel;
 import game.model.charactersModel.TrigorathModel;
+import server.DataBase;
 //import view.MainPanel;
 //import view.Panel;
 
@@ -28,7 +29,7 @@ public interface Collidable {
     Point2D[] getVertices();
     ArrayList<Line2D> getEdges();
 
-    default void checkCollision(Collidable collidable) {
+    default void checkCollision(Collidable collidable ) {
         if (isCircular() && !collidable.isCircular()) {
             handleCirclePolygonCollision(collidable);
         } else if (!isCircular() && collidable.isCircular()) {
@@ -118,54 +119,57 @@ public interface Collidable {
 //        ((BulletModel) this).bulletImpact((BulletModel) this, intersection, collidable);
 //    }
 
-    private void handleCirclePolygonImpact(Point2D intersection, Collidable collidable) {
-        double minDistance = Double.MAX_VALUE;
-        for (Point2D vertex : collidable.getVertices()) {
-            minDistance = Math.min(minDistance, intersection.distance(vertex));
-        }
-
-        if (minDistance == 0) {
-            if (collidable instanceof SquarantineModel) {
-                EpsilonModel.getINSTANCE().damage(6);
-            } else if (collidable instanceof TrigorathModel) {
-                EpsilonModel.getINSTANCE().damage(10);
-            }
-        }
-
-        EpsilonModel epsilon = EpsilonModel.getINSTANCE();
-        if (epsilon.vertices != null) {
-            for (Point2D vertex : epsilon.vertices) {
-                minDistance = Math.min(minDistance, intersection.distance(vertex));
-            }
-            if (minDistance < 5) {
-                if (collidable instanceof SquarantineModel) {
-                    // todo yum ...
-//                    ((SquarantineModel) collidable).damage(Profile.getCurrent().EPSILON_MELEE_DAMAGE);
-                } else if (collidable instanceof TrigorathModel) {
-//                    ((TrigorathModel) collidable).damage(Profile.getCurrent().EPSILON_MELEE_DAMAGE);
-                }
-            }
-        }
-
-
-
-
-        for (Impactable coll : Impactable.impactables) {
-            if (!(coll instanceof CollectibleModel)) {
-                if (coll == collidable) {
-                    ((Impactable) collidable).impact(Utils.relativeLocation(intersection, getAnchor()), intersection, this);
-                } else if (coll == this) {
-                    ((Impactable) this).impact(Utils.relativeLocation(getAnchor(), intersection), intersection, collidable);
-                } else {
-//                    ((Impactable) coll).impact(new CollisionState(intersection)); // todo
-                }
-            }
-        }
-
-//        if (collidable instanceof MainPanel || collidable instanceof Panel) {
-//            ((Impactable) this).impact(relativeLocation(getAnchor(), intersection), intersection, collidable);
+//    private void handleCirclePolygonImpact(Point2D intersection, Collidable collidable, String gameID) {
+//        double minDistance = Double.MAX_VALUE;
+//        for (Point2D vertex : collidable.getVertices()) {
+//            minDistance = Math.min(minDistance, intersection.distance(vertex));
 //        }
-    }
+//
+//        if (minDistance == 0) {
+//            if (collidable instanceof SquarantineModel) {
+//                EpsilonModel.getINSTANCE().damage(6);
+//            } else if (collidable instanceof TrigorathModel) {
+//                EpsilonModel.getINSTANCE().damage(10);
+//            }
+//        }
+//
+////        EpsilonModel epsilon = EpsilonModel.getINSTANCE();
+//        for (EpsilonModel epsilon : DataBase.getDataBase().findGame(gameID).epsilons)
+//
+//
+//        if (epsilon.vertices != null) {
+//            for (Point2D vertex : epsilon.vertices) {
+//                minDistance = Math.min(minDistance, intersection.distance(vertex));
+//            }
+//            if (minDistance < 5) {
+//                if (collidable instanceof SquarantineModel) {
+//                    // todo yum ...
+////                    ((SquarantineModel) collidable).damage(Profile.getCurrent().EPSILON_MELEE_DAMAGE);
+//                } else if (collidable instanceof TrigorathModel) {
+////                    ((TrigorathModel) collidable).damage(Profile.getCurrent().EPSILON_MELEE_DAMAGE);
+//                }
+//            }
+//        }
+//
+//
+//
+//
+//        for (Impactable coll : Impactable.impactables) {
+//            if (!(coll instanceof CollectibleModel)) {
+//                if (coll == collidable) {
+//                    ((Impactable) collidable).impact(Utils.relativeLocation(intersection, getAnchor()), intersection, this);
+//                } else if (coll == this) {
+//                    ((Impactable) this).impact(Utils.relativeLocation(getAnchor(), intersection), intersection, collidable);
+//                } else {
+////                    ((Impactable) coll).impact(new CollisionState(intersection)); // todo
+//                }
+//            }
+//        }
+//
+////        if (collidable instanceof MainPanel || collidable instanceof Panel) {
+////            ((Impactable) this).impact(relativeLocation(getAnchor(), intersection), intersection, collidable);
+////        }
+//    }
 
     private void handlePolygonPolygonCollision(Collidable collidable) {
         if (!(collidable instanceof FinalPanelModel) && !(this instanceof FinalPanelModel)) {

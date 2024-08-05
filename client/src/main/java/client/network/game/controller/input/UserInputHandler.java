@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Set;
 
 import static client.network.RequestFactory.createMoveRequest;
+import static client.network.RequestFactory.createPauseRequest;
 import static client.network.game.controller.onlineGame.ClientGameLoop.movementInProgress;
 
 
@@ -55,9 +56,10 @@ public class UserInputHandler implements KeyListener {
     public void keyPressed(KeyEvent e) {
         Map<String, Integer> keyBindings = KeyBindingMenu.getINSTANCE().getKeyBindings();
 
-//        if (e.getKeyCode() == keyBindings.get("Open Shop")) {
-//            handleAbilityShopPanelToggle();
-//        }
+        if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+            System.out.println("escape");
+            createPauseRequest();
+        }
 
 //        if (GameLoop.getINSTANCE().isRunning()) {
 //            if (e.getKeyCode() == KeyEvent.VK_G) UserInterfaceController.fireAbility();

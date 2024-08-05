@@ -27,7 +27,7 @@ public class Constants {
     public static final double LARGE_IMPACT_RADIUS = 300;
     public static final double PI = Math.PI;
     public static final double BULLET_RADIUS = 5;
-    public static final double BULLET_VELOCITY = 3;
+    public static final double BULLET_VELOCITY = 5;
     public static final double TRIGORATH_MAX_VEL_RADIUS = 200;
     public static double INTERVAL = 5;
     public static double AOE_COOLDOWN = 1;

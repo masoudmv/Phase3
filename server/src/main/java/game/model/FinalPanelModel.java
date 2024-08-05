@@ -330,6 +330,7 @@ public class FinalPanelModel implements Collidable, Serializable {
                 }
             }
         } return false;
+
     }
 
     public boolean dontUpdate(){
@@ -364,7 +365,7 @@ public class FinalPanelModel implements Collidable, Serializable {
 
         for (EpsilonModel epsilon : findGame(gameID).epsilons){
             // todo terrible idea to make local panel static ...
-            if (EpsilonModel.getINSTANCE().getLocalPanel() == null){
+            if (epsilon.getLocalPanel() == null){
                 /**
                  *  checking for the intersections of epsilon with panel's original edges
                  *  and cripple them accordingly ...

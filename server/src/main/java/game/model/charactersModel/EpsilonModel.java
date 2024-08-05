@@ -33,11 +33,12 @@ import java.util.List;
 import static shared.Model.imagetools.ToolBox.getBufferedImage;
 
 public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, Impactable {
-    static transient BufferedImage image; // transient to avoid serialization
-    private static transient EpsilonModel INSTANCE;
+    static BufferedImage image; // transient to avoid serialization
+    private static EpsilonModel INSTANCE;
     private double lastCerebrus = -Double.MAX_VALUE;
 
     private boolean isBlackTeam = true;
+    private String macAddress;
 
 
 
@@ -52,42 +53,23 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
 
 
 
-    //    @SerializedName("localPanel")
-//    @Expose
     private FinalPanelModel localPanel;
 
 
 
-//    public EpsilonModel(double x, double y, boolean isBlackTeam, String gameID) {
-//        Point2D point = new Point2D.Double(x, y);
-//        this.isBlackTeam = isBlackTeam;
-//        new EpsilonModel(point, gameID);
-//    }
 
-
-
-    public EpsilonModel(Point2D anchor, String gameID) {
+    public EpsilonModel(Point2D anchor, boolean isBlackTeam, String gameID) {
         super(anchor, image, new MyPolygon(), gameID);
-        INSTANCE = this;
-        Point2D loc = new Point2D.Double(getAnchor().getX() - 250, getAnchor().getY() - 250); // todo spawn epsilon in the middle of screen
-        DoubleDimension2D size = new DoubleDimension2D(500, 500);
-        localPanel = new FinalPanelModel(loc, size, gameID);
-        localPanel.setIsometric(false);
-        Point vector = new Point(0, 0); //todo shitty design
+        this.isBlackTeam = isBlackTeam;
+        Point vector = new Point(0, 0);
         this.direction = new Direction(vector);
-//        epsilonModels.add(this);
         collidables.add(this);
         movables.add(this);
         UserInterfaceController.createEpsilonView(id, gameID);
-//        this.h = 100;
-//        damageSize.put(AttackTypes.AOE, 5);
         damageSize.put(AttackTypes.ASTRAPE, 0);
         impactables.add(this);
-
         setDummyPolygon();
-
         this.health = 50;
-
         Game game = findGame(gameID);
         game.epsilons.add(this);
 
@@ -95,6 +77,14 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
 
     public static EpsilonModel getINSTANCE() {
         return INSTANCE;
+    }
+
+    public String getMacAddress() {
+        return macAddress;
+    }
+
+    public void setMacAddress(String macAddress) {
+        this.macAddress = macAddress;
     }
 
     public String getId() {
@@ -490,10 +480,21 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
     }
 
 
+    private void handleBulletCollision(Collidable other, Point2D intersection){
+        String macAddress = ((BulletModel) other).getCreatorMacAddress();
+        String thisMacAddress = getMacAddress();
+        if (macAddress.equals(thisMacAddress)) return;
+        impact(new CollisionState(intersection));
+    }
+
+
 
 
     @Override
     public void onCollision(Collidable other, Point2D intersection) {
+        if (other instanceof EpsilonModel){
+            impact(new CollisionState(intersection));
+        }
         if (other instanceof FinalPanelModel) {
             if (!isOnFall) impact(new CollisionState(intersection));
             return;
@@ -501,6 +502,10 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
 
         if (other instanceof CollectibleModel || other instanceof NonrigidBullet){
             return;
+        }
+
+        if (other instanceof  BulletModel) {
+            handleBulletCollision(other, intersection);
         }
 
         // todo this may need to change

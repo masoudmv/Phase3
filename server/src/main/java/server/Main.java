@@ -1,6 +1,7 @@
 package server;
 
 import game.controller.Game;
+import game.controller.GameType;
 import game.example.GraphicalObject;
 import game.model.charactersModel.blackOrb.BlackOrb;
 import shared.Model.MyPolygon;
@@ -51,22 +52,10 @@ public class Main {
 
 
         new Profile();
-        new Game(); // uncoment this todo
+        new Game(GameType.monomachia).addEpsilons("1", "2", GameType.monomachia);
         Skill.initializeSkills();
 
 
-//        new BlackOrb();
-//        new OmenoctModel(new Point2D.Double(200, 500));
-
-
-
-
-
-
-
-
-
-        ////
 
 
         // Start the server

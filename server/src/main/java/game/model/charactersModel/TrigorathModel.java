@@ -20,8 +20,10 @@ import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import static shared.Model.imagetools.ToolBox.getBufferedImage;
+import static shared.constants.Constants.FRAME_DIMENSION;
 
 public class TrigorathModel extends GeoShapeModel implements Movable, Collidable, Impactable {
     public double impactMaxVelocity;
@@ -425,6 +427,36 @@ public class TrigorathModel extends GeoShapeModel implements Movable, Collidable
         CollectibleModel.dropCollectible(getAnchor(), EntityConstants.TRIGORATH_NUM_OF_COLLECTIBLES.getValue(), EntityConstants.TRIGORATH_COLLECTIBLES_XP.getValue(), gameID);
 
 
+    }
+
+    public static void createEnemy(String gameID){
+        Dimension dimension = FRAME_DIMENSION;
+        Random random = new Random();
+        int index = random.nextInt(4);
+        double offset = 100;
+        double x = -offset;
+        double y = -offset;
+        switch (index){
+            case 0: {
+                x = random.nextDouble(0, dimension.width);
+                y = -offset;
+            }
+            case 1: {
+                x = dimension.getWidth() + offset;
+                y = random.nextDouble(0, dimension.height);
+            }
+            case 2: {
+                y = dimension.getHeight() + offset;
+                x = random.nextDouble(0, dimension.width);
+            }
+            case 3: {
+                x = -offset;
+                y = random.nextDouble(0, dimension.height);
+            }
+
+        }
+
+        new TrigorathModel(new Point2D.Double(x,y), gameID);
     }
 
 

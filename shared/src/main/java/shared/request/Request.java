@@ -3,6 +3,7 @@ package shared.request;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import shared.request.game.ClickedRequest;
+import shared.request.game.PauseRequest;
 import shared.request.game.StateRequest;
 import shared.request.leader.JoinDemandStatusReq;
 import shared.request.leader.KickPlayerReq;
@@ -39,6 +40,7 @@ import shared.response.Response;
         @JsonSubTypes.Type(value = MoveRequest.class, name = "MoveRequest"),
         @JsonSubTypes.Type(value = StateRequest.class, name = "StateRequest"),
         @JsonSubTypes.Type(value = ClickedRequest.class, name = "ClickedRequest"),
+        @JsonSubTypes.Type(value = PauseRequest.class, name = "PauseRequest"),
 })
 public interface Request {
     Response run(RequestHandler requestHandler);

@@ -6,7 +6,7 @@ import java.awt.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class BulletView extends GeoShapeView {
-//    Point2D currentLocation=new Point2D.Double(0,0);
+//    Point2Dv currentLocation=new Point2D.Double(0,0);
     public static CopyOnWriteArrayList<BulletView> bulletViews = new CopyOnWriteArrayList<>();
 
     public BulletView(String id) {
