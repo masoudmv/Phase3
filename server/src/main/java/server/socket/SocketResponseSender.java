@@ -2,6 +2,7 @@ package server.socket;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import shared.CustomObjectMapper;
 import shared.request.Request;
 import shared.response.Response;
 
@@ -14,13 +15,13 @@ public class SocketResponseSender {
     public final Scanner scanner;
     private final Socket socket;
     private final PrintStream printStream;
-    private final ObjectMapper objectMapper;
+    private final CustomObjectMapper objectMapper;
 
     public SocketResponseSender(Socket socket) throws IOException {
         this.socket = socket;
         printStream = new PrintStream(socket.getOutputStream());
         scanner = new Scanner(socket.getInputStream());
-        objectMapper = new ObjectMapper();
+        objectMapper = new CustomObjectMapper();
     }
 
     public Request getRequest() {

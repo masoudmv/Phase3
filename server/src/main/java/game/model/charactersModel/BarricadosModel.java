@@ -11,6 +11,7 @@ import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
+import static game.controller.UserInterfaceController.createBarricadosView;
 import static shared.Model.imagetools.ToolBox.getBufferedImage;
 
 public class BarricadosModel extends GeoShapeModel implements Collidable {
@@ -23,7 +24,7 @@ public class BarricadosModel extends GeoShapeModel implements Collidable {
     public static ArrayList<BarricadosModel> barricados = new ArrayList<>();
 
     public BarricadosModel(Point2D anchor) {
-        super(anchor, image, pol, 1);
+        super(anchor, image, pol, true);
         Point2D location = new Point2D.Double(anchor.getX()-200, anchor.getY()-200);
         FinalPanelModel f = new FinalPanelModel(location, panelSize);
         f.setRigid(false);
@@ -35,6 +36,7 @@ public class BarricadosModel extends GeoShapeModel implements Collidable {
 
         barricados.add(this);
         collidables.add(this);
+        createBarricadosView(id);
     }
 
     private void updateMyPolygon(){

@@ -1,6 +1,7 @@
 package client.network.socket;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import shared.CustomObjectMapper;
 import shared.request.Request;
 import shared.response.Response;
 
@@ -13,14 +14,14 @@ public class SocketRequestSender {
     private final Scanner scanner;
     private final Socket socket;
     private final PrintStream printStream;
-    private final ObjectMapper objectMapper;
+    private final CustomObjectMapper objectMapper;
 
     public SocketRequestSender() {
         try {
             this.socket = new Socket("127.0.0.1", 8080);
             printStream = new PrintStream(socket.getOutputStream());
             scanner = new Scanner(socket.getInputStream());
-            objectMapper = new ObjectMapper();
+            objectMapper = new CustomObjectMapper();
         } catch (IOException e) {
             System.out.println("could not open a new socket");
             throw new RuntimeException(e);

@@ -50,6 +50,11 @@ public abstract class UserInterfaceController {
         dataBase.createPanel(id, location, size);
     }
 
+    public static void createBarricadosView(String id){
+        DataBase dataBase = DataBase.getDataBase();
+        dataBase.createEntity(id, barricados);
+    }
+
 
 
 
@@ -70,12 +75,21 @@ public abstract class UserInterfaceController {
         dataBase.createEntity(id, laser);
     }
 
+    public static void createArchmireView(String id){
+        DataBase dataBase = DataBase.getDataBase();
+        dataBase.createEntity(id, archmire);
+    }
+
+    public static void createBabyArchmireView(String id){
+        DataBase dataBase = DataBase.getDataBase();
+        dataBase.createEntity(id, babyArchmire);
+    }
+
 
     public static void createGeoShapeView(String id){
         DataBase dataBase = DataBase.getDataBase();
         dataBase.createEntity(id, orb);
     }
-
 
 
 
@@ -101,9 +115,6 @@ public abstract class UserInterfaceController {
 //        new NecropickView(id, image);
 //    }
 //
-//    public static void createArchmireView(String id, Image image){
-//        new ArchmireView(id, image);
-//    }
 //
 //
 //    public static void createGeoShapeView(String id){ new GeoShapeView(id); }

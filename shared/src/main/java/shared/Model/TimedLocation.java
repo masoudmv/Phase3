@@ -25,6 +25,19 @@ public class TimedLocation {
         return polygon;
     }
 
+
+    //todo move to utils ...
+    public static Polygon myPolToPolygon(MyPolygon myPolygon) {
+        int nPoints = myPolygon.npoints;
+        int[] xPoints = new int[nPoints];
+        int[] yPoints = new int[nPoints];
+        for (int i = 0; i < nPoints; i++) {
+            xPoints[i] = (int) myPolygon.xpoints[i];
+            yPoints[i] = (int) myPolygon.ypoints[i];
+        }
+        return new Polygon(xPoints, yPoints, nPoints);
+    }
+
     public double getTimestamp() {
         return timestamp;
     }

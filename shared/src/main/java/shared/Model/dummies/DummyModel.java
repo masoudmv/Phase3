@@ -2,6 +2,8 @@ package shared.Model.dummies;
 
 import java.awt.*;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DummyModel implements Serializable {
     private static final long serialVersionUID = 1L; // Add a unique identifier for serialization
@@ -11,6 +13,9 @@ public class DummyModel implements Serializable {
     private int[] xPoints;
     private int[] yPoints;
     private int nPoints;
+
+
+    private List<Polygon> polygons = new ArrayList<>();
 
     public DummyModel(String id, Point anchor, double angle, int[] xPoints, int[] yPoints, int nPoints) {
         this.id = id;
@@ -66,7 +71,11 @@ public class DummyModel implements Serializable {
         return nPoints;
     }
 
-    //    public Polygon getPolygon() {
-//        return new Polygon(xPoints, yPoints, nPoints);
-//    }
+    public List<Polygon> getPolygons() {
+        return polygons;
+    }
+
+    public void setPolygons(List<Polygon> polygons) {
+        this.polygons = polygons;
+    }
 }

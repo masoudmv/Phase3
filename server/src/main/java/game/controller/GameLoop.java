@@ -5,7 +5,9 @@ import game.model.PanelManager;
 import game.model.charactersModel.*;
 import game.model.entities.Profile;
 import game.model.charactersModel.blackOrb.BlackOrb;
+import javafx.scene.SpotLight;
 import server.DataBase;
+import shared.Model.TimedLocation;
 import shared.Model.dummies.DummyModel;
 import shared.Model.dummies.DummyPanel;
 
@@ -15,6 +17,9 @@ import java.awt.*;
 import java.awt.geom.Dimension2D;
 
 import java.awt.geom.Point2D;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static game.controller.Game.*;
@@ -25,6 +30,7 @@ import static game.model.charactersModel.GeoShapeModel.entities;
 import static game.model.charactersModel.SquarantineModel.squarantineModels;
 import static game.model.charactersModel.TrigorathModel.trigorathModels;
 import static game.model.collision.Collidable.collidables;
+import static shared.Model.TimedLocation.myPolToPolygon;
 
 public class GameLoop implements Runnable {
 
@@ -262,12 +268,18 @@ public class GameLoop implements Runnable {
             int nPoints = entity.myPolygon.npoints;
             double angle = entity.getAngle();
 
+            List<Polygon> polygons = new ArrayList<>();
+            if (entity instanceof ArchmireModel){
+                LinkedList<TimedLocation> timedLocation = ((ArchmireModel)entity).getLocationHistory();
+                for (TimedLocation location : timedLocation) {
+                    polygons.add(myPolToPolygon(location.getMyPolygon()));
+                }
+            }
+
 
 
             DummyModel model = new DummyModel(id, point, angle, xPoints, yPoints, nPoints);
-
-
-//            model.setAngle(entity.getAngle());
+            model.setPolygons(polygons);
             dataBase.addUpdatedModels(model);
         }
 

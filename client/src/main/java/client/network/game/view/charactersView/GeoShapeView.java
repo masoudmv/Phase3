@@ -91,7 +91,7 @@ public class GeoShapeView {
         geoShapeViews.remove(this);
     }
 
-    public void setHistory(String panelID, List<TimedLocation> history){}
+    public void setHistory(String panelID, List<Polygon> polygons){}
 
 
     public void setImage(BufferedImage image) {

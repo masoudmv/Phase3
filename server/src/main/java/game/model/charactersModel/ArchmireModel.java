@@ -18,6 +18,8 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
+import static game.controller.UserInterfaceController.createArchmireView;
+import static game.controller.UserInterfaceController.createBabyArchmireView;
 import static shared.Model.imagetools.ToolBox.getBufferedImage;
 
 public class ArchmireModel extends GeoShapeModel implements Collidable {
@@ -33,7 +35,7 @@ public class ArchmireModel extends GeoShapeModel implements Collidable {
         this.health = EntityConstants.ARCHMIRE_HEALTH.getValue();
         this.isHovering = true;
         updateDirection();
-//        UserInterfaceController.createArchmireView(id, ArchmireModel.image);
+        createArchmireView(id);
         archmireModels.add(this);
         collidables.add(this);
         damageSize.put(AttackTypes.DROWN, 10);
@@ -44,7 +46,7 @@ public class ArchmireModel extends GeoShapeModel implements Collidable {
     public ArchmireModel(Point2D anchor, MyPolygon myPolygon) {
         super(anchor, BabyArchmire.image, myPolygon, true);
         updateDirection();
-//        UserInterfaceController.createArchmireView(id, BabyArchmire.image);
+        createBabyArchmireView(id);
 
         archmireModels.add(this);
         collidables.add(this);
@@ -88,8 +90,6 @@ public class ArchmireModel extends GeoShapeModel implements Collidable {
         new BabyArchmire(new Point2D.Double(anchor.getX(), anchor.getY() + 40));
         new BabyArchmire(new Point2D.Double(anchor.getX(), anchor.getY() - 40));
         // TODO: REAL ELIMINATE
-
-
 
     }
 

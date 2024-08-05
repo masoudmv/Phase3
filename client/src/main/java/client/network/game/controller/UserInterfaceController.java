@@ -5,11 +5,15 @@ import client.network.game.view.FinalPanelView;
 import client.network.game.view.charactersView.*;
 
 import shared.Model.MyPolygon;
+import shared.Model.TimedLocation;
 import shared.Model.dummies.DummyModel;
 import shared.Model.dummies.DummyPanel;
 
 import java.awt.*;
 import java.awt.geom.Point2D;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 import static client.network.game.view.FinalPanelView.finalPanelViews;
 import static client.network.game.view.charactersView.BulletView.bulletViews;
@@ -49,6 +53,10 @@ public abstract class UserInterfaceController {
         new LaserView(id);
     }
 
+    public static void createBarricadosView(String id){
+        new BarricadosView(id);
+    }
+
 //    public static void createGeoShapeView(String id, Image image){
 //        new GeoShapeView(id, image);
 //    }
@@ -57,6 +65,13 @@ public abstract class UserInterfaceController {
         new OrbView(id);
     }
 
+    public static void createArchmireView(String id){
+        new ArchmireView(id);
+    }
+
+    public static void createBabyArchmireView(String id){
+        new BabyArchmireView(id);
+    }
 
 
     public static void createOmenoctView(String id){ new PolygonView(id); }
@@ -65,7 +80,6 @@ public abstract class UserInterfaceController {
     public static void createNecropickView(String id){
         new NecropickView(id);
     }
-    public static void createArchmireView(String id){ new ArchmireView(id); }
     public static void createGeoShapeView(String id, Image image, int zOrder){
         new GeoShapeView(id, image, zOrder);
     }
@@ -148,7 +162,7 @@ public abstract class UserInterfaceController {
                     String panelID = finalPanelView.getId();
                     geoShapeView.setCurrentLocation(panelID, currentLocation);
                     geoShapeView.setMyPolygon(panelID, calculateEntityView(finalPanelView, geoShapeView.getId()));
-//                geoShapeView.setHistory(panelID, calculateLocationHistory(finalPanelView, geoShapeView.getId()));
+                    geoShapeView.setHistory(panelID, calculateLocationHistory(finalPanelView, geoShapeView.getId()));
 
                 } else System.out.println("null geoshapemodel!!!!");
             }
@@ -171,28 +185,26 @@ public abstract class UserInterfaceController {
 //        v.showNextLocation = m.isHovering();
 //    }
 
-//    public static LinkedList<TimedLocation> calculateLocationHistory(FinalPanelView component, String id){
-//        DummyModel geoShapeModel = findGeoShapeModel(id);
-//        if (!(geoShapeModel instanceof ArchmireModel)) return null;
-//        LinkedList<TimedLocation> timedLocations = ((ArchmireModel) geoShapeModel).getLocationHistory();
-//        LinkedList<TimedLocation> result = new LinkedList<>();
-//        for (TimedLocation timedLocation : timedLocations){
-//            double timeStamp = timedLocation.getTimestamp();
-//            MyPolygon pol = timedLocation.getMyPolygon();
-//
-//            int[] xPoints = new int[pol.npoints];
-//            int[] yPoints = new int[pol.npoints];
-//
-//            for (int i = 0; i < pol.npoints; i++) {
-//                xPoints[i] = (int) (pol.xpoints[i] - component.getX());
-//                yPoints[i] = (int) (pol.ypoints[i] - component.getY());
-//            }
-//
-//            TimedLocation t = new TimedLocation(new Polygon(xPoints, yPoints, pol.npoints), timeStamp);
-//            result.add(t);
-//        }
-//        return result;
-//    }
+    public static List<Polygon> calculateLocationHistory(FinalPanelView component, String id){
+        DummyModel geoShapeModel = findGeoShapeModel(id);
+        List<Polygon> polygons = geoShapeModel.getPolygons();
+        List<Polygon> res = new ArrayList<>();
+
+        for (Polygon polygon : polygons){
+            if (polygon == null) break;
+            int[] xPoints = new int[polygon.npoints];
+            int[] yPoints = new int[polygon.npoints];
+
+            for (int i = 0; i < polygon.npoints; i++) {
+                xPoints[i] = polygon.xpoints[i] - component.getX();
+                yPoints[i] = polygon.ypoints[i] - component.getY();
+            }
+
+            res.add(new Polygon(xPoints, yPoints, polygon.npoints));
+
+        }
+        return res;
+    }
 
 
 
@@ -213,16 +225,8 @@ public abstract class UserInterfaceController {
 
 
 
-
-
-
     public static DummyPanel findFinalPanelModel(String id){
-//        for (DummyPanel f: ClientDataBase.panels){
-//            if (f.getId().equals(id)) return f;
-//        }
-
         return ClientDataBase.panels.get(id);
-//        return null;
     }
 
 

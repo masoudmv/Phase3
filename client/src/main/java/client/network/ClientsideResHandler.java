@@ -279,10 +279,15 @@ public class ClientsideResHandler implements ResponseHandler {
                         case babyEpsilon -> createBabyEpsilonView(id);
                         case orb -> createOrbView(id);
                         case laser -> createLaserView(id);
+                        case archmire -> createArchmireView(id);
+                        case babyArchmire -> createBabyArchmireView(id);
+                        case barricados -> createBarricadosView(id);
                     }
                 }) ;
             }
         }
+
+//        System.out.println("SIZE: " + createdEntities.size());
 
 
 

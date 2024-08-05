@@ -55,8 +55,8 @@ public class Main {
         Skill.initializeSkills();
 
 
-        new BlackOrb();
-        new SquarantineModel(new Point2D.Double(200, 500));
+//        new BlackOrb();
+        new BarricadosModel(new Point2D.Double(200, 500));
 
 
 

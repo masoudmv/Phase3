@@ -46,16 +46,7 @@ public abstract class GeoShapeModel extends Entity {
 
 
 
-    public GeoShapeModel(Point2D anchor, BufferedImage image, MyPolygon myPolygon, int zOrder) {
-        this.id = UUID.randomUUID().toString();
-        this.anchor = new Point2D.Double(anchor.getX(), anchor.getY());
-        this.myPolygon = myPolygon;
-        radius = (double) image.getWidth() / 2;
-        Point2D img = new Point2D.Double((double) -image.getWidth() / 2, (double) -image.getHeight() / 2);
-        moveVertices(Utils.addVectors(anchor, img));
-        entities.add(this);
-//        UserInterfaceController.createGeoShapeView(id, image, zOrder);
-    }
+
 
     public GeoShapeModel(Point2D anchor, BufferedImage image, MyPolygon myPolygon, boolean necropick) {
         this.id = UUID.randomUUID().toString();
