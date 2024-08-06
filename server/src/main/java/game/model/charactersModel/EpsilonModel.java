@@ -196,7 +196,7 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
 
     @Override
     public void update(Direction direction) {
-        if (localPanel== null) System.out.println("null");
+//        if (localPanel== null) System.out.println("null");
         Point2D movement = Utils.multiplyVector(direction.getNormalizedDirectionVector(), direction.getMagnitude());
         this.anchor = Utils.addVectors(anchor, movement);
         for (int i = 0; i < numberOfVertices; i++) {
@@ -369,8 +369,9 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
 
     private void updateLocalPanel() {
         if (localPanel != null) if (isInFinalPanelModel(localPanel)) return;
-        for (FinalPanelModel panel : FinalPanelModel.finalPanelModels) {
+        for (FinalPanelModel panel : findGame(gameID).finalPanelModels) {
             if (isInFinalPanelModel(panel)) {
+                localPanel = panel;
                 localPanel = panel;
                 return;
             }
@@ -500,6 +501,11 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
 
 
     private void handleBulletCollision(Collidable other, Point2D intersection){
+        boolean createdByEpsilon = ((BulletModel) other).isCreatedByEpsilon();
+        if (!createdByEpsilon){
+            impact(new CollisionState(intersection));
+            return;
+        }
         String macAddress = ((BulletModel) other).getCreatorMacAddress();
         String thisMacAddress = getMacAddress();
         if (macAddress.equals(thisMacAddress)) return;

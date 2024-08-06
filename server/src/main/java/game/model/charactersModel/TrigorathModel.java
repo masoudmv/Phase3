@@ -416,6 +416,7 @@ public class TrigorathModel extends GeoShapeModel implements Movable, Collidable
         ArrayList<Point2D> bound = new ArrayList<>();
         for (int i = 0; i < myPolygon.npoints; i++) {
             bound.add( new Point2D.Double(myPolygon.xpoints[i], myPolygon.ypoints[i]) );
+            bound.add( new Point2D.Double(myPolygon.xpoints[i], myPolygon.ypoints[i]) );
         } return bound;
     }
 
@@ -427,14 +428,19 @@ public class TrigorathModel extends GeoShapeModel implements Movable, Collidable
         findGame(gameID).trigorathModels.remove(this);
         movables.remove(this);
 
+        findGame(gameID).enemyEliminated();
+
 //        aliveEnemies--;
 
-        CollectibleModel.dropCollectible(getAnchor(), EntityConstants.TRIGORATH_NUM_OF_COLLECTIBLES.getValue(), EntityConstants.TRIGORATH_COLLECTIBLES_XP.getValue(), gameID);
+        CollectibleModel.dropCollectible(getAnchor(),
+                EntityConstants.TRIGORATH_NUM_OF_COLLECTIBLES.getValue(),
+                EntityConstants.TRIGORATH_COLLECTIBLES_XP.getValue(),
+                gameID
+        );
 
 
     }
 
-    @Override
     public void create(String gameID) {
         Point2D anchor;
         boolean isValid;
@@ -469,6 +475,10 @@ public class TrigorathModel extends GeoShapeModel implements Movable, Collidable
         return 1;
     }
 
+    @Override
+    public boolean isUniquePerWave(){
+        return false;
+    }
 
 
 
@@ -478,7 +488,6 @@ public class TrigorathModel extends GeoShapeModel implements Movable, Collidable
     @Override
     public void onCollision(Collidable other, Point2D intersection) {
         if (other instanceof EpsilonModel) {
-            System.out.println("IMPACT");
             impact(Utils.relativeLocation(intersection, anchor), intersection, other);
         }
         if (other instanceof Orb) impact(Utils.relativeLocation(intersection, anchor), intersection, other);

@@ -3,6 +3,7 @@ package game.model.charactersModel;
 import game.controller.Game;
 import game.controller.PolygonUtils;
 import game.controller.Utils;
+import game.model.reflection.Enemy;
 import shared.constants.Constants;
 import shared.constants.EntityConstants;
 import shared.constants.SmileyConstants;
@@ -24,7 +25,7 @@ import static game.controller.UserInterfaceController.createOmenoctView;
 import static game.controller.Utils.*;
 import static shared.Model.imagetools.ToolBox.getBufferedImage;
 
-public class OmenoctModel extends GeoShapeModel implements Collidable {
+public class OmenoctModel extends GeoShapeModel implements Collidable, Enemy {
     public boolean isOnEpsilonPanel = false;
     protected static MyPolygon pol;
     static BufferedImage image;
@@ -39,6 +40,9 @@ public class OmenoctModel extends GeoShapeModel implements Collidable {
         initVertices();
         createOmenoctView(id, gameID);
         setTarget();
+    }
+
+    public OmenoctModel() {
     }
 
     private void initVertices() {
@@ -87,8 +91,13 @@ public class OmenoctModel extends GeoShapeModel implements Collidable {
         super.eliminate();
         collidables.remove(this);
 
+        findGame(gameID).enemyEliminated();
+
         CollectibleModel.dropCollectible(
-                getAnchor(), EntityConstants.OMENOCT_NUM_OF_COLLECTIBLES.getValue(), EntityConstants.OMENOCT_COLLECTIBLES_XP.getValue(), gameID
+                getAnchor(),
+                EntityConstants.OMENOCT_NUM_OF_COLLECTIBLES.getValue(),
+                EntityConstants.OMENOCT_COLLECTIBLES_XP.getValue(),
+                gameID
         );
     }
 
@@ -365,6 +374,38 @@ public class OmenoctModel extends GeoShapeModel implements Collidable {
     }
 
 
+    public void create(String gameID) {
+        Point2D anchor;
+        boolean isValid;
+        double MIN_DISTANCE = 100.0; // The minimum distance to avoid collision
+        int maxAttempts = 100;
+        int attempts = 0;
 
+        do {
+            isValid = true;
+            anchor = findRandomPoint();
+            attempts++;
 
+            for (GeoShapeModel model : findGame(gameID).entities) {
+                double distance = model.getAnchor().distance(anchor);
+                if (distance < MIN_DISTANCE) {
+                    isValid = false;
+                    break;
+                }
+            }
+        } while (!isValid && attempts < maxAttempts);
+
+        if (isValid) {
+            // Add the new enemy to the game's entities
+            new OmenoctModel(anchor, gameID);
+        } else {
+            System.out.println("Failed to create SquarantineModel without intersection after " + maxAttempts + " attempts.");
+        }
+    }
+
+    @Override
+    public int getMinSpawnWave() {
+        // todo handle omenoct collision ...
+        return 3;
+    }
 }

@@ -32,18 +32,21 @@ public class NecropickModel extends GeoShapeModel implements Collidable, Enemy {
 
     public NecropickModel(String gameID) {
         super(new Point2D.Double(-100, -100), image, pol, gameID);
+        setTarget();
         stateChangeTime = findGame(gameID).ELAPSED_TIME; // Initialize state change time
         isHovering = true; // Start in hovering state
         collidables.add(this);
         this.health = EntityConstants.NECROPICK_HEALTH.getValue();
-        setTarget();
         createNecropickView(id, gameID);
     }
 
+    public NecropickModel() {
+    }
 
     protected void setTarget(){
         Game game = findGame(gameID);
         int index = random.nextInt(game.epsilons.size());
+        target = game.epsilons.get(index);
     }
 
 
@@ -118,8 +121,13 @@ public class NecropickModel extends GeoShapeModel implements Collidable, Enemy {
         super.eliminate();
         collidables.remove(this);
 
+        findGame(gameID).enemyEliminated();
+
         CollectibleModel.dropCollectible(
-                getAnchor(), EntityConstants.NECROPICK_NUM_OF_COLLECTIBLES.getValue(), EntityConstants.NECROPICK_COLLECTIBLES_XP.getValue(), gameID
+                getAnchor(),
+                EntityConstants.NECROPICK_NUM_OF_COLLECTIBLES.getValue(),
+                EntityConstants.NECROPICK_COLLECTIBLES_XP.getValue(),
+                gameID
         );
     }
 
@@ -132,8 +140,6 @@ public class NecropickModel extends GeoShapeModel implements Collidable, Enemy {
                 doesIntersect = findNextPos();
             }
         }
-
-//        UserInterfaceController.updateNecropick(id);
     }
 
     private boolean findNextPos() {
@@ -175,7 +181,7 @@ public class NecropickModel extends GeoShapeModel implements Collidable, Enemy {
 
     @Override
     public void create(String gameID) {
-
+        new NecropickModel(gameID);
     }
 
 

@@ -70,8 +70,9 @@ public interface Collidable {
 
         else {
 //            System.out.println("BARICAAAAAAAAAAAA");
-            Point2D intersection = closestPointOnPolygon(getAnchor(), collidable.getVertices()); // todo this calculation most be done with edges when dealing with FinalPanel
-            if (intersection.distance(getAnchor()) <= getRadius()) { // todo change radius by an offset amount
+            Point2D intersection = closestPointOnPolygon(getAnchor(), collidable.getVertices());
+            if (intersection == null) return;
+            if (intersection.distance(getAnchor()) <= getRadius()) {
 
                 this.onCollision(collidable, intersection);
                 collidable.onCollision(this, intersection);

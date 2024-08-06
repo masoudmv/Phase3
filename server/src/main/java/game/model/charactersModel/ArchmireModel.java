@@ -56,7 +56,8 @@ public class ArchmireModel extends GeoShapeModel implements Collidable, Enemy {
         damageSize.put(AttackTypes.AOE, 1);
     }
 
-
+    public ArchmireModel() {
+    }
 
     private void updateDirection(){
         Point2D destination = target.getAnchor();
@@ -85,6 +86,8 @@ public class ArchmireModel extends GeoShapeModel implements Collidable, Enemy {
     public void eliminate() {
         super.eliminate();
         collidables.remove(this);
+
+        findGame(gameID).enemyEliminated();
 
         CollectibleModel.dropCollectible(getAnchor(),
                 EntityConstants.ARCHMIRE_NUM_OF_COLLECTIBLES.getValue(),

@@ -57,8 +57,8 @@ public class SquarantineModel extends GeoShapeModel implements Movable, Collidab
 
     }
 
-
-
+    public SquarantineModel() {
+    }
 
     private void initMyPolygon() {
         double halfEdgeLength = edgeLength / 2;
@@ -372,6 +372,7 @@ public class SquarantineModel extends GeoShapeModel implements Movable, Collidab
         movables.remove(this);
         findGame(gameID).squarantineModels.remove(this);
 
+        findGame(gameID).enemyEliminated();
 //        aliveEnemies--;
         CollectibleModel.dropCollectible(
                 getAnchor(),
@@ -382,7 +383,10 @@ public class SquarantineModel extends GeoShapeModel implements Movable, Collidab
 
     }
 
-
+    @Override
+    public boolean isUniquePerWave(){
+        return false;
+    }
 
 
 
@@ -403,7 +407,6 @@ public class SquarantineModel extends GeoShapeModel implements Movable, Collidab
 
     }
 
-    @Override
     public void create(String gameID) {
         Point2D anchor;
         boolean isValid;

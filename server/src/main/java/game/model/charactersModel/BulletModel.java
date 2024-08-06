@@ -257,6 +257,13 @@ public class BulletModel extends GeoShapeModel implements Movable, Collidable, I
         Game game = findGame(gameID);
         EpsilonModel creator = null;
 
+        if (!createdByEpsilon){
+            this.damage((Entity) other, AttackTypes.MELEE);
+            createImpactWave(this, other, intersection);
+            eliminate();
+            return;
+        }
+
         for (EpsilonModel epsilon : game.epsilons){
             if (epsilon.getMacAddress().equals(creatorMacAddress)) creator = epsilon;
         }
@@ -268,13 +275,9 @@ public class BulletModel extends GeoShapeModel implements Movable, Collidable, I
 
         boolean effectDamage = (creatorIsBlack && !otherIsBlack) || (otherIsBlack && !creatorIsBlack);
 
-        if (!createdByEpsilon){
-            this.damage((Entity) other, AttackTypes.MELEE);
-            createImpactWave(this, other, intersection);
-            eliminate();
-        }
 
-        else if (effectDamage){
+
+        if (effectDamage){
             this.damage((Entity) other, AttackTypes.MELEE);
             createImpactWave(this, other, intersection);
             eliminate();

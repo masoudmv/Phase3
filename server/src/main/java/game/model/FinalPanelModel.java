@@ -3,6 +3,7 @@ package game.model;
 
 import game.controller.Game;
 import game.controller.Utils;
+import game.model.collision.CollisionState;
 import game.model.entities.Profile;
 import game.model.charactersModel.BulletModel;
 import game.model.charactersModel.EpsilonModel;
@@ -79,7 +80,7 @@ public class FinalPanelModel implements Collidable, Serializable {
         this.vertices = new ArrayList<>();
 
         updateVertices();
-        finalPanelModels.add(this);
+        findGame(gameID).finalPanelModels.add(this);
 
         createFinalPanelView(id, location, new Dimension((int) size.getWidth(), (int) size.getHeight()), gameID);
         collidables.add(this);
@@ -192,7 +193,7 @@ public class FinalPanelModel implements Collidable, Serializable {
             }
         }
 
-        finalPanelModels.remove(this);
+        findGame(gameID).finalPanelModels.remove(this);
         collidables.remove(this);
         removeFinalPanelView(id, gameID);
     }
@@ -212,8 +213,10 @@ public class FinalPanelModel implements Collidable, Serializable {
         return edges;
     }
 
-    private void handleCollisionWithBullet(Point2D intersection){
+    private void handleCollisionWithBullet(Collidable other, Point2D intersection){
         int index = Utils.findPanelEdgeIndex(getArrayListVertices(), intersection);
+        boolean createdByEpsilon = ((BulletModel) other).isCreatedByEpsilon();
+        if (!createdByEpsilon) return;
         switch (index){
             case 0 -> moveUp = true;
             case 1 -> moveRight = true;
@@ -713,8 +716,8 @@ public class FinalPanelModel implements Collidable, Serializable {
 
 
     public void onCollision(Collidable other, Point2D intersection){
-        if (other instanceof BulletModel) handleCollisionWithBullet(intersection);
-        if (other instanceof FinalPanelModel) handleCollisionWithBullet(intersection);
+        if (other instanceof BulletModel) handleCollisionWithBullet(other, intersection);
+//        if (other instanceof FinalPanelModel) handleCollisionWithBullet(intersection);
         if (other instanceof BulletModel) {
             createImpactWave(this, other, intersection);
         }

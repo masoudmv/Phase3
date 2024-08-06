@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import static game.controller.UserInterfaceController.createBarricadosView;
-import static game.model.FinalPanelModel.finalPanelModels;
+//import static game.model.FinalPanelModel.finalPanelModels;
 import static shared.Model.imagetools.ToolBox.getBufferedImage;
 import static shared.constants.Constants.FRAME_DIMENSION;
 
@@ -119,7 +119,7 @@ public class BarricadosModel extends GeoShapeModel implements Collidable, Enemy 
             pivot = new Point2D.Double(x, y);
             Point2D panelPivot = new Point2D.Double(x - 200, y - 200);
 
-            isValid = !wouldIntersect(panelPivot, panelSize);
+            isValid = !wouldIntersect(panelPivot, panelSize, gameID);
             attempts++;
         } while (!isValid && attempts < maxAttempts);
 
@@ -136,13 +136,13 @@ public class BarricadosModel extends GeoShapeModel implements Collidable, Enemy 
     }
 
 
-    public static boolean wouldIntersect(Point2D location, Dimension2D size) {
+    public static boolean wouldIntersect(Point2D location, Dimension2D size, String gameID) {
         double newLeft = location.getX();
         double newRight = location.getX() + size.getWidth();
         double newTop = location.getY();
         double newBottom = location.getY() + size.getHeight();
 
-        for (FinalPanelModel panel : finalPanelModels) {
+        for (FinalPanelModel panel : findGame(gameID).finalPanelModels) {
             double existingLeft = panel.getLocation().getX();
             double existingRight = panel.getLocation().getX() + panel.getSize().getWidth();
             double existingTop = panel.getLocation().getY();

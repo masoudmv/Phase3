@@ -403,10 +403,9 @@ public abstract class GeoShapeModel extends Entity {
 
 
     public void update(){
-
-
-
     }
+
+
 
     public String getGameID() {
         return gameID;
@@ -416,7 +415,7 @@ public abstract class GeoShapeModel extends Entity {
         this.gameID = gameID;
     }
 
-    protected Game findGame(String gameID){
+    protected static Game findGame(String gameID){
         return DataBase.getDataBase().findGame(gameID);
     }
 }

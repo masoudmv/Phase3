@@ -35,6 +35,8 @@ public class BabyArchmire extends ArchmireModel {
         );
     }
 
+    public BabyArchmire() {
+    }
 
     public static BufferedImage loadImage() {
         Image img = new ImageIcon("./client/src/babyArchmire.png").getImage();

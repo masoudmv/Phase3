@@ -3,7 +3,6 @@ package game.controller;
 import game.model.DoubleDimension2D;
 import game.model.FinalPanelModel;
 import game.model.charactersModel.*;
-import game.model.charactersModel.blackOrb.BlackOrb;
 import game.model.entities.Ability;
 import game.model.entities.Profile;
 import server.DataBase;
@@ -14,11 +13,9 @@ import java.awt.*;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
-;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import static shared.constants.Constants.FRAME_DIMENSION;
-
 
 public class Game {
     private String gameID;
@@ -27,7 +24,7 @@ public class Game {
     public List<GeoShapeModel> entities = new CopyOnWriteArrayList<>();
     public List<SquarantineModel> squarantineModels = new ArrayList<>();
     public List<TrigorathModel> trigorathModels = new ArrayList<>();
-
+    public List<FinalPanelModel> finalPanelModels = new ArrayList<>();
 
     public double ELAPSED_TIME = 0;
     public int wave;
@@ -35,6 +32,7 @@ public class Game {
 
     private GameType gameType;
     private GameLoop gameLoop;
+
     private long pausedTime = 0;
 
     private Profile profile;
@@ -49,13 +47,11 @@ public class Game {
 
         ELAPSED_TIME = 0;
 
-
         Constants.RADIUS = 15;
 
-        gameLoop = new GameLoop(gameID);
+        addEpsilons("1", "2", GameType.monomachia);
 
-
-
+        gameLoop = new GameLoop(gameID, 5); // Initialize GameLoop with number of waves
     }
 
     public void addEpsilons(String macAddress1, String macAddress2, GameType gameType) {
@@ -92,25 +88,13 @@ public class Game {
         }
 
         profile.activeAbilities.put("1", Ability.EMPOWER);
-        BlackOrb blackOrb = new BlackOrb();
-        blackOrb.create(gameID);
-       TrigorathModel t = new TrigorathModel();
-       t.create(gameID);
-       t.create(gameID);
-       t.create(gameID);
-       t.create(gameID);
 
-        BarricadosModel b = new BarricadosModel();
-        b.create(gameID);
-//        b.create(gameID);
-//        b.create(gameID);
-//        b.create(gameID);
-//        b.create(gameID);
-//        b.create(gameID);
-//        b.create(gameID);
-
-
-
+//        TrigorathModel t = new TrigorathModel();
+//        t.create(gameID);
+//        t.create(gameID);
+//
+//        NecropickModel n = new NecropickModel();
+//        n.create(gameID);
     }
 
     public boolean isPaused() {
@@ -127,16 +111,13 @@ public class Game {
         }
     }
 
-
     public GameType getGameType() {
         return gameType;
     }
 
-
     public String getGameID() {
         return gameID;
     }
-
 
     public void setGameID(String gameID) {
         this.gameID = gameID;
@@ -157,5 +138,11 @@ public class Game {
     public void setProfile(Profile profile) {
         this.profile = profile;
     }
-}
 
+    // Notify GameLoop when an enemy is eliminated
+    public void enemyEliminated() {
+        gameLoop.enemyEliminated();
+    }
+
+
+}

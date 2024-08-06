@@ -4,8 +4,8 @@ import game.model.FinalPanelModel;
 import game.model.PanelManager;
 import game.model.charactersModel.*;
 import game.model.entities.Profile;
+import game.model.reflection.WaveManager;
 import game.model.charactersModel.blackOrb.BlackOrb;
-import javafx.scene.SpotLight;
 import server.DataBase;
 import server.GameData;
 import shared.Model.TimedLocation;
@@ -13,10 +13,8 @@ import shared.Model.dummies.DummyModel;
 import shared.Model.dummies.DummyPanel;
 
 import javax.swing.Timer;
-
 import java.awt.*;
 import java.awt.geom.Dimension2D;
-
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -24,8 +22,6 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static game.controller.Game.*;
-
-import static game.model.FinalPanelModel.finalPanelModels;
 import static game.model.charactersModel.CollectibleModel.collectibleModels;
 import static game.model.collision.Collidable.collidables;
 import static shared.Model.TimedLocation.myPolToPolygon;
@@ -34,27 +30,24 @@ public class GameLoop implements Runnable {
     private String gameID;
     private final AtomicBoolean running = new AtomicBoolean(false);
     private final AtomicBoolean exit = new AtomicBoolean(false);
-    private final AtomicBoolean paused = new AtomicBoolean(false); // Added for pause functionality
+    private final AtomicBoolean paused = new AtomicBoolean(false);
 
     private int updateCount = 0;
-
     public static boolean movementInProgress = false;
-
     private Timer gameLoop;
-
     private int extraBullet = 0;
-
     double lastHpRegainTime = -1;
     private double hpRegainRate = Double.MAX_VALUE;
-
     public static boolean decreaseVelocities;
+    private WaveManager waveManager;
+    private Thread waveManagerThread; // Thread for WaveManager
 
-
-    public GameLoop(String gameID) {
+    public GameLoop(String gameID, int numberOfWaves) {
         this.gameID = gameID;
-        decreaseVelocities=false;
+        decreaseVelocities = false;
         movementInProgress = false;
-
+        this.waveManager = new WaveManager(gameID, numberOfWaves);
+        this.waveManagerThread = new Thread(waveManager); // Initialize the WaveManager thread
         this.start();
     }
 
@@ -62,6 +55,7 @@ public class GameLoop implements Runnable {
         if (running.get()) return;
         running.set(true);
         new Thread(this).start();
+        waveManagerThread.start(); // Start the WaveManager thread
     }
 
     public void stop() {
@@ -83,10 +77,12 @@ public class GameLoop implements Runnable {
     }
 
     public void updateModel() {
-        if (paused.get()) return; // Skip update if game is paused
+        if (paused.get()) return;
+
+        List<FinalPanelModel> finalPanelModels = findGame(gameID).finalPanelModels;
 
         for (int i = 0; i < finalPanelModels.size(); i++) {
-            finalPanelModels.get(i).panelMotion();  // todo
+            finalPanelModels.get(i).panelMotion();
         }
 
         for (int i = 0; i < finalPanelModels.size(); i++) {
@@ -100,10 +96,6 @@ public class GameLoop implements Runnable {
                 collidables.get(i).checkCollision(collidables.get(j));
             }
         }
-
-//        if (ELAPSED_TIME > 2 && ELAPSED_TIME < 10) {
-//            // panel.expansion();
-//        }
 
         findGame(gameID).ELAPSED_TIME += 0.0167;
 
@@ -212,8 +204,6 @@ public class GameLoop implements Runnable {
             panel.setDimension(dimension);
             gameData.addUpdatedPanels(panel);
         }
-
-
     }
 
     @Override
@@ -243,7 +233,15 @@ public class GameLoop implements Runnable {
         }
     }
 
-    private Game findGame(String gameID){
+    private Game findGame(String gameID) {
         return DataBase.getDataBase().findGame(gameID);
+    }
+
+    public void enemyEliminated() {
+        waveManager.onEnemyEliminated();
+    }
+
+    public WaveManager getWaveManager() {
+        return waveManager;
     }
 }

@@ -39,20 +39,11 @@ public class Main {
         ArchmireModel.loadImage();
         Orb.loadImage();
         BarricadosModel.loadImage();
-
-        BufferedImage b = EpsilonModel.loadImage();
-        GraphicalObject bows = new GraphicalObject(b);
-        MyPolygon pol = bows.getMyBoundingPolygon();
-
-
-//        new SquarantineModel(new Point2D.Double(400, 500));
-//        new OmenoctModel(new Point2D.Double(1400, 500));
-
-
+       EpsilonModel.loadImage();
 
 
         new Profile();
-        new Game(GameType.monomachia).addEpsilons("1", "2", GameType.monomachia);
+        new Game(GameType.monomachia);
         Skill.initializeSkills();
 
 
