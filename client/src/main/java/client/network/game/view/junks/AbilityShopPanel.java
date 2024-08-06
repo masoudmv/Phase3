@@ -5,6 +5,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
+import static client.network.RequestFactory.createBuyAbilityRequest;
 import static client.network.RequestFactory.createPauseRequest;
 
 public class AbilityShopPanel extends JPanel {
@@ -47,11 +48,7 @@ public class AbilityShopPanel extends JPanel {
     }
 
     private void performAbilityAction(Ability ability) {
-        if (Ability.activeAbility != null) {
-            JOptionPane.showMessageDialog(frame, "You already have an active ability!", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-        purchaseAbility(ability);
+        createBuyAbilityRequest(ability.getName());
     }
 
     private void purchaseAbility(Ability ability) {

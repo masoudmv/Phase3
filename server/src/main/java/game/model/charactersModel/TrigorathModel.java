@@ -1,8 +1,11 @@
 
 package game.model.charactersModel;
 
+import game.controller.GameType;
 import game.controller.UserInterfaceController;
 import game.controller.Utils;
+import game.model.entities.AttackTypes;
+import game.model.entities.Entity;
 import game.model.reflection.Enemy;
 import shared.constants.Constants;
 import shared.constants.EntityConstants;
@@ -38,6 +41,7 @@ public class TrigorathModel extends GeoShapeModel implements Movable, Collidable
 
     public TrigorathModel(Point2D anchor, String gameID) {
         super(anchor, image, new MyPolygon(new double[3], new double[3], 3), gameID);
+        setTarget();
         this.gameID = gameID;
         initVertices();
         findGame(gameID).trigorathModels.add(this);
@@ -46,9 +50,9 @@ public class TrigorathModel extends GeoShapeModel implements Movable, Collidable
         impactables.add(this);
 
         this.health = 15;
+        damageSize.put(AttackTypes.MELEE, 10);
 
         UserInterfaceController.createTrigorathView(id, gameID);
-        setTarget();
     }
 
     public TrigorathModel() {
@@ -464,9 +468,23 @@ public class TrigorathModel extends GeoShapeModel implements Movable, Collidable
 
         if (isValid) {
             // Add the new enemy to the game's entities
-            new TrigorathModel(anchor, gameID);
+            GameType type = findGame(gameID).getGameType();
+            switch (type) {
+                case monomachia: {
+                    Point2D pivot = getSymmetricPoint(anchor);
+                    new TrigorathModel(pivot, gameID);
+                    new TrigorathModel(anchor, gameID);
+                    break;
+                }
+                case colosseum:{
+                    new TrigorathModel(anchor, gameID);
+                    break;
+                }
+            }
+
+
         } else {
-            System.out.println("Failed to create SquarantineModel without intersection after " + maxAttempts + " attempts.");
+            System.out.println("Failed to create Trigorath without intersection after " + maxAttempts + " attempts.");
         }
     }
 
@@ -483,11 +501,10 @@ public class TrigorathModel extends GeoShapeModel implements Movable, Collidable
 
 
 
-
-
     @Override
     public void onCollision(Collidable other, Point2D intersection) {
         if (other instanceof EpsilonModel) {
+            handleDamageEpsilon((EpsilonModel) other);
             impact(Utils.relativeLocation(intersection, anchor), intersection, other);
         }
         if (other instanceof Orb) impact(Utils.relativeLocation(intersection, anchor), intersection, other);

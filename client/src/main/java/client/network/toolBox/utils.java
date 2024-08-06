@@ -21,7 +21,6 @@ public class utils {
             Status.getINSTANCE().setSocket(socketRequestSender);
 
             // send identification Request ...
-            System.out.println("good");
             RequestFactory.createIdentificateReq();
             // start a thread to check connection with server ...
             new Thread(new ConnectionChecker()).start();
@@ -65,7 +64,6 @@ public class utils {
                         if (!Status.getINSTANCE().isConnectedToServer()) break;
                     }
                     RequestFactory.createIdentificateReq();
-                    System.out.println("Connection check successful.");
                 } catch (Exception e) {
                     JOptionPane.showMessageDialog(MainFrame.getINSTANCE(), "Connection Lost!", "Error", JOptionPane.ERROR_MESSAGE);
                     Status.getINSTANCE().setConnectedToServer(false);

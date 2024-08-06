@@ -95,7 +95,7 @@ public class Status {
 
                     // todo revert to using mac address ...
 //                    return String.join("-", hexadecimal);
-                    return UUID.randomUUID().toString();
+                    return "1";
 
                 }
             }

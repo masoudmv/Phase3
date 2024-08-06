@@ -1,6 +1,7 @@
 package game.model.charactersModel;
 
 import game.controller.Game;
+import game.controller.GameType;
 import game.controller.UserInterfaceController;
 import game.controller.Utils;
 import game.model.reflection.Enemy;
@@ -180,7 +181,20 @@ public class ArchmireModel extends GeoShapeModel implements Collidable, Enemy {
     @Override
     public void create(String gameID) {
         Point2D anchor = findRandomPoint();
-        new ArchmireModel(anchor, gameID);
+        GameType type = findGame(gameID).getGameType();
+        switch (type) {
+            case monomachia: {
+                Point2D pivot = getSymmetricPoint(anchor);
+                new ArchmireModel(pivot, gameID);
+                new ArchmireModel(anchor, gameID);
+                break;
+            }
+            case colosseum:{
+                new ArchmireModel(anchor, gameID);
+                break;
+            }
+        }
+
     }
 
     @Override

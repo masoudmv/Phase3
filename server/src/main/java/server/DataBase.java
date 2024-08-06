@@ -8,6 +8,7 @@ import shared.response.TransferReqToClientResponse;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class DataBase {
@@ -18,6 +19,7 @@ public class DataBase {
     private final List<Pair<Squad, Squad>> squadPairs = new CopyOnWriteArrayList<>();
     private final List<Pair<Player, Player>> monomachiaPairs = new CopyOnWriteArrayList<>();
     private final List<Pair<Player, Player>> colosseumPairs = new CopyOnWriteArrayList<>();
+    private final List<Match> matches = new CopyOnWriteArrayList<>();
     // todo update playerPairs based on summons ...
     private boolean squadBattleInitiated = false;
 
@@ -397,6 +399,53 @@ public class DataBase {
         }
     }
 
+    public synchronized void terminateSquadBattle() {
+        for (Pair<Squad, Squad> pair : squadPairs){
+            boolean firstIsWinner;
+            Squad first = pair.getFirst();
+            Squad second = pair.getSecond();
+            int firstSquad = first.getBattleXP();
+            int secondSquad = second.getBattleXP();
+            if (firstSquad > secondSquad) firstIsWinner = true;
+            else if (firstSquad < secondSquad)firstIsWinner = false;
+            else {
+                int firstVic = first.getMonomachiaVictories();
+                int secondVic = second.getMonomachiaVictories();
+                if (firstVic > secondVic) firstIsWinner = true;
+                else if (firstVic < secondVic)firstIsWinner = false;
+                else {
+                    boolean firstG = first.gefjonIsActivated();
+                    boolean secondG = second.gefjonIsActivated();
+                    if (firstG && !secondG) firstIsWinner = true;
+                    else if (!firstG && secondG) firstIsWinner = false;
+                    else {
+                        int index = new Random().nextInt(2);
+                        if (index == 0) firstIsWinner = true;
+                        else firstIsWinner = false;
+                    }
+                }
+            }
+
+            if (firstIsWinner){
+                for (Player player : first.getMembers()){
+                    player.addXP(500);
+                }
+
+                for (Player player : second.getMembers()){
+                    player.reduceXP(300);
+                }
+            } else {
+                for (Player player : second.getMembers()){
+                    player.addXP(500);
+                }
+
+                for (Player player : first.getMembers()){
+                    player.reduceXP(300);
+                }
+            }
+        }
+    }
+
 
     public GameData findGameData(String id){
         for (GameData gameData : gameData){
@@ -428,4 +477,10 @@ public class DataBase {
         }
         return null;
     }
+
+    public void addMatch(Match match){
+        matches.add(match);
+    }
+
+
 }

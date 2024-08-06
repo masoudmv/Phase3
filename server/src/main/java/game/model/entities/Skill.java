@@ -54,7 +54,6 @@ public enum Skill {
     public ActionListener getAction(String gameID, String macAddress) {
         return switch (this) {
             case ARES -> e -> {
-
                 findGame(gameID).getProfile().EPSILON_MELEE_DAMAGE += (int) SkillConstants.WRIT_OF_ARES_BUFF_AMOUNT.getValue();
                 findGame(gameID).getProfile().EPSILON_RANGED_DAMAGE += (int) SkillConstants.WRIT_OF_ARES_BUFF_AMOUNT.getValue();
             };

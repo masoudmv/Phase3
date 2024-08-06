@@ -203,6 +203,11 @@ public class Player extends Model {
         this.battleID = battleID;
     }
 
+    public int incrementInMenuTime(){
+        inMenuTime += 1;
+        return inMenuTime;
+    }
+
 
 
     public int getInMenuTime() {
@@ -211,6 +216,15 @@ public class Player extends Model {
 
     public void setInMenuTime(int inMenuTime) {
         this.inMenuTime = inMenuTime;
+    }
+
+    public void addXP(int XP){
+        this.XP += XP;
+    }
+
+    public void reduceXP(int XP){
+        this.XP -= XP;
+        if (XP < 0) XP = 0;
     }
 }
 

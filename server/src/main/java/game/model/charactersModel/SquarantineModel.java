@@ -1,7 +1,10 @@
 package game.model.charactersModel;
 
+import game.controller.GameType;
 import game.controller.UserInterfaceController;
 import game.controller.Utils;
+import game.model.entities.AttackTypes;
+import game.model.entities.Entity;
 import game.model.reflection.Enemy;
 import shared.constants.Constants;
 import shared.constants.EntityConstants;
@@ -53,6 +56,7 @@ public class SquarantineModel extends GeoShapeModel implements Movable, Collidab
         impactables.add(this);
         this.health = 10;
         createSquarantineView(id, gameID);
+        damageSize.put(AttackTypes.MELEE, 6);
         setTarget();
 
     }
@@ -390,9 +394,14 @@ public class SquarantineModel extends GeoShapeModel implements Movable, Collidab
 
 
 
+
+
     @Override
     public void onCollision(Collidable other, Point2D intersection) {
-        if (other instanceof EpsilonModel) impact(Utils.relativeLocation(intersection, anchor), intersection, other);
+        if (other instanceof EpsilonModel) {
+            handleDamageEpsilon((EpsilonModel) other);
+            impact(Utils.relativeLocation(intersection, anchor), intersection, other);
+        }
         if (other instanceof Orb) impact(Utils.relativeLocation(intersection, anchor), intersection, other);
         if (other instanceof BulletModel) {
             impact(Utils.relativeLocation(intersection, anchor), intersection, other, 7200);
@@ -430,9 +439,23 @@ public class SquarantineModel extends GeoShapeModel implements Movable, Collidab
 
         if (isValid) {
             // Add the new enemy to the game's entities
-            new SquarantineModel(anchor, gameID);
+            GameType type = findGame(gameID).getGameType();
+            switch (type) {
+                case monomachia: {
+                    Point2D pivot = getSymmetricPoint(anchor);
+                    new SquarantineModel(pivot, gameID);
+                    new SquarantineModel(anchor, gameID);
+                    break;
+                }
+                case colosseum:{
+                    new SquarantineModel(anchor, gameID);
+                    break;
+                }
+            }
+
+
         } else {
-            System.out.println("Failed to create SquarantineModel without intersection after " + maxAttempts + " attempts.");
+            System.out.println("Failed to create Trigorath without intersection after " + maxAttempts + " attempts.");
         }
     }
 

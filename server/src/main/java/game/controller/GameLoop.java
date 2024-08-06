@@ -41,6 +41,7 @@ public class GameLoop implements Runnable {
     public static boolean decreaseVelocities;
     private WaveManager waveManager;
     private Thread waveManagerThread; // Thread for WaveManager
+    private Thread pauseThread;
 
     public GameLoop(String gameID, int numberOfWaves) {
         this.gameID = gameID;
@@ -64,11 +65,29 @@ public class GameLoop implements Runnable {
         exit.set(true);
     }
 
-    public void pauseGame() {
+    public void pauseGame(String macAddress) {
+        pauseThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    while (true){
+                        Thread.sleep(1000);
+                        int x = DataBase.getDataBase().findPlayer("1").incrementInMenuTime();
+                        if (x > 45) resumeGame();
+                    }
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+        pauseThread.start();
+        waveManager.pause();
         paused.set(true);
     }
 
     public void resumeGame() {
+        waveManager.resume();
+        pauseThread.interrupt();
         paused.set(false);
     }
 

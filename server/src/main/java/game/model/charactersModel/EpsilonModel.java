@@ -220,13 +220,14 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
         updateLocalPanel();
 
 
-//        moveBabies(direction);
+        moveBabies(direction);
         update(direction);
 
         applyCerebrus();
     }
 
     private void moveBabies(Direction direction){
+        if (babies == null) return;
         if (babies[0] == null) return;
         for (int i = 0; i < 3; i++) {
             babies[i].move(direction);
@@ -336,7 +337,7 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
     }
 
     public void cerebrus(){
-        BabyEpsilon.createBabies(gameID);
+        BabyEpsilon.createBabies(gameID, macAddress);
     }
 
     @Override

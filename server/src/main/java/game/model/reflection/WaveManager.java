@@ -7,11 +7,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 import org.reflections.Reflections;
 
 public class WaveManager implements Runnable {
-    private static final int INITIAL_DELAY = 8000; // 5 seconds
+    private static final int INITIAL_DELAY = 12000; // 12 seconds
     private static final int MIN_DELAY = 1000; // minimum delay of 1 second
     private static final int ENEMIES_TO_ELIMINATE_PER_WAVE = 2; // Example threshold
     private List<Class<? extends Enemy>> enemyClasses;
@@ -19,6 +20,10 @@ public class WaveManager implements Runnable {
     private AtomicInteger enemiesGenerated; // Track generated enemies per wave
     private String gameID;
     private int numberOfWaves;
+    private int waveIndex;
+
+    private final AtomicBoolean running = new AtomicBoolean(true); // To control the running state
+    private final Object pauseLock = new Object(); // Lock object for pausing
 
     public WaveManager(String gameID, int numberOfWaves) {
         this.enemyClasses = new ArrayList<>();
@@ -39,11 +44,21 @@ public class WaveManager implements Runnable {
 
     @Override
     public void run() {
-        generateWaves(gameID, numberOfWaves);
+        try {
+            generateWaves(gameID, numberOfWaves);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
     }
 
-    private void generateWaves(String gameID, int numberOfWaves) {
+    private void generateWaves(String gameID, int numberOfWaves) throws InterruptedException {
         for (int wave = 1; wave <= numberOfWaves; wave++) {
+            synchronized (pauseLock) {
+                while (!running.get()) {
+                    pauseLock.wait(); // Wait until notified
+                }
+            }
+            waveIndex = wave;
             System.out.println("Starting wave " + wave);
             generateWave(gameID, wave);
             waitForWaveCompletion();
@@ -53,12 +68,30 @@ public class WaveManager implements Runnable {
         }
     }
 
-    private void generateWave(String gameID, int waveNumber) {
+    public void pause() {
+        running.set(false);
+    }
+
+    public void resume() {
+        synchronized (pauseLock) {
+            running.set(true);
+            pauseLock.notifyAll();
+        }
+    }
+
+    private void generateWave(String gameID, int waveNumber) throws InterruptedException {
         int delay = INITIAL_DELAY;
         List<Class<? extends Enemy>> generatedEnemies = new ArrayList<>();
         enemiesGenerated.set(0);
 
         while (enemiesEliminated.get() < ENEMIES_TO_ELIMINATE_PER_WAVE) {
+            synchronized (pauseLock) {
+                while (!running.get()) {
+
+                    pauseLock.wait(); // Wait until notified to resume
+                }
+            }
+
             boolean enemyGenerated = false;
 
             for (Class<? extends Enemy> enemyClass : enemyClasses) {
@@ -115,25 +148,17 @@ public class WaveManager implements Runnable {
         return false;
     }
 
-    private void waitForWaveCompletion() {
+    private void waitForWaveCompletion() throws InterruptedException {
         while (enemiesEliminated.get() < ENEMIES_TO_ELIMINATE_PER_WAVE) {
-            try {
-                System.out.println("Waiting for wave completion: " + enemiesEliminated.get() + "/" + ENEMIES_TO_ELIMINATE_PER_WAVE);
-                Thread.sleep(1000); // Check every second
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            System.out.println("Waiting for wave completion: " + enemiesEliminated.get() + "/" + ENEMIES_TO_ELIMINATE_PER_WAVE);
+            Thread.sleep(1000); // Check every second
         }
     }
 
-    private void waitForAllEnemiesToBeEliminated() {
+    private void waitForAllEnemiesToBeEliminated() throws InterruptedException {
         while (enemiesEliminated.get() < enemiesGenerated.get()) {
-            try {
-                System.out.println("Waiting for all enemies to be eliminated: " + enemiesEliminated.get() + "/" + enemiesGenerated.get());
-                Thread.sleep(1000); // Check every second
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            System.out.println("Waiting for all enemies to be eliminated: " + enemiesEliminated.get() + "/" + enemiesGenerated.get());
+            Thread.sleep(1000); // Check every second
         }
         enemiesEliminated.set(0); // Reset for the next wave
     }
@@ -144,8 +169,7 @@ public class WaveManager implements Runnable {
         System.out.println("Enemy eliminated. Total eliminated: " + enemiesEliminated.get());
     }
 
-    public static void main(String[] args) {
-        WaveManager waveManager = new WaveManager("game123", 10); // Example usage
-        new Thread(waveManager).start();
+    public int getWaveIndex() {
+        return waveIndex;
     }
 }

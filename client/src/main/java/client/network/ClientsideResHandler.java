@@ -2,6 +2,7 @@ package client.network;
 
 import client.network.containers.SquadListPanel;
 import client.network.containers.MainFrame;
+import client.network.game.controller.onlineGame.ClientGame;
 import client.network.game.view.ClientDataBase;
 import client.network.game.view.FinalPanelView;
 import client.network.game.view.charactersView.*;
@@ -264,6 +265,15 @@ public class ClientsideResHandler implements ResponseHandler {
         Map<String, EntityType> createdEntities = stateResponse.getCreatedEntities();
         List<String> eliminates = stateResponse.getEliminatedEntities();
 
+//        System.out.println(stateResponse.isPaused());
+
+
+        if (!stateResponse.isPaused()){
+            if (client.network.game.view.MainFrame.getINSTANCE().abilityShopFrame != null){
+                client.network.game.view.MainFrame.getINSTANCE().handleAbilityShopPanelToggle();
+            }
+        }
+
 
         for (Map.Entry<String, EntityType> createdEntity : createdEntities.entrySet()) {
             String id = createdEntity.getKey();
@@ -332,6 +342,16 @@ public class ClientsideResHandler implements ResponseHandler {
                 panelView.eliminate();
             }
         }
+
+
+
+        ClientGame game = ClientGame.getINSTANCE();
+        game.updateTime(stateResponse.getElapsedTime());
+        game.updateHealth(stateResponse.getHealth());
+        game.updateXP(stateResponse.getGameXP());
+        game.updateWave(stateResponse.getWave());
+        game.updateSkill(stateResponse.getSkill());
+        game.updateOtherHP(stateResponse.getOtherHealth());
 
 
 

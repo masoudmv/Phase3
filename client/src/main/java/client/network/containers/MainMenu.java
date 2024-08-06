@@ -4,6 +4,7 @@ import client.network.RequestFactory;
 import client.network.Status;
 import shared.Model.Player;
 
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -13,6 +14,7 @@ import static client.network.toolBox.utils.tryConnection;
 
 public class MainMenu extends JPanel {
     private static MainMenu INSTANCE;
+
     JButton startButton = new JButton("Start");
     JButton squadButton = new JButton("Squad");
     JButton settingsButton = new JButton("Settings");
@@ -74,7 +76,6 @@ public class MainMenu extends JPanel {
         skillTreeButton.addActionListener(new SkillTreeButtonAction());
         toggleModeButton.addActionListener(new ToggleModeButtonAction());
         exitButton.addActionListener(new ExitButtonAction());
-
     }
 
     private class StartButtonAction implements ActionListener {
@@ -95,15 +96,12 @@ public class MainMenu extends JPanel {
 
             if (!isOnline){
                 JOptionPane.showMessageDialog(frame, "You are not online!", "Error", JOptionPane.ERROR_MESSAGE);
-            }
-
-            else if (username == null) {
+            } else if (username == null) {
                 username = JOptionPane.showInputDialog(frame, "Please Enter Your username");
                 RequestFactory.createIdentificateReq(username);
             }
 
             if (username != null && isOnline) {
-
                 status.getPlayer().setUsername(username);
                 PanelManager.showSquadMenu();
             }
@@ -128,6 +126,23 @@ public class MainMenu extends JPanel {
     private class SkillTreeButtonAction implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
+            JFrame skillFrame = new JFrame("Skill Tree");
+            skillFrame.setSize(400, 400);
+            skillFrame.setLayout(new GridLayout(5, 2)); // 5 rows, 2 columns
+
+            for (Skill skill : Skill.values()) {
+                JButton skillButton = new JButton(skill.name());
+//                skillButton.addActionListener(skill.getAction("gameID", "macAddress")); // Replace with appropriate values
+//                skillFrame.add(skillButton);
+            }
+
+            skillFrame.setVisible(true);
+        }
+    }
+
+    private class SkillTreeButtonActionOld implements ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e) {
             // SkillTree button logic
             System.out.println("SkillTree button clicked");
         }
@@ -136,22 +151,15 @@ public class MainMenu extends JPanel {
     private class ToggleModeButtonAction implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-//            toggleOnlineOfflineMode();
-
             if (isOnline) {
                 Status.getINSTANCE().getSocket().close();
                 Status.getINSTANCE().setConnectedToServer(false);
                 System.out.println("socket closed successfully ... ");
-//                isOnline = false;
-
             } else {
                 System.out.println("in else block");
                 tryConnection();
             }
-
-
             updateStatusLabel();
-//            Menu.getINSTANCE();
         }
     }
 
@@ -161,8 +169,6 @@ public class MainMenu extends JPanel {
             System.exit(0);
         }
     }
-
-
 
     public static MainMenu getINSTANCE() {
         if (MainMenu.INSTANCE == null) INSTANCE = new MainMenu();
@@ -183,6 +189,4 @@ public class MainMenu extends JPanel {
         }
         statusLabel.repaint();
     }
-
-
 }

@@ -11,7 +11,7 @@ public final class MainFrame extends JFrame {
     private static MainFrame INSTANCE;
     public static JLabel label;
 
-    private JFrame abilityShopFrame = null;
+    public JFrame abilityShopFrame = null;
 
     private MainFrame() {
         INSTANCE = this;

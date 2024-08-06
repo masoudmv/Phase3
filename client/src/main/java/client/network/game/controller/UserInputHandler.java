@@ -1,4 +1,4 @@
-package client.network.game.controller.input;
+package client.network.game.controller;
 
 
 
@@ -58,6 +58,8 @@ public class UserInputHandler implements KeyListener {
 
 //        if (GameLoop.getINSTANCE().isRunning()) {
         if (e.getKeyCode() == KeyEvent.VK_R) createActivateAbilityRequest();
+
+        if (e.getKeyCode() == KeyEvent.VK_F) createActivateSkillRequest();
 //        }
 
 //        if (GameLoop.getINSTANCE().isRunning()) {

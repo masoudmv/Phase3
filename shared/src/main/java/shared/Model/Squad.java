@@ -12,6 +12,8 @@ public class Squad {
     private Player owner = null;
     private int vault;
     private boolean inBattle = false;
+    private int battleXP = 0;
+    private int monomachiaVictories = 0;
 
 //    @JsonIgnore
 //    private Squad opponent = null;
@@ -90,7 +92,35 @@ public class Squad {
         this.inBattle = inBattle;
     }
 
-//    public Squad getOpponent() {
+    public int getBattleXP() {
+        return battleXP;
+    }
+
+    public void setBattleXP(int battleXP) {
+        this.battleXP = battleXP;
+    }
+
+    public void addBattleXP(int battleXP) {
+        this.battleXP += battleXP;
+    }
+
+    public int getMonomachiaVictories() {
+        return monomachiaVictories;
+    }
+
+    public void setMonomachiaVictories(int monomachiaVictories) {
+        this.monomachiaVictories = monomachiaVictories;
+    }
+
+    public void addMonomachiaVictories() {
+        this.monomachiaVictories++;
+    }
+
+    public boolean gefjonIsActivated(){
+        return gefjon > 0;
+    }
+
+    //    public Squad getOpponent() {
 //        return opponent;
 //    }
 //

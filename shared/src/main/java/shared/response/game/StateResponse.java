@@ -25,6 +25,10 @@ public class StateResponse implements Response {
     private int health = 0;
     private int gameXP = 0;
     private int elapsedTime = 0;
+    private int wave  = 0;
+    private String skill;
+    private int otherHealth = 0;
+    private boolean isPaused = false;
 
 
 
@@ -93,6 +97,38 @@ public class StateResponse implements Response {
 
     public void setElapsedTime(int elapsedTime) {
         this.elapsedTime = elapsedTime;
+    }
+
+    public int getWave() {
+        return wave;
+    }
+
+    public void setWave(int wave) {
+        this.wave = wave;
+    }
+
+    public String getSkill() {
+        return skill;
+    }
+
+    public void setSkill(String skill) {
+        this.skill = skill;
+    }
+
+    public int getOtherHealth() {
+        return otherHealth;
+    }
+
+    public void setOtherHealth(int otherHealth) {
+        this.otherHealth = otherHealth;
+    }
+
+    public boolean isPaused() {
+        return isPaused;
+    }
+
+    public void setPaused(boolean paused) {
+        isPaused = paused;
     }
 
     @Override

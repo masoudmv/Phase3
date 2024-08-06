@@ -1,5 +1,6 @@
 package game.model.charactersModel;
 
+import game.controller.Game;
 import game.controller.UserInterfaceController;
 import game.controller.Utils;
 import shared.constants.EntityConstants;
@@ -33,8 +34,18 @@ public class BabyEpsilon extends GeoShapeModel {
 
     }
 
-    public static void createBabies(String gameID) {
-        Point2D epsilonAnchor = EpsilonModel.getINSTANCE().getAnchor();
+    public static void createBabies(String gameID, String macAddress) {
+        Game game = findGame(gameID);
+        EpsilonModel epsilon = null;
+        for (EpsilonModel epsilonModel : game.epsilons){
+            if (epsilonModel.getMacAddress().equals(macAddress)) {
+                epsilon = epsilonModel;
+                break;
+            }
+        }
+
+
+        Point2D epsilonAnchor = epsilon.getAnchor();
         double sideLength = 70; // replace with the actual side length if known
         BabyEpsilon[] babies = new BabyEpsilon[3];
         Point2D[] vertices = calculateEquilateralTriangleVertices(epsilonAnchor, sideLength);
@@ -43,7 +54,7 @@ public class BabyEpsilon extends GeoShapeModel {
             babies[i] = new BabyEpsilon(vertices[i], gameID);
         }
 
-        EpsilonModel.getINSTANCE().setBabies(babies);
+        epsilon.setBabies(babies);
     }
 
     @Override

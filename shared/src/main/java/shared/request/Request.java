@@ -40,6 +40,7 @@ import shared.response.Response;
         @JsonSubTypes.Type(value = PauseRequest.class, name = "PauseRequest"),
         @JsonSubTypes.Type(value = BuyAbilityRequest.class, name = "BuyAbilityRequest"),
         @JsonSubTypes.Type(value = ActivateAbilityRequest.class, name = "ActivateAbilityRequest"),
+        @JsonSubTypes.Type(value = ActivateSkillRequest.class, name = "ActivateSkillRequest"),
 })
 public interface Request {
     Response run(RequestHandler requestHandler);

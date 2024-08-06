@@ -10,10 +10,14 @@ import static shared.Model.imagetools.ToolBox.getBufferedImage;
 public class EpsilonView extends GeoShapeView {
     private double radius;
     private static Image img;
+    private int index;
+    private static int createdNum = 0;
 
     public EpsilonView(String id) {
         super(id, img);
         this.radius = 20;
+        createdNum ++;
+        index = createdNum;
 
     }
 
@@ -28,11 +32,13 @@ public class EpsilonView extends GeoShapeView {
     @Override
     public void draw(Graphics g, String panelID){
 
-//        this.radius = Profile.getCurrent().EPSILON_RADIUS;
-
-
-        // tofo epsilon polymorpph ability
         Graphics2D g2d = (Graphics2D) g;
+
+        switch (index){
+            case 1: g2d.setColor(Color.green); break;
+            case 2: g2d.setColor(Color.yellow); break;
+            case 3: g2d.setColor(Color.red); break;
+        }
 
 
         if (locations.get(panelID) == null) return;

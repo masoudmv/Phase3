@@ -4,6 +4,7 @@ import game.controller.Game;
 import game.controller.UserInterfaceController;
 import game.controller.Utils;
 import game.model.FinalPanelModel;
+import game.model.entities.AttackTypes;
 import server.DataBase;
 import shared.Model.MyPolygon;
 import game.model.entities.Entity;
@@ -54,14 +55,20 @@ public abstract class GeoShapeModel extends Entity {
 
     protected void setTarget(){
         double minDistance = Double.MAX_VALUE;
+        int index = 0;
         EpsilonModel target = null;
-        for (EpsilonModel epsilon : findGame(gameID).epsilons){
-            double distance = epsilon.getAnchor().distance(anchor);
+        List<EpsilonModel> epsilons = findGame(gameID).epsilons;
+
+        for (int i = 0; i < epsilons.size(); i++) {
+            EpsilonModel epsilon = epsilons.get(i);
+            double distance =  epsilon.getAnchor().distance(anchor);
             if (distance < minDistance) {
-                target = epsilon;
+                minDistance = distance;
+                index = i;
             }
         }
-        this.target = target;
+
+        this.target =  epsilons.get(index);
     }
 
 
@@ -379,30 +386,73 @@ public abstract class GeoShapeModel extends Entity {
         double offset = 100;
         double x = -offset;
         double y = -offset;
+        double middleRangeWidth = dimension.width * 0.3; // 30% of the width
+        double middleRangeHeight = dimension.height * 0.3; // 30% of the height
 
         switch (index) {
             case 0 -> {
-                x = random.nextDouble() * dimension.width;
+                x = random.nextDouble() * (dimension.width - middleRangeWidth);
+                if (x > dimension.width * 0.35) {
+                    x += middleRangeWidth;
+                }
                 y = -offset;
             }
             case 1 -> {
                 x = dimension.getWidth() + offset;
-                y = random.nextDouble() * dimension.height;
+                y = random.nextDouble() * (dimension.height - middleRangeHeight);
+                if (y > dimension.height * 0.35) {
+                    y += middleRangeHeight;
+                }
             }
             case 2 -> {
                 y = dimension.getHeight() + offset;
-                x = random.nextDouble() * dimension.width;
+                x = random.nextDouble() * (dimension.width - middleRangeWidth);
+                if (x > dimension.width * 0.35) {
+                    x += middleRangeWidth;
+                }
             }
             case 3 -> {
                 x = -offset;
-                y = random.nextDouble() * dimension.height;
+                y = random.nextDouble() * (dimension.height - middleRangeHeight);
+                if (y > dimension.height * 0.35) {
+                    y += middleRangeHeight;
+                }
             }
         }
         return new Point2D.Double(x, y);
     }
 
 
+    public static Point2D getSymmetricPoint(Point2D point) {
+        double screenWidth = FRAME_DIMENSION.getWidth();
+        double screenHeight = FRAME_DIMENSION.getHeight();
+        double midX = screenWidth / 2;
+        double midY = screenHeight / 2;
+
+        double symmetricX = 2 * midX - point.getX();
+        double symmetricY = 2 * midY - point.getY();
+
+        return new Point2D.Double(symmetricX, symmetricY);
+    }
+
+
+
+
+
+
     public void update(){
+    }
+
+    protected void handleDamageEpsilon(EpsilonModel epsilon){
+        for (int i = 0; i < myPolygon.npoints; i++) {
+            double x = myPolygon.xpoints[i];
+            double y = myPolygon.ypoints[i];
+            Point2D vertex = new Point2D.Double(x, y);
+            double distance = vertex.distance(epsilon.getAnchor());
+            if (distance < epsilon.getRadius()){
+                this.damage((Entity) epsilon, AttackTypes.MELEE);
+            }
+        }
     }
 
 

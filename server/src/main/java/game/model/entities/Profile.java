@@ -32,6 +32,7 @@ public class Profile {
     public HashMap<String, Ability> activeAbilities = new HashMap<>();
     public HashMap<String, Ability> activatedAbilities = new HashMap<>();
 
+    public HashMap<String, Skill> activatedSkills = new HashMap<>();
 //    public static Profile getCurrent() {
 //        return current;
 //    }

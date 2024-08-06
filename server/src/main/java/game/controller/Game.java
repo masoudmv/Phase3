@@ -5,6 +5,7 @@ import game.model.FinalPanelModel;
 import game.model.charactersModel.*;
 import game.model.entities.Ability;
 import game.model.entities.Profile;
+import game.model.entities.Skill;
 import server.DataBase;
 import server.GameData;
 import shared.constants.Constants;
@@ -27,13 +28,12 @@ public class Game {
     public List<FinalPanelModel> finalPanelModels = new ArrayList<>();
 
     public double ELAPSED_TIME = 0;
-    public int wave;
     private boolean isPaused = false;
 
     private GameType gameType;
     private GameLoop gameLoop;
 
-    private long pausedTime = 0;
+
 
     private Profile profile;
 
@@ -50,6 +50,8 @@ public class Game {
         Constants.RADIUS = 15;
 
         addEpsilons("1", "2", GameType.monomachia);
+
+        profile.activatedSkills.put("1", Skill.CERBERUS);
 
         gameLoop = new GameLoop(gameID, 5); // Initialize GameLoop with number of waves
     }
@@ -87,7 +89,7 @@ public class Game {
             }
         }
 
-        profile.activeAbilities.put("1", Ability.EMPOWER);
+
 
 //        TrigorathModel t = new TrigorathModel();
 //        t.create(gameID);
@@ -98,14 +100,12 @@ public class Game {
     }
 
     public boolean isPaused() {
-        return isPaused;
+        return gameLoop.isPaused();
     }
 
-    public void setPaused(boolean paused) {
-        isPaused = paused;
+    public void setPaused(boolean paused, String macAddress) {
         if (paused) {
-            pausedTime = System.currentTimeMillis();
-            gameLoop.pauseGame();
+            gameLoop.pauseGame(macAddress);
         } else {
             gameLoop.resumeGame();
         }
@@ -123,13 +123,6 @@ public class Game {
         this.gameID = gameID;
     }
 
-    public long getPausedTime() {
-        return pausedTime;
-    }
-
-    public void setPausedTime(long pausedTime) {
-        this.pausedTime = pausedTime;
-    }
 
     public Profile getProfile() {
         return profile;
@@ -142,6 +135,10 @@ public class Game {
     // Notify GameLoop when an enemy is eliminated
     public void enemyEliminated() {
         gameLoop.enemyEliminated();
+    }
+
+    public int getWave(){
+        return gameLoop.getWaveManager().getWaveIndex();
     }
 
 

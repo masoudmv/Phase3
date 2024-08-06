@@ -1,6 +1,6 @@
 package client.network.game.controller.onlineGame;
 
-import client.network.game.controller.input.UserInputHandler;
+import client.network.game.controller.UserInputHandler;
 
 import client.network.game.view.MainFrame;
 
@@ -44,21 +44,8 @@ public class ClientGameLoop implements Runnable{
     public ClientGameLoop() {
         decreaseVelocities=false;
         movementInProgress = false;
-
-
-
-
-
-
         MainFrame frame = MainFrame.getINSTANCE();
-//        frame.addKeyListener(UserInputHandler.getINSTANCE());
-//        frame.addMouseListener(new MouseController());
-//        frame.addMouseMotionListener(new MouseController());
-
-
-
         INSTANCE = this;
-
         this.start();
     }
 

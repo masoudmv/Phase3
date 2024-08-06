@@ -28,11 +28,13 @@ import shared.response.game.NullResponse;
 import shared.response.game.PauseResponse;
 import shared.response.game.StateResponse;
 
+import javax.accessibility.AccessibleKeyBinding;
 import javax.swing.*;
 import java.awt.geom.Point2D;
 
 
 import static game.controller.UserInterfaceController.fireAbility;
+import static game.controller.UserInterfaceController.fireSkill;
 import static game.controller.Utils.addVectors;
 import static game.controller.Utils.multiplyVector;
 import static shared.constants.Constants.BULLET_VELOCITY;
@@ -265,7 +267,7 @@ public class ServersideReqHandler extends Thread implements RequestHandler {
 
             for (EpsilonModel epsilon : game.epsilons){
 
-                System.out.println("EPSILON: " + epsilon.getMacAddress());
+
                 if (epsilon.getMacAddress().equals("1")){
 
                     Point2D.Double vector = new Point2D.Double(deltaX, deltaY);
@@ -276,7 +278,7 @@ public class ServersideReqHandler extends Thread implements RequestHandler {
 
 
                     epsilon.setDirection(direction);
-                    System.out.println("found epsilon");
+
                 }
             }
 
@@ -299,14 +301,33 @@ public class ServersideReqHandler extends Thread implements RequestHandler {
             String gameID = "1";
 
             int XP = 0;
-            int health = 100;
+            int health = -1;
+            int otherHP = -1;
             Game game = dataBase.findGame(gameID);
+            int wave = game.getWave();
+            int time = (int) game.ELAPSED_TIME;
             for (EpsilonModel epsilon : game.epsilons){
                 if (epsilon.getMacAddress().equals(macAddress)) {
                     XP  = epsilon.getGameXP();
                     health  = epsilon.getHp();
                 }
+
+                else otherHP = epsilon.getHp();
             }
+
+            boolean isPaused = game.isPaused();
+
+            String skill = game.getProfile().activatedSkills.get(macAddress).getName();
+
+            stateResponse.setElapsedTime(time);
+            stateResponse.setHealth(health);
+            stateResponse.setOtherHealth(otherHP);
+            stateResponse.setSkill(skill);
+            stateResponse.setPaused(isPaused);
+
+//            stateResponse.setWave(game.getWave());
+            stateResponse.setGameXP(XP);
+            stateResponse.setWave(wave);
 
 
 
@@ -318,8 +339,7 @@ public class ServersideReqHandler extends Thread implements RequestHandler {
             stateResponse.setEliminatedEntities(gameData.getEliminatedEntities());
             stateResponse.setUpdatedPanels(gameData.getUpdatedPanels());
             stateResponse.setUpdatedModels(gameData.getUpdatedModels());
-            stateResponse.setGameXP(XP);
-            stateResponse.setHealth(health);
+
 
 
 
@@ -374,56 +394,106 @@ public class ServersideReqHandler extends Thread implements RequestHandler {
 
     @Override
     public Response handlePauseRequest(PauseRequest pauseRequest) {
-//        String macAddress = pauseRequest.getMacAddress();
-//        Player player = dataBase.findPlayer(macAddress);
-//        int inMenu = player.getInMenuTime();
+        String macAddress = pauseRequest.getMacAddress();
+        macAddress = "1";
+        Player player = dataBase.findPlayer(macAddress);
+        int inMenu = player.getInMenuTime();
 
-
-        // todo use real gameID
         Game game = dataBase.findGame("1");
-
-        if (!game.isPaused()){
-            game.setPaused(true);
-        } else {
-            long pausedTime = game.getPausedTime();
-            long now = System.currentTimeMillis();
-            long pauseDuration = pausedTime - now;
-            // todo add duration to player
-
-            game.setPaused(false);
+        if (inMenu < 45) {
+            if (!game.isPaused()) game.setPaused(true, macAddress);
+            else game.setPaused(false, macAddress);
+            return new PauseResponse(true);
         }
 
-        return new PauseResponse(true);
+        return new PauseResponse(false);
     }
 
     @Override
     public Response handleBuyAbilityRequest(BuyAbilityRequest buyAbilityRequest) {
-
-//        if (ability == Ability.SLAUGHTER){
-//            double now = Game.ELAPSED_TIME;
-//            double initiation = Profile.getCurrent().slaughterInitiationTime;
-//            if (now - initiation < 120) {
-//                JOptionPane.showMessageDialog(frame, "You should wait at least 120 seconds after your previous slaughter!");
-//                return;
-//            }
-//        }
-//        int currentXP = Game.inGameXP;
-//        if (currentXP >= ability.getCost()) {
-//            Game.inGameXP -= ability.getCost();
-//            Ability.activeAbility = ability;
-//            if (ability == Ability.SLAUGHTER) Profile.getCurrent().slaughterInitiationTime = Game.ELAPSED_TIME;
-//            JOptionPane.showMessageDialog(frame, ability.getName() + " was successfully activated");
-//        } else {
-//            JOptionPane.showMessageDialog(frame, "You don't have enough XP!", "Error", JOptionPane.ERROR_MESSAGE);
-//        }
+        String ability = buyAbilityRequest.getAbilityName();
+        String macAddress = buyAbilityRequest.getMacAddress();
+        macAddress = "1";
+        Game game = dataBase.findGame("1");
+        int XP=0;
 
 
-        return null;
+        for (EpsilonModel epsilon : game.epsilons){
+            if (epsilon.getMacAddress().equals(buyAbilityRequest.getMacAddress())){
+                XP = epsilon.getGameXP();
+            }
+        }
+
+        XP = 1000;
+        Ability ability1 = null;
+
+        switch (ability){
+            case ("O' Hephaestus, Banish"):
+            {
+                ability1 = Ability.BANISH;
+                break;
+            }
+
+            case ("O' Athena, Empower"):
+            {
+                ability1 = Ability.EMPOWER;
+                break;
+            }
+
+            case ("O' Apollo, Heal"):
+            {
+                ability1 = Ability.HEAL;
+                break;
+            }
+
+            case ("O' Deimos, Dismay"):
+            {
+                ability1 = Ability.DISMAY;
+                break;
+            }
+
+            case ("O' Hypnos, Slumber"):
+            {
+                ability1 = Ability.SLUMBER;
+                break;
+            }
+
+            case ("O' Phonoi, Slaughter"):
+            {
+                ability1 = Ability.SLAUGHTER;
+                break;
+            }
+        }
+
+        int currentXP = XP;
+
+        if (game.getProfile().activeAbilities.get(macAddress) != null){
+            return new MessageResponse("You already have an active ability");
+        }
+
+
+        if (ability1 == Ability.SLAUGHTER){
+            double now = game.ELAPSED_TIME;
+            double initiation = game.getProfile().slaughterInitiationTime;
+            if (now - initiation < 120) {
+                return new MessageResponse("You should wait at least 120 seconds after your previous slaughter!");
+            }
+        }
+
+        if (currentXP >= ability1.getCost()) {
+            XP -= ability1.getCost();
+            game.getProfile().activeAbilities.put(macAddress, ability1);
+            if (ability1 == Ability.SLAUGHTER) game.getProfile().slaughterInitiationTime = game.ELAPSED_TIME;
+
+            return new MessageResponse(" was successfully activated");
+        } else {
+            return new MessageResponse("You don't have enough XP!");
+        }
+
     }
 
     @Override
     public Response handleActivateAbilityRequest(ActivateAbilityRequest activateAbilityRequest) {
-        System.out.println("ability Req");
 
         String gameID = "1";
         String macAddress = "1";
@@ -433,6 +503,16 @@ public class ServersideReqHandler extends Thread implements RequestHandler {
         return new NullResponse();
     }
 
+    @Override
+    public Response handleActivateSkillRequest(ActivateSkillRequest activateSkillRequest) {
+
+        String gameID = "1";
+        String macAddress = "1";
+
+        fireSkill(gameID, macAddress);
+
+        return new NullResponse();
+    }
 
 
     private static Point2D calculateDirection(ClickedRequest clickedRequest, EpsilonModel epsilon) {

@@ -177,8 +177,8 @@ public abstract class UserInterfaceController {
     }
 
     public static void fireSkill(String gameID, String macAddress) {
-        if (findGame(gameID).getProfile().activeAbilities.get(macAddress) != null) {
-            Skill.activeSkill.fire(gameID, macAddress);
+        if (findGame(gameID).getProfile().activatedSkills.get(macAddress) != null) {
+            findGame(gameID).getProfile().activatedSkills.get(macAddress).fire(gameID, macAddress);
         }
     }
 

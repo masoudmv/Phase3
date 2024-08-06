@@ -1,25 +1,37 @@
 package client.network;
 
 
+import client.network.containers.PanelManager;
 import client.network.game.controller.MouseController;
 import client.network.game.controller.onlineGame.ClientGame;
 import client.network.game.view.MainFrame;
 import client.network.game.view.charactersView.*;
 import client.network.game.view.junks.AbilityShopPanel;
 import client.network.socket.SocketRequestSender;
+import client.network.toolBox.utils;
 
 
 import java.io.IOException;
+
+import static client.network.RequestFactory.createIdentificateReq;
 
 
 public class Main {
     public static void main(String[] args) throws IOException {
         Status.getINSTANCE();
+        Status.getINSTANCE();
+//        utils.tryConnection();
+//        PanelManager.displayMainMenu();
+
+
+
+
 
         SocketRequestSender socketRequestSender = new SocketRequestSender();
         Status.getINSTANCE().setConnectedToServer(true);
         Status.getINSTANCE().setSocket(socketRequestSender);
 
+        createIdentificateReq();
 
         EpsilonView.loadImage();
         OrbView.loadImage();
@@ -28,8 +40,6 @@ public class Main {
         BarricadosView.loadImage();
         NecropickView.loadImage();
         NonrigidBulletView.loadImage();
-
-//        MainFrame.getINSTANCE().handleAbilityShopPanelToggle();
 
 
         MainFrame.getINSTANCE().addMouseListener(new MouseController());

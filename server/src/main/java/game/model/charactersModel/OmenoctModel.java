@@ -1,8 +1,11 @@
 package game.model.charactersModel;
 
 import game.controller.Game;
+import game.controller.GameType;
 import game.controller.PolygonUtils;
 import game.controller.Utils;
+import game.model.entities.AttackTypes;
+import game.model.entities.Entity;
 import game.model.reflection.Enemy;
 import shared.constants.Constants;
 import shared.constants.EntityConstants;
@@ -313,6 +316,9 @@ public class OmenoctModel extends GeoShapeModel implements Collidable, Enemy {
 
     @Override
     public void onCollision(Collidable other, Point2D intersection) {
+        if (other instanceof EpsilonModel) {
+            handleDamageEpsilon((EpsilonModel) other);
+        }
 
     }
 
@@ -374,6 +380,8 @@ public class OmenoctModel extends GeoShapeModel implements Collidable, Enemy {
     }
 
 
+
+
     public void create(String gameID) {
         Point2D anchor;
         boolean isValid;
@@ -397,9 +405,23 @@ public class OmenoctModel extends GeoShapeModel implements Collidable, Enemy {
 
         if (isValid) {
             // Add the new enemy to the game's entities
-            new OmenoctModel(anchor, gameID);
+            GameType type = findGame(gameID).getGameType();
+            switch (type) {
+                case monomachia: {
+                    Point2D pivot = getSymmetricPoint(anchor);
+                    new OmenoctModel(pivot, gameID);
+                    new OmenoctModel(anchor, gameID);
+                    break;
+                }
+                case colosseum:{
+                    new OmenoctModel(anchor, gameID);
+                    break;
+                }
+            }
+
+
         } else {
-            System.out.println("Failed to create SquarantineModel without intersection after " + maxAttempts + " attempts.");
+            System.out.println("Failed to create Trigorath without intersection after " + maxAttempts + " attempts.");
         }
     }
 

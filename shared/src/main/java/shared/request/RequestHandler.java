@@ -34,4 +34,5 @@ public interface RequestHandler {
     Response handlePauseRequest(PauseRequest pauseRequest);
     Response handleBuyAbilityRequest(BuyAbilityRequest buyAbilityRequest);
     Response handleActivateAbilityRequest(ActivateAbilityRequest activateAbilityRequest);
+    Response handleActivateSkillRequest(ActivateSkillRequest activateSkillRequest);
 }

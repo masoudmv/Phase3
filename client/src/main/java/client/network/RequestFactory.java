@@ -212,4 +212,31 @@ public class RequestFactory {
             }
         }
     }
+
+
+    public static void createActivateSkillRequest(){
+        synchronized (LOCK){
+            socketRequestSender = status.getSocket();
+            try {
+                socketRequestSender.sendRequest(new ActivateSkillRequest(macAddress)).run(requestHandler);
+                System.out.println("Activate Skill Request was sent ... ");
+            } catch (IOException e) {
+                System.out.println("Activate Skill Request was not sent ... ");
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    public static void createBuyAbilityRequest(String ability){
+        synchronized (LOCK){
+            socketRequestSender = status.getSocket();
+            try {
+                socketRequestSender.sendRequest(new BuyAbilityRequest(macAddress, ability)).run(requestHandler);
+                System.out.println("buy ability Request was sent ... ");
+            } catch (IOException e) {
+                System.out.println("buy ability Request was not sent ... ");
+                throw new RuntimeException(e);
+            }
+        }
+    }
 }
