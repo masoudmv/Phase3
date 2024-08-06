@@ -1,7 +1,6 @@
 package shared.response.game;
 
 import shared.Model.EntityType;
-import shared.Model.Pair;
 import shared.Model.dummies.DummyModel;
 import shared.Model.dummies.DummyPanel;
 import shared.response.Response;
@@ -11,7 +10,6 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 
@@ -21,12 +19,11 @@ public class StateResponse implements Response {
     private Map<String, DummyPanel> createdPanels = new HashMap<>();
     private Map<String, DummyModel> updatedModels = new HashMap<>();
     private Map<String, DummyPanel> updatedPanels = new HashMap<>();
-
     private List<String> eliminatedEntities = new CopyOnWriteArrayList<>();
 
 
     private int health = 0;
-    private int XP = 0;
+    private int gameXP = 0;
     private int elapsedTime = 0;
 
 
@@ -82,12 +79,12 @@ public class StateResponse implements Response {
         this.health = health;
     }
 
-    public int getXP() {
-        return XP;
+    public int getGameXP() {
+        return gameXP;
     }
 
-    public void setXP(int XP) {
-        this.XP = XP;
+    public void setGameXP(int gameXP) {
+        this.gameXP = gameXP;
     }
 
     public int getElapsedTime() {

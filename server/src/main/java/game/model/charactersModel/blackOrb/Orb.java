@@ -28,31 +28,31 @@ public class Orb extends GeoShapeModel implements Collidable {
     private FinalPanelModel panel;
 
     public Orb(Point2D anchor, String gameID) {
-        super(anchor, image);
+        super(anchor, image, gameID);
         this.circle = new Circle(anchor.getX(), anchor.getY(), (double) image.getHeight() / 2);
         collidables.add(this);
         this.health = EntityConstants.ORB_HEALTH.getValue();
-        this.gameID = gameID;
 
 
         /**
          checking for intersection with epsilon
          if it touches the orb in the creation process, YOU DIE!
          */
+        handleCollisionsUponBirth();
 
 
+
+
+
+    }
+
+    private void handleCollisionsUponBirth(){
         Game game = findGame(gameID);
 
-        for (EpsilonModel epsilon : game.epsilons){
-            for (GeoShapeModel model : findGame(gameID).entities){
-                if (model.intersects(this) && !model.equals(this)) model.eliminate();
+        for (GeoShapeModel model : game.entities){
+            if (model.intersects(this) && !model.equals(this)) model.eliminate();
 
-            }
-
-            if (epsilon.intersects(this)) System.out.println("YOU ARE DEAD!");
-            // todo show death panel ...
         }
-
     }
 
     public static BufferedImage loadImage() {

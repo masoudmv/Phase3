@@ -274,9 +274,7 @@ public class ClientsideResHandler implements ResponseHandler {
                         case bullet -> new BulletView(id);
                         case epsilon -> new EpsilonView(id);
                         case collectible -> new CollectibleView(id);
-                        case trigorath, squarantine, simplePolygon -> {
-                            new TrigorathView(id);
-                        }
+                        case trigorath, squarantine, simplePolygon -> new TrigorathView(id);
                         case babyEpsilon -> createBabyEpsilonView(id);
                         case orb -> createOrbView(id);
                         case laser -> createLaserView(id);
@@ -334,6 +332,8 @@ public class ClientsideResHandler implements ResponseHandler {
                 panelView.eliminate();
             }
         }
+
+
 
 
         updateGeoShapeViewProperties();

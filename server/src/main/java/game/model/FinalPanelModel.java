@@ -37,6 +37,8 @@ public class FinalPanelModel implements Collidable, Serializable {
 
     protected Point2D location;
 
+    // todo move to game
+
     public static List<FinalPanelModel> finalPanelModels = new ArrayList<>();
 
 
@@ -690,6 +692,25 @@ public class FinalPanelModel implements Collidable, Serializable {
         this.size = size;
         updateVertices();
     }
+    public static boolean intersect(FinalPanelModel panel1, FinalPanelModel panel2) {
+        double left1 = panel1.location.getX();
+        double right1 = panel1.location.getX() + panel1.size.getWidth();
+        double top1 = panel1.location.getY();
+        double bottom1 = panel1.location.getY() + panel1.size.getHeight();
+
+        double left2 = panel2.location.getX();
+        double right2 = panel2.location.getX() + panel2.size.getWidth();
+        double top2 = panel2.location.getY();
+        double bottom2 = panel2.location.getY() + panel2.size.getHeight();
+
+        // Check if there is an overlap
+        if (right1 > left2 && left1 < right2 && bottom1 > top2 && top1 < bottom2) {
+            return true;
+        }
+        return false;
+    }
+
+
 
     public void onCollision(Collidable other, Point2D intersection){
         if (other instanceof BulletModel) handleCollisionWithBullet(intersection);

@@ -2,6 +2,7 @@ package game.model.charactersModel;
 
 import game.controller.Game;
 import game.controller.UserInterfaceController;
+import game.model.reflection.Enemy;
 import shared.constants.EntityConstants;
 import game.example.GraphicalObject;
 import shared.Model.MyPolygon;
@@ -19,7 +20,7 @@ import java.util.Random;
 import static game.controller.UserInterfaceController.createNecropickView;
 import static shared.Model.imagetools.ToolBox.getBufferedImage;
 
-public class NecropickModel extends GeoShapeModel implements Collidable {
+public class NecropickModel extends GeoShapeModel implements Collidable, Enemy {
     static BufferedImage image;
     protected static MyPolygon pol;
 //    public Polygon polygon;
@@ -38,6 +39,13 @@ public class NecropickModel extends GeoShapeModel implements Collidable {
         setTarget();
         createNecropickView(id, gameID);
     }
+
+
+    protected void setTarget(){
+        Game game = findGame(gameID);
+        int index = random.nextInt(game.epsilons.size());
+    }
+
 
     public static BufferedImage loadImage() {
         Image img = new ImageIcon("./client/src/necropick.png").getImage();
@@ -163,5 +171,16 @@ public class NecropickModel extends GeoShapeModel implements Collidable {
     @Override
     public void onCollision(Collidable other, Point2D coll1, Point2D coll2) {
 
+    }
+
+    @Override
+    public void create(String gameID) {
+
+    }
+
+
+    @Override
+    public int getMinSpawnWave() {
+        return 3;
     }
 }

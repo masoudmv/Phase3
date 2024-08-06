@@ -165,7 +165,7 @@ public class CollectibleModel extends GeoShapeModel implements Collidable, Movab
         collidables.remove(this);
         movables.remove(this);
         collectibleModels.remove(this);
-        Game.inGameXP += collectibleXP;
+//        Game.inGameXP += collectibleXP;
 //        findCollectibleView((this).getId()).remove();
     }
 

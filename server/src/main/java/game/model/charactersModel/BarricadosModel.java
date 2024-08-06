@@ -1,40 +1,54 @@
 package game.model.charactersModel;
 
+import game.controller.Game;
 import game.example.GraphicalObject;
 import game.model.FinalPanelModel;
+import game.model.charactersModel.blackOrb.BlackOrb;
+import game.model.reflection.Enemy;
 import shared.Model.MyPolygon;
 import game.model.collision.Collidable;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.geom.Dimension2D;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Random;
 
 import static game.controller.UserInterfaceController.createBarricadosView;
+import static game.model.FinalPanelModel.finalPanelModels;
 import static shared.Model.imagetools.ToolBox.getBufferedImage;
+import static shared.constants.Constants.FRAME_DIMENSION;
 
-public class BarricadosModel extends GeoShapeModel implements Collidable {
+public class BarricadosModel extends GeoShapeModel implements Collidable, Enemy {
     static BufferedImage image;
-
     protected static MyPolygon pol;
-
     private final static Dimension panelSize = new Dimension(400, 400);
+    FinalPanelModel f;
 
     public BarricadosModel(Point2D anchor, String gameID) {
         super(anchor, image, pol, gameID);
         Point2D location = new Point2D.Double(anchor.getX()-200, anchor.getY()-200);
-        FinalPanelModel f = new FinalPanelModel(location, panelSize, gameID);
+        f = new FinalPanelModel(location, panelSize, gameID);
         f.setRigid(false);
         f.setIsometric(true);
         setMyPolygon();
-
         updateMyPolygon();
         this.health = Integer.MAX_VALUE;
-
-
         collidables.add(this);
         createBarricadosView(id, gameID);
+
+        Game game = findGame(gameID);
+
+        for (GeoShapeModel model : game.entities){
+            if (model.intersects(this) && !model.equals(this)) model.eliminate();
+        }
+
+    }
+
+    public BarricadosModel() {
+        super();
     }
 
     private void updateMyPolygon(){
@@ -87,8 +101,68 @@ public class BarricadosModel extends GeoShapeModel implements Collidable {
 
 //    }
 
+
+    @Override
+    public void create(String gameID) {
+        Random random = new Random();
+        double width = FRAME_DIMENSION.getWidth();
+        double height = FRAME_DIMENSION.getHeight();
+        Point2D pivot;
+        Dimension2D panelSize = new Dimension(400, 400);
+        boolean isValid;
+        int attempts = 0;
+        int maxAttempts = 100;
+
+        do {
+            double x = random.nextDouble(250, width - 250);
+            double y = random.nextDouble(250, height - 250);
+            pivot = new Point2D.Double(x, y);
+            Point2D panelPivot = new Point2D.Double(x - 200, y - 200);
+
+            isValid = !wouldIntersect(panelPivot, panelSize);
+            attempts++;
+        } while (!isValid && attempts < maxAttempts);
+
+        if (isValid) {
+            new BarricadosModel(pivot, gameID);
+        } else {
+            System.out.println("Failed to create BarricadosModel without intersection after " + maxAttempts + " attempts.");
+        }
+    }
+
+    @Override
+    public int getMinSpawnWave() {
+        return 4;
+    }
+
+
+    public static boolean wouldIntersect(Point2D location, Dimension2D size) {
+        double newLeft = location.getX();
+        double newRight = location.getX() + size.getWidth();
+        double newTop = location.getY();
+        double newBottom = location.getY() + size.getHeight();
+
+        for (FinalPanelModel panel : finalPanelModels) {
+            double existingLeft = panel.getLocation().getX();
+            double existingRight = panel.getLocation().getX() + panel.getSize().getWidth();
+            double existingTop = panel.getLocation().getY();
+            double existingBottom = panel.getLocation().getY() + panel.getSize().getHeight();
+
+            if (newRight > existingLeft && newLeft < existingRight && newBottom > existingTop && newTop < existingBottom) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public FinalPanelModel getF() {
+        return f;
+    }
+
     @Override
     public void eliminate() {
+        super.eliminate();
+        f.eliminate();
 
     }
 
@@ -97,11 +171,8 @@ public class BarricadosModel extends GeoShapeModel implements Collidable {
         return false;
     }
 
-//    public Point2D[] getVertices(){
-//        Point2D[] array = new Point2D[vertices.size()];
-//        array = vertices.toArray(array);
-//        return array;
-//    }
+
+
 
     @Override
     public void onCollision(Collidable other, Point2D intersection) {

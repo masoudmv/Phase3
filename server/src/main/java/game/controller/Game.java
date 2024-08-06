@@ -3,6 +3,7 @@ package game.controller;
 import game.model.DoubleDimension2D;
 import game.model.FinalPanelModel;
 import game.model.charactersModel.*;
+import game.model.charactersModel.blackOrb.BlackOrb;
 import game.model.entities.Ability;
 import game.model.entities.Profile;
 import server.DataBase;
@@ -13,8 +14,7 @@ import java.awt.*;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
-import java.util.UUID;
+;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import static shared.constants.Constants.FRAME_DIMENSION;
@@ -28,9 +28,9 @@ public class Game {
     public List<SquarantineModel> squarantineModels = new ArrayList<>();
     public List<TrigorathModel> trigorathModels = new ArrayList<>();
 
-    public static int inGameXP = 1000;
+
     public double ELAPSED_TIME = 0;
-    public static int wave;
+    public int wave;
     private boolean isPaused = false;
 
     private GameType gameType;
@@ -48,8 +48,8 @@ public class Game {
         DataBase.getDataBase().addGame(this);
 
         ELAPSED_TIME = 0;
-        inGameXP = 0;
-        wave = 1;
+
+
         Constants.RADIUS = 15;
 
         gameLoop = new GameLoop(gameID);
@@ -73,25 +73,42 @@ public class Game {
         switch (gameType) {
             case colosseum -> {
                 Point2D pos1 = new Point2D.Double(width / 2 + epsilonDis, height / 2);
-                new EpsilonModel(pos1, true, gameID).setMacAddress(macAddress1);
+                EpsilonModel epsilon1 = new EpsilonModel(pos1, true, gameID, Color.green);
+                epsilon1.setMacAddress(macAddress1);
 
                 Point2D pos2 = new Point2D.Double(width / 2 - epsilonDis, height / 2);
-                new EpsilonModel(pos2, true, gameID).setMacAddress(macAddress2);
+                EpsilonModel epsilon2 = new EpsilonModel(pos2, true, gameID, Color.yellow);
+                epsilon2.setMacAddress(macAddress2);
             }
             case monomachia -> {
                 Point2D pos1 = new Point2D.Double(width / 2 + epsilonDis, height / 2);
-                new EpsilonModel(pos1, true, gameID).setMacAddress(macAddress1);
+                EpsilonModel epsilon1 = new EpsilonModel(pos1, true, gameID, Color.green);
+                epsilon1.setMacAddress(macAddress1);
 
                 Point2D pos2 = new Point2D.Double(width / 2 - epsilonDis, height / 2);
-                new EpsilonModel(pos2, false, gameID).setMacAddress(macAddress2);
+                EpsilonModel epsilon2 = new EpsilonModel(pos2, false, gameID, Color.yellow);
+                epsilon2.setMacAddress(macAddress2);
             }
         }
 
         profile.activeAbilities.put("1", Ability.EMPOWER);
+        BlackOrb blackOrb = new BlackOrb();
+        blackOrb.create(gameID);
+       TrigorathModel t = new TrigorathModel();
+       t.create(gameID);
+       t.create(gameID);
+       t.create(gameID);
+       t.create(gameID);
 
+        BarricadosModel b = new BarricadosModel();
+        b.create(gameID);
+//        b.create(gameID);
+//        b.create(gameID);
+//        b.create(gameID);
+//        b.create(gameID);
+//        b.create(gameID);
+//        b.create(gameID);
 
-        new TrigorathModel(new Point2D.Double(300, 200), gameID);
-        new TrigorathModel(new Point2D.Double(300, 1000), gameID);
 
 
     }

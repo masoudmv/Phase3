@@ -88,4 +88,6 @@ public class DummyModel implements Serializable {
     public void setShowNextLoc(boolean showNextLoc) {
         this.showNextLoc = showNextLoc;
     }
+
+
 }

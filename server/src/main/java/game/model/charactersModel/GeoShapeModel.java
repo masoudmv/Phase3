@@ -10,15 +10,18 @@ import game.model.entities.Entity;
 import game.model.entities.Profile;
 import game.model.movement.Direction;
 
+import java.awt.*;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 
 import static game.controller.UserInterfaceController.createGeoShapeView;
 import static game.controller.UserInterfaceController.eliminateGeoShapeView;
+import static shared.constants.Constants.FRAME_DIMENSION;
 
 public abstract class GeoShapeModel extends Entity {
 
@@ -44,6 +47,9 @@ public abstract class GeoShapeModel extends Entity {
         moveVertices(Utils.addVectors(anchor, img));
         findGame(gameID).entities.add(this);
 //        UserInterfaceController.createGeoShapeView(id, image);
+    }
+
+    public GeoShapeModel() {
     }
 
     protected void setTarget(){
@@ -80,8 +86,9 @@ public abstract class GeoShapeModel extends Entity {
 //        UserInterfaceController.createGeoShapeView(id, image);
     }
 
-    public GeoShapeModel(Point2D anchor, BufferedImage image) {
+    public GeoShapeModel(Point2D anchor, BufferedImage image, String gameID) {
         setDummyPolygon();
+        this.gameID = gameID;
         this.id = UUID.randomUUID().toString();
         this.anchor = new Point2D.Double(anchor.getX(), anchor.getY());
         radius = (double) image.getHeight() / 2;
@@ -362,6 +369,36 @@ public abstract class GeoShapeModel extends Entity {
         double now = findGame(gameID).ELAPSED_TIME;
         double slumberInitiation = findGame(gameID).getProfile().slumberInitiationTime;
         return now - slumberInitiation < 10;
+    }
+
+
+    public Point2D findRandomPoint() {
+        Dimension dimension = FRAME_DIMENSION;
+        Random random = new Random();
+        int index = random.nextInt(4);
+        double offset = 100;
+        double x = -offset;
+        double y = -offset;
+
+        switch (index) {
+            case 0 -> {
+                x = random.nextDouble() * dimension.width;
+                y = -offset;
+            }
+            case 1 -> {
+                x = dimension.getWidth() + offset;
+                y = random.nextDouble() * dimension.height;
+            }
+            case 2 -> {
+                y = dimension.getHeight() + offset;
+                x = random.nextDouble() * dimension.width;
+            }
+            case 3 -> {
+                x = -offset;
+                y = random.nextDouble() * dimension.height;
+            }
+        }
+        return new Point2D.Double(x, y);
     }
 
 

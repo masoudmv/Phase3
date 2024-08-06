@@ -2,6 +2,7 @@ package game.model.charactersModel;
 
 import game.controller.UserInterfaceController;
 import game.controller.Utils;
+import game.model.reflection.Enemy;
 import shared.constants.Constants;
 import shared.constants.EntityConstants;
 import shared.Model.MyPolygon;
@@ -26,7 +27,7 @@ import static shared.Model.imagetools.ToolBox.getBufferedImage;
 import static shared.constants.EntityConstants.SQUARANTINE_COLLECTIBLES_XP;
 import static shared.constants.EntityConstants.SQUARANTINE_NUM_OF_COLLECTIBLES;
 
-public class SquarantineModel extends GeoShapeModel implements Movable, Collidable, Impactable {
+public class SquarantineModel extends GeoShapeModel implements Movable, Collidable, Impactable, Enemy {
     static BufferedImage image;
     double nextDash = Double.MAX_VALUE;
 
@@ -400,5 +401,41 @@ public class SquarantineModel extends GeoShapeModel implements Movable, Collidab
     public void onCollision(Collidable other, Point2D coll1, Point2D coll2) {
         ((Impactable) this).impact(coll1, coll2, other);
 
+    }
+
+    @Override
+    public void create(String gameID) {
+        Point2D anchor;
+        boolean isValid;
+        double MIN_DISTANCE = 100.0; // The minimum distance to avoid collision
+        int maxAttempts = 100;
+        int attempts = 0;
+
+        do {
+            isValid = true;
+            anchor = findRandomPoint();
+            attempts++;
+
+            for (GeoShapeModel model : findGame(gameID).entities) {
+                double distance = model.getAnchor().distance(anchor);
+                if (distance < MIN_DISTANCE) {
+                    isValid = false;
+                    break;
+                }
+            }
+        } while (!isValid && attempts < maxAttempts);
+
+        if (isValid) {
+            // Add the new enemy to the game's entities
+            new SquarantineModel(anchor, gameID);
+        } else {
+            System.out.println("Failed to create SquarantineModel without intersection after " + maxAttempts + " attempts.");
+        }
+    }
+
+
+    @Override
+    public int getMinSpawnWave() {
+        return 1;
     }
 }

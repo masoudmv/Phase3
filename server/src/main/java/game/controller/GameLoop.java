@@ -54,8 +54,7 @@ public class GameLoop implements Runnable {
         this.gameID = gameID;
         decreaseVelocities=false;
         movementInProgress = false;
-        inGameXP = 1000;
-        wave = 1;
+
         this.start();
     }
 

@@ -3,6 +3,7 @@ package game.model.charactersModel;
 
 import game.controller.UserInterfaceController;
 import game.controller.Utils;
+import game.model.reflection.Enemy;
 import shared.constants.Constants;
 import shared.constants.EntityConstants;
 import shared.Model.MyPolygon;
@@ -25,7 +26,7 @@ import java.util.Random;
 import static shared.Model.imagetools.ToolBox.getBufferedImage;
 import static shared.constants.Constants.FRAME_DIMENSION;
 
-public class TrigorathModel extends GeoShapeModel implements Movable, Collidable, Impactable {
+public class TrigorathModel extends GeoShapeModel implements Movable, Collidable, Impactable, Enemy {
     public double impactMaxVelocity;
 
     private boolean impactInProgress = false;
@@ -48,6 +49,10 @@ public class TrigorathModel extends GeoShapeModel implements Movable, Collidable
 
         UserInterfaceController.createTrigorathView(id, gameID);
         setTarget();
+    }
+
+    public TrigorathModel() {
+        super();
     }
 
     private void initVertices(){
@@ -429,35 +434,43 @@ public class TrigorathModel extends GeoShapeModel implements Movable, Collidable
 
     }
 
-    public static void createEnemy(String gameID){
-        Dimension dimension = FRAME_DIMENSION;
-        Random random = new Random();
-        int index = random.nextInt(4);
-        double offset = 100;
-        double x = -offset;
-        double y = -offset;
-        switch (index){
-            case 0: {
-                x = random.nextDouble(0, dimension.width);
-                y = -offset;
-            }
-            case 1: {
-                x = dimension.getWidth() + offset;
-                y = random.nextDouble(0, dimension.height);
-            }
-            case 2: {
-                y = dimension.getHeight() + offset;
-                x = random.nextDouble(0, dimension.width);
-            }
-            case 3: {
-                x = -offset;
-                y = random.nextDouble(0, dimension.height);
-            }
+    @Override
+    public void create(String gameID) {
+        Point2D anchor;
+        boolean isValid;
+        double MIN_DISTANCE = 100.0; // The minimum distance to avoid collision
+        int maxAttempts = 100;
+        int attempts = 0;
 
+        do {
+            isValid = true;
+            anchor = findRandomPoint();
+            attempts++;
+
+            for (GeoShapeModel model : findGame(gameID).entities) {
+                double distance = model.getAnchor().distance(anchor);
+                if (distance < MIN_DISTANCE) {
+                    isValid = false;
+                    break;
+                }
+            }
+        } while (!isValid && attempts < maxAttempts);
+
+        if (isValid) {
+            // Add the new enemy to the game's entities
+            new TrigorathModel(anchor, gameID);
+        } else {
+            System.out.println("Failed to create SquarantineModel without intersection after " + maxAttempts + " attempts.");
         }
-
-        new TrigorathModel(new Point2D.Double(x,y), gameID);
     }
+
+    @Override
+    public int getMinSpawnWave() {
+        return 1;
+    }
+
+
+
 
 
 

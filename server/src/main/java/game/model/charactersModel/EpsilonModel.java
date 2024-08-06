@@ -38,6 +38,7 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
 
     private boolean isBlackTeam = true;
     private String macAddress;
+    private Color color;
 
 
 
@@ -48,23 +49,25 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
 
     public ArrayList<Point2D> vertices = new ArrayList<>();
 
-    BabyEpsilon[] babies = new BabyEpsilon[3];
+    BabyEpsilon[] babies;
 
 
 
     private FinalPanelModel localPanel;
+    private int gameXP;
 
 
 
 
-    public EpsilonModel(Point2D anchor, boolean isBlackTeam, String gameID) {
+    public EpsilonModel(Point2D anchor, boolean isBlackTeam, String gameID, Color color) {
         super(anchor, image, new MyPolygon(), gameID);
+        babies = new BabyEpsilon[3];
         this.isBlackTeam = isBlackTeam;
         Point vector = new Point(0, 0);
         this.direction = new Direction(vector);
         collidables.add(this);
         movables.add(this);
-        UserInterfaceController.createEpsilonView(id, gameID);
+        UserInterfaceController.createEpsilonView(id, gameID, color);
         damageSize.put(AttackTypes.ASTRAPE, 0);
         impactables.add(this);
         setDummyPolygon();
@@ -72,6 +75,22 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
         Game game = findGame(gameID);
         game.epsilons.add(this);
 
+    }
+
+    public int getGameXP() {
+        return gameXP;
+    }
+
+    public void addGameXP(int gameXP) {
+        this.gameXP += gameXP;
+    }
+
+    public Color getColor() {
+        return color;
+    }
+
+    public void setColor(Color color) {
+        this.color = color;
     }
 
     public static EpsilonModel getINSTANCE() {
@@ -201,7 +220,7 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
         updateLocalPanel();
 
 
-        moveBabies(direction);
+//        moveBabies(direction);
         update(direction);
 
         applyCerebrus();
@@ -500,9 +519,17 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
             return;
         }
 
-        if (other instanceof CollectibleModel || other instanceof NonrigidBullet){
+        if ( other instanceof NonrigidBullet){
             return;
         }
+
+        if (other instanceof CollectibleModel) {
+            int XP = ((CollectibleModel) other).getCollectibleXP();
+            this.addGameXP(XP);
+        };
+
+
+
 
         if (other instanceof  BulletModel) {
             handleBulletCollision(other, intersection);
@@ -532,7 +559,6 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
             if (!isOnFall) impact(new CollisionState(intersection));
         }
         if (other instanceof NecropickModel) if (!((NecropickModel) other).isHovering()) impact(new CollisionState(intersection)); // :)
-        if (other instanceof CollectibleModel) Game.inGameXP += ((CollectibleModel) other).getCollectibleXP();
         if (other instanceof BulletModel) ;
         if (other instanceof NonrigidBullet) ;
 

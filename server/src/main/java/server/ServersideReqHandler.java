@@ -291,22 +291,35 @@ public class ServersideReqHandler extends Thread implements RequestHandler {
 
         synchronized (dataBase) {
             StateResponse stateResponse = new StateResponse();
+            String macAddress = "1";
 
 
 //            String macAddress = stateRequest.getMacAddress();
 //            Player player = dataBase.findPlayer(macAddress);
             String gameID = "1";
 
+            int XP = 0;
+            int health = 100;
+            Game game = dataBase.findGame(gameID);
+            for (EpsilonModel epsilon : game.epsilons){
+                if (epsilon.getMacAddress().equals(macAddress)) {
+                    XP  = epsilon.getGameXP();
+                    health  = epsilon.getHp();
+                }
+            }
+
+
 
 
             GameData gameData = dataBase.findGameData(gameID);
-
 
             stateResponse.setCreatedEntities(gameData.getCreatedEntities());
             stateResponse.setCreatedPanels(gameData.getCreatedPanels());
             stateResponse.setEliminatedEntities(gameData.getEliminatedEntities());
             stateResponse.setUpdatedPanels(gameData.getUpdatedPanels());
             stateResponse.setUpdatedModels(gameData.getUpdatedModels());
+            stateResponse.setGameXP(XP);
+            stateResponse.setHealth(health);
 
 
 

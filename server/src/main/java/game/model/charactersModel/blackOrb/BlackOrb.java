@@ -2,6 +2,9 @@ package game.model.charactersModel.blackOrb;
 
 import game.controller.Game;
 import game.controller.Utils;
+import game.model.charactersModel.BarricadosModel;
+import game.model.charactersModel.GeoShapeModel;
+import game.model.reflection.Enemy;
 import server.DataBase;
 import shared.constants.EntityConstants;
 import game.model.FinalPanelModel;
@@ -12,7 +15,10 @@ import java.awt.geom.Point2D;
 import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class BlackOrb { // todo panels should be created with delay?
+import static game.model.FinalPanelModel.intersect;
+import static shared.constants.Constants.FRAME_DIMENSION;
+
+public class BlackOrb implements Enemy { // todo panels should be created with delay?
     Random random = new Random();
     FinalPanelModel[] panels = new FinalPanelModel[5];
     Orb[] orbs = new Orb[5];
@@ -25,12 +31,12 @@ public class BlackOrb { // todo panels should be created with delay?
     private boolean avalancheIsSet = false;
     private double avalancheBirthTime;
     private String gameID;
+    private static double edgeLength = 350; // Distance between adjacent vertices
 
-    public BlackOrb(String gameID) {
+    public BlackOrb(Point2D pivot, String gameID) {
         this.gameID = gameID;
         this.avalancheBirthTime = random.nextInt((int) (findGame(gameID).ELAPSED_TIME + 6), (int) (findGame(gameID).ELAPSED_TIME + 15));
-        Point2D pivot = new Point2D.Double(500, 400); // Center of the pentagon
-        double edgeLength = 350; // Distance between adjacent vertices
+
         double radius = edgeLength / (2 * Math.sin(Math.PI / 5)); // Circumradius of the pentagon
         for (int i = 0; i < 5; i++) {
             double angle = 2 * Math.PI * i / 5 + Math.PI / 2; // Central angle for each vertex, adjusted for upside-down orientation
@@ -40,6 +46,9 @@ public class BlackOrb { // todo panels should be created with delay?
             );
         }
         blackOrbs.add(this);
+    }
+
+    public BlackOrb() {
     }
 
     private Game findGame(String gameID){
@@ -60,6 +69,7 @@ public class BlackOrb { // todo panels should be created with delay?
         if (now - lastCreatedOrbTime > EntityConstants.ORB_PANEL_CREATION_DELAY && numCreatedOrbs == 5) {
             // Run initializeOrbs in a separate thread
 //            executorService.submit(this::initializedOrbs); // TODO ADD CONURENCY TO REQUIRED METHODS IN GAMELOOP.
+            System.out.println("HERE");
             new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -71,6 +81,19 @@ public class BlackOrb { // todo panels should be created with delay?
         }
         if ( now - lastCreatedOrbTime < EntityConstants.ORB_PANEL_CREATION_DELAY || numCreatedOrbs > 4) return;
         FinalPanelModel p = new FinalPanelModel(vertices[numCreatedOrbs], getPanelDimension(), gameID);
+        Game game = findGame(gameID);
+        for (GeoShapeModel model : game.entities){
+            if (model instanceof BarricadosModel){
+                FinalPanelModel panelModel = ((BarricadosModel) model).getF();
+                if (intersect(panelModel, p)) {
+                    panelModel.setRigid(false);
+                    model.eliminate();
+                }
+            }
+
+        }
+
+
         p.setIsometric(true);
         panels[numCreatedOrbs] = p;
         lastCreatedOrbTime = now;
@@ -107,4 +130,26 @@ public class BlackOrb { // todo panels should be created with delay?
     }
 
 
+    @Override
+    public void create(String gameID) {
+        Random random = new Random();
+        double offset = 520;
+        double width = FRAME_DIMENSION.getWidth();
+        double x = random.nextDouble(offset, width-offset);
+        double y = random.nextDouble(350, 450);
+        Point2D pivot = new Point2D.Double(x, y);
+        new BlackOrb(pivot, gameID);
+    }
+
+
+
+    @Override
+    public int getMinSpawnWave() {
+        return 5;
+    }
+
+    @Override
+    public boolean isUniquePerWave(){
+        return true;
+    }
 }

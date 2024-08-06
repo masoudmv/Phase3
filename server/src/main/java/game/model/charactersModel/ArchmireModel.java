@@ -3,6 +3,8 @@ package game.model.charactersModel;
 import game.controller.Game;
 import game.controller.UserInterfaceController;
 import game.controller.Utils;
+import game.model.reflection.Enemy;
+import javafx.scene.shape.Arc;
 import shared.constants.EntityConstants;
 import game.example.GraphicalObject;
 import shared.Model.MyPolygon;
@@ -23,7 +25,7 @@ import static game.controller.UserInterfaceController.createArchmireView;
 import static game.controller.UserInterfaceController.createBabyArchmireView;
 import static shared.Model.imagetools.ToolBox.getBufferedImage;
 
-public class ArchmireModel extends GeoShapeModel implements Collidable {
+public class ArchmireModel extends GeoShapeModel implements Collidable, Enemy {
     static BufferedImage image;
     protected static MyPolygon pol;
     private LinkedList<TimedLocation> locationHistory = new LinkedList<>();
@@ -170,6 +172,17 @@ public class ArchmireModel extends GeoShapeModel implements Collidable {
     @Override
     public void onCollision(Collidable other, Point2D coll1, Point2D coll2) {
 
+    }
+
+    @Override
+    public void create(String gameID) {
+        Point2D anchor = findRandomPoint();
+        new ArchmireModel(anchor, gameID);
+    }
+
+    @Override
+    public int getMinSpawnWave() {
+        return 2;
     }
 }
 
