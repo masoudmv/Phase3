@@ -10,7 +10,7 @@ import static controller.Utils.relativeLocation;
 public class ProjectileState {
     private boolean isProjecting;
     private double totalRotationAngle;
-    private double angularSpeed = 1.5;
+    private double angularSpeed = 1;
     private double angleToEpsilon;
     private double lastShotBulletTime = 0;
     private Point2D center = EpsilonModel.getINSTANCE().getAnchor();

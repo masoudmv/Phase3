@@ -81,6 +81,7 @@ public class FinalPanelModel implements Collidable, Serializable {
     @SerializedName("velocity")
     @Expose
     private double velocity;
+    private boolean motionLock = false;
 
     public FinalPanelModel(Point2D location, Dimension2D size) {
         this.id = UUID.randomUUID().toString();
@@ -112,6 +113,7 @@ public class FinalPanelModel implements Collidable, Serializable {
     }
 
     public void moveLocation(Point2D movement){
+//        if (motionLock) return;
         this.location = addVectors(location, movement);
         updateVertices();
     }
@@ -309,24 +311,6 @@ public class FinalPanelModel implements Collidable, Serializable {
         }
     }
 
-    public void verticalShrink(double contraction){
-        if (size.getHeight() > 400){
-            size.setSize(size.getWidth(), size.getHeight() - contraction * 2);
-            Point2D movement = new Point2D.Double(0, contraction);
-            moveLocation(movement);
-            updateVertices();
-        }
-    }
-
-    public void horizontalShrink(double contraction){
-        if (size.getWidth() > 400){
-            size.setSize(size.getWidth() - contraction * 2, size.getHeight());
-            Point2D movement = new Point2D.Double(contraction, 0);
-            moveLocation(movement);
-            updateVertices();
-        }
-    }
-
 
     private boolean touchesPanel(){
         for (EpsilonModel epsilon : epsilons) {
@@ -347,6 +331,7 @@ public class FinalPanelModel implements Collidable, Serializable {
     }
 
     public void panelMotion(){
+        updateVertices();
         if (dontUpdate()) return;
         if (shallBeEliminated){
             boolean cantDieYet = false;
@@ -370,6 +355,8 @@ public class FinalPanelModel implements Collidable, Serializable {
         bottomIsBlocked = false;
         leftIsBlocked = false;
 
+        motionLock = false;
+
         for (EpsilonModel epsilon : epsilons){
             // todo terrible idea to make local panel static ...
             if (EpsilonModel.getINSTANCE().getLocalPanel() == null){
@@ -390,6 +377,7 @@ public class FinalPanelModel implements Collidable, Serializable {
                         case 2 -> bottomIsBlocked = true;
                         case 3 -> leftIsBlocked = true;
                     }
+                    motionLock = true;
                 }
             }
         }
@@ -508,7 +496,7 @@ public class FinalPanelModel implements Collidable, Serializable {
         }
 
         if (verticesInsideThisPanel.size() == 2) {
-            handleTwoVerticesInside(other, this, verticesInsideThisPanel);
+            handleTwoVerticesInside(this, other, verticesInsideThisPanel);
         }
 
         if (verticesInsideOtherPanel.size() == 1) {

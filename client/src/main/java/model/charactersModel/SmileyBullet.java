@@ -2,6 +2,7 @@ package model.charactersModel;
 
 import model.FinalPanelModel;
 import model.MyPolygon;
+import model.charactersModel.smiley.Smiley;
 import model.collision.Collidable;
 import model.entities.AttackTypes;
 import model.entities.Entity;
@@ -53,26 +54,6 @@ public class SmileyBullet extends GeoShapeModel implements Collidable {
 
 
 
-    public void rapidFire(int numBullets, double arcAngle) {
-
-        double startAngle = 0;
-        double angleStep = arcAngle / (numBullets - 1);
-
-        for (int i = 0; i < numBullets; i++) {
-            double angle = startAngle + i * angleStep;
-            double radians = Math.toRadians(angle);
-            Point2D direction = new Point2D.Double(Math.cos(radians), Math.sin(radians));
-
-
-            Point2D firingPoint = new Point2D.Double(130, 130); //todo edit
-
-            SmileyBullet b = new SmileyBullet(firingPoint);
-
-            direction = adjustVectorMagnitude(direction, 5);
-            b.setDirection(new Direction(direction));
-            smileyBullets.add(b);
-        }
-    }
 
     public static BufferedImage loadImage() {
         Image img = new ImageIcon("./client/src/bullet.png").getImage();
@@ -119,11 +100,14 @@ public class SmileyBullet extends GeoShapeModel implements Collidable {
 
     @Override
     public void onCollision(Collidable other, Point2D intersection) {
-        if (other instanceof FinalPanelModel) return;
+        if (other instanceof FinalPanelModel || other instanceof Smiley) return;
         if (other instanceof EpsilonModel) {
             this.damage((Entity) other, AttackTypes.MELEE);
             eliminate();
+            return;
         }
+
+//        eliminate();
 
     }
 

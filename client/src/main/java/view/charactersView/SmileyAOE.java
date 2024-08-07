@@ -3,6 +3,9 @@ package view.charactersView;
 import controller.Game;
 
 import java.awt.*;
+import java.awt.geom.Point2D;
+import java.util.HashMap;
+import java.util.Map;
 
 import static controller.constants.EntityConstants.*;
 import static controller.constants.EntityConstants.SMILEY_AOE_ACTIVATED_LIFETIME;
@@ -14,6 +17,7 @@ public class SmileyAOE extends GeoShapeView{
         super(id);
         this.radius = SMILEY_AOE_RADIUS.getValue();
         birthTime = Game.ELAPSED_TIME;
+        zOrder = 1;
     }
 
 
@@ -23,31 +27,47 @@ public class SmileyAOE extends GeoShapeView{
 //        geoShapeViews.remove(this);
     }
 
-//    @Override
-//    public void draw(Graphics g) {
-//        g.setColor(Color.white);
-//
-////        g.drawOval((int) (currentLocation.getX()-radius), (int) (currentLocation.getY()-radius), (int) (2*radius), (int) (2*radius));
-//
-//
-//
-//        double now = Game.ELAPSED_TIME;
-//        g.setColor(Color.green);
-//
-//
-//
-//        if (now - birthTime < SMILEY_AOE_ACTIVATION_TIME.getValue()) {
-//            g.drawOval((int) (currentLocation.getX()-radius), (int) (currentLocation.getY()-radius), (int) (2*radius), (int) (2*radius));
-//        };
-//
-//
-//        if (now - birthTime > SMILEY_AOE_ACTIVATION_TIME.getValue()) {
-//            g.fillOval((int) (currentLocation.getX()-radius), (int) (currentLocation.getY()-radius), (int) (2*radius), (int) (2*radius));
-//        };
-//
-//
-//
-//
-////        if (now - birthTime > SMILEY_AOE_ACTIVATED_LIFETIME.getValue());
-//    }
+    @Override
+    public void draw(Graphics g, String panelID) {
+        g.setColor(Color.white);
+        if (locations.get(panelID) == null) return;
+
+
+        double now = Game.ELAPSED_TIME;
+        g.setColor(Color.green);
+
+        Point2D currentLocation = locations.get(panelID);
+
+        Color baseColor = Color.GREEN;
+        int baseAlpha = 70;
+
+        Map<Integer, Color> alphaColorCache = new HashMap<>();
+
+
+        // Calculate the maximum and minimum alpha values
+        int maxAlpha = baseAlpha;
+        int minAlpha = 0;
+        int alpha = Math.max(minAlpha, Math.min(maxAlpha, baseAlpha));
+
+
+        // Get or create the dimmer color with the cached alpha value
+        Color dimmerColor = alphaColorCache.computeIfAbsent(alpha, a ->
+                new Color(baseColor.getRed(), baseColor.getGreen(), baseColor.getBlue(), a)
+        );
+
+        g.setColor(dimmerColor);
+
+
+        if (now - birthTime < SMILEY_AOE_ACTIVATION_TIME.getValue()) {
+            g.drawOval((int) (currentLocation.getX()-radius), (int) (currentLocation.getY()-radius), (int) (2*radius), (int) (2*radius));
+        };
+
+
+        if (now - birthTime > SMILEY_AOE_ACTIVATION_TIME.getValue()) {
+            g.fillOval((int) (currentLocation.getX()-radius), (int) (currentLocation.getY()-radius), (int) (2*radius), (int) (2*radius));
+        };
+
+
+
+    }
 }

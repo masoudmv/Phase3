@@ -50,7 +50,7 @@ public class Main {
     public static void main(String[] args) throws LineUnavailableException, IOException, UnsupportedAudioFileException, InterruptedException {
         LeftHand.loadImage();
         Hand.loadImage();
-
+        SmileyBullet.loadImage();
         Smiley.loadImage();
 
 
@@ -62,6 +62,7 @@ public class Main {
         ArchmireModel.loadImage();
         Orb.loadImage();
         BarricadosModel.loadImage();
+
 
         BufferedImage b = EpsilonModel.loadImage();
         GraphicalObject bows = new GraphicalObject(b);

@@ -166,8 +166,14 @@ public class GeoShapeView {
             ypoints[i] = (int) myPolygon.ypoints[i];
         }
 
-        g2d.drawImage(rotateImage(image, Math.toDegrees(-angle)), (int) (x - imageWidth/2), (int) (y - imageWidth/2), null);
+        // Rotate the image and get the new dimensions
+        BufferedImage rotatedImage = rotateImage(image, angle);
+        int rotatedWidth = rotatedImage.getWidth();
+        int rotatedHeight = rotatedImage.getHeight();
 
-        g2d.drawPolygon(xpoints, ypoints, myPolygon.npoints);
+        // Draw the rotated image centered at (x, y)
+        g2d.drawImage(rotatedImage, (x - rotatedWidth / 2), (y - rotatedHeight / 2), null);
+
+//        g2d.drawPolygon(xpoints, ypoints, myPolygon.npoints);
     }
 }

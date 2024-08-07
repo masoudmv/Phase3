@@ -72,7 +72,7 @@ public class UserInputHandler implements KeyListener {
     public void keyPressed(KeyEvent e) {
         Map<String, Integer> keyBindings = KeyBindingMenu.getINSTANCE().getKeyBindings();
 
-        if (e.getKeyCode() == keyBindings.get("Open Shop")) {
+        if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
             handleAbilityShopPanelToggle();
         }
 

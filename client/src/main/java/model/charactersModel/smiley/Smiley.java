@@ -18,9 +18,12 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Random;
 
 import static controller.Utils.*;
+import static controller.constants.Constants.FRAME_DIMENSION;
 import static controller.constants.EntityConstants.*;
+import static controller.constants.EntityConstants.SMILEY_SLAP_COOLDOWN;
 import static model.imagetools.ToolBox.getBufferedImage;
 
 public class Smiley extends GeoShapeModel implements Collidable {
@@ -30,7 +33,8 @@ public class Smiley extends GeoShapeModel implements Collidable {
     public static ArrayList<Smiley> smilies = new ArrayList<>();
     private FinalPanelModel finalPanelModel;
     protected static MyPolygon pol;
-    private double lastRapidFire = 0;
+    private double lastRapidFire = -15;
+    private double lastVomit = -20;
 
 
     private Hand leftHand;
@@ -50,15 +54,19 @@ public class Smiley extends GeoShapeModel implements Collidable {
 
 
     public Smiley(Point2D anchor, Hand leftHand, Hand rightHand) {
-        super(anchor, image, pol);
-        this.leftHand = leftHand;
+        super(anchor, image, new MyPolygon());
+
         Point2D loc = new Point2D.Double(getAnchor().getX() - 150, getAnchor().getY() - 150);
         Dimension size = new Dimension(300, 300);
         finalPanelModel = new FinalPanelModel(loc, size);
+        finalPanelModel.setIsometric(true);
 
         collidables.add(this);
         smilies.add(this);
+
         this.rightHand = rightHand;
+        this.leftHand = leftHand;
+
 
 
 //        rightHand.initializeSqueeze();
@@ -69,8 +77,23 @@ public class Smiley extends GeoShapeModel implements Collidable {
 
     private void checkForProjectileCoolDown(){
         double now = Game.ELAPSED_TIME;
-        if (!rightHand.projectileInProgress && now - rightHand.lastProjectileTime > SMILEY_PROJECTILE_DURATION.getValue() + SMILEY_PROJECTILE_COOLDOWN.getValue()) {
+        if (!rightHand.projectileInProgress &&
+                now - rightHand.lastProjectileTime > SMILEY_PROJECTILE_DURATION.getValue() + SMILEY_PROJECTILE_COOLDOWN.getValue()) {
             if (Hand.slapInProgress) return;
+            if (leftHand.projectileInProgress) return;
+            if (leftHand.squeezeInProgress) return;
+            if (rightHand.squeezeInProgress) return;
+
+            EpsilonModel epsilon = EpsilonModel.getINSTANCE();
+            Point2D p = epsilon.getAnchor();
+            double x = p.getX();
+            double y = p.getY();
+            double midX = FRAME_DIMENSION.getWidth() / 2;
+            double midY = FRAME_DIMENSION.getHeight() / 2;
+            double diffX = Math.abs(x - midX);
+            double diffY = y - midY;
+            if (diffY < 0 || diffY > 200 ||diffX > 400) return;
+
             rightHand.initializeProjectile();
             leftHand.initializeProjectile();
         }
@@ -79,43 +102,20 @@ public class Smiley extends GeoShapeModel implements Collidable {
 
     private void checkForSqueezeCoolDown(){
         double now = Game.ELAPSED_TIME;
-        if (!rightHand.squeezeInProgress && now - rightHand.lastSqueezeTime > SMILEY_SQUEEZE_DURATION.getValue() + SMILEY_SQUEEZE_COOLDOWN.getValue()) {
+        if (!rightHand.squeezeInProgress &&
+                now - rightHand.lastSqueezeTime > SMILEY_SQUEEZE_DURATION.getValue() + SMILEY_SQUEEZE_COOLDOWN.getValue()) {
             if (Hand.slapInProgress) return;
+
+            if (leftHand.squeezeInProgress) return;
+            if (leftHand.projectileInProgress) return;
+            if (rightHand.projectileInProgress) return;
+
+
             initiateSqueeze();
         }
     }
 
 
-//    private void checkForSlapCoolDown(){
-//        double now = Game.ELAPSED_TIME;
-//        if (!slapInProgress && now - lastSlapTime > SMILEY_SLAP_DURATION.getValue() + SMILEY_SLAP_COOLDOWN.getValue()) {
-//            Random random = new Random();
-//            int randomNumber = random.nextInt(2) + 1;
-//            if (randomNumber == 1) rightHand.initializeSlap();
-//            else rightHand.initializeSlap();
-//        }
-//    }
-
-
-
-
-//    private void initiateProjectile(){
-//        lastProjectileTime = Game.ELAPSED_TIME;
-//        leftHand.initializeProjectile();
-//        rightHand.initializeProjectile();
-//    }
-
-
-    public Smiley(Point2D anchor) {
-        super(anchor, image, pol);
-        Point2D loc = new Point2D.Double(getAnchor().getX() - 150, getAnchor().getY() - 150);
-        Dimension size = new Dimension(300, 300);
-        finalPanelModel = new FinalPanelModel(loc, size);
-
-        collidables.add(this);
-        smilies.add(this);
-
-    }
 
 
     private void vomit(){
@@ -124,16 +124,21 @@ public class Smiley extends GeoShapeModel implements Collidable {
 
 
     private void initiateSqueeze(){
-        if (EpsilonModel.getINSTANCE().getLocalPanel() == null) return;
 //        lastSqueezeTime = Game.ELAPSED_TIME;
         if (!leftHand.isAlive() || !rightHand.isAlive()) return;
+//        if (leftHand.projectileInProgress || rightHand.projectileInProgress) return;
         FinalPanelModel leftPanel = leftHand.getFinalPanelModel();
         FinalPanelModel rightPanel = rightHand.getFinalPanelModel();
         FinalPanelModel epsilonPanel = EpsilonModel.getINSTANCE().getLocalPanel();
+        if (epsilonPanel == null) return;
 
         boolean left = leftPanel.getLocation().getX() + leftPanel.getSize().getWidth() < epsilonPanel.getLocation().getX();
         boolean right = rightPanel.getLocation().getX() > epsilonPanel.getLocation().getX() + epsilonPanel.getSize().getWidth();
         boolean top  = epsilonPanel.getLocation().getY() > finalPanelModel.getLocation().getY() + finalPanelModel.getSize().getHeight();
+
+        if (rightHand.beforeSlapPosition != null) return;
+        if (leftHand.beforeSlapPosition != null) return;
+
 
         if (right && left && top) {
             leftHand.initializeSqueeze();
@@ -142,23 +147,26 @@ public class Smiley extends GeoShapeModel implements Collidable {
     }
 
 
+    @Override
     public void update() {
-        if (dontUpdate()) return;
         checkForProjectileCoolDown();
         checkForSqueezeCoolDown();
 
 
+        double now = Game.ELAPSED_TIME;
 
 
-
-//        if (now - lastRapidFire > 5) {
-//            lastRapidFire = now;
-//            rapidFire(10, 360);
-//        }
+        if (now - lastRapidFire > 20) {
+            lastRapidFire = now;
+            rapidFire(7, 90);
+        }
 
 
         SmileyAOE.updateAll();
-//        if (now > 10) vomit();
+        if (now - lastVomit > 25) {
+            lastVomit = now;
+            vomit();
+        }
 
 
     }
@@ -166,23 +174,67 @@ public class Smiley extends GeoShapeModel implements Collidable {
 
     public void rapidFire(int numBullets, double arcAngle) {
 
-        double startAngle = 0;
-        double angleStep = arcAngle / (numBullets - 1);
+        new Thread(new Runnable() {
 
-        for (int i = 0; i < numBullets; i++) {
-            double angle = startAngle + i * angleStep;
-            double radians = Math.toRadians(angle);
-            Point2D direction = new Point2D.Double(Math.cos(radians), Math.sin(radians));
+            @Override
+            public void run() {
+                int index = 0;
+                while (index < 6){
+                    EpsilonModel epsilon = EpsilonModel.getINSTANCE();
+                    Point2D des = epsilon.getAnchor();
+                    Point2D start = anchor;
 
+                    // Calculate the relative position from start to des
+                    Point2D rel = relativeLocation(des, start);
+                    double t = rel.getY() / rel.getX();
 
-            Point2D firingPoint = new Point2D.Double(anchor.getX(), anchor.getY()); //todo edit
+                    // Calculate the starting angle of the arc
+                    double startAngle = Math.toDegrees(Math.atan2(rel.getY(), rel.getX())) - arcAngle / 2;
 
-            SmileyBullet b = new SmileyBullet(firingPoint);
+                    // Calculate the angle step between each bullet
+                    double angleStep = arcAngle / (numBullets - 1);
 
-            direction = adjustVectorMagnitude(direction, 5);
-            b.setDirection(new Direction(direction));
-        }
+                    // Loop through each bullet to set its direction and fire it
+                    for (int i = 0; i < numBullets; i++) {
+                        // Calculate the angle for the current bullet
+                        double angle = startAngle + i * angleStep;
+                        double radians = Math.toRadians(angle);
+
+                        // Calculate the direction vector based on the angle
+                        Point2D direction = new Point2D.Double(Math.cos(radians), Math.sin(radians));
+
+                        // Set the firing point (anchor point in this case)
+                        Point2D firingPoint = new Point2D.Double(anchor.getX(), anchor.getY());
+
+                        // Create a new bullet at the firing point
+                        SmileyBullet b = new SmileyBullet(firingPoint);
+
+                        // Adjust the direction vector's magnitude and set it on the bullet
+                        direction = adjustVectorMagnitude(direction, 5);
+                        b.setDirection(new Direction(direction));
+                    }
+
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                    index ++;
+                }
+            }
+        }).start();
     }
+
+    private Point2D relativeLocation(Point2D des, Point2D start) {
+        return new Point2D.Double(des.getX() - start.getX(), des.getY() - start.getY());
+    }
+
+    private Point2D adjustVectorMagnitude(Point2D vector, double magnitude) {
+        double currentMagnitude = Math.sqrt(vector.getX() * vector.getX() + vector.getY() * vector.getY());
+        double scale = magnitude / currentMagnitude;
+        return new Point2D.Double(vector.getX() * scale, vector.getY() * scale);
+    }
+
 
 
 
@@ -209,13 +261,13 @@ public class Smiley extends GeoShapeModel implements Collidable {
 
 
     public static BufferedImage loadImage() {
-        Image img = new ImageIcon("./client/src/smiley.png").getImage();
+        Image img = new ImageIcon("C:\\Users\\masoud\\Desktop\\New folder\\NetworkClass\\client\\src\\smiley.png").getImage();
 //        Smiley.image = getBufferedImage(img);
 
         Smiley.image = getBufferedImage(img);
 
-        GraphicalObject bowser = new GraphicalObject(image);
-        pol = bowser.getMyBoundingPolygon();
+//        GraphicalObject bowser = new GraphicalObject(image);
+//        pol = bowser.getMyBoundingPolygon();
 
 
 
@@ -260,6 +312,11 @@ public class Smiley extends GeoShapeModel implements Collidable {
     public void onCollision(Collidable other, Point2D coll1, Point2D coll2) {
 
     }
+
+//    @Override
+//    public void onCollision(Collidable other) {
+//
+//    }
 
     @Override
     public void eliminate() {

@@ -21,13 +21,13 @@ public class Constants {
     public static double TRIGORATH_RADIUS = 20;
     public static double SQUARANTINE_EDGE = SQUARANTINE_RADIUS * Math.sqrt(2);
     public static final double FRICTION = 0.97;
-    public static final double IMPACT_COEFFICIENT = 6;
+    public static final double IMPACT_COEFFICIENT = 4.5;
     public static final double BULLET_IMPACT_COEFFICIENT = 5;
     public static final double SMALL_IMPACT_RADIUS = 100;
     public static final double LARGE_IMPACT_RADIUS = 300;
     public static final double PI = Math.PI;
     public static final double BULLET_RADIUS = 5;
-    public static final double BULLET_VELOCITY = 6;
+    public static final double BULLET_VELOCITY = 4;
     public static final double TRIGORATH_MAX_VEL_RADIUS = 200;
     public static double INTERVAL = 5;
     public static double AOE_COOLDOWN = 1;

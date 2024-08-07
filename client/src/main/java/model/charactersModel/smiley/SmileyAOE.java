@@ -4,6 +4,7 @@ import controller.Game;
 import model.MyPolygon;
 import model.charactersModel.EpsilonModel;
 import model.charactersModel.GeoShapeModel;
+import model.entities.AttackTypes;
 
 import java.awt.geom.Point2D;
 import java.util.Random;
@@ -30,6 +31,7 @@ public class SmileyAOE extends GeoShapeModel {
 
         setDummyPolygon();
         createSmileyAOEView(id);
+        damageSize.put(AttackTypes.AOE, 5);
     }
 
     public static void updateAll(){
@@ -43,7 +45,7 @@ public class SmileyAOE extends GeoShapeModel {
 
         if (isActivated && isEpsilonInside()) {
             // TODO damage epsilon
-            System.out.println("DDDDDDDDDDDDD");
+            EpsilonModel.getINSTANCE().health -= 5;
         }
     }
 

@@ -16,10 +16,12 @@ import java.awt.*;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Random;
 
 import static controller.Utils.*;
 import static controller.constants.EntityConstants.*;
 import static controller.constants.SmileyConstants.*;
+import static model.charactersModel.smiley.Smiley.smilies;
 import static model.imagetools.ToolBox.getBufferedImage;
 
 public class Hand extends GeoShapeModel implements Collidable {
@@ -31,7 +33,7 @@ public class Hand extends GeoShapeModel implements Collidable {
     private MovementState movementState;
     private RotationState rotationState;
     private ProjectileState projectileState;
-    private Point2D beforeSlapPosition;
+    public Point2D beforeSlapPosition;
     private int pointerVertexIndex;  // Added missing field
 
     public static boolean slapInProgress = false;
@@ -39,8 +41,8 @@ public class Hand extends GeoShapeModel implements Collidable {
     public boolean projectileInProgress = false;
 
     public static double lastSlapTime = 0;
-    public double lastSqueezeTime = -1;
-    public double lastProjectileTime = -1;
+    public double lastSqueezeTime = -20;
+    public double lastProjectileTime = -20;
 
     public Hand(Point2D anchor) {
         super(anchor, image, Hand.pol);
@@ -67,7 +69,12 @@ public class Hand extends GeoShapeModel implements Collidable {
     }
 
     public void initializeSlap() {
-        if (findDistance(getAnchor(), EpsilonModel.getINSTANCE().getAnchor()) > 400) return;
+        Point2D eAnchor = EpsilonModel.getINSTANCE().getAnchor();
+        if (findDistance(getAnchor(), eAnchor) > 400) return;
+        for(Smiley smiley : smilies){
+            if (smiley.getAnchor().distance(eAnchor) < 300) return;
+        }
+
         if (projectileInProgress || squeezeInProgress || slapInProgress) return;
         slapInProgress = true;
         lastSlapTime = Game.ELAPSED_TIME;
@@ -78,7 +85,9 @@ public class Hand extends GeoShapeModel implements Collidable {
 
 
     public void initializeProjectile() {
-        if (squeezeInProgress || slapInProgress) return;
+        if (squeezeInProgress || slapInProgress || projectileInProgress) return;
+        if (movementState.isMovingToDestination) return;
+        if (rotationState.rotating) return;
         lastProjectileTime = Game.ELAPSED_TIME;
         projectileInProgress = true;
         rotationState.startRotation(pointToEpsilon());
@@ -87,13 +96,17 @@ public class Hand extends GeoShapeModel implements Collidable {
     }
 
     public void initializeSqueeze() {
-        if (projectileInProgress || squeezeInProgress) return;
+        if (projectileInProgress || squeezeInProgress || slapInProgress) return;
+        if (movementState.isMovingToDestination) return;
+        if (rotationState.rotating) return;
+
         lastSqueezeTime = Game.ELAPSED_TIME;
         squeezeInProgress = true;
         finalPanelModel.setRigid(true);
         beforeSlapPosition = new Point2D.Double(getAnchor().getX(), getAnchor().getY()); // Store exact position
         FinalPanelModel epsilonPanel = EpsilonModel.getINSTANCE().getLocalPanel();
-        double x = epsilonPanel.getLocation().getX() + (isRightHand() ? epsilonPanel.getSize().getWidth() + finalPanelModel.getSize().getWidth()/2 : -finalPanelModel.getSize().getWidth()/2);
+        double x = epsilonPanel.getLocation().getX() + (isRightHand() ?
+                epsilonPanel.getSize().getWidth() + finalPanelModel.getSize().getWidth()/2 : -finalPanelModel.getSize().getWidth()/2);
         double y = epsilonPanel.getLocation().getY() + epsilonPanel.getSize().getHeight()/2;
         moveTo(new Point2D.Double(x, y));
 
@@ -162,10 +175,11 @@ public class Hand extends GeoShapeModel implements Collidable {
         return direction;
     }
 
+
+    @Override
     public void update() {
-        if (dontUpdate()) return;
         updateDirection();
-        update(direction);
+        move(direction);
     }
 
     private void updateActions(){
@@ -183,7 +197,7 @@ public class Hand extends GeoShapeModel implements Collidable {
 
     }
 
-    private void update(Direction direction) {
+    private void move(Direction direction) {
         if (direction == null) return;
         Point2D movement = multiplyVector(direction.getNormalizedDirectionVector(), direction.getMagnitude());
         movePolygon(movement);
@@ -260,7 +274,7 @@ public class Hand extends GeoShapeModel implements Collidable {
 //            System.out.println("Moving ...");
             movementState.updateSpeed();
             direction.setMagnitude(movementState.getSpeed());
-            update(direction); // Ensure this method is called to apply movement
+            move(direction); // Ensure this method is called to apply movement
         }
 //
         else if (beforeSlapPosition != null) {
@@ -306,10 +320,9 @@ public class Hand extends GeoShapeModel implements Collidable {
     }
 
     public static BufferedImage loadImage() {
-        Image img = new ImageIcon("./client/src/1.png").getImage();
+        Image img = new ImageIcon("./client/src/hand.png").getImage();
         Hand.image = getBufferedImage(img);
         GraphicalObject bowser = new GraphicalObject(image);
-        bowser.refine();
         pol = bowser.getMyBoundingPolygon();
         return Hand.image;
     }
@@ -346,7 +359,9 @@ public class Hand extends GeoShapeModel implements Collidable {
 
     @Override
     public void onCollision(Collidable other, Point2D coll1, Point2D coll2) {
+
     }
+
 
     // Rotate method added here
     public void rotate(double angle) {
@@ -432,7 +447,7 @@ public class Hand extends GeoShapeModel implements Collidable {
 
         public void updateRotation() {
             double difference = Math.abs(angle - targetAngle);
-            if (difference > 1 &&  Math.abs(difference - 360) > 1) {
+            if ( Math.abs(difference % 360 - 360) > 1  &&  Math.abs(difference % 360) > 1 )  {
 //                System.out.println("updating rotation");
                 System.out.println("angle: "+ angle);
                 System.out.println("target: "+ targetAngle);

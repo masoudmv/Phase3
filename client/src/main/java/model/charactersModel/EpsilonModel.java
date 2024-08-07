@@ -81,7 +81,7 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
         damageSize.put(AttackTypes.ASTRAPE, 0);
         impactables.add(this);
 
-        this.health = 50;
+        this.health = 5000000;
         epsilons.add(this);
 
     }
@@ -209,6 +209,8 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
         update(direction);
 
         applyCerebrus();
+
+
     }
 
     private void moveBabies(Direction direction){
@@ -244,6 +246,7 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
     @Override
     public void friction() {
         if (isOnFall) return;
+
         if (isImpactInProgress()) {
             if (direction.getMagnitude() < 1) {
                 setImpactInProgress(false);

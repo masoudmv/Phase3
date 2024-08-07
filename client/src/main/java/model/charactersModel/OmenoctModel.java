@@ -97,7 +97,7 @@ public class OmenoctModel extends GeoShapeModel implements Collidable {
         OmenoctModel.image = getBufferedImage(img);
 
         GraphicalObject bowser = new GraphicalObject(image);
-        bowser.refine();
+//        bowser.refine();
         pol = bowser.getMyBoundingPolygon();
 
         return OmenoctModel.image;

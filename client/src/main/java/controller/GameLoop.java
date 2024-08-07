@@ -132,7 +132,7 @@ public class GameLoop implements Runnable {
         ELAPSED_TIME += (double) interval / 1000;
 
 //        if (!EpsilonModel.getINSTANCE().isImpactInProgress()) updateMovement(); // Single REsponsibility
-        if (!EpsilonModel.getINSTANCE().isImpactInProgress()) UserInputHandler.updateMovement();
+
 
 
         // Increment frame count every time updateView is called
@@ -151,33 +151,10 @@ public class GameLoop implements Runnable {
 
 
 
-
-
-
-
-
-//        for (SquarantineView squarantineView: squarantineViews){
-//            squarantineView.setVertices(calculateViewLocationSquarantine(MainPanel.getINSTANCE(),squarantineView.getId()));
-//        }
-//        for (TrigorathView trigorathView : trigorathViews){
-//            trigorathView.setVertices(calculateViewLocationTrigorath(MainPanel.getINSTANCE(), trigorathView.getId()));
-//        }
-//        for (BulletView bulletView : bulletViews){
-//            bulletView.setCurrentLocation(calculateViewLocationBullet(MainPanel.getINSTANCE(), bulletView.getId()));
-//        }
-//        for (CollectibleView collectibleView : collectibleViews){
-//            collectibleView.setCurrentLocation(
-//                    calculateViewLocationCollectible(MainPanel.getINSTANCE(), collectibleView.getId())
-//            );
-//        }
-
-
         for (FinalPanelView f : finalPanelViews){
             f.setLocation(calculateLocationOfFinalPanelView(f.getId()));
             f.setSize(calculateDimensionOfFinalPanelView(f.getId()));
         }
-
-
 
 
 
@@ -186,6 +163,7 @@ public class GameLoop implements Runnable {
     }
 
     public void updateModel() {
+
 
 
         for (int i = 0; i < finalPanelModels.size(); i++) {
@@ -208,57 +186,9 @@ public class GameLoop implements Runnable {
 
 
 
-//        MainPanel panel = MainPanel.getINSTANCE();
-//        if (ELAPSED_TIME < 2) panel.verticalShrink(2);
-//        if (ELAPSED_TIME < 2) panel.horizontalShrink(2);
-        if (ELAPSED_TIME > 2 && ELAPSED_TIME < 10) {
-//            panel.expansion();
-        }
-
-
-//        for (Movable movable : movables) {
-//            movable.move();
-////            movable.friction();
-//        }
         for (int i = 0; i < BlackOrb.blackOrbs.size(); i++) {
             BlackOrb.blackOrbs.get(i).update();
         }
-//        for (Fist f : fists){
-//            f.update();
-//        }
-//        for (Smiley smiley : Smiley.smilies){
-//            smiley.update();
-//        }
-//        for (Hand h : hands){
-////            h.rot();
-//            h.update();
-////            h.mySlapAttack();
-////            h.rotateTowardsTarget();
-////            if (ELAPSED_TIME > 3) h.rot();
-//        }
-//        for (SmileyBullet b : smileyBullets){
-//            b.update();
-//        }
-//        for (OmenoctModel omenoctModel : OmenoctModel.omenoctModels) {
-//            omenoctModel.setOnEpsilonPanel(EpsilonModel.getINSTANCE().getLocalPanel());
-//            omenoctModel.updateDirection();
-//        }
-//        for (NecropickModel n : necropickModels) {   // todo revert
-//            n.update();
-//        }
-//        for (ArchmireModel archmireModel : ArchmireModel.archmireModels) {
-//            archmireModel.update();
-//        }
-//        for (TrigorathModel t : trigorathModels) {
-//            t.rotate();
-//        }
-//        for (SquarantineModel s : squarantineModels) {
-//            s.rotate();
-//        }
-//        for (Movable movable: movables){
-//            movable.update();
-//        }
-
 
 
         if (EpsilonModel.getINSTANCE().getHp() <= 0) {
@@ -313,8 +243,9 @@ public class GameLoop implements Runnable {
         }
         EpsilonModel epsilonModel = EpsilonModel.getINSTANCE();
         if (epsilonModel.isImpactInProgress()) {
-            epsilonModel.getDirection().accelerateDirection(6);
-            if (epsilonModel.getDirection().getMagnitude() > 4.5) {
+            epsilonModel.getDirection().accelerateDirection(4);
+            System.out.println(epsilonModel.getDirection().getMagnitude());
+            if (epsilonModel.getDirection().getMagnitude() > 3.8) {
                 epsilonModel.setImpactInProgress(false);
             }
         }
@@ -328,6 +259,9 @@ public class GameLoop implements Runnable {
             collectibleModel.friction();
             collectibleModel.update();
         }
+
+
+        UserInputHandler.updateMovement();
 
 
 
@@ -365,70 +299,6 @@ public class GameLoop implements Runnable {
     public void setGameLoop(Timer gameLoop) {
         this.gameLoop = gameLoop;
     }
-
-
-
-
-    // deprecated!
-//    private void creatEnemy(){
-//        double interval = ELAPSED_TIME - lastCreatedEnemyTime;
-//        if ((lastCreatedEnemyTime != -1 && interval < INTERVAL) || ELAPSED_TIME < 8) return;
-//        lastCreatedEnemyTime = ELAPSED_TIME;
-//        createdNumberOfEnemies++;
-//        aliveEnemies++;
-//        MainPanel panel = MainPanel.getINSTANCE();
-//        MainFrame frame = MainFrame.getINSTANCE();
-//        Point2D vertex1 = panel.getVertices()[0];
-//        Point2D vertex2 = panel.getVertices()[1];
-//        Point2D vertex3 = panel.getVertices()[2];
-//        Point2D vertex4 = panel.getVertices()[3];
-//        ArrayList<Integer> accessibles = new ArrayList<>();
-//        boolean leftAccessible = (vertex1.getX()>50) && (vertex4.getX()>50);
-//        boolean upAccessible = (vertex1.getY()>50) && (vertex2.getY()>50);
-//        boolean rightAccessible = (frame.getWidth()-vertex2.getX()>50) && (frame.getWidth()-vertex3.getX()>50);
-//        boolean downAccessible = (frame.getHeight()-vertex3.getY()>50) && (frame.getHeight()-vertex4.getY()>50);
-//        if (leftAccessible) accessibles.add(0);
-//        if (upAccessible) accessibles.add(1);
-//        if (rightAccessible) accessibles.add(2);
-//        if (downAccessible) accessibles.add(3);
-//
-//        Random random = new Random();
-//        int index = random.nextInt(accessibles.size());
-//        if (accessibles.get(index) == 0){
-//            double y = random.nextDouble(vertex1.getY(), vertex4.getY());
-//            int rand = random.nextInt(2);
-//            Point2D anchor = new Point2D.Double(vertex1.getX()-40, y);
-//            if (rand==0) new SquarantineModel(anchor);
-//            if (rand==1) new TrigorathModel(anchor);
-//
-//        }
-//        if (accessibles.get(index) == 1){
-//            double x = random.nextDouble(vertex1.getX(), vertex2.getX());
-//            int rand = random.nextInt(2);
-//            Point2D anchor = new Point2D.Double(x, vertex2.getY()-40);
-//            if (rand==0) new SquarantineModel(anchor);
-//            if (rand==1) new TrigorathModel(anchor);
-//
-//        }
-//        if (accessibles.get(index) == 2){
-//            double y = random.nextDouble(vertex2.getY(), vertex3.getY());
-//            int rand = random.nextInt(2);
-//            Point2D anchor = new Point2D.Double(vertex3.getX()+40, y);
-//            if (rand==0) new SquarantineModel(anchor);
-//            if (rand==1) new TrigorathModel(anchor);
-//
-//        }
-//        if (accessibles.get(index) == 3){
-//            double x = random.nextDouble(vertex4.getX(), vertex3.getX());
-//            int rand = random.nextInt(2);
-//            Point2D anchor = new Point2D.Double(x, vertex4.getY()+40);
-//            if (rand==0) new SquarantineModel(anchor);
-//            if (rand==1) new TrigorathModel(anchor);
-//
-//        }
-//
-//    }
-
 
 
 
