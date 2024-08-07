@@ -20,6 +20,9 @@ public abstract class Entity {
         // todo
         // implement melampus ...
 //        double now = Game.ELAPSED_TIME;
+        if (attackType == AttackTypes.AOE){
+
+        }
 //        if (now - lastAoeTime >= AOE_COOLDOWN) {
             if (entity.vulnerable) {
                 entity.health -= damageSize.get(attackType);

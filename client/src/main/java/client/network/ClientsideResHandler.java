@@ -1,5 +1,6 @@
 package client.network;
 
+import client.network.containers.PanelManager;
 import client.network.containers.SquadListPanel;
 import client.network.containers.MainFrame;
 import client.network.game.controller.onlineGame.ClientGame;
@@ -10,6 +11,7 @@ import shared.Model.*;
 import shared.Model.dummies.DummyModel;
 import shared.Model.dummies.DummyPanel;
 import shared.response.*;
+import shared.response.game.EndOfGameResponse;
 import shared.response.game.NullResponse;
 import shared.response.game.PauseResponse;
 import shared.response.game.StateResponse;
@@ -17,10 +19,12 @@ import shared.response.game.StateResponse;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.Point2D;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import static client.network.game.controller.UserInterfaceController.*;
+import static client.network.game.view.ClientDataBase.removeAll;
 import static client.network.game.view.FinalPanelView.finalPanelViews;
 import static client.network.game.view.charactersView.GeoShapeView.geoShapeViews;
 
@@ -364,6 +368,51 @@ public class ClientsideResHandler implements ResponseHandler {
     @Override
     public void handlePauseResponse(PauseResponse pauseResponse) {
         client.network.game.view.MainFrame.getINSTANCE().handleAbilityShopPanelToggle();
+    }
+
+    @Override
+    public void handleEndOfGameResponse(EndOfGameResponse endOfGameResponse) {
+        ClientDataBase.removeAll();
+        ClientGame.getGameLoop().stop();
+        Match match = endOfGameResponse.getMatch();
+        List<Match> matchList = endOfGameResponse.getMatches();
+
+        // TODO ...
+        // add end game panel
+        int XP = -Integer.MAX_VALUE;
+        int XPIndex = 0;
+        double survivalTime = -Double.MAX_VALUE;
+        int timeIndex = 0;
+        for (int i = 0; i < matchList.size(); i++) {
+            if (matchList.get(i).getSurvivalTime() > survivalTime) timeIndex = i;
+            if (matchList.get(i).getGainedXP() > XP) XPIndex = i;
+        }
+
+        String result;
+        boolean defeated = endOfGameResponse.isDefeated();
+        if (defeated) result = "You were defeated";
+        else result = "Victory!";
+
+        List<String> histories = getLeaderBoard(matchList, timeIndex, XPIndex, match);
+        PanelManager.showEndGamePanel(result, histories);
+
+    }
+
+    private static List<String> getLeaderBoard(List<Match> matchList, int timeIndex, int XPIndex, Match match) {
+        String maxTime = "Survival Time Record:     username: " + matchList.get(timeIndex).getUsername() +
+                                                       " time: " + matchList.get(timeIndex).getSurvivalTime();
+
+        String maxXP = "XP Record:     username: " + matchList.get(XPIndex).getUsername() +
+                                          " time: " + matchList.get(XPIndex).getGainedXP();
+
+        String yourRecord = " Your Record:  " + " survival Time: " + match.getSurvivalTime()
+                                                + " in Game XP: " + match.getGainedXP();
+
+        List<String> histories = new ArrayList<>();
+        histories.add(yourRecord);
+        histories.add(maxTime);
+        histories.add(maxXP);
+        return histories;
     }
 
 

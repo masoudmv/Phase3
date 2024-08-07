@@ -12,6 +12,8 @@ import client.network.toolBox.utils;
 
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import static client.network.RequestFactory.createIdentificateReq;
 
@@ -44,5 +46,6 @@ public class Main {
 
         MainFrame.getINSTANCE().addMouseListener(new MouseController());
         new ClientGame();
+
     }
 }

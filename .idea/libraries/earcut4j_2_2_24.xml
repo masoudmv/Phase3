@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="earcut4j-2.2.24">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/earcut4j-2.2.2.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

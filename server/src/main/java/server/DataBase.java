@@ -1,6 +1,9 @@
 package server;
 
 import game.controller.Game;
+import game.controller.GameLoop;
+import game.controller.GameType;
+import game.model.charactersModel.EpsilonModel;
 import shared.Model.*;
 import shared.response.MessageResponse;
 import shared.response.Response;
@@ -10,6 +13,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.BiConsumer;
 
 public class DataBase {
     private static DataBase dataBase;
@@ -37,8 +41,8 @@ public class DataBase {
 //        squads.add(squad);
     }
 
-    public synchronized Player findPlayer(String macAddress) {
-        for (Player player : players) {
+    public synchronized static Player findPlayer(String macAddress) {
+        for (Player player : dataBase.getAllPlayers()) {
             if (player.getMacAddress().equals(macAddress)) {
                 return player;
             }
@@ -400,51 +404,70 @@ public class DataBase {
     }
 
     public synchronized void terminateSquadBattle() {
-        for (Pair<Squad, Squad> pair : squadPairs){
-            boolean firstIsWinner;
+        for (Pair<Squad, Squad> pair : squadPairs) {
             Squad first = pair.getFirst();
             Squad second = pair.getSecond();
-            int firstSquad = first.getBattleXP();
-            int secondSquad = second.getBattleXP();
-            if (firstSquad > secondSquad) firstIsWinner = true;
-            else if (firstSquad < secondSquad)firstIsWinner = false;
-            else {
-                int firstVic = first.getMonomachiaVictories();
-                int secondVic = second.getMonomachiaVictories();
-                if (firstVic > secondVic) firstIsWinner = true;
-                else if (firstVic < secondVic)firstIsWinner = false;
-                else {
-                    boolean firstG = first.gefjonIsActivated();
-                    boolean secondG = second.gefjonIsActivated();
-                    if (firstG && !secondG) firstIsWinner = true;
-                    else if (!firstG && secondG) firstIsWinner = false;
-                    else {
-                        int index = new Random().nextInt(2);
-                        if (index == 0) firstIsWinner = true;
-                        else firstIsWinner = false;
-                    }
-                }
-            }
 
-            if (firstIsWinner){
-                for (Player player : first.getMembers()){
-                    player.addXP(500);
-                }
+            boolean firstIsWinner = determineWinner(first, second);
 
-                for (Player player : second.getMembers()){
-                    player.reduceXP(300);
-                }
-            } else {
-                for (Player player : second.getMembers()){
-                    player.addXP(500);
-                }
-
-                for (Player player : first.getMembers()){
-                    player.reduceXP(300);
-                }
-            }
+            updatePlayers(first, second, firstIsWinner);
         }
     }
+
+    private boolean determineWinner(Squad first, Squad second) {
+        int firstSquadXP = first.getBattleXP();
+        int secondSquadXP = second.getBattleXP();
+
+        if (firstSquadXP != secondSquadXP) {
+            return firstSquadXP > secondSquadXP;
+        }
+
+        int firstVic = first.getMonomachiaVictories();
+        int secondVic = second.getMonomachiaVictories();
+
+        if (firstVic != secondVic) {
+            return firstVic > secondVic;
+        }
+
+        boolean firstG = first.gefjonIsActivated();
+        boolean secondG = second.gefjonIsActivated();
+
+        if (firstG != secondG) {
+            return firstG;
+        }
+
+        return new Random().nextInt(2) == 0;
+    }
+
+    private void updatePlayers(Squad first, Squad second, boolean firstIsWinner) {
+        Squad winner = firstIsWinner ? first : second;
+        Squad loser = firstIsWinner ? second : first;
+
+        int reward = 500;
+        if (winner.hasGefjon()) reward *= 2;
+
+        for (Player player : winner.getMembers()) {
+            player.addXP(reward);
+            player.setNotification(createNotification("You have won the battle!"));
+        }
+
+        int punishment = 300;
+        if (loser.hasPalioxis()) punishment = 100;
+        if (loser.hasGefjon()) punishment *= 2;
+
+        for (Player player : loser.getMembers()) {
+            player.reduceXP(punishment);
+            player.setNotification(createNotification("You have lost the battle!"));
+        }
+    }
+
+    private Notification createNotification(String message) {
+        Notification notification = new Notification();
+        notification.setNotificationType(NotificationType.SIMPLE_MESSAGE);
+        notification.setMessage(message);
+        return notification;
+    }
+
 
 
     public GameData findGameData(String id){
@@ -478,9 +501,64 @@ public class DataBase {
         return null;
     }
 
-    public void addMatch(Match match){
+    public void addMatch(String username, double survivalTime, int gainedXP){
+        Match match = new Match(username, survivalTime, gainedXP);
         matches.add(match);
     }
 
 
+    public static void handleEndGame(GameType gameType, Game game){
+        switch (gameType){
+            case monomachia -> handleMonomachiaEndGame(game);
+            case colosseum -> handleColosseumEndGame(game);
+        }
+    }
+
+    public static void handleMonomachiaEndGame(Game game) {
+        List<EpsilonModel> epsilons = game.epsilons;
+        List<EpsilonModel> deadEpsilons = game.deadEpsilons;
+        int total = epsilons.size() + deadEpsilons.size();
+        int reward = 80 / (total - 1);
+
+
+        int black = 0;
+        int green = 0;
+
+        for (EpsilonModel epsilon : epsilons) {
+            if (epsilon.isBlackTeam()) black++;
+            else green++;
+        }
+
+        boolean blackWins = black > green;
+
+        // Function to add XP to players based on team
+        BiConsumer<List<EpsilonModel>, Boolean> addXPToTeam = (epsilonList, isBlackTeam) -> {
+            for (EpsilonModel e : epsilonList) {
+                if (e.isBlackTeam() == isBlackTeam) {
+                    Player p = findPlayer(e.getMacAddress());
+                    p.addXP(reward);
+                }
+            }
+        };
+
+        addXPToTeam.accept(epsilons, blackWins);
+        addXPToTeam.accept(deadEpsilons, blackWins);
+    }
+
+
+    public static void handleColosseumEndGame(Game game){
+        List<EpsilonModel> epsilons = game.epsilons;
+        List<EpsilonModel> deadEpsilons = game.deadEpsilons;
+
+        if (epsilons.size() == 2){
+            String m1 = epsilons.get(0).getMacAddress();
+            Player p1 = findPlayer(m1);
+            p1.addXP(30);
+
+            String m2 = epsilons.get(1).getMacAddress();
+            Player p2 = findPlayer(m2);
+            p2.addXP(30);
+
+        }
+    }
 }

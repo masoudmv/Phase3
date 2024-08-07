@@ -193,6 +193,7 @@ public class OmenoctModel extends GeoShapeModel implements Collidable, Enemy {
     @Override
     public void update(){
         if (dontUpdate()) return;
+        setTarget();
         setOnEpsilonPanel(target.getLocalPanel());
         updateDirection();
     }

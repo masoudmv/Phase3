@@ -80,6 +80,21 @@ public class Squad {
         return gefjon;
     }
 
+
+    public boolean hasGefjon(){
+        if (gefjon > 0) {
+            gefjon --;
+            return true;
+        } return false;
+    }
+
+    public boolean hasPalioxis(){
+        if (palioxis > 0) {
+            palioxis --;
+            return true;
+        } return false;
+    }
+
     public void reduceVaultBy(int amount) {
         this.vault -= amount;
     }

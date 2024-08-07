@@ -22,7 +22,7 @@ import static shared.Model.EntityType.*;
 public abstract class UserInterfaceController {
 
 
-    public static void createEpsilonView(String id, String gameID, Color color){
+    public static void createEpsilonView(String id, String gameID){
         DataBase dataBase = DataBase.getDataBase();
         GameData gameData = dataBase.findGameData(gameID);
 

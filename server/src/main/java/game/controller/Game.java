@@ -15,6 +15,7 @@ import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static shared.constants.Constants.FRAME_DIMENSION;
 
@@ -26,6 +27,7 @@ public class Game {
     public List<SquarantineModel> squarantineModels = new ArrayList<>();
     public List<TrigorathModel> trigorathModels = new ArrayList<>();
     public List<FinalPanelModel> finalPanelModels = new ArrayList<>();
+    public List<EpsilonModel> deadEpsilons = new ArrayList<>();
 
     public double ELAPSED_TIME = 0;
     private boolean isPaused = false;
@@ -49,18 +51,38 @@ public class Game {
 
         Constants.RADIUS = 15;
 
-        addEpsilons("1", "2", GameType.monomachia);
+        addEpsilons("1", "2", "3");
 
         profile.activatedSkills.put("1", Skill.CERBERUS);
 
-        gameLoop = new GameLoop(gameID, 5); // Initialize GameLoop with number of waves
+        gameLoop = new GameLoop(gameID, 1); // Initialize GameLoop with number of waves
+    }
+
+
+    public void addEpsilons(String macAddress1, String macAddress2, String macAddress3) {
+        addEpsilonModels(new String[]{macAddress1, macAddress2, macAddress3},
+                new boolean[]{true, false, true},
+                new Point2D[]{
+                        new Point2D.Double(FRAME_DIMENSION.getWidth() / 2 + 50, FRAME_DIMENSION.getHeight() / 2 - 50),
+                        new Point2D.Double(FRAME_DIMENSION.getWidth() / 2 - 50, FRAME_DIMENSION.getHeight() / 2),
+                        new Point2D.Double(FRAME_DIMENSION.getWidth() / 2 - 50, FRAME_DIMENSION.getHeight() / 2 + 50)
+                });
     }
 
     public void addEpsilons(String macAddress1, String macAddress2, GameType gameType) {
+        boolean isMonomachia = (gameType == GameType.monomachia);
+        addEpsilonModels(new String[]{macAddress1, macAddress2},
+                new boolean[]{true, isMonomachia},
+                new Point2D[]{
+                        new Point2D.Double(FRAME_DIMENSION.getWidth() / 2 + 50, FRAME_DIMENSION.getHeight() / 2),
+                        new Point2D.Double(FRAME_DIMENSION.getWidth() / 2 - 50, FRAME_DIMENSION.getHeight() / 2)
+                });
+    }
+
+    private void addEpsilonModels(String[] macAddresses, boolean[] teamAssignments, Point2D[] positions) {
         Dimension dimension = FRAME_DIMENSION;
         double width = dimension.getWidth();
         double height = dimension.getHeight();
-        double epsilonDis = 50;
 
         Point2D loc = new Point2D.Double(width / 2 - 250, height / 2 - 250);
         DoubleDimension2D size = new DoubleDimension2D(500, 500);
@@ -68,36 +90,13 @@ public class Game {
         FinalPanelModel localPanel = new FinalPanelModel(loc, size, gameID);
         localPanel.setIsometric(false);
 
-        switch (gameType) {
-            case colosseum -> {
-                Point2D pos1 = new Point2D.Double(width / 2 + epsilonDis, height / 2);
-                EpsilonModel epsilon1 = new EpsilonModel(pos1, true, gameID, Color.green);
-                epsilon1.setMacAddress(macAddress1);
-
-                Point2D pos2 = new Point2D.Double(width / 2 - epsilonDis, height / 2);
-                EpsilonModel epsilon2 = new EpsilonModel(pos2, true, gameID, Color.yellow);
-                epsilon2.setMacAddress(macAddress2);
-            }
-            case monomachia -> {
-                Point2D pos1 = new Point2D.Double(width / 2 + epsilonDis, height / 2);
-                EpsilonModel epsilon1 = new EpsilonModel(pos1, true, gameID, Color.green);
-                epsilon1.setMacAddress(macAddress1);
-
-                Point2D pos2 = new Point2D.Double(width / 2 - epsilonDis, height / 2);
-                EpsilonModel epsilon2 = new EpsilonModel(pos2, false, gameID, Color.yellow);
-                epsilon2.setMacAddress(macAddress2);
-            }
+        for (int i = 0; i < macAddresses.length; i++) {
+            EpsilonModel epsilon = new EpsilonModel(positions[i], teamAssignments[i], gameID);
+            epsilon.setMacAddress(macAddresses[i]);
         }
-
-
-
-//        TrigorathModel t = new TrigorathModel();
-//        t.create(gameID);
-//        t.create(gameID);
-//
-//        NecropickModel n = new NecropickModel();
-//        n.create(gameID);
     }
+
+
 
     public boolean isPaused() {
         return gameLoop.isPaused();
@@ -139,6 +138,31 @@ public class Game {
 
     public int getWave(){
         return gameLoop.getWaveManager().getWaveIndex();
+    }
+
+    public AtomicBoolean getExit(){
+        return gameLoop.getExit();
+    }
+
+    public boolean isEnded(){
+        if (GameType.monomachia == gameType) {
+            if (ELAPSED_TIME > 60 * 5) return true;
+            int b = 0;
+            int g = 0;
+            for (EpsilonModel e : epsilons){
+                if (e.isBlackTeam()) b++;
+                else g++;
+            }
+
+            if (b == 0 || g == 0) return true;
+        }
+
+        else {
+            if (deadEpsilons.size() == 1) return true;
+            if (gameLoop.defeatedAllWaves()) return true;
+        }
+
+        return false;
     }
 
 

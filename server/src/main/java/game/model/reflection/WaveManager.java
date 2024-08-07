@@ -12,8 +12,8 @@ import java.util.stream.Collectors;
 import org.reflections.Reflections;
 
 public class WaveManager implements Runnable {
-    private static final int INITIAL_DELAY = 12000; // 12 seconds
-    private static final int MIN_DELAY = 1000; // minimum delay of 1 second
+    private static final int INITIAL_DELAY = 15000; // 12 seconds
+    private static final int MIN_DELAY = 10000; // minimum delay of 1 second
     private static final int ENEMIES_TO_ELIMINATE_PER_WAVE = 2; // Example threshold
     private List<Class<? extends Enemy>> enemyClasses;
     private AtomicInteger enemiesEliminated; // Use AtomicInteger for thread safety
@@ -21,6 +21,7 @@ public class WaveManager implements Runnable {
     private String gameID;
     private int numberOfWaves;
     private int waveIndex;
+
 
     private final AtomicBoolean running = new AtomicBoolean(true); // To control the running state
     private final Object pauseLock = new Object(); // Lock object for pausing
@@ -66,6 +67,8 @@ public class WaveManager implements Runnable {
             waitForAllEnemiesToBeEliminated();
             System.out.println("All enemies for wave " + wave + " eliminated.");
         }
+
+        waveIndex ++;
     }
 
     public void pause() {
@@ -171,5 +174,9 @@ public class WaveManager implements Runnable {
 
     public int getWaveIndex() {
         return waveIndex;
+    }
+
+    public int getNumberOfWaves() {
+        return numberOfWaves;
     }
 }

@@ -24,6 +24,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import static game.controller.Game.*;
 import static game.model.charactersModel.CollectibleModel.collectibleModels;
 import static game.model.collision.Collidable.collidables;
+import static server.DataBase.handleEndGame;
 import static shared.Model.TimedLocation.myPolToPolygon;
 
 public class GameLoop implements Runnable {
@@ -32,20 +33,16 @@ public class GameLoop implements Runnable {
     private final AtomicBoolean exit = new AtomicBoolean(false);
     private final AtomicBoolean paused = new AtomicBoolean(false);
 
-    private int updateCount = 0;
+
     public static boolean movementInProgress = false;
-    private Timer gameLoop;
-    private int extraBullet = 0;
-    double lastHpRegainTime = -1;
-    private double hpRegainRate = Double.MAX_VALUE;
-    public static boolean decreaseVelocities;
     private WaveManager waveManager;
-    private Thread waveManagerThread; // Thread for WaveManager
+    private Thread waveManagerThread;
     private Thread pauseThread;
+
 
     public GameLoop(String gameID, int numberOfWaves) {
         this.gameID = gameID;
-        decreaseVelocities = false;
+
         movementInProgress = false;
         this.waveManager = new WaveManager(gameID, numberOfWaves);
         this.waveManagerThread = new Thread(waveManager); // Initialize the WaveManager thread
@@ -97,6 +94,10 @@ public class GameLoop implements Runnable {
 
     public void updateModel() {
         if (paused.get()) return;
+        if (findGame(gameID).isEnded()) {
+            handleEndGame(findGame(gameID).getGameType(), findGame(gameID));
+            stop();
+        }
 
         List<FinalPanelModel> finalPanelModels = findGame(gameID).finalPanelModels;
 
@@ -122,7 +123,7 @@ public class GameLoop implements Runnable {
             BlackOrb.blackOrbs.get(i).update();
         }
 
-        updateCount++;
+
 
         List<SquarantineModel> squarantineModels = DataBase.getDataBase().findGame(gameID).squarantineModels;
 
@@ -252,6 +253,34 @@ public class GameLoop implements Runnable {
         }
     }
 
+    public boolean defeatedAllWaves(){
+//        Game game = findGame(gameID);
+//        List<EpsilonModel> epsilons = game.epsilons;
+//        for (EpsilonModel epsilon : epsilons) {
+//
+//        }
+
+
+        int waveIndex = waveManager.getWaveIndex();
+        int numberOfWaves = waveManager.getNumberOfWaves();
+        if (waveIndex > numberOfWaves) return true;
+
+        return false;
+//
+//        GameType gameType = game.getGameType();
+
+
+//        if (gameType == GameType.monomachia){
+//            double time = game.ELAPSED_TIME;
+//            if (time > 600) handleMonomachiaEndGame(game);
+//
+//        }
+
+
+
+    }
+
+
     private Game findGame(String gameID) {
         return DataBase.getDataBase().findGame(gameID);
     }
@@ -262,5 +291,9 @@ public class GameLoop implements Runnable {
 
     public WaveManager getWaveManager() {
         return waveManager;
+    }
+
+    public AtomicBoolean getExit() {
+        return exit;
     }
 }

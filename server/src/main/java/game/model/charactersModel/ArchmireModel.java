@@ -32,6 +32,7 @@ public class ArchmireModel extends GeoShapeModel implements Collidable, Enemy {
     private LinkedList<TimedLocation> locationHistory = new LinkedList<>();
     private double lastUpdatedLocation = 0;
     public Polygon polygon;
+    private double lastAOE = -Double.MAX_VALUE;
 
     public ArchmireModel(Point2D anchor, String gameID) {
         super(anchor, image, pol, gameID);
@@ -143,18 +144,26 @@ public class ArchmireModel extends GeoShapeModel implements Collidable, Enemy {
         for (EpsilonModel model : findGame(gameID).epsilons){
             boolean isInside = model.isInside(myPolygon.getVertices());
             if (isInside) {
-                this.damage(model, AttackTypes.DROWN);
-                return;
+                double now = findGame(gameID).ELAPSED_TIME;
+                if (now - lastAOE > 1) {
+                    this.damage(model, AttackTypes.DROWN);
+                    lastAOE = now;
+                    return;
+                }
             }
 
 
             for (TimedLocation location : locationHistory){
                 isInside = model.isInside(location.getMyPolygon().getVertices());
                 if (isInside) {
-                    this.damage(model, AttackTypes.AOE);
+                    double now = findGame(gameID).ELAPSED_TIME;
+                    if (now - lastAOE > 1) {
+                        this.damage(model, AttackTypes.AOE);
+                        lastAOE = now;
+                        return;
+                    }
                 }
             }
-
         }
     }
 

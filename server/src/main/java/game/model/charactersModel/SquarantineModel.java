@@ -267,6 +267,7 @@ public class SquarantineModel extends GeoShapeModel implements Movable, Collidab
 //        System.out.println("HP:  " + health);
         Point2D movement = Utils.multiplyVector(direction.getDirectionVector(), direction.getMagnitude());
         Random random = new Random();
+        if (target == null) setTarget();
         Point2D dir = Utils.normalizeVector(Utils.relativeLocation(target.getAnchor(), getAnchor()));
         double angle = Utils.findAngleBetweenTwoVectors(dir, getDirection().getDirectionVector());
         nextDash -= 0.010;
@@ -285,6 +286,7 @@ public class SquarantineModel extends GeoShapeModel implements Movable, Collidab
     @Override
     public void update() {
         if (dontUpdate()) return;
+        setTarget();
         update(direction);
     }
 

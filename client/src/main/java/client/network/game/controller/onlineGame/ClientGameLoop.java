@@ -1,11 +1,7 @@
 package client.network.game.controller.onlineGame;
 
 import client.network.game.controller.UserInputHandler;
-
 import client.network.game.view.MainFrame;
-
-
-import javax.swing.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static client.network.RequestFactory.createStateRequest;
@@ -16,33 +12,13 @@ public class ClientGameLoop implements Runnable{
     public static ClientGameLoop INSTANCE;
     private final AtomicBoolean running = new AtomicBoolean(false);
     private final AtomicBoolean exit = new AtomicBoolean(false);
-
     private long lastUpdateTime;
-
-    private volatile String FPS_UPS = "";
     private long lastTickTime = System.currentTimeMillis();
     private int frameCount = 0;
-
-
-    private int updateCount = 0;
-
     public static boolean movementInProgress = false;
-    private final int MOVEMENT_DELAY = 10; // Delay in milliseconds
-    private Timer gameLoop;
 
-    private int extraBullet=0;
-
-    double lastHpRegainTime=-1;
-    private double hpRegainRate = Double.MAX_VALUE;
-
-    public static boolean decreaseVelocities;
-
-
-
-    private boolean acesoInProgress=false;
 
     public ClientGameLoop() {
-        decreaseVelocities=false;
         movementInProgress = false;
         MainFrame frame = MainFrame.getINSTANCE();
         INSTANCE = this;
@@ -69,20 +45,10 @@ public class ClientGameLoop implements Runnable{
 
     public void updateView() {
 
-
-
-
-//        label.setText("<html>Wave: "+ Game.wave + "<br>Elapsed Time: "+ (int) Game.ELAPSED_TIME
-//                + "<br> XP: "+Game.inGameXP +"<br>HP: "+ EpsilonModel.getINSTANCE().getHp());
-
         long currentTickTime = System.currentTimeMillis();
         long interval = currentTickTime - lastTickTime;
 
         lastTickTime = currentTickTime;
-
-
-
-//        if (!EpsilonModel.getINSTANCE().isImpactInProgress()) UserInputHandler.updateMovement();
 
         UserInputHandler.updateMovement();
 
@@ -99,29 +65,8 @@ public class ClientGameLoop implements Runnable{
             lastUpdateTime = currentTime;
         }
 
-//
-
-//
-//        updateGeoShapeViewProperties();
-
         createStateRequest();
     }
-
-
-
-    public Timer getGameLoop() {
-        return gameLoop;
-    }
-
-    public void setGameLoop(Timer gameLoop) {
-        this.gameLoop = gameLoop;
-    }
-
-
-
-
-
-
 
 
 
@@ -165,6 +110,7 @@ public class ClientGameLoop implements Runnable{
     public boolean isOn() {
         return !exit.get();
     }
+
 
 }
 

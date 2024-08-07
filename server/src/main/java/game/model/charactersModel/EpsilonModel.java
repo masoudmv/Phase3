@@ -5,6 +5,8 @@ import game.controller.Game;
 import game.controller.UserInterfaceController;
 import game.controller.Utils;
 import game.model.entities.Ability;
+import server.DataBase;
+import shared.Model.Player;
 import shared.constants.Constants;
 import game.model.FinalPanelModel;
 import shared.Model.MyPolygon;
@@ -38,7 +40,6 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
 
     private boolean isBlackTeam = true;
     private String macAddress;
-    private Color color;
 
 
 
@@ -55,11 +56,12 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
 
     private FinalPanelModel localPanel;
     private int gameXP;
+    private boolean isSummon = false;
 
 
 
 
-    public EpsilonModel(Point2D anchor, boolean isBlackTeam, String gameID, Color color) {
+    public EpsilonModel(Point2D anchor, boolean isBlackTeam, String gameID) {
         super(anchor, image, new MyPolygon(), gameID);
         babies = new BabyEpsilon[3];
         this.isBlackTeam = isBlackTeam;
@@ -67,7 +69,7 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
         this.direction = new Direction(vector);
         collidables.add(this);
         movables.add(this);
-        UserInterfaceController.createEpsilonView(id, gameID, color);
+        UserInterfaceController.createEpsilonView(id, gameID);
         damageSize.put(AttackTypes.ASTRAPE, 0);
         impactables.add(this);
         setDummyPolygon();
@@ -83,14 +85,6 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
 
     public void addGameXP(int gameXP) {
         this.gameXP += gameXP;
-    }
-
-    public Color getColor() {
-        return color;
-    }
-
-    public void setColor(Color color) {
-        this.color = color;
     }
 
     public static EpsilonModel getINSTANCE() {
@@ -255,6 +249,15 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
 
     @Override
     public void eliminate() {
+        super.eliminate();
+
+        setRecord(macAddress);
+        findGame(gameID).deadEpsilons.add(this);
+
+        collidables.remove(this);
+        movables.remove(this);
+        findGame(gameID).epsilons.remove(this);
+        findGame(gameID).enemyEliminated();
     }
 
     @Override
@@ -271,6 +274,18 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
             }
         }
     }
+
+    private void setRecord(String macAddress){
+        DataBase db = DataBase.getDataBase();
+        Player Player = db.findPlayer(macAddress);
+        String username = Player.getUsername();
+        int XP = this.getGameXP();
+        double survivalTime =findGame(gameID).ELAPSED_TIME;
+        db.addMatch(username, survivalTime, XP);
+    }
+
+
+
 
     public Point2D reflect(Point2D normalVector) {
         double dotProduct = Utils.dotVectors(getDirection().getDirectionVector(), normalVector);

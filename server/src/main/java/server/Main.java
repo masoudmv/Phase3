@@ -16,6 +16,8 @@ import game.model.entities.Skill;
 import picocli.CommandLine;
 import server.cli.ServerCli;
 import server.socket.SocketStarter;
+import shared.Model.Player;
+import shared.Model.Status;
 
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
@@ -65,6 +67,27 @@ public class Main {
                     break;
                 }
                 commandLine.execute(command.split(" "));
+            }
+        }).start();
+
+
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+
+                    for (Player player : dataBase.getAllPlayers()){
+                        double now = System.currentTimeMillis();
+                        double diff = now - player.getLastOnlineTime();
+                        if (diff > 2000) player.setStatus(Status.offline);
+                    }
+
+
+                    Thread.sleep(3000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
             }
         }).start();
     }

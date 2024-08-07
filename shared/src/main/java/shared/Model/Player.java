@@ -220,6 +220,7 @@ public class Player extends Model {
 
     public void addXP(int XP){
         this.XP += XP;
+        squad.addBattleXP(XP);
     }
 
     public void reduceXP(int XP){

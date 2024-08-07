@@ -24,6 +24,7 @@ import shared.request.member.LeaveSquadReq;
 import shared.request.nonmember.GetSquadsListRequest;
 import shared.request.nonmember.JoinSquadReq;
 import shared.response.*;
+import shared.response.game.EndOfGameResponse;
 import shared.response.game.NullResponse;
 import shared.response.game.PauseResponse;
 import shared.response.game.StateResponse;
@@ -292,6 +293,8 @@ public class ServersideReqHandler extends Thread implements RequestHandler {
     public Response handleStateRequest(StateRequest stateRequest) {
 
         synchronized (dataBase) {
+
+
             StateResponse stateResponse = new StateResponse();
             String macAddress = "1";
 
@@ -304,6 +307,10 @@ public class ServersideReqHandler extends Thread implements RequestHandler {
             int health = -1;
             int otherHP = -1;
             Game game = dataBase.findGame(gameID);
+
+            if (game.getExit().get()) return new EndOfGameResponse();
+
+
             int wave = game.getWave();
             int time = (int) game.ELAPSED_TIME;
             for (EpsilonModel epsilon : game.epsilons){

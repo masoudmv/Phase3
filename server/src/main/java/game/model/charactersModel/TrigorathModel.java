@@ -294,6 +294,7 @@ public class TrigorathModel extends GeoShapeModel implements Movable, Collidable
 
     @Override
     public void update(Direction direction) {
+        setTarget();
         double distanceByEpsilon = getAnchor().distance(target.getAnchor());
         Point2D movement = Utils.multiplyVector(direction.getDirectionVector(), direction.getMagnitude());
         double magnitude = getDirection().getMagnitude();
@@ -434,7 +435,6 @@ public class TrigorathModel extends GeoShapeModel implements Movable, Collidable
 
         findGame(gameID).enemyEliminated();
 
-//        aliveEnemies--;
 
         CollectibleModel.dropCollectible(getAnchor(),
                 EntityConstants.TRIGORATH_NUM_OF_COLLECTIBLES.getValue(),

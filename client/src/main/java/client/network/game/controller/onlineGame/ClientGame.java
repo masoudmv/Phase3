@@ -10,6 +10,7 @@ import java.awt.*;
 public class ClientGame {
     private static ClientGame INSTANCE;
     private boolean isPaused = false;
+    private static ClientGameLoop gameLoop;
     private int time;
     private int health;
     private int XP;
@@ -70,7 +71,7 @@ public class ClientGame {
 
         SwingUtilities.invokeLater(() -> {
             MainFrame.getINSTANCE().addKeyListener(UserInputHandler.getINSTANCE());
-            new ClientGameLoop();
+            gameLoop = new ClientGameLoop();
         });
     }
 
@@ -126,5 +127,9 @@ public class ClientGame {
     public void updateOtherHP(int otherHP) {
         this.otherHP = otherHP;
         otherHPLabel.setText("other health: " + otherHP);
+    }
+
+    public static ClientGameLoop getGameLoop() {
+        return gameLoop;
     }
 }
