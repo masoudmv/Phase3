@@ -1,6 +1,7 @@
 package view.junks;
 
 import controller.Game;
+import model.entities.Profile;
 import org.example.Main;
 import view.MainFrame;
 
@@ -10,7 +11,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
-import static org.example.Main.totalXP;
+
 
 public class Menu extends JPanel implements MouseListener {
     private static Menu INSTANCE;
@@ -50,7 +51,7 @@ public class Menu extends JPanel implements MouseListener {
         exitLabel.setBounds(labelX+25, 450, buttonWidth, buttonHeight);
 
 
-        JLabel totXP = new JLabel("Total XP: " + Integer.toString(totalXP));
+        JLabel totXP = new JLabel("Total XP: " + Integer.toString(Profile.getCurrent().totalXP));
         totXP.setBounds(0,0,100,40);
         totXP.setBackground(Color.gray);
         totXP.setOpaque(true);

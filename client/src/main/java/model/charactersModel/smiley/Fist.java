@@ -34,8 +34,8 @@ public class Fist extends GeoShapeModel implements Collidable {
     protected static MyPolygon pol;
 
 
-    public Fist(Point2D anchor) {
-        super(anchor, image, pol);
+    public Fist() {
+        super(new Point2D.Double(200, 600), image, pol);
         fists.add(this);
         angle = -90;
         rotate(180);
@@ -43,20 +43,17 @@ public class Fist extends GeoShapeModel implements Collidable {
         Point2D loc = new Point2D.Double(anchor.getX()-90, anchor.getY()-90);
         Dimension size = new Dimension(200, 200);
         finalPanelModel = new FinalPanelModel(loc, size);
+        finalPanelModel.setRigid(false);
 
         collidables.add(this);
-        
-//        quake();
+
+        quake();
     }
 
 
-    void update(Direction direction) {
-        if (direction == null) return;
-        Point2D movement = multiplyVector(direction.getNormalizedDirectionVector(), direction.getMagnitude());
-        movePolygon(movement);
-        finalPanelModel.moveLocation(movement);
-    }
 
+
+    @Override
     public void update() {
         if (dontUpdate()) return;
         if (!quakeInProgress) return;
@@ -64,6 +61,13 @@ public class Fist extends GeoShapeModel implements Collidable {
         direction = new Direction(new Point2D.Double(0, getSpeed()));
         update(direction);
 
+    }
+
+    void update(Direction direction) {
+        if (direction == null) return;
+        Point2D movement = multiplyVector(direction.getNormalizedDirectionVector(), direction.getMagnitude());
+        movePolygon(movement);
+        finalPanelModel.moveLocation(movement);
     }
 
     private void setBottomVertex(){
@@ -117,7 +121,7 @@ public class Fist extends GeoShapeModel implements Collidable {
 
 
     public static BufferedImage loadImage() {
-        Image img = new ImageIcon("./src/fist.png").getImage();
+        Image img = new ImageIcon("./client/src/fist.png").getImage();
         Fist.image = getBufferedImage(img);
         GraphicalObject bowser = new GraphicalObject(image);
         pol = bowser.getMyBoundingPolygon();
@@ -126,8 +130,6 @@ public class Fist extends GeoShapeModel implements Collidable {
 
     private void quake(){
         quakeInProgress = true;
-//        setBottomVertex();
-//        direction = new Direction(new Point2D.Double(0, 2));
 
 
     }

@@ -72,7 +72,6 @@ public class Direction {
     }
 
     public void accelerateDirection(double speed){
-//        magnitude *= 1.2;
         if (magnitude < speed){
             magnitude *= 1.1;
         }

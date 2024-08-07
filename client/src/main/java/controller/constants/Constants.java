@@ -20,7 +20,7 @@ public class Constants {
     public static double SQUARANTINE_RADIUS = 20;
     public static double TRIGORATH_RADIUS = 20;
     public static double SQUARANTINE_EDGE = SQUARANTINE_RADIUS * Math.sqrt(2);
-    public static final double FRICTION = 0.97;
+    public static final double FRICTION = 0.98;
     public static final double IMPACT_COEFFICIENT = 4.5;
     public static final double BULLET_IMPACT_COEFFICIENT = 5;
     public static final double SMALL_IMPACT_RADIUS = 100;

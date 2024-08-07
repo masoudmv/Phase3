@@ -174,6 +174,6 @@ public class GeoShapeView {
         // Draw the rotated image centered at (x, y)
         g2d.drawImage(rotatedImage, (x - rotatedWidth / 2), (y - rotatedHeight / 2), null);
 
-//        g2d.drawPolygon(xpoints, ypoints, myPolygon.npoints);
+        g2d.drawPolygon(xpoints, ypoints, myPolygon.npoints);
     }
 }

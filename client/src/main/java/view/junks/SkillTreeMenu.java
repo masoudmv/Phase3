@@ -7,15 +7,16 @@ import view.MainFrame;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 import java.util.List;
 
+import static model.entities.Skill.buySkill;
 
-
-public class SkillTreeMenu extends JPanel implements MouseListener, MouseMotionListener {
+public class SkillTreeMenu extends JPanel implements MouseListener {
     JLabel backLabel = new JLabel("Back");
     JLabel xpLabel = new JLabel("XP: 0");  // XP label to display XP points
     Point backButton = new Point(22, 22);
@@ -31,9 +32,9 @@ public class SkillTreeMenu extends JPanel implements MouseListener, MouseMotionL
     private Point defendBranch = new Point(214, 140);
     private Point polymorphBranch = new Point(406, 140);
 
-    private List<SkillTreeOption> attackOptions = new ArrayList<>();
-    private List<SkillTreeOption> defendOptions = new ArrayList<>();
-    private List<SkillTreeOption> polymorphOptions = new ArrayList<>();
+    private List<JButton> attackButtons = new ArrayList<>();
+    private List<JButton> defendButtons = new ArrayList<>();
+    private List<JButton> polymorphButtons = new ArrayList<>();
 
     private Point lastSelectedBranch = null;
     private int lastSelectedOptionIndex = -1;
@@ -56,30 +57,45 @@ public class SkillTreeMenu extends JPanel implements MouseListener, MouseMotionL
         xpLabel.setFont(new Font("Arial", Font.BOLD, 16));
         xpLabel.setForeground(Color.WHITE);
         add(xpLabel);
-        xpLabel.setBounds(dimension.width - 100, 22, 75, 35);  // Position in the right-top part
+        xpLabel.setBounds(dimension.width - 150, 22, 120, 35);  // Position in the right-top part
 
         // Initialize options
         initializeOptions();
+        updateXP();
 
         addMouseListener(this);
-        addMouseMotionListener(this);
         frame.add(this);
         frame.repaint();
     }
 
     private void initializeOptions() {
-        attackOptions.add(new SkillTreeOption(Skill.ARES, new Point(attackBranch.x + 10, attackBranch.y + 40)));
-        attackOptions.add(new SkillTreeOption(Skill.ASTRAPE, new Point(attackBranch.x + 10, attackBranch.y + 40 + 60)));
-        attackOptions.add(new SkillTreeOption(Skill.CERBERUS, new Point(attackBranch.x + 10, attackBranch.y + 40 + (2 * 60))));
+        addSkillButton(Skill.ARES, attackBranch, 0, attackButtons);
+        addSkillButton(Skill.ASTRAPE, attackBranch, 1, attackButtons);
+        addSkillButton(Skill.CERBERUS, attackBranch, 2, attackButtons);
 
-        defendOptions.add(new SkillTreeOption(Skill.ACESO, new Point(defendBranch.x + 10, defendBranch.y + 40)));
-        defendOptions.add(new SkillTreeOption(Skill.MELAMPUS, new Point(defendBranch.x + 10, defendBranch.y + 40 + 60)));
-        defendOptions.add(new SkillTreeOption(Skill.CHIRON, new Point(defendBranch.x + 10, defendBranch.y + 40 + (2 * 60))));
-        defendOptions.add(new SkillTreeOption(Skill.ATHENA, new Point(defendBranch.x + 10, defendBranch.y + 40 + (3 * 60))));
+        addSkillButton(Skill.ACESO, defendBranch, 0, defendButtons);
+        addSkillButton(Skill.MELAMPUS, defendBranch, 1, defendButtons);
+        addSkillButton(Skill.CHIRON, defendBranch, 2, defendButtons);
+        addSkillButton(Skill.ATHENA, defendBranch, 3, defendButtons);
 
-        polymorphOptions.add(new SkillTreeOption(Skill.PROTEUS, new Point(polymorphBranch.x + 10, polymorphBranch.y + 40)));
-        polymorphOptions.add(new SkillTreeOption(Skill.EMPUSA, new Point(polymorphBranch.x + 10, polymorphBranch.y + 40 + 60)));
-        polymorphOptions.add(new SkillTreeOption(Skill.DOLUS, new Point(polymorphBranch.x + 10, polymorphBranch.y + 40 + (2 * 60))));
+        addSkillButton(Skill.PROTEUS, polymorphBranch, 0, polymorphButtons);
+        addSkillButton(Skill.EMPUSA, polymorphBranch, 1, polymorphButtons);
+        addSkillButton(Skill.DOLUS, polymorphBranch, 2, polymorphButtons);
+    }
+
+    private void addSkillButton(Skill skill, Point branchPosition, int index, List<JButton> buttonList) {
+        int offsetY = 40 + (index * 60);
+        JButton button = new JButton(skill.getName());
+        button.setBounds(branchPosition.x + 10, branchPosition.y + offsetY, optionWidth, optionHeight);
+        button.addActionListener(e -> {
+            System.out.println(skill.getName());
+            String message = buySkill(skill, Profile.getCurrent().totalXP);
+            JOptionPane.showMessageDialog(this, message);
+            updateXP();
+            repaint();
+        });
+        buttonList.add(button);
+        add(button);
     }
 
     @Override
@@ -97,66 +113,18 @@ public class SkillTreeMenu extends JPanel implements MouseListener, MouseMotionL
             backLabel.setFont(new Font("Arial", Font.BOLD, 12));
         }
 
-        // Draw branches and options
-        drawBranch(g, "Attack", attackBranch, attackOptions);
-        drawBranch(g, "Guard", defendBranch, defendOptions);
-        drawBranch(g, "Polymorph", polymorphBranch, polymorphOptions);
+        // Draw branches
+        drawBranch(g, "Attack", attackBranch);
+        drawBranch(g, "Guard", defendBranch);
+        drawBranch(g, "Polymorph", polymorphBranch);
     }
 
-    private void drawBranch(Graphics g, String branchName, Point branchPosition, List<SkillTreeOption> options) {
+    private void drawBranch(Graphics g, String branchName, Point branchPosition) {
         g.setColor(Color.gray);
         g.fillRect(branchPosition.x, branchPosition.y, branchWidth, branchHeight);
         g.setColor(Color.white);
         g.setFont(new Font("Arial", Font.BOLD, 14));
         g.drawString(branchName, branchPosition.x + 10, branchPosition.y + 30);
-
-        for (int i = 0; i < options.size(); i++) {
-            SkillTreeOption option = options.get(i);
-            Point optionPosition = option.getPosition();
-
-            if (option.isSelected()) {
-                g.setColor(Color.blue); // Background color for selected options
-                g.fillRect(optionPosition.x, optionPosition.y, optionWidth, optionHeight);
-                g.setColor(Color.white);
-            } else {
-                g.setColor(Color.darkGray);
-                g.fillRect(optionPosition.x, optionPosition.y, optionWidth, optionHeight);
-                g.setColor(Color.white);
-            }
-
-            if (option.isTouching()) {
-                g.setFont(new Font("Arial", Font.BOLD, 14));
-            } else {
-                g.setFont(new Font("Arial", Font.PLAIN, 12));
-            }
-
-            if (branchPosition.equals(lastSelectedBranch) && i == lastSelectedOptionIndex) {
-                g.setColor(Color.red); // Text color for the last chosen option
-            }
-
-            g.drawString(option.getName(), optionPosition.x + 10, optionPosition.y + 30);
-            g.setColor(Color.white); // Reset color to white for other texts
-        }
-    }
-
-    @Override
-    public void mouseMoved(MouseEvent e) {
-        touchingBackButton = isCursorInRectangle(e, backButton, 75, 35);
-        updateTouchingOptions(e, attackOptions);
-        updateTouchingOptions(e, defendOptions);
-        updateTouchingOptions(e, polymorphOptions);
-        repaint();
-    }
-
-    private void updateTouchingOptions(MouseEvent e, List<SkillTreeOption> options) {
-        for (SkillTreeOption option : options) {
-            option.setTouching(isCursorInRectangle(e, option.getPosition(), optionWidth, optionHeight));
-        }
-    }
-
-    private boolean isCursorInRectangle(MouseEvent e, Point rectPosition, int rectWidth, int rectHeight) {
-        return e.getX() >= rectPosition.x && e.getX() <= rectPosition.x + rectWidth &&
-                e.getY() >= rectPosition.y && e.getY() <= rectPosition.y + rectHeight;
     }
 
     @Override
@@ -165,29 +133,7 @@ public class SkillTreeMenu extends JPanel implements MouseListener, MouseMotionL
             removeSkillTreeMenu();
             new Menu();
         }
-
-        handleBranchClick(e, attackBranch, attackOptions);
-        handleBranchClick(e, defendBranch, defendOptions);
-        handleBranchClick(e, polymorphBranch, polymorphOptions);
-
-        MainFrame.getINSTANCE().repaint();
     }
-
-    private void handleBranchClick(MouseEvent e, Point branchPosition, List<SkillTreeOption> options) {
-        for (int i = 0; i < options.size(); i++) {
-            SkillTreeOption option = options.get(i);
-            Point optionPosition = option.getPosition();
-            if (isCursorInRectangle(e, optionPosition, optionWidth, optionHeight)) {
-                option.setSelected(true);
-                lastSelectedBranch = branchPosition;
-                lastSelectedOptionIndex = i;
-//                System.out.println(branchPosition.toString() + " Option " + (i + 1) + " clicked");
-            }
-        }
-    }
-
-    @Override
-    public void mouseDragged(MouseEvent e) {}
 
     @Override
     public void mousePressed(MouseEvent e) {}
@@ -201,7 +147,10 @@ public class SkillTreeMenu extends JPanel implements MouseListener, MouseMotionL
     @Override
     public void mouseExited(MouseEvent e) {}
 
-
+    private boolean isCursorInRectangle(MouseEvent e, Point rectPosition, int rectWidth, int rectHeight) {
+        return e.getX() >= rectPosition.x && e.getX() <= rectPosition.x + rectWidth &&
+                e.getY() >= rectPosition.y && e.getY() <= rectPosition.y + rectHeight;
+    }
 
     private void removeSkillTreeMenu() {
         MainFrame frame = MainFrame.getINSTANCE();
@@ -214,7 +163,7 @@ public class SkillTreeMenu extends JPanel implements MouseListener, MouseMotionL
     }
 
     // Method to update the XP display
-    public void updateXP(int xp) {
+    public void updateXP() {
         xpLabel.setText("XP: " + Profile.getCurrent().totalXP);
     }
 }

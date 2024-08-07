@@ -42,7 +42,7 @@ public class CollectibleModel extends GeoShapeModel implements Collidable, Movab
         this.collectibleXP = collectibleXP;
         this.health = Integer.MAX_VALUE;
         impactInProgress = true;
-        impactMaxVel = 1.75;
+        impactMaxVel = 1.2;
         setDummyPolygon();
         collectibleModels.add(this);
         collidables.add(this);
@@ -110,6 +110,7 @@ public class CollectibleModel extends GeoShapeModel implements Collidable, Movab
     @Override
     public void friction() {
         direction.setMagnitude(direction.getMagnitude() * 0.97);
+        System.out.println(direction.getMagnitude());
         if (direction.getMagnitude() < 1){
             direction.setMagnitude(0);
             impactInProgress = false;

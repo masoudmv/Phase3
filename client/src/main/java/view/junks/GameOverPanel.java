@@ -19,7 +19,7 @@ import static model.charactersModel.TrigorathModel.trigorathModels;
 import static model.collision.Collidable.collidables;
 import static model.collision.Impactable.impactables;
 import static model.movement.Movable.movables;
-import static org.example.Main.totalXP;
+
 import static view.charactersView.BulletView.bulletViews;
 //import static view.charactersView.CollectibleView.collectibleViews;
 //import static view.MainPanel.nullifyMainPanel;
@@ -85,29 +85,29 @@ public class GameOverPanel extends JPanel implements MouseListener {
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        MainFrame.getINSTANCE().remove(this);
-        MainFrame.getINSTANCE().repaint();
-        collidables.clear();
-        impactables.clear();
-        movables.clear();
-        trigorathModels.clear();
-//        trigorathViews.clear();
-        squarantineModels.clear();
-//        squarantineViews.clear();
-        bulletModels.clear();
-        bulletViews.clear();
-        collectibleModels.clear();
-//        collectibleViews.clear();
-        totalXP += inGameXP;
-        nullifyEpsilon();
-        nullifyGameInstance();
-
-
-//        MainFrame.getINSTANCE().removeMouseListener(MainPanel.getINSTANCE().getMouseController());
-//        MainFrame.getINSTANCE().removeMouseMotionListener(MainPanel.getINSTANCE().getMouseController());
-//        MainFrame.getINSTANCE().removeKeyListener();
-//        nullifyMainPanel();
-        addMenu();
+//        MainFrame.getINSTANCE().remove(this);
+//        MainFrame.getINSTANCE().repaint();
+//        collidables.clear();
+//        impactables.clear();
+//        movables.clear();
+//        trigorathModels.clear();
+////        trigorathViews.clear();
+//        squarantineModels.clear();
+////        squarantineViews.clear();
+//        bulletModels.clear();
+//        bulletViews.clear();
+//        collectibleModels.clear();
+////        collectibleViews.clear();
+//        totalXP += inGameXP;
+//        nullifyEpsilon();
+//        nullifyGameInstance();
+//
+//
+////        MainFrame.getINSTANCE().removeMouseListener(MainPanel.getINSTANCE().getMouseController());
+////        MainFrame.getINSTANCE().removeMouseMotionListener(MainPanel.getINSTANCE().getMouseController());
+////        MainFrame.getINSTANCE().removeKeyListener();
+////        nullifyMainPanel();
+//        addMenu();
     }
 
     @Override

@@ -4,10 +4,13 @@ import controller.Game;
 import controller.Utils;
 import model.FinalPanelModel;
 import model.MyPolygon;
+import model.charactersModel.BulletModel;
 import model.charactersModel.EpsilonModel;
 import model.charactersModel.GeoShapeModel;
 import model.charactersModel.SmileyBullet;
 import model.collision.Collidable;
+import model.entities.AttackTypes;
+import model.entities.Entity;
 import model.movement.Direction;
 import org.example.GraphicalObject;
 
@@ -44,14 +47,20 @@ public class Hand extends GeoShapeModel implements Collidable {
     public double lastSqueezeTime = -20;
     public double lastProjectileTime = -20;
 
+    private boolean isAlive = true;
+
     public Hand(Point2D anchor) {
         super(anchor, image, Hand.pol);
+        this.health = 100;
+        vulnerable = false;
         init();
 //        initializeProjectile();
     }
 
     public Hand(Point2D anchor, MyPolygon pol) {
         super(anchor, LeftHand.image, pol);
+        this.health = 100;
+        vulnerable = false;
         init();
 //        initializeProjectile();
 
@@ -77,6 +86,7 @@ public class Hand extends GeoShapeModel implements Collidable {
 
         if (projectileInProgress || squeezeInProgress || slapInProgress) return;
         slapInProgress = true;
+        vulnerable = false;
         lastSlapTime = Game.ELAPSED_TIME;
         rotationState.startRotation(pointToEpsilon());
         beforeSlapPosition = new Point2D.Double(getAnchor().getX(), getAnchor().getY()); // Store exact position
@@ -120,10 +130,7 @@ public class Hand extends GeoShapeModel implements Collidable {
 
 
 
-    public boolean isAlive() {
-        // TODO: Implement method
-        return true;
-    }
+
 
     protected boolean isRightHand() {
         return true;
@@ -334,6 +341,10 @@ public class Hand extends GeoShapeModel implements Collidable {
 
     @Override
     public void eliminate() {
+        super.eliminate();
+        isAlive = false;
+        collidables.remove(this);
+        finalPanelModel.eliminate();
     }
 
     private void setPointerVertex() {
@@ -355,6 +366,9 @@ public class Hand extends GeoShapeModel implements Collidable {
 
     @Override
     public void onCollision(Collidable other, Point2D intersection) {
+        if (other instanceof BulletModel) {
+            ((BulletModel) other).damage(this, AttackTypes.MELEE);
+        }
     }
 
     @Override
@@ -469,5 +483,13 @@ public class Hand extends GeoShapeModel implements Collidable {
             this.targetAngle = targetAngle;
         }
     }
+
+
+    public boolean isAlive() {
+        return isAlive;
+    }
+
+
+
 
 }

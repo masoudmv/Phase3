@@ -2,6 +2,7 @@ package model.charactersModel;
 
 import model.FinalPanelModel;
 import model.MyPolygon;
+import model.charactersModel.smiley.Hand;
 import model.collision.Collidable;
 import model.collision.CollisionState;
 import model.collision.Impactable;
@@ -192,6 +193,10 @@ public class BulletModel extends GeoShapeModel implements Movable, Collidable, I
     @Override
     public void onCollision(Collidable other, Point2D intersection) {
         if ( other instanceof CollectibleModel || other instanceof BulletModel) return;
+        if (other instanceof Hand) {
+            eliminate();
+            return;
+        }
         else if (other instanceof NecropickModel){
             if (((NecropickModel) other).isHovering()) return;
             if (!createdByEpsilon) {
@@ -212,7 +217,8 @@ public class BulletModel extends GeoShapeModel implements Movable, Collidable, I
             }
         }
 
-        // todo: change for multiplayer part ...
+        createImpactWave(this, other, intersection);
+
         EpsilonModel epsilon = EpsilonModel.getINSTANCE();
         epsilon.health += (int) Profile.getCurrent().EPSILON_HEALTH_REGAIN;
         this.damage((Entity) other, AttackTypes.MELEE);

@@ -21,7 +21,7 @@ public class Game {
     public static double ELAPSED_TIME = 0;
     public static int wave;
     private boolean isPaused = false;
-    private EpsilonModel epsilon;
+
 
 
     private static GameLoop gameLoop;
@@ -36,8 +36,8 @@ public class Game {
         wave=1;
         Constants.RADIUS = 15;
         MainFrame frame = MainFrame.getINSTANCE();
-        frame.addMouseListener(new MouseController());
-        frame.addMouseMotionListener(new MouseController());
+//        frame.addMouseListener(new MouseController());
+//        frame.addMouseMotionListener(new MouseController());
 
 
         SwingUtilities.invokeLater(() -> {

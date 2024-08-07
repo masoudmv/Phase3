@@ -21,7 +21,7 @@ public class Profile {
     public double EPSILON_AUTO_DAMAGE = 0;
     public String activeSkillSaveName = "";
     public CopyOnWriteArrayList<String> acquiredSkillsNames = new CopyOnWriteArrayList<>();
-    public int totalXP = 0;
+    public int totalXP = 10000;
     public int currentGameXP = 0;
 
     public double dismayInitiationTime = -Double.MAX_VALUE;

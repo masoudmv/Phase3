@@ -4,11 +4,13 @@ import controller.Game;
 import controller.Utils;
 import model.FinalPanelModel;
 import model.MyPolygon;
+import model.charactersModel.BulletModel;
 import model.charactersModel.EpsilonModel;
 import model.charactersModel.GeoShapeModel;
 //import model.collision.Coll;
 import model.charactersModel.SmileyBullet;
 import model.collision.Collidable;
+import model.entities.AttackTypes;
 import model.movement.Direction;
 import org.example.GraphicalObject;
 
@@ -33,23 +35,13 @@ public class Smiley extends GeoShapeModel implements Collidable {
     public static ArrayList<Smiley> smilies = new ArrayList<>();
     private FinalPanelModel finalPanelModel;
     protected static MyPolygon pol;
-    private double lastRapidFire = -15;
-    private double lastVomit = -20;
+    private double lastRapidFire = 0;
+    private double lastVomit = 0;
 
 
     private Hand leftHand;
     private Hand rightHand;
-
-
-
-
-//    private boolean squeezeInProgress = false;
-//    private boolean slapInProgress = false;
-//    private boolean projectileInProgress = false;
-//
-//    private double lastSlapTime = -1;
-//    private double lastSqueezeTime = -1;
-//    private double lastProjectileTime = -1;
+    private Fist fist;
 
 
 
@@ -66,23 +58,24 @@ public class Smiley extends GeoShapeModel implements Collidable {
 
         this.rightHand = rightHand;
         this.leftHand = leftHand;
+        this.health = 300;
+        this.vulnerable = true;
 
-
-
-//        rightHand.initializeSqueeze();
-//        leftHand.initializeSqueeze();
-
-//        initiateSqueeze();
     }
 
     private void checkForProjectileCoolDown(){
         double now = Game.ELAPSED_TIME;
+
+        if (!leftHand.isAlive() && !rightHand.isAlive()) return;
+
         if (!rightHand.projectileInProgress &&
                 now - rightHand.lastProjectileTime > SMILEY_PROJECTILE_DURATION.getValue() + SMILEY_PROJECTILE_COOLDOWN.getValue()) {
             if (Hand.slapInProgress) return;
             if (leftHand.projectileInProgress) return;
             if (leftHand.squeezeInProgress) return;
             if (rightHand.squeezeInProgress) return;
+
+
 
             EpsilonModel epsilon = EpsilonModel.getINSTANCE();
             Point2D p = epsilon.getAnchor();
@@ -113,6 +106,16 @@ public class Smiley extends GeoShapeModel implements Collidable {
 
             initiateSqueeze();
         }
+    }
+
+
+    private void updateVulnerability(){
+        double now = Game.ELAPSED_TIME;
+        boolean isVomit = now - lastVomit > SMILEY_AOE_ACTIVATED_LIFETIME.getValue();
+        boolean isRapidFire = now - lastRapidFire > 5;
+        boolean isSqueeze = rightHand.squeezeInProgress && leftHand.squeezeInProgress;
+        boolean isSlap = Hand.slapInProgress;
+        if (!isSlap && !isSqueeze && !isVomit && !isRapidFire) vulnerable = false;
     }
 
 
@@ -167,6 +170,10 @@ public class Smiley extends GeoShapeModel implements Collidable {
             lastVomit = now;
             vomit();
         }
+
+
+
+        updateVulnerability();
 
 
     }
@@ -304,7 +311,15 @@ public class Smiley extends GeoShapeModel implements Collidable {
 
     @Override
     public void onCollision(Collidable other, Point2D intersection) {
-        if (other instanceof EpsilonModel);
+//        if (other instanceof EpsilonModel);
+
+        if (other instanceof BulletModel) {
+            ((BulletModel) other).damage(this, AttackTypes.MELEE);
+            eliminate();
+        }
+
+
+
 
     }
 
@@ -313,13 +328,14 @@ public class Smiley extends GeoShapeModel implements Collidable {
 
     }
 
-//    @Override
-//    public void onCollision(Collidable other) {
-//
-//    }
 
     @Override
     public void eliminate() {
+        super.eliminate();
+        collidables.remove(this);
+        finalPanelModel.eliminate();
 
+        leftHand.eliminate();
+        rightHand.eliminate();
     }
 }

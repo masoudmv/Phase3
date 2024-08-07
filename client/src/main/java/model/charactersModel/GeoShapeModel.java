@@ -7,16 +7,19 @@ import model.entities.Entity;
 import model.entities.Profile;
 import model.movement.Direction;
 
+import java.awt.*;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import static controller.UserInterfaceController.*;
 import static controller.Utils.*;
+import static controller.constants.Constants.FRAME_DIMENSION;
 
 public abstract class GeoShapeModel extends Entity {
 
@@ -306,6 +309,36 @@ public abstract class GeoShapeModel extends Entity {
             }
         }
         return true;
+    }
+
+
+    public static Point2D findRandomPoint() {
+        Dimension dimension = FRAME_DIMENSION;
+        Random random = new Random();
+        int index = random.nextInt(4);
+        double offset = 100;
+        double x = -offset;
+        double y = -offset;
+
+        switch (index) {
+            case 0 -> {
+                x = random.nextDouble() * dimension.width;
+                y = -offset;
+            }
+            case 1 -> {
+                x = dimension.getWidth() + offset;
+                y = random.nextDouble() * dimension.height;
+            }
+            case 2 -> {
+                y = dimension.getHeight() + offset;
+                x = random.nextDouble() * dimension.width;
+            }
+            case 3 -> {
+                x = -offset;
+                y = random.nextDouble() * dimension.height;
+            }
+        }
+        return new Point2D.Double(x, y);
     }
 
     private void addPolygonAxes(MyPolygon poly, List<Point2D.Double> axes) {

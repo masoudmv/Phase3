@@ -1,6 +1,7 @@
 
 package model.charactersModel;
 
+import controller.Utils;
 import model.MyPolygon;
 import model.charactersModel.blackOrb.Orb;
 import model.collision.Collidable;
@@ -283,16 +284,8 @@ public class TrigorathModel extends GeoShapeModel implements Movable, Collidable
 
     @Override
     public void update(Direction direction) {
-        double distanceByEpsilon = getAnchor().distance(EpsilonModel.getINSTANCE().getAnchor());
+
         Point2D movement = multiplyVector(direction.getDirectionVector(), direction.getMagnitude());
-        double magnitude = getDirection().getMagnitude();
-//        this.anchor = addVectors(anchor, movement);
-
-
-//        for (int i = 0; i < 3; i++) {
-//            vertices[i] = addVectors(vertices[i], movement);
-//        }
-        // TODO !isImpactInProgress???
 
         movePolygon(movement);
         rotate();
@@ -427,18 +420,47 @@ public class TrigorathModel extends GeoShapeModel implements Movable, Collidable
 
     }
 
+    public static void create() {
+        Point2D anchor;
+        boolean isValid;
+        double MIN_DISTANCE = 100.0; // The minimum distance to avoid collision
+        int maxAttempts = 100;
+        int attempts = 0;
+
+        do {
+            isValid = true;
+            anchor = findRandomPoint();
+            attempts++;
+
+            for (GeoShapeModel model : entities) {
+                double distance = model.getAnchor().distance(anchor);
+                if (distance < MIN_DISTANCE) {
+                    isValid = false;
+                    break;
+                }
+            }
+        } while (!isValid && attempts < maxAttempts);
+
+        if (isValid) {
+            // Add the new enemy to the game's entities
+            new TrigorathModel(anchor);
+        } else {
+            System.out.println("Failed to create SquarantineModel without intersection after " + maxAttempts + " attempts.");
+        }
+    }
+
 
 
 
     @Override
     public void onCollision(Collidable other, Point2D intersection) {
         if (other instanceof EpsilonModel) {
-            System.out.println("IMPACT");
             impact(relativeLocation(intersection, anchor), intersection, other);
         }
         if (other instanceof Orb) impact(relativeLocation(intersection, anchor), intersection, other);
         if (other instanceof BulletModel) {
-            impact(relativeLocation(intersection, anchor), intersection, other, 6200);
+            System.out.println("impact");
+            impact(Utils.relativeLocation(intersection, anchor), intersection, other, 6200);
             createImpactWave(this, other, intersection);
         }
     }

@@ -76,17 +76,14 @@ public class GameLoop implements Runnable {
 
     public GameLoop() {
         decreaseVelocities=false;
-
         movementInProgress = false;
-
 
         playThemeSound();
 
 
-
         ELAPSED_TIME = 0;
         inGameXP = 1000;
-        wave = 1;
+
         MainFrame frame = MainFrame.getINSTANCE();
         frame.addMouseListener(new MouseController());
         frame.addMouseMotionListener(new MouseController());
@@ -94,7 +91,6 @@ public class GameLoop implements Runnable {
 
 
         INSTANCE = this;
-
         this.start();
     }
 
@@ -165,11 +161,9 @@ public class GameLoop implements Runnable {
     public void updateModel() {
 
 
-
         for (int i = 0; i < finalPanelModels.size(); i++) {
             finalPanelModels.get(i).panelMotion();  // todo
         }
-
 
 
         for (int i = 0; i < finalPanelModels.size(); i++) {
@@ -191,30 +185,10 @@ public class GameLoop implements Runnable {
         }
 
 
-        if (EpsilonModel.getINSTANCE().getHp() <= 0) {
-//            MainFrame.getINSTANCE().remove(MainPanel.getINSTANCE());
-            MainFrame.getINSTANCE().repaint();
-            MainFrame.getINSTANCE().remove(label);
-//            gameLoop.stop();
-            new GameOverPanel();
-        }
 
 
-        if (wave > 3) {
-//            MainFrame.getINSTANCE().removeKeyListener(this);
-//            MainFrame.getINSTANCE().removeMouseListener(MainPanel.getINSTANCE().getMouseController());
-            if (theme.isRunning()) stopThemeSound();
-            playVictorySound();
-            RADIUS += 1;
-        }
-        if (RADIUS > 500) {
-//            MainFrame.getINSTANCE().remove(MainPanel.getINSTANCE());
-            MainFrame.getINSTANCE().repaint();
-            MainFrame.getINSTANCE().remove(label);
-//            gameLoop.stop();
-            new VictoryPanel();
 
-        }
+
         updateCount++;
 
 
@@ -225,8 +199,7 @@ public class GameLoop implements Runnable {
                     squarantineModels.get(i).setImpactInProgress(false);
                 }
             }
-            // todo edit the following code with health instead of hp ...
-//            if (squarantineModels.get(i).getHp() <= 0) squarantineModels.get(i).remove();
+
 
 
         }
@@ -237,14 +210,12 @@ public class GameLoop implements Runnable {
                     trigorathModels.get(i).setImpactInProgress(false);
                 }
             }
-//            if (trigorathModels.get(i).getHp() <= 0) trigorathModels.get(i).remove();
-            // todo edit the following code with health instead of hp ...
-
         }
+
         EpsilonModel epsilonModel = EpsilonModel.getINSTANCE();
         if (epsilonModel.isImpactInProgress()) {
             epsilonModel.getDirection().accelerateDirection(4);
-            System.out.println(epsilonModel.getDirection().getMagnitude());
+
             if (epsilonModel.getDirection().getMagnitude() > 3.8) {
                 epsilonModel.setImpactInProgress(false);
             }
@@ -271,21 +242,17 @@ public class GameLoop implements Runnable {
 
 
 
-        // TODO move these out of gameLoop ...
 
-
-
-
-        if (acesoInProgress) {
-            EpsilonModel epsilon = EpsilonModel.getINSTANCE();
-            if (lastHpRegainTime == -1) {
-                epsilon.sumHpWith(1);
-                lastHpRegainTime = ELAPSED_TIME;
-            } else if (ELAPSED_TIME - lastHpRegainTime > hpRegainRate) {
-                epsilon.sumHpWith(1);
-                lastHpRegainTime = ELAPSED_TIME;
-            }
-        }
+//        if (acesoInProgress) {
+//            EpsilonModel epsilon = EpsilonModel.getINSTANCE();
+//            if (lastHpRegainTime == -1) {
+//                epsilon.sumHpWith(1);
+//                lastHpRegainTime = ELAPSED_TIME;
+//            } else if (ELAPSED_TIME - lastHpRegainTime > hpRegainRate) {
+//                epsilon.sumHpWith(1);
+//                lastHpRegainTime = ELAPSED_TIME;
+//            }
+//        }
 
 
 
