@@ -4,9 +4,9 @@ import client.network.game.view.ClientDataBase;
 import client.network.game.view.FinalPanelView;
 import client.network.game.view.charactersView.*;
 
-import shared.Model.MyPolygon;
-import shared.Model.dummies.DummyModel;
-import shared.Model.dummies.DummyPanel;
+import shared.model.MyPolygon;
+import shared.model.dummies.DummyModel;
+import shared.model.dummies.DummyPanel;
 
 import java.awt.*;
 import java.awt.geom.Point2D;

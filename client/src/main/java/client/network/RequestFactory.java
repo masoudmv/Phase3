@@ -2,9 +2,9 @@ package client.network;
 
 import client.network.socket.SocketRequestSender;
 
-import shared.Model.Input;
-import shared.Model.NotificationType;
-import shared.Model.Skill;
+import shared.model.Input;
+import shared.model.NotificationType;
+import shared.model.Skill;
 import shared.request.*;
 import shared.request.game.*;
 import shared.request.leader.JoinDemandStatusReq;

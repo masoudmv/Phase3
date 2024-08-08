@@ -1,11 +1,10 @@
 package game.model.charactersModel;
 
 import game.controller.Game;
-import game.controller.UserInterfaceController;
 import game.model.reflection.Enemy;
 import shared.constants.EntityConstants;
 import game.example.GraphicalObject;
-import shared.Model.MyPolygon;
+import shared.model.MyPolygon;
 //import view.MainPanel;
 import game.model.collision.Collidable;
 import game.model.movement.Direction;
@@ -14,11 +13,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
 import java.util.Random;
 
 import static game.controller.UserInterfaceController.createNecropickView;
-import static shared.Model.imagetools.ToolBox.getBufferedImage;
+import static shared.model.imagetools.ToolBox.getBufferedImage;
 
 public class NecropickModel extends GeoShapeModel implements Collidable, Enemy {
     static BufferedImage image;

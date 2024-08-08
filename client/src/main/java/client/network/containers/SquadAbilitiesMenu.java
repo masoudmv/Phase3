@@ -3,9 +3,9 @@ package client.network.containers;
 import client.network.RequestFactory;
 import client.network.Status;
 import client.network.socket.SocketRequestSender;
-import shared.Model.Player;
-import shared.Model.Squad;
-import shared.Model.Skill;
+import shared.model.Player;
+import shared.model.Squad;
+import shared.model.Skill;
 import shared.request.member.DonateRequest;
 
 import javax.swing.*;

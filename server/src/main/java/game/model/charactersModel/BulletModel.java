@@ -1,16 +1,13 @@
 package game.model.charactersModel;
 
 import game.controller.Game;
-import game.controller.UserInterfaceController;
 import game.controller.Utils;
-import server.DataBase;
-import shared.Model.dummies.DummyModel;
+import shared.model.dummies.DummyModel;
 import shared.constants.Constants;
 import game.model.FinalPanelModel;
-import shared.Model.MyPolygon;
+import shared.model.MyPolygon;
 import game.model.entities.AttackTypes;
 import game.model.entities.Entity;
-import game.model.entities.Profile;
 import game.model.collision.Collidable;
 import game.model.collision.CollisionState;
 import game.model.collision.Impactable;
@@ -21,7 +18,6 @@ import java.awt.*;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 import static game.controller.UserInterfaceController.creatBulletView;
 

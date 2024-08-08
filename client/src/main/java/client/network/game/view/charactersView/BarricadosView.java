@@ -1,12 +1,9 @@
 package client.network.game.view.charactersView;
 
-import shared.Model.MyPolygon;
-
 import javax.swing.*;
 import java.awt.*;
-import java.awt.geom.Point2D;
 
-import static shared.Model.imagetools.ToolBox.getBufferedImage;
+import static shared.model.imagetools.ToolBox.getBufferedImage;
 
 public class BarricadosView extends GeoShapeView{
     private static Image img;

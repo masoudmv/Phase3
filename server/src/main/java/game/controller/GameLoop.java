@@ -3,16 +3,14 @@ package game.controller;
 import game.model.FinalPanelModel;
 import game.model.PanelManager;
 import game.model.charactersModel.*;
-import game.model.entities.Profile;
 import game.model.reflection.WaveManager;
 import game.model.charactersModel.blackOrb.BlackOrb;
-import server.DataBase;
+import server.database.DataBase;
 import server.GameData;
-import shared.Model.TimedLocation;
-import shared.Model.dummies.DummyModel;
-import shared.Model.dummies.DummyPanel;
+import shared.model.TimedLocation;
+import shared.model.dummies.DummyModel;
+import shared.model.dummies.DummyPanel;
 
-import javax.swing.Timer;
 import java.awt.*;
 import java.awt.geom.Dimension2D;
 import java.awt.geom.Point2D;
@@ -21,11 +19,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static game.controller.Game.*;
 import static game.model.charactersModel.CollectibleModel.collectibleModels;
 import static game.model.collision.Collidable.collidables;
-import static server.DataBase.handleEndGame;
-import static shared.Model.TimedLocation.myPolToPolygon;
+import static server.database.DataBase.handleEndGame;
+import static shared.model.TimedLocation.myPolToPolygon;
 
 public class GameLoop implements Runnable {
     private String gameID;

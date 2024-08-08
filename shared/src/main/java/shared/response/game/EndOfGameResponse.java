@@ -1,6 +1,6 @@
 package shared.response.game;
 
-import shared.Model.Match;
+import shared.model.Match;
 import shared.response.Response;
 import shared.response.ResponseHandler;
 import com.fasterxml.jackson.annotation.JsonTypeName;

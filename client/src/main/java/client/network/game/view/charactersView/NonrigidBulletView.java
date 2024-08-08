@@ -1,12 +1,10 @@
 package client.network.game.view.charactersView;
 
-import shared.Model.MyPolygon;
-
 import javax.swing.*;
 import java.awt.*;
 
-import static shared.Model.imagetools.ToolBox.getBufferedImage;
-import static shared.Model.imagetools.ToolBox.rotateImage;
+import static shared.model.imagetools.ToolBox.getBufferedImage;
+import static shared.model.imagetools.ToolBox.rotateImage;
 
 public class NonrigidBulletView extends GeoShapeView{
     private static Image img;

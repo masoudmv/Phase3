@@ -3,7 +3,7 @@ package game.controller;
 //import model.charactersModel.Edge;
 //import model.charactersModel.Polygon;
 import game.model.FinalPanelModel;
-import shared.Model.MyPolygon;
+import shared.model.MyPolygon;
 //import model.NonRigid;
 
 import java.awt.*;

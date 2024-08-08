@@ -2,7 +2,7 @@ package client.network.containers;
 
 import client.network.RequestFactory;
 import client.network.Status;
-import shared.Model.Player;
+import shared.model.Player;
 
 
 import javax.swing.*;

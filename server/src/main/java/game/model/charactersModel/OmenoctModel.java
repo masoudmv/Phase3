@@ -1,18 +1,15 @@
 package game.model.charactersModel;
 
-import game.controller.Game;
 import game.controller.GameType;
 import game.controller.PolygonUtils;
 import game.controller.Utils;
-import game.model.entities.AttackTypes;
-import game.model.entities.Entity;
 import game.model.reflection.Enemy;
 import shared.constants.Constants;
 import shared.constants.EntityConstants;
 import shared.constants.SmileyConstants;
 import game.example.GraphicalObject;
 import game.model.FinalPanelModel;
-import shared.Model.MyPolygon;
+import shared.model.MyPolygon;
 import game.model.collision.Collidable;
 import game.model.movement.Direction;
 //import view.MainPanel;
@@ -21,12 +18,11 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import static game.controller.UserInterfaceController.createOmenoctView;
 import static game.controller.Utils.*;
-import static shared.Model.imagetools.ToolBox.getBufferedImage;
+import static shared.model.imagetools.ToolBox.getBufferedImage;
 
 public class OmenoctModel extends GeoShapeModel implements Collidable, Enemy {
     public boolean isOnEpsilonPanel = false;
@@ -109,7 +105,7 @@ public class OmenoctModel extends GeoShapeModel implements Collidable, Enemy {
         OmenoctModel.image = getBufferedImage(img);
 
         GraphicalObject bowser = new GraphicalObject(image);
-        bowser.refine();
+
         pol = bowser.getMyBoundingPolygon();
 
         return OmenoctModel.image;

@@ -1,7 +1,7 @@
 package client.network.game.view.charactersView;
 
 
-import shared.Model.MyPolygon;
+import shared.model.MyPolygon;
 
 import java.awt.*;
 

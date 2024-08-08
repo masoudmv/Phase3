@@ -1,12 +1,11 @@
 package game.model.charactersModel.smiley;
 
-import game.controller.Game;
 import game.controller.Utils;
 import shared.constants.EntityConstants;
 import shared.constants.SmileyConstants;
 import game.example.GraphicalObject;
 import game.model.FinalPanelModel;
-import shared.Model.MyPolygon;
+import shared.model.MyPolygon;
 import game.model.charactersModel.EpsilonModel;
 import game.model.charactersModel.GeoShapeModel;
 import game.model.charactersModel.NonrigidBullet;
@@ -19,7 +18,7 @@ import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
-import static shared.Model.imagetools.ToolBox.getBufferedImage;
+import static shared.model.imagetools.ToolBox.getBufferedImage;
 
 public class Hand extends GeoShapeModel implements Collidable {
     static BufferedImage image;
@@ -311,7 +310,7 @@ public class Hand extends GeoShapeModel implements Collidable {
         Image img = new ImageIcon("./client/src/1.png").getImage();
         Hand.image = getBufferedImage(img);
         GraphicalObject bowser = new GraphicalObject(image);
-        bowser.refine();
+
         pol = bowser.getMyBoundingPolygon();
         return Hand.image;
     }

@@ -1,6 +1,6 @@
 package client.network.game.controller;
 
-import shared.Model.MyPolygon;
+import shared.model.MyPolygon;
 
 import java.awt.*;
 import java.awt.geom.Line2D;

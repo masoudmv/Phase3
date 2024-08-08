@@ -3,10 +3,9 @@ package game.model.charactersModel.blackOrb;
 import game.controller.Game;
 import shared.constants.EntityConstants;
 import game.model.FinalPanelModel;
-import shared.Model.MyPolygon;
+import shared.model.MyPolygon;
 import javafx.scene.shape.Circle;
 import game.model.charactersModel.CollectibleModel;
-import game.model.charactersModel.EpsilonModel;
 import game.model.charactersModel.GeoShapeModel;
 import game.model.collision.Collidable;
 
@@ -20,7 +19,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 
 import static game.model.charactersModel.blackOrb.BlackOrb.lasers;
-import static shared.Model.imagetools.ToolBox.getBufferedImage;
+import static shared.model.imagetools.ToolBox.getBufferedImage;
 
 public class Orb extends GeoShapeModel implements Collidable {
     static BufferedImage image; // transient to avoid serialization

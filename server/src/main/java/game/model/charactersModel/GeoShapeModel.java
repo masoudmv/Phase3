@@ -1,14 +1,12 @@
 package game.model.charactersModel;
 
 import game.controller.Game;
-import game.controller.UserInterfaceController;
 import game.controller.Utils;
 import game.model.FinalPanelModel;
 import game.model.entities.AttackTypes;
-import server.DataBase;
-import shared.Model.MyPolygon;
+import server.database.DataBase;
+import shared.model.MyPolygon;
 import game.model.entities.Entity;
-import game.model.entities.Profile;
 import game.model.movement.Direction;
 
 import java.awt.*;

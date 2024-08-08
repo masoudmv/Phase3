@@ -1,6 +1,6 @@
 package game.controller;
 
-import shared.Model.MyPolygon;
+import shared.model.MyPolygon;
 
 import java.awt.geom.Point2D;
 import java.util.ArrayList;

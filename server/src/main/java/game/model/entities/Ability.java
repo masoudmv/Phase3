@@ -2,7 +2,7 @@ package game.model.entities;
 
 import game.controller.Game;
 import game.model.charactersModel.EpsilonModel;
-import server.DataBase;
+import server.database.DataBase;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;

@@ -1,11 +1,10 @@
 package game.model.charactersModel.smiley;
 
-import game.controller.Game;
 import game.controller.Utils;
 import shared.constants.EntityConstants;
 import game.example.GraphicalObject;
 import game.model.FinalPanelModel;
-import shared.Model.MyPolygon;
+import shared.model.MyPolygon;
 import game.model.charactersModel.EpsilonModel;
 import game.model.charactersModel.GeoShapeModel;
 //import model.collision.Coll;
@@ -20,7 +19,7 @@ import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
-import static shared.Model.imagetools.ToolBox.getBufferedImage;
+import static shared.model.imagetools.ToolBox.getBufferedImage;
 
 public class Smiley extends GeoShapeModel implements Collidable {
 

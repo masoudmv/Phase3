@@ -3,7 +3,7 @@ package client.network.game.view.charactersView;
 import javax.swing.*;
 import java.awt.*;
 
-import static shared.Model.imagetools.ToolBox.getBufferedImage;
+import static shared.model.imagetools.ToolBox.getBufferedImage;
 
 public class BabyArchmireView extends ArchmireView{
     private static Image img;

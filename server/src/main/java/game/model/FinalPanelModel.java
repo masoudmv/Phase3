@@ -3,12 +3,10 @@ package game.model;
 
 import game.controller.Game;
 import game.controller.Utils;
-import game.model.collision.CollisionState;
-import game.model.entities.Profile;
 import game.model.charactersModel.BulletModel;
 import game.model.charactersModel.EpsilonModel;
 import game.model.collision.Collidable;
-import server.DataBase;
+import server.database.DataBase;
 
 import java.awt.*;
 import java.awt.geom.Dimension2D;

@@ -1,7 +1,7 @@
 package shared.response;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import shared.Model.NotificationType;
+import shared.model.NotificationType;
 
 @JsonTypeName("TransferReqToClientResponse")
 public class TransferReqToClientResponse implements Response{

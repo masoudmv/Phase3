@@ -1,7 +1,7 @@
 package client.network.containers;
 
 import client.network.RequestFactory;
-import shared.Model.Squad;
+import shared.model.Squad;
 
 import javax.swing.*;
 import java.awt.*;
@@ -23,7 +23,7 @@ public class SquadListPanel extends JPanel {
             squadPanel.setBorder(BorderFactory.createDashedBorder(Color.BLACK));
             squadPanel.setAlignmentX(Component.CENTER_ALIGNMENT);  // Center align the panel horizontally
 
-            JLabel squadNameLabel = new JLabel("Squad: " + squad.getName());
+            JLabel squadNameLabel = new JLabel("Squad Owner: " + squad.getOwner().getUsername());
             JLabel membersCountLabel = new JLabel("Number of Members: " + squad.getMembers().size());
 
             JButton joinButton = new JButton("Join Squad");

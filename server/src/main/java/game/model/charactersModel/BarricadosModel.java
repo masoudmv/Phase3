@@ -3,9 +3,8 @@ package game.model.charactersModel;
 import game.controller.Game;
 import game.example.GraphicalObject;
 import game.model.FinalPanelModel;
-import game.model.charactersModel.blackOrb.BlackOrb;
 import game.model.reflection.Enemy;
-import shared.Model.MyPolygon;
+import shared.model.MyPolygon;
 import game.model.collision.Collidable;
 
 import javax.swing.*;
@@ -13,12 +12,11 @@ import java.awt.*;
 import java.awt.geom.Dimension2D;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
 import java.util.Random;
 
 import static game.controller.UserInterfaceController.createBarricadosView;
 //import static game.model.FinalPanelModel.finalPanelModels;
-import static shared.Model.imagetools.ToolBox.getBufferedImage;
+import static shared.model.imagetools.ToolBox.getBufferedImage;
 import static shared.constants.Constants.FRAME_DIMENSION;
 
 public class BarricadosModel extends GeoShapeModel implements Collidable, Enemy {

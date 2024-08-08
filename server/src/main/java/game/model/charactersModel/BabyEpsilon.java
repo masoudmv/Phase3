@@ -1,10 +1,9 @@
 package game.model.charactersModel;
 
 import game.controller.Game;
-import game.controller.UserInterfaceController;
 import game.controller.Utils;
 import shared.constants.EntityConstants;
-import shared.Model.MyPolygon;
+import shared.model.MyPolygon;
 import game.model.entities.AttackTypes;
 import game.model.movement.Direction;
 import java.awt.geom.Point2D;

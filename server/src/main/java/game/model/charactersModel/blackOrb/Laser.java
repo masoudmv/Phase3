@@ -1,20 +1,12 @@
 package game.model.charactersModel.blackOrb;
 
-import game.controller.Game;
 import game.controller.Utils;
-import game.controller.UserInterfaceController;
 import game.model.charactersModel.*;
-import server.DataBase;
-import shared.Model.Squad;
-import shared.Model.dummies.DummyModel;
-import shared.constants.Constants;
-import shared.Model.MyPolygon;
+import shared.model.MyPolygon;
 import game.model.entities.AttackTypes;
 
-import java.awt.*;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
-import java.util.ArrayList;
 
 import static game.controller.UserInterfaceController.createLaserView;
 import static game.controller.Utils.*;

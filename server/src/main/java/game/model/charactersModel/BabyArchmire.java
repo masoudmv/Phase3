@@ -2,7 +2,7 @@ package game.model.charactersModel;
 
 import shared.constants.EntityConstants;
 import game.example.GraphicalObject;
-import shared.Model.MyPolygon;
+import shared.model.MyPolygon;
 import game.model.collision.Collidable;
 
 import javax.swing.*;
@@ -10,7 +10,7 @@ import java.awt.*;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 
-import static shared.Model.imagetools.ToolBox.getBufferedImage;
+import static shared.model.imagetools.ToolBox.getBufferedImage;
 
 public class BabyArchmire extends ArchmireModel {
 

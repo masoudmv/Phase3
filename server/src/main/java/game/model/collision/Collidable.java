@@ -2,11 +2,6 @@ package game.model.collision;
 
 import game.controller.Utils;
 import game.model.FinalPanelModel;
-import game.model.charactersModel.CollectibleModel;
-import game.model.charactersModel.EpsilonModel;
-import game.model.charactersModel.SquarantineModel;
-import game.model.charactersModel.TrigorathModel;
-import server.DataBase;
 //import view.MainPanel;
 //import view.Panel;
 

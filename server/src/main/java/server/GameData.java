@@ -1,8 +1,8 @@
 package server;
 
-import shared.Model.EntityType;
-import shared.Model.dummies.DummyModel;
-import shared.Model.dummies.DummyPanel;
+import shared.model.EntityType;
+import shared.model.dummies.DummyModel;
+import shared.model.dummies.DummyPanel;
 
 import java.awt.*;
 import java.awt.geom.Point2D;

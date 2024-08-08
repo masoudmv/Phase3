@@ -1,8 +1,8 @@
 package shared.response.game;
 
-import shared.Model.EntityType;
-import shared.Model.dummies.DummyModel;
-import shared.Model.dummies.DummyPanel;
+import shared.model.EntityType;
+import shared.model.dummies.DummyModel;
+import shared.model.dummies.DummyPanel;
 import shared.response.Response;
 import shared.response.ResponseHandler;
 import com.fasterxml.jackson.annotation.JsonTypeName;

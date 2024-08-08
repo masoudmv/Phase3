@@ -1,6 +1,6 @@
 package shared.request.member;
 
-import shared.Model.NotificationType;
+import shared.model.NotificationType;
 import shared.request.Request;
 import shared.request.RequestHandler;
 import shared.response.Response;

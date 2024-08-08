@@ -1,8 +1,7 @@
 package shared.response;
 
-import shared.Model.Squad;
+import shared.model.Squad;
 
-import java.util.ArrayList;
 import java.util.List;
 
 

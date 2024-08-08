@@ -5,10 +5,9 @@ import game.controller.Utils;
 import game.model.charactersModel.BarricadosModel;
 import game.model.charactersModel.GeoShapeModel;
 import game.model.reflection.Enemy;
-import server.DataBase;
+import server.database.DataBase;
 import shared.constants.EntityConstants;
 import game.model.FinalPanelModel;
-import game.model.entities.Profile;
 
 import java.awt.*;
 import java.awt.geom.Point2D;

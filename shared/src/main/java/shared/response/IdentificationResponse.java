@@ -2,8 +2,8 @@ package shared.response;
 
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import shared.Model.Player;
-import shared.Model.Squad;
+import shared.model.Player;
+import shared.model.Squad;
 
 @JsonTypeName("IdentificationResponse")
 public class IdentificationResponse implements Response{

@@ -1,16 +1,14 @@
 package server;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import game.controller.Game;
 import game.controller.Utils;
 import game.model.charactersModel.BulletModel;
 import game.model.charactersModel.EpsilonModel;
 import game.model.entities.Ability;
-import game.model.entities.Profile;
 import game.model.movement.Direction;
+import server.database.DataBase;
 import server.socket.SocketResponseSender;
-import shared.Model.*;
+import shared.model.*;
 import shared.request.*;
 import shared.request.game.*;
 import shared.request.leader.JoinDemandStatusReq;
@@ -29,8 +27,6 @@ import shared.response.game.NullResponse;
 import shared.response.game.PauseResponse;
 import shared.response.game.StateResponse;
 
-import javax.accessibility.AccessibleKeyBinding;
-import javax.swing.*;
 import java.awt.geom.Point2D;
 
 

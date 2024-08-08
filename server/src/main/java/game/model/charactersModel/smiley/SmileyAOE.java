@@ -1,15 +1,10 @@
 package game.model.charactersModel.smiley;
 
-import game.controller.Game;
-import game.controller.UserInterfaceController;
-import game.controller.Utils;
 import shared.constants.EntityConstants;
-import shared.Model.MyPolygon;
-import game.model.charactersModel.EpsilonModel;
+import shared.model.MyPolygon;
 import game.model.charactersModel.GeoShapeModel;
 
 import java.awt.geom.Point2D;
-import java.util.Random;
 
 public class SmileyAOE extends GeoShapeModel {
 

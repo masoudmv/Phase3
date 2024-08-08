@@ -1,16 +1,13 @@
 package game.model.entities;
 
 import game.controller.Game;
-import game.controller.UserInterfaceController;
-import server.DataBase;
+import server.database.DataBase;
 import shared.constants.EntityConstants;
 import shared.constants.SkillConstants;
 import game.model.charactersModel.EpsilonModel;
 
-import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 public enum Skill {
     ARES, ASTRAPE, CERBERUS,

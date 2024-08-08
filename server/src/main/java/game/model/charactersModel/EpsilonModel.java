@@ -5,11 +5,11 @@ import game.controller.Game;
 import game.controller.UserInterfaceController;
 import game.controller.Utils;
 import game.model.entities.Ability;
-import server.DataBase;
-import shared.Model.Player;
+import server.database.DataBase;
+import shared.model.Player;
 import shared.constants.Constants;
 import game.model.FinalPanelModel;
-import shared.Model.MyPolygon;
+import shared.model.MyPolygon;
 import game.model.charactersModel.blackOrb.Orb;
 import game.model.charactersModel.smiley.Fist;
 import game.model.charactersModel.smiley.Hand;
@@ -31,7 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-import static shared.Model.imagetools.ToolBox.getBufferedImage;
+import static shared.model.imagetools.ToolBox.getBufferedImage;
 
 public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, Impactable {
     static BufferedImage image; // transient to avoid serialization

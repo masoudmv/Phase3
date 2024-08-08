@@ -3,10 +3,9 @@ package game.controller;
 import game.model.DoubleDimension2D;
 import game.model.FinalPanelModel;
 import game.model.charactersModel.*;
-import game.model.entities.Ability;
 import game.model.entities.Profile;
 import game.model.entities.Skill;
-import server.DataBase;
+import server.database.DataBase;
 import server.GameData;
 import shared.constants.Constants;
 

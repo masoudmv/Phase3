@@ -1,15 +1,12 @@
 package game.model.charactersModel;
 
-import game.controller.Game;
 import game.controller.GameType;
-import game.controller.UserInterfaceController;
 import game.controller.Utils;
 import game.model.reflection.Enemy;
-import javafx.scene.shape.Arc;
 import shared.constants.EntityConstants;
 import game.example.GraphicalObject;
-import shared.Model.MyPolygon;
-import shared.Model.TimedLocation;
+import shared.model.MyPolygon;
+import shared.model.TimedLocation;
 import game.model.entities.AttackTypes;
 import game.model.collision.Collidable;
 import game.model.movement.Direction;
@@ -18,13 +15,12 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
 import java.util.LinkedList;
 
 
 import static game.controller.UserInterfaceController.createArchmireView;
 import static game.controller.UserInterfaceController.createBabyArchmireView;
-import static shared.Model.imagetools.ToolBox.getBufferedImage;
+import static shared.model.imagetools.ToolBox.getBufferedImage;
 
 public class ArchmireModel extends GeoShapeModel implements Collidable, Enemy {
     static BufferedImage image;

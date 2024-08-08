@@ -7,9 +7,9 @@ import client.network.game.controller.onlineGame.ClientGame;
 import client.network.game.view.ClientDataBase;
 import client.network.game.view.FinalPanelView;
 import client.network.game.view.charactersView.*;
-import shared.Model.*;
-import shared.Model.dummies.DummyModel;
-import shared.Model.dummies.DummyPanel;
+import shared.model.*;
+import shared.model.dummies.DummyModel;
+import shared.model.dummies.DummyPanel;
 import shared.response.*;
 import shared.response.game.EndOfGameResponse;
 import shared.response.game.NullResponse;
@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 
 import static client.network.game.controller.UserInterfaceController.*;
-import static client.network.game.view.ClientDataBase.removeAll;
 import static client.network.game.view.FinalPanelView.finalPanelViews;
 import static client.network.game.view.charactersView.GeoShapeView.geoShapeViews;
 

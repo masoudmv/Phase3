@@ -4,8 +4,7 @@ import client.network.game.controller.UserInterfaceController;
 import client.network.game.controller.Utils;
 import client.network.game.view.FinalPanelView;
 
-import shared.Model.MyPolygon;
-import shared.Model.TimedLocation;
+import shared.model.MyPolygon;
 
 import java.awt.*;
 import java.awt.geom.Point2D;
@@ -14,8 +13,8 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import static shared.Model.imagetools.ToolBox.getBufferedImage;
-import static shared.Model.imagetools.ToolBox.rotateImage;
+import static shared.model.imagetools.ToolBox.getBufferedImage;
+import static shared.model.imagetools.ToolBox.rotateImage;
 
 public class GeoShapeView {
     String id;

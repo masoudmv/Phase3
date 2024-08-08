@@ -5,11 +5,10 @@ import game.controller.GameType;
 import game.controller.UserInterfaceController;
 import game.controller.Utils;
 import game.model.entities.AttackTypes;
-import game.model.entities.Entity;
 import game.model.reflection.Enemy;
 import shared.constants.Constants;
 import shared.constants.EntityConstants;
-import shared.Model.MyPolygon;
+import shared.model.MyPolygon;
 import game.model.charactersModel.blackOrb.Orb;
 import game.model.collision.Collidable;
 import game.model.collision.CollisionState;
@@ -23,11 +22,8 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
 
-import static shared.Model.imagetools.ToolBox.getBufferedImage;
-import static shared.constants.Constants.FRAME_DIMENSION;
+import static shared.model.imagetools.ToolBox.getBufferedImage;
 
 public class TrigorathModel extends GeoShapeModel implements Movable, Collidable, Impactable, Enemy {
     public double impactMaxVelocity;

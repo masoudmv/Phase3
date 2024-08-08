@@ -3,7 +3,7 @@ package client.network.game.controller;
 
 
 import client.network.game.view.junks.KeyBindingMenu;
-import shared.Model.Input;
+import shared.model.Input;
 
 
 import javax.swing.*;

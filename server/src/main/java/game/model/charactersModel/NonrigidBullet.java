@@ -3,7 +3,7 @@ package game.model.charactersModel;
 import game.controller.Utils;
 import game.example.GraphicalObject;
 import game.model.FinalPanelModel;
-import shared.Model.MyPolygon;
+import shared.model.MyPolygon;
 import game.model.entities.AttackTypes;
 import game.model.entities.Entity;
 import game.model.collision.Collidable;
@@ -13,10 +13,9 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 import static game.controller.UserInterfaceController.createNonrigidBulletView;
-import static shared.Model.imagetools.ToolBox.getBufferedImage;
+import static shared.model.imagetools.ToolBox.getBufferedImage;
 import static shared.constants.Constants.FRAME_DIMENSION;
 
 public class NonrigidBullet extends GeoShapeModel implements Collidable {

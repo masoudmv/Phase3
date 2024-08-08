@@ -2,7 +2,7 @@ package client.network.game.view.charactersView;
 
 import client.network.game.view.FinalPanelView;
 
-import shared.Model.MyPolygon;
+import shared.model.MyPolygon;
 
 import java.awt.*;
 //import static controller.Game.squarantine;

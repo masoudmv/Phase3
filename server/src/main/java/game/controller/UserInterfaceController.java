@@ -1,23 +1,17 @@
 package game.controller;
 
-import game.model.FinalPanelModel;
 import server.GameData;
-import shared.Model.MyPolygon;
-import shared.Model.TimedLocation;
-import game.model.charactersModel.*;
-import game.model.entities.Ability;
 
 
 import game.model.entities.Skill;
 
-import server.DataBase;
+import server.database.DataBase;
 
 
 import java.awt.*;
 import java.awt.geom.Point2D;
-import java.util.UUID;
 
-import static shared.Model.EntityType.*;
+import static shared.model.EntityType.*;
 
 public abstract class UserInterfaceController {
 

@@ -1,16 +1,12 @@
 package client.network;
 
 import client.network.socket.SocketRequestSender;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import shared.Model.Player;
-import shared.Model.Squad;
+import shared.model.Player;
+import shared.model.Squad;
 
-import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
-import java.net.UnknownHostException;
 import java.util.Enumeration;
-import java.util.UUID;
 
 public class Status {
     private static Status INSTANCE;

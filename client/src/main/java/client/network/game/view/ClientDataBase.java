@@ -1,8 +1,8 @@
 package client.network.game.view;
 
 import client.network.game.view.charactersView.GeoShapeView;
-import shared.Model.dummies.DummyModel;
-import shared.Model.dummies.DummyPanel;
+import shared.model.dummies.DummyModel;
+import shared.model.dummies.DummyPanel;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

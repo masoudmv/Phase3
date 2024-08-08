@@ -1,18 +1,14 @@
 package client.network.game.view.charactersView;
 
 
-import shared.Model.MyPolygon;
-import shared.Model.TimedLocation;
-import shared.Model.imagetools.ToolBox;
+import shared.model.imagetools.ToolBox;
 
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import static shared.Model.imagetools.ToolBox.getBufferedImage;
+import static shared.model.imagetools.ToolBox.getBufferedImage;
 
 public class ArchmireView extends GeoShapeView {
 //    HashMap<String, List<TimedLocation>> history = new HashMap<>();

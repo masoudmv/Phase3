@@ -1,14 +1,14 @@
 package game.model.charactersModel.smiley;
 
 import game.example.GraphicalObject;
-import shared.Model.MyPolygon;
+import shared.model.MyPolygon;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 
-import static shared.Model.imagetools.ToolBox.getBufferedImage;
+import static shared.model.imagetools.ToolBox.getBufferedImage;
 
 
 
@@ -27,7 +27,7 @@ public class LeftHand extends Hand{
         Image img = new ImageIcon("./client/src/hand2.png").getImage();
         LeftHand.image = getBufferedImage(img);
         GraphicalObject bowser = new GraphicalObject(image);
-        bowser.refine();
+
 
         polygon = bowser.getMyBoundingPolygon();
 

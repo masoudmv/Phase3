@@ -1,6 +1,6 @@
 package shared.request.leader;
 
-import shared.Model.Skill;
+import shared.model.Skill;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import shared.request.Request;
 import shared.request.RequestHandler;

@@ -1,6 +1,6 @@
 package shared.request.game;
 
-import shared.Model.Input;
+import shared.model.Input;
 import shared.request.Request;
 import shared.request.RequestHandler;
 import shared.response.Response;

@@ -2,9 +2,9 @@ package client.network.containers;
 
 import client.network.RequestFactory;
 import client.network.Status;
-import shared.Model.NotificationType;
-import shared.Model.Player;
-import shared.Model.Squad;
+import shared.model.NotificationType;
+import shared.model.Player;
+import shared.model.Squad;
 
 import javax.swing.*;
 import java.awt.*;
