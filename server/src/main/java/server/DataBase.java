@@ -1,14 +1,20 @@
-package server.database;
+package server;
 
 import game.controller.Game;
 import game.controller.GameType;
 import game.model.charactersModel.EpsilonModel;
-import server.GameData;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+import shared.hibernate.HibernateUtil;
+import shared.hibernate.PlayerDAO;
+import shared.hibernate.SquadDAO;
 import shared.model.*;
 import shared.response.MessageResponse;
 import shared.response.Response;
 import shared.response.TransferReqToClientResponse;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
@@ -17,6 +23,9 @@ import java.util.function.BiConsumer;
 
 public class DataBase {
     private static DataBase dataBase;
+
+
+
 
     private volatile List<Squad> squads = new CopyOnWriteArrayList<>();
     private volatile List<Player> players = new CopyOnWriteArrayList<>();
@@ -54,19 +63,63 @@ public class DataBase {
 
         Player player = findPlayer(macAddress);
         if (player == null) {
-            players.add(new Player(macAddress));
-            System.out.println("Number of players after adding: " + players.size());
+            System.out.println("The player was successfully added to the database");
+
+            Player player1 = new Player(macAddress);
+            players.add(player1);
+
+            SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
+            Session session = sessionFactory.openSession();
+            Transaction t = session.beginTransaction();
+
+            session.save(player1);
+            t.commit();
+
+
+            System.out.println("The player was successfully added to the database");
         }
     }
 
     public synchronized void setUsername(String macAddress, String username) {
         Player player = findPlayer(macAddress);
+
         if (player != null) {
+            SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
+            Session session = null;
+            Transaction transaction = null;
+
+            try {
+                session = sessionFactory.openSession();
+                transaction = session.beginTransaction();
+
+                Player p = session.get(Player.class, macAddress);
+                if (p != null) {
+                    p.setUsername(username);
+                    transaction.commit(); // Changes are automatically detected and saved
+                    System.out.println("Username updated successfully for player with MAC address " + macAddress);
+                } else {
+                    System.out.println("Player with MAC address " + macAddress + " not found in the database.");
+                }
+            } catch (Exception e) {
+                if (transaction != null) {
+                    transaction.rollback();
+                }
+                e.printStackTrace();
+                System.err.println("Failed to update username for player with MAC address " + macAddress + ": " + e.getMessage());
+            } finally {
+                if (session != null) {
+                    session.close();
+                }
+            }
+
+            // Update the in-memory player object as well
             player.setUsername(username);
         } else {
-            System.out.println("Player with MAC address " + macAddress + " not found.");
+            System.out.println("Player with MAC address " + macAddress + " not found in the in-memory database.");
         }
     }
+
+
 
     public List<Player> getAllPlayers() {
         return players;
@@ -91,6 +144,7 @@ public class DataBase {
 
     public synchronized String createSquad(String macAddress) {
         Player player = findPlayer(macAddress);
+
         if (player == null) {
             return "The player does not exist :/";
         } else if (player.getSquad() != null) {
@@ -98,12 +152,54 @@ public class DataBase {
         } else if (player.getXP() < 100) {
             return "You don't have enough XP!";
         } else {
-            Squad squad = new Squad(player);
-            squads.add(squad);
-            player.reduceXpBy(200);
-            return "Squad was created successfully!";
+            SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
+            Session session = null;
+            Transaction transaction = null;
+
+            try {
+                session = sessionFactory.openSession();
+                transaction = session.beginTransaction();
+
+                // Reload the player from the session to ensure we are working with the latest data
+                Player p = session.get(Player.class, macAddress);
+                if (p == null) {
+                    return "The player does not exist :/";
+                } else if (p.getSquad() != null) {
+                    return "You are already in a squad!";
+                } else if (p.getXP() < 100) {
+                    return "You don't have enough XP!";
+                }
+
+                // Create the new squad and associate it with the player
+                Squad squad = new Squad(p);
+                p.setSquad(squad);
+                p.reduceXpBy(200);
+
+                // Save the squad and update the player in the database
+                session.update(p);
+                session.save(squad);
+                transaction.commit();
+
+                // Update the in-memory player object as well
+                player.setSquad(squad);
+                player.reduceXpBy(200);
+
+                return "Squad was created successfully!";
+            } catch (Exception e) {
+                if (transaction != null) {
+                    transaction.rollback();
+                }
+                e.printStackTrace();
+                System.err.println("Failed to create squad for player with MAC address " + macAddress + ": " + e.getMessage());
+                return "Failed to create squad due to an internal error.";
+            } finally {
+                if (session != null) {
+                    session.close();
+                }
+            }
         }
     }
+
 
     public synchronized String donateToSquad(Player player, int amount) {
         if (player.getSquad() == null) {
@@ -127,51 +223,170 @@ public class DataBase {
         return squad.buySkill(skill);
     }
 
-    public synchronized String sendOutFromSquad(Player player) { // todo use a better name
+    public synchronized String sendOutFromSquad(Player player) {
         Squad squad = player.getSquad();
-        if (squad == null) return "The player isn't in any squad!";
+        if (squad == null) {
+            return "The player isn't in any squad!";
+        }
+
         String playerMacAddress = player.getMacAddress();
         String ownerMacAddress = squad.getOwner().getMacAddress();
-        if (playerMacAddress.equals(ownerMacAddress)) {
-            for (Player p : squad.getMembers()) {
-                p.setSquad(null);
+
+        SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
+        Session session = null;
+        Transaction transaction = null;
+
+        try {
+            session = sessionFactory.openSession();
+            transaction = session.beginTransaction();
+
+            if (playerMacAddress.equals(ownerMacAddress)) {
+                // The player is the owner, terminate the squad
+                for (Player p : squad.getMembers()) {
+                    p.setSquad(null);
+                    session.update(p);
+                }
+                squad.setMembers(null);
+                session.delete(squad);
+
+                transaction.commit();
+                return "The squad was successfully terminated!";
+            } else {
+                // The player is a member, leave the squad
+                player.setSquad(null);
+                squad.getMembers().remove(player);
+
+                session.update(player);
+                session.update(squad);
+
+                transaction.commit();
+                return "You have successfully left the squad!";
             }
-            squad.setMembers(null);
-            squads.remove(squad);
-            return "The squad was successfully terminated!";
-        } else {
-            player.setSquad(null);
-            squad.getMembers().remove(player);
-            return "You have successfully left the squad!";
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            e.printStackTrace();
+            System.err.println("Failed to update squad for player with MAC address " + playerMacAddress + ": " + e.getMessage());
+            return "Failed to update squad due to an internal error.";
+        } finally {
+            if (session != null) {
+                session.close();
+            }
         }
     }
 
 
+
     public String joinPlayerToSquad(Player demander, Squad squad, boolean accepted) {
-        if (squad == null) return "the Squad does not exist anymore!";
-        if (demander.getSquad() != null) return "the Player has already joined another squad!";
+        if (squad == null) return "The squad does not exist anymore!";
+        if (demander.getSquad() != null) return "The player has already joined another squad!";
         if (!accepted) {
             demander.setHasMessage(true);
             demander.setMessage(Message.JOIN_REQUEST_UNSUCCESSFUL.getValue());
-            return "You have declined the request!";
+
+            // Update the database to reflect the change
+            SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
+            Session session = null;
+            Transaction transaction = null;
+
+            try {
+                session = sessionFactory.openSession();
+                transaction = session.beginTransaction();
+
+                // Update the player's message status in the database
+                session.update(demander);
+
+                transaction.commit();
+                return "You have declined the request!";
+            } catch (Exception e) {
+                if (transaction != null) {
+                    transaction.rollback();
+                }
+                e.printStackTrace();
+                System.err.println("Failed to update player message for demander: " + e.getMessage());
+                return "Failed to decline request due to an internal error.";
+            } finally {
+                if (session != null) {
+                    session.close();
+                }
+            }
         }
+
+        // If the request is accepted
         demander.setSquad(squad);
         squad.addMember(demander);
 
         demander.setHasMessage(true);
         demander.setMessage(Message.JOIN_REQUEST_SUCCESSFUL.getValue());
-        return "The Player has successfully joined the squad!";
+
+        // Update the database to reflect the changes
+        SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
+        Session session = null;
+        Transaction transaction = null;
+
+        try {
+            session = sessionFactory.openSession();
+            transaction = session.beginTransaction();
+
+            // Update the player's squad and message status in the database
+            session.update(demander);
+            session.update(squad);
+
+            transaction.commit();
+            return "The player has successfully joined the squad!";
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            e.printStackTrace();
+            System.err.println("Failed to update squad for demander: " + e.getMessage());
+            return "Failed to join squad due to an internal error.";
+        } finally {
+            if (session != null) {
+                session.close();
+            }
+        }
     }
 
-    public String kickPlayer(Player player){
+
+    public String kickPlayer(Player player) {
         Squad squad = player.getSquad();
-        if (squad == null) return "the player is not in any squad!";
-        squad.getMembers().remove(player);
-        player.setSquad(null);
-        player.setHasMessage(true);
-        player.setMessage("You have been kicked out of the squad by leader!");
-        return "the player was successfully kicked!";
+        if (squad == null) return "The player is not in any squad!";
+
+        SessionFactory sessionFactory = HibernateUtil.getSessionFactory();
+        Session session = null;
+        Transaction transaction = null;
+
+        try {
+            session = sessionFactory.openSession();
+            transaction = session.beginTransaction();
+
+            // Remove the player from the squad and update the database
+            squad.getMembers().remove(player);
+            player.setSquad(null);
+            player.setHasMessage(true);
+            player.setMessage("You have been kicked out of the squad by the leader!");
+
+            session.update(player);
+            session.update(squad);
+
+            transaction.commit();
+            return "The player was successfully kicked!";
+        } catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            e.printStackTrace();
+            System.err.println("Failed to kick player from squad: " + e.getMessage());
+            return "Failed to kick player due to an internal error.";
+        } finally {
+            if (session != null) {
+                session.close();
+            }
+        }
     }
+
 
     public Squad findOpponent(Squad squad){
         if (squad == null) return null;
@@ -561,8 +776,23 @@ public class DataBase {
         }
     }
 
-//
-//    public static List<Player> getMembers(Squad squad){
+    public List<Player> getPlayers() {
+        return players;
+    }
+
+    public void setPlayers(List<Player> players) {
+        this.players = players;
+    }
+
+    public List<Squad> getSquads() {
+        return squads;
+    }
+
+    public void setSquads(List<Squad> squads) {
+        this.squads = squads;
+    }
+
+    //    public static List<Player> getMembers(Squad squad){
 //        List<String> macs = squad.getMacAddresses();
 //        List<Player> members = new ArrayList<>();
 //
@@ -585,7 +815,7 @@ public class DataBase {
 //
 //        return null;
 //    }
-
+//
 //    public Squad getSquad(Player player){
 //        for (Squad squad : dataBase.squads){
 //            for (Player p : squad.getMembers()){

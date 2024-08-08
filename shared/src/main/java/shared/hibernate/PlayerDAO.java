@@ -6,11 +6,11 @@ import shared.model.Player;
 import java.util.List;
 
 public class PlayerDAO {
-    public void savePlayer(Player player) {
+    public void saveOrUpdatePlayer(Player player) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            session.save(player);
+            session.saveOrUpdate(player);  // saveOrUpdate will handle both save and update
             transaction.commit();
         } catch (Exception e) {
             if (transaction != null) {
@@ -32,25 +32,6 @@ public class PlayerDAO {
         }
     }
 
-
-    public void updatePlayer(Player player) {
-        Transaction transaction = null;
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            transaction = session.beginTransaction();
-            session.update(player);
-            transaction.commit();
-        } catch (Exception e) {
-            if (transaction != null) {
-                try {
-                    transaction.rollback();
-                } catch (Exception rollbackException) {
-                    rollbackException.printStackTrace();
-                }
-            }
-            e.printStackTrace();
-        }
-    }
-
     public void deletePlayer(Long id) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
@@ -63,11 +44,7 @@ public class PlayerDAO {
             transaction.commit();
         } catch (Exception e) {
             if (transaction != null) {
-                try {
-                    transaction.rollback();
-                } catch (Exception rollbackException) {
-                    rollbackException.printStackTrace();
-                }
+                transaction.rollback();
             }
             e.printStackTrace();
         }
@@ -81,11 +58,7 @@ public class PlayerDAO {
             transaction.commit();
         } catch (Exception e) {
             if (transaction != null) {
-                try {
-                    transaction.rollback();
-                } catch (Exception rollbackException) {
-                    rollbackException.printStackTrace();
-                }
+                transaction.rollback();
             }
             e.printStackTrace();
         }

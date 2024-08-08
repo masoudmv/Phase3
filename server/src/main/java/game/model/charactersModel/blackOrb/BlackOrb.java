@@ -5,7 +5,7 @@ import game.controller.Utils;
 import game.model.charactersModel.BarricadosModel;
 import game.model.charactersModel.GeoShapeModel;
 import game.model.reflection.Enemy;
-import server.database.DataBase;
+import server.DataBase;
 import shared.constants.EntityConstants;
 import game.model.FinalPanelModel;
 

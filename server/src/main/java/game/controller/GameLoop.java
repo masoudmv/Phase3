@@ -5,7 +5,7 @@ import game.model.PanelManager;
 import game.model.charactersModel.*;
 import game.model.reflection.WaveManager;
 import game.model.charactersModel.blackOrb.BlackOrb;
-import server.database.DataBase;
+import server.DataBase;
 import server.GameData;
 import shared.model.TimedLocation;
 import shared.model.dummies.DummyModel;
@@ -21,7 +21,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import static game.model.charactersModel.CollectibleModel.collectibleModels;
 import static game.model.collision.Collidable.collidables;
-import static server.database.DataBase.handleEndGame;
+import static server.DataBase.handleEndGame;
 import static shared.model.TimedLocation.myPolToPolygon;
 
 public class GameLoop implements Runnable {

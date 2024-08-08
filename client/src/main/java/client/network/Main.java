@@ -21,9 +21,8 @@ import static client.network.RequestFactory.createIdentificateReq;
 public class Main {
     public static void main(String[] args) throws IOException {
         Status.getINSTANCE();
-        Status.getINSTANCE();
-//        utils.tryConnection();
-//        PanelManager.displayMainMenu();
+        utils.tryConnection();
+        PanelManager.displayMainMenu();
 
 
 
@@ -33,7 +32,7 @@ public class Main {
         Status.getINSTANCE().setConnectedToServer(true);
         Status.getINSTANCE().setSocket(socketRequestSender);
 
-        createIdentificateReq();
+//        createIdentificateReq();
 
         EpsilonView.loadImage();
         OrbView.loadImage();
@@ -44,8 +43,8 @@ public class Main {
         NonrigidBulletView.loadImage();
 
 
-        MainFrame.getINSTANCE().addMouseListener(new MouseController());
-        new ClientGame();
+//        MainFrame.getINSTANCE().addMouseListener(new MouseController());
+//        new ClientGame();
 
     }
 }

@@ -6,7 +6,6 @@ import game.model.charactersModel.BulletModel;
 import game.model.charactersModel.EpsilonModel;
 import game.model.entities.Ability;
 import game.model.movement.Direction;
-import server.database.DataBase;
 import server.socket.SocketResponseSender;
 import shared.model.*;
 import shared.request.*;

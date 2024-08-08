@@ -1,7 +1,7 @@
 package server.cli;
 
 import picocli.CommandLine;
-import server.database.DataBase;
+import server.DataBase;
 
 import java.util.concurrent.Callable;
 

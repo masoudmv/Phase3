@@ -6,7 +6,7 @@ import game.controller.Utils;
 import game.model.charactersModel.BulletModel;
 import game.model.charactersModel.EpsilonModel;
 import game.model.collision.Collidable;
-import server.database.DataBase;
+import server.DataBase;
 
 import java.awt.*;
 import java.awt.geom.Dimension2D;

@@ -5,7 +5,7 @@ import game.controller.Game;
 import game.controller.UserInterfaceController;
 import game.controller.Utils;
 import game.model.entities.Ability;
-import server.database.DataBase;
+import server.DataBase;
 import shared.model.Player;
 import shared.constants.Constants;
 import game.model.FinalPanelModel;

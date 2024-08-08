@@ -5,7 +5,7 @@ import game.model.FinalPanelModel;
 import game.model.charactersModel.*;
 import game.model.entities.Profile;
 import game.model.entities.Skill;
-import server.database.DataBase;
+import server.DataBase;
 import server.GameData;
 import shared.constants.Constants;
 

@@ -5,7 +5,7 @@ import server.GameData;
 
 import game.model.entities.Skill;
 
-import server.database.DataBase;
+import server.DataBase;
 
 
 import java.awt.*;

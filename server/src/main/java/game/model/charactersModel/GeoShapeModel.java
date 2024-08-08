@@ -4,7 +4,7 @@ import game.controller.Game;
 import game.controller.Utils;
 import game.model.FinalPanelModel;
 import game.model.entities.AttackTypes;
-import server.database.DataBase;
+import server.DataBase;
 import shared.model.MyPolygon;
 import game.model.entities.Entity;
 import game.model.movement.Direction;

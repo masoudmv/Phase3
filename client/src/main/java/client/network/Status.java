@@ -7,6 +7,7 @@ import shared.model.Squad;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.util.Enumeration;
+import java.util.UUID;
 
 public class Status {
     private static Status INSTANCE;
@@ -90,8 +91,8 @@ public class Status {
                     }
 
                     // todo revert to using mac address ...
-//                    return String.join("-", hexadecimal);
-                    return "1";
+                    return String.join("-", hexadecimal);
+//                    return UUID.randomUUID().toString();
 
                 }
             }

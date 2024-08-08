@@ -1,7 +1,7 @@
 package server.socket;
 
 import server.ServersideReqHandler;
-import server.database.DataBase;
+import server.DataBase;
 
 import java.net.ServerSocket;
 import java.net.Socket;

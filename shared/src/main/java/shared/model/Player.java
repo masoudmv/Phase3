@@ -3,6 +3,11 @@ package shared.model;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import jakarta.persistence.*;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+import shared.hibernate.HibernateUtil;
+
 import static shared.model.Status.online;
 
 
@@ -11,9 +16,6 @@ import static shared.model.Status.online;
 public class Player {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
     @Column(name = "mac_address", nullable = false, unique = true)
     private String macAddress;
 
@@ -68,7 +70,7 @@ public class Player {
     private int inMenuTime = 0;
 
     @JsonBackReference
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "squad_id")
     private Squad squad;
 
@@ -79,6 +81,7 @@ public class Player {
         this.macAddress = macAddress;
         this.XP = 1000;
         this.status = online;
+
     }
 
     public Player() {
@@ -231,13 +234,13 @@ public class Player {
         isInBattle = inBattle;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
+//    public Long getId() {
+//        return id;
+//    }
+//
+//    public void setId(Long id) {
+//        this.id = id;
+//    }
 
     public String getBattleID() {
         return battleID;

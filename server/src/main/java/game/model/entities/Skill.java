@@ -1,7 +1,7 @@
 package game.model.entities;
 
 import game.controller.Game;
-import server.database.DataBase;
+import server.DataBase;
 import shared.constants.EntityConstants;
 import shared.constants.SkillConstants;
 import game.model.charactersModel.EpsilonModel;

@@ -10,11 +10,13 @@ import java.util.List;
 @Table(name = "squads")
 public class Squad {
 
+//    @Id
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    private String macAddress;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @OneToOne
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "owner_id", nullable = false)
     private Player owner = null;
 
@@ -52,6 +54,8 @@ public class Squad {
 
     public Squad(Player owner) {
         this.owner = owner;
+//        this.macAddress = owner.getMacAddress();
+//        System.out.println("saved macAddress: " + macAddress);
         this.members.add(owner);
         owner.setSquad(this);
     }
@@ -61,6 +65,7 @@ public class Squad {
 
     public void addMember(Player player){
         members.add(player);
+        player.setSquad(this);
 //        macAddresses.add(player.getMacAddress());
     }
 
@@ -87,7 +92,29 @@ public class Squad {
 //    }
 
 
+//    public String getMacAddress() {
+//        return macAddress;
+//    }
+//
+//    public void setMacAddress(String macAddress) {
+//        this.macAddress = macAddress;
+//    }
 
+    public void setVault(int vault) {
+        this.vault = vault;
+    }
+
+    public void setPalioxis(int palioxis) {
+        this.palioxis = palioxis;
+    }
+
+    public void setAdonis(int adonis) {
+        this.adonis = adonis;
+    }
+
+    public void setGefjon(int gefjon) {
+        this.gefjon = gefjon;
+    }
 
     public void setMembers(List<Player> members) {
         this.members = members;
@@ -184,13 +211,7 @@ public class Squad {
         return gefjon > 0;
     }
 
-    public Long getId() {
-        return id;
-    }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     //    public Squad getOpponent() {
 //        return opponent;
