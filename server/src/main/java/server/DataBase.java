@@ -6,6 +6,9 @@ import game.model.charactersModel.EpsilonModel;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import server.globalExceptionHandling.OperationFailedException;
+import server.globalExceptionHandling.PlayerNotFoundException;
+import server.globalExceptionHandling.SquadNotFoundException;
 import shared.hibernate.HibernateUtil;
 import shared.hibernate.PlayerDAO;
 import shared.hibernate.SquadDAO;
@@ -56,13 +59,13 @@ public class DataBase {
                 return player;
             }
         }
-        return null;
+        throw new PlayerNotFoundException("Player with MAC address " + macAddress + " not found.");
     }
 
     public synchronized void identificate(String macAddress) {
-
-        Player player = findPlayer(macAddress);
-        if (player == null) {
+        try {
+            Player player = findPlayer(macAddress);
+        } catch (PlayerNotFoundException e) {
             System.out.println("The player was successfully added to the database");
 
             Player player1 = new Player(macAddress);
@@ -74,11 +77,12 @@ public class DataBase {
 
             session.save(player1);
             t.commit();
-
+            session.close();
 
             System.out.println("The player was successfully added to the database");
         }
     }
+
 
     public synchronized void setUsername(String macAddress, String username) {
         Player player = findPlayer(macAddress);
@@ -98,14 +102,14 @@ public class DataBase {
                     transaction.commit(); // Changes are automatically detected and saved
                     System.out.println("Username updated successfully for player with MAC address " + macAddress);
                 } else {
-                    System.out.println("Player with MAC address " + macAddress + " not found in the database.");
+                    throw new PlayerNotFoundException("Player with MAC address " + macAddress + " not found in the database.");
                 }
             } catch (Exception e) {
                 if (transaction != null) {
                     transaction.rollback();
                 }
                 e.printStackTrace();
-                System.err.println("Failed to update username for player with MAC address " + macAddress + ": " + e.getMessage());
+                throw new OperationFailedException("Failed to update username for player with MAC address " + macAddress + ": " + e.getMessage());
             } finally {
                 if (session != null) {
                     session.close();
@@ -114,8 +118,6 @@ public class DataBase {
 
             // Update the in-memory player object as well
             player.setUsername(username);
-        } else {
-            System.out.println("Player with MAC address " + macAddress + " not found in the in-memory database.");
         }
     }
 
@@ -142,12 +144,11 @@ public class DataBase {
         this.squadBattleInitiated = squadBattleInitiated;
     }
 
+
     public synchronized String createSquad(String macAddress) {
         Player player = findPlayer(macAddress);
 
-        if (player == null) {
-            return "The player does not exist :/";
-        } else if (player.getSquad() != null) {
+        if (player.getSquad() != null) {
             return "You are already in a squad!";
         } else if (player.getXP() < 100) {
             return "You don't have enough XP!";
@@ -163,7 +164,7 @@ public class DataBase {
                 // Reload the player from the session to ensure we are working with the latest data
                 Player p = session.get(Player.class, macAddress);
                 if (p == null) {
-                    return "The player does not exist :/";
+                    throw new PlayerNotFoundException("The player does not exist :/");
                 } else if (p.getSquad() != null) {
                     return "You are already in a squad!";
                 } else if (p.getXP() < 100) {
@@ -190,8 +191,7 @@ public class DataBase {
                     transaction.rollback();
                 }
                 e.printStackTrace();
-                System.err.println("Failed to create squad for player with MAC address " + macAddress + ": " + e.getMessage());
-                return "Failed to create squad due to an internal error.";
+                throw new OperationFailedException("Failed to create squad for player with MAC address " + macAddress + ": " + e.getMessage());
             } finally {
                 if (session != null) {
                     session.close();
@@ -226,7 +226,7 @@ public class DataBase {
     public synchronized String sendOutFromSquad(Player player) {
         Squad squad = player.getSquad();
         if (squad == null) {
-            return "The player isn't in any squad!";
+            throw new SquadNotFoundException("The player isn't in any squad!");
         }
 
         String playerMacAddress = player.getMacAddress();
@@ -267,8 +267,7 @@ public class DataBase {
                 transaction.rollback();
             }
             e.printStackTrace();
-            System.err.println("Failed to update squad for player with MAC address " + playerMacAddress + ": " + e.getMessage());
-            return "Failed to update squad due to an internal error.";
+            throw new OperationFailedException("Failed to update squad for player with MAC address " + playerMacAddress + ": " + e.getMessage());
         } finally {
             if (session != null) {
                 session.close();
