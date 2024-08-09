@@ -111,7 +111,6 @@ public class CollectibleModel extends GeoShapeModel implements Collidable, Movab
     @Override
     public void friction() {
         direction.setMagnitude(direction.getMagnitude() * 0.97);
-        System.out.println(direction.getMagnitude());
         if (direction.getMagnitude() < 1){
             direction.setMagnitude(0);
             impactInProgress = false;

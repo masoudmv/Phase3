@@ -5,6 +5,7 @@ import controller.PolygonUtils;
 import model.FinalPanelModel;
 import model.MyPolygon;
 import model.collision.Collidable;
+import model.entities.AttackTypes;
 import model.entities.Entity;
 import model.interfaces.Enemy;
 import model.movement.Direction;
@@ -39,6 +40,7 @@ public class OmenoctModel extends GeoShapeModel implements Collidable, Enemy {
         omenoctModels.add(this);
         collidables.add(this);
         this.health = OMENOCT_HEALTH.getValue();
+        damageSize.put(AttackTypes.MELEE, 8);
         initVertices();
         createOmenoctView(id);
     }

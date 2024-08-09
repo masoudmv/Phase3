@@ -6,6 +6,7 @@ import model.charactersModel.blackOrb.Orb;
 import model.collision.Collidable;
 import model.collision.CollisionState;
 import model.collision.Impactable;
+import model.entities.AttackTypes;
 import model.interfaces.Enemy;
 import model.movement.Direction;
 import model.movement.Movable;
@@ -48,7 +49,7 @@ public class SquarantineModel extends GeoShapeModel implements Movable, Collidab
         impactables.add(this);
         this.health = 10;
         createSquarantineView(id);
-
+        damageSize.put(AttackTypes.MELEE, 6);
     }
 
     public SquarantineModel() {

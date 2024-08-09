@@ -24,6 +24,7 @@ public class Game {
         INSTANCE = this;
         elapsedTime = 0;
         Profile.getCurrent().inGameXP = 0;
+        Profile.getCurrent().totalBullets = 0;
 
         BufferedImage b = EpsilonModel.loadImage();
         GraphicalObject bows = new GraphicalObject(b);

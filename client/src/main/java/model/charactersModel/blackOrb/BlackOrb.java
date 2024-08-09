@@ -141,7 +141,7 @@ public class BlackOrb implements Enemy { // todo panels should be created with d
 
     @Override
     public int getMinSpawnWave() {
-        return 1;
+        return 5;
     }
 
     @Override

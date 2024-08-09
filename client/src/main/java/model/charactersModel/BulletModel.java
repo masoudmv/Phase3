@@ -45,7 +45,7 @@ public class BulletModel extends GeoShapeModel implements Movable, Collidable, I
         damageSize.put(AttackTypes.MELEE, damage);
         updateBulletDamage();
 
-
+        Profile.getCurrent().totalBullets ++;
     }
 
     private void updateBulletDamage(){
@@ -182,10 +182,6 @@ public class BulletModel extends GeoShapeModel implements Movable, Collidable, I
     @Override
     public void onCollision(Collidable other, Point2D intersection) {
         if ( other instanceof CollectibleModel || other instanceof BulletModel) return;
-        if (other instanceof Hand) {
-            eliminate();
-            return;
-        }
         else if (other instanceof NecropickModel){
             if (((NecropickModel) other).isHovering()) return;
             if (!createdByEpsilon) {

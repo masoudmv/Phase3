@@ -23,6 +23,7 @@ public class Profile {
     public CopyOnWriteArrayList<String> acquiredSkillsNames = new CopyOnWriteArrayList<>();
     public int totalXP = 10000;
     public int inGameXP = 0;
+    public int totalBullets = 0;
 
     public double dismayInitiationTime = -Double.MAX_VALUE;
     public double slumberInitiationTime = -Double.MAX_VALUE;

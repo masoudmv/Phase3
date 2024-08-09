@@ -10,6 +10,7 @@ import model.charactersModel.GeoShapeModel;
 import model.charactersModel.SmileyBullet;
 import model.collision.Collidable;
 import model.entities.AttackTypes;
+import model.entities.Entity;
 import model.movement.Direction;
 import org.example.GraphicalObject;
 
@@ -41,9 +42,9 @@ public class Hand extends GeoShapeModel implements Collidable {
     public  boolean squeezeInProgress = false;
     public boolean projectileInProgress = false;
 
-    public static double lastSlapTime = 0;
-    public double lastSqueezeTime = -20;
-    public double lastProjectileTime = -20;
+    public static double lastSlapTime = Game.elapsedTime + 10;
+    public double lastSqueezeTime = Game.elapsedTime + 15;
+    public double lastProjectileTime = Game.elapsedTime + 20;
 
     private boolean isAlive = true;
 
@@ -51,6 +52,11 @@ public class Hand extends GeoShapeModel implements Collidable {
         super(anchor, image, Hand.pol);
         this.health = 100;
         vulnerable = false;
+
+        lastSlapTime = Game.elapsedTime + 15;
+        lastSqueezeTime = Game.elapsedTime + 20;
+        lastProjectileTime = Game.elapsedTime + 35;
+
         init();
     }
 
@@ -59,7 +65,6 @@ public class Hand extends GeoShapeModel implements Collidable {
         this.health = 100;
         vulnerable = false;
         init();
-//        initializeProjectile();
 
     }
 
@@ -77,9 +82,7 @@ public class Hand extends GeoShapeModel implements Collidable {
     public void initializeSlap() {
         Point2D eAnchor = EpsilonModel.getINSTANCE().getAnchor();
         if (findDistance(getAnchor(), eAnchor) > 400) return;
-        for(Smiley smiley : smilies){
-            if (smiley.getAnchor().distance(eAnchor) < 300) return;
-        }
+        for(Smiley smiley : smilies) if (smiley.getAnchor().distance(eAnchor) < 300) return;
 
         if (projectileInProgress || squeezeInProgress || slapInProgress) return;
         slapInProgress = true;
@@ -116,10 +119,6 @@ public class Hand extends GeoShapeModel implements Collidable {
                 epsilonPanel.getSize().getWidth() + finalPanelModel.getSize().getWidth()/2 : -finalPanelModel.getSize().getWidth()/2);
         double y = epsilonPanel.getLocation().getY() + epsilonPanel.getSize().getHeight()/2;
         moveTo(new Point2D.Double(x, y));
-
-//
-//        moveTo(new Point2D.Double(isRightHand() ? 1500 : 500, 400));
-//        finalPanelModel.setRigid(false);
     }
 
 
@@ -179,7 +178,6 @@ public class Hand extends GeoShapeModel implements Collidable {
         return direction;
     }
 
-
     @Override
     public void update() {
         updateDirection();
@@ -198,7 +196,6 @@ public class Hand extends GeoShapeModel implements Collidable {
         if (slapInProgress && now - lastSlapTime > SMILEY_SLAP_DURATION.getValue()) {
             slapInProgress = false;
         }
-
     }
 
     private void move(Direction direction) {
@@ -208,12 +205,9 @@ public class Hand extends GeoShapeModel implements Collidable {
         finalPanelModel.moveLocation(movement);
     }
 
-
     public void projectile() {
-
         creatBulletFromPointingVertex();
         if (projectileState.updateRotation()) {
-
             Point2D center = projectileState.getCenter();
             double radius = findDistance(getAnchor(), center);
             double radians = Math.toRadians(projectileState.getAngleToEpsilon());
@@ -227,46 +221,12 @@ public class Hand extends GeoShapeModel implements Collidable {
         }
     }
 
-
-
-
-
     public void updateDirection() {
 
         updateActions();
 
-
-//    System.out.println(beforeSlapPosition);
-
-//        if (!slapInProgress) {
-//            checkForSqueezeCoolDown();
-//            checkForProjectileCoolDown();
-//        }
-
         double now = Game.elapsedTime;
 
-
-
-//        if (now -  lastSqueezeTime > SQUEEZE_DURATION && lastSqueezeTime != -1) {
-//            moveTo(new Point2D.Double(isRightHand() ? 1500 : 500, 400));
-//            finalPanelModel.setRigid(false);
-//            lastSqueezeTime = -1;
-//        }
-//        if (now - lastSqueezeTime > 5){
-//            squeezeInProgress = true;
-//        }
-
-//        System.out.println(beforeSlapPosition);
-//
-//
-//        if (now - lastSqueezeTime > 5 && squeezeInProgress){
-//            squeezeInProgress = false;
-//            moveTo(beforeSlapPosition);
-//        }
-
-//        else if (squeezeInProgress && now - lastSqueezeTime > 2){
-//            System.out.println("SSSSSSSSSSS");
-//        }
 
         if (rotationState.isRotating()) {
             rotationState.updateRotation();
@@ -275,7 +235,6 @@ public class Hand extends GeoShapeModel implements Collidable {
         }
 
         else if (movementState.isMoving()) {
-//            System.out.println("Moving ...");
             movementState.updateSpeed();
             direction.setMagnitude(movementState.getSpeed());
             move(direction); // Ensure this method is called to apply movement
@@ -300,9 +259,7 @@ public class Hand extends GeoShapeModel implements Collidable {
 
         else if (now - lastSlapTime > SMILEY_SLAP_COOLDOWN.getValue() && !slapInProgress) {
             if (findDistance(getAnchor(), EpsilonModel.getINSTANCE().getAnchor()) < 700) {
-//                System.out.println("initiate ...");
                 initializeSlap();
-//                movementState.setMovingToDestination(false);
                 lastSlapTime = now;
             }
         }
@@ -362,16 +319,10 @@ public class Hand extends GeoShapeModel implements Collidable {
     }
 
     @Override
-    public void onCollision(Collidable other, Point2D intersection) {
-        if (other instanceof BulletModel) {
-            ((BulletModel) other).damage(this, AttackTypes.MELEE);
-        }
-    }
+    public void onCollision(Collidable other, Point2D intersection) {}
 
     @Override
-    public void onCollision(Collidable other, Point2D coll1, Point2D coll2) {
-
-    }
+    public void onCollision(Collidable other, Point2D coll1, Point2D coll2) {}
 
 
     // Rotate method added here
@@ -415,7 +366,6 @@ public class Hand extends GeoShapeModel implements Collidable {
         public void updateSpeed() {
             double currentDistance = findDistance(getAnchor(), destination);
             if (!isDecelerating) {
-//                System.out.println("AAAAAAAAAAAA");
                 speed += acceleration * dt;
                 if (speed > MAX_SPEED) {
                     speed = MAX_SPEED;
@@ -459,15 +409,10 @@ public class Hand extends GeoShapeModel implements Collidable {
         public void updateRotation() {
             double difference = Math.abs(angle - targetAngle);
             if ( Math.abs(difference % 360 - 360) > 1  &&  Math.abs(difference % 360) > 1 )  {
-//                System.out.println("updating rotation");
-                System.out.println("angle: "+ angle);
-                System.out.println("target: "+ targetAngle);
                 double angleDifference = (targetAngle - angle) % 360;
                 double rotationStep = Math.min(Math.abs(angleDifference), angularSpeed) * Math.signum(angleDifference);
-//                angle += rotationStep;
                 rotate(rotationStep);
             } else {
-                System.out.println("Seting rotation to false");
                 rotating = false;
             }
         }

@@ -1,26 +1,38 @@
 package controller;
 
+import model.FinalPanelModel;
 import model.WaveManager;
 import model.charactersModel.CollectibleModel;
 import model.charactersModel.*;
 import model.charactersModel.blackOrb.BlackOrb;
+import model.entities.Entity;
 import model.entities.Profile;
 import view.*;
+import view.charactersView.GeoShapeView;
+import view.junks.EndGamePanel;
+
 import javax.swing.*;
+import java.awt.*;
+import java.util.Formattable;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static controller.UserInterfaceController.*;
 import static controller.Game.*;
 import static model.FinalPanelModel.finalPanelModels;
 import static model.PanelManager.handlePanelPanelCollision;
+import static model.charactersModel.BulletModel.bulletModels;
 import static model.charactersModel.CollectibleModel.collectibleModels;
+import static model.charactersModel.EpsilonModel.epsilons;
 import static model.charactersModel.GeoShapeModel.entities;
+import static model.charactersModel.GeoShapeModel.findRandomPoint;
 import static model.charactersModel.SquarantineModel.squarantineModels;
 import static model.charactersModel.TrigorathModel.trigorathModels;
 import static model.collision.Collidable.collidables;
 
+import static model.movement.Movable.movables;
 import static view.FinalPanelView.finalPanelViews;
 import static view.MainFrame.label;
+import static view.charactersView.BulletView.bulletViews;
 
 
 public class GameLoop implements Runnable {
@@ -31,14 +43,16 @@ public class GameLoop implements Runnable {
     public static boolean movementInProgress = false;
     private final WaveManager waveManager;
     private final Thread waveManagerThread;
+    private final MouseController m;
 
 
 
     public GameLoop() {
         movementInProgress = false;
         MainFrame frame = MainFrame.getINSTANCE();
-        frame.addMouseListener(new MouseController());
-        frame.addMouseMotionListener(new MouseController());
+        m = new MouseController();
+        frame.addMouseListener(m);
+        frame.addMouseMotionListener(m);
         INSTANCE = this;
         this.waveManager = new WaveManager();
         this.waveManagerThread = new Thread(waveManager);
@@ -65,6 +79,7 @@ public class GameLoop implements Runnable {
     public void updateView() {
         if (paused.get()) return;
 
+
         label.setText("<html>Wave: "+ Game.wave + "<br>Elapsed Time: "+ (int) Game.elapsedTime
                 + "<br> XP: "+ Profile.getCurrent().inGameXP +"<br>HP: "+ EpsilonModel.getINSTANCE().getHp());
 
@@ -76,20 +91,40 @@ public class GameLoop implements Runnable {
             f.setSize(calculateDimensionOfFinalPanelView(f.getId()));
         }
 
-
-
         updateGeoShapeViewProperties();
         SwingUtilities.invokeLater(MainFrame.getINSTANCE()::repaint);
     }
 
     public void updateModel() {
         if (paused.get()) return;
+        if (EpsilonModel.getINSTANCE().health <= 0) {
+            for (Entity entity : Entity.entities) entity.eliminate();
+            finalPanelModels.clear();
+            for (FinalPanelView v : finalPanelViews) v.eliminate();
+            collectibleModels.clear();
+            movables.clear();
+            trigorathModels.clear();
+            squarantineModels.clear();
+            collidables.clear();
+            bulletModels.clear();
+            bulletViews.clear();
+            GeoShapeView.geoShapeViews.clear();
+            entities.clear();
+            MainFrame.getINSTANCE().removeMouseListener(m);
+            MainFrame.getINSTANCE().removeMouseMotionListener(m);
+            Game.nullifyGameInstance();
+            epsilons.clear();
+            EpsilonModel.setNull();
+            MainFrame.getINSTANCE().repaint();
+            exit.set(true);
+            waveManagerThread.interrupt();
+            EndGamePanel.getINSTANCE("GAME OVER");
+        }
 
 
         for (int i = 0; i < finalPanelModels.size(); i++) {
             finalPanelModels.get(i).panelMotion();  // todo
         }
-
 
         for (int i = 0; i < finalPanelModels.size(); i++) {
             for (int j = i + 1; j < finalPanelModels.size(); j++) {
@@ -103,12 +138,9 @@ public class GameLoop implements Runnable {
             }
         }
 
-
-
         for (int i = 0; i < BlackOrb.blackOrbs.size(); i++) {
             BlackOrb.blackOrbs.get(i).update();
         }
-
 
         for (int i = 0; i < squarantineModels.size(); i++) {
             if (squarantineModels.get(i).isImpactInProgress()) {
@@ -117,10 +149,8 @@ public class GameLoop implements Runnable {
                     squarantineModels.get(i).setImpactInProgress(false);
                 }
             }
-
-
-
         }
+
         for (int i = 0; i < trigorathModels.size(); i++) {
             if (trigorathModels.get(i).isImpactInProgress()) {
                 trigorathModels.get(i).getDirection().accelerateDirection(trigorathModels.get(i).impactMaxVelocity);
@@ -149,11 +179,7 @@ public class GameLoop implements Runnable {
             collectibleModel.update();
         }
 
-
         UserInputHandler.updateMovement();
-
-
-
         for (GeoShapeModel entity : entities){
             entity.update();
         }
@@ -225,6 +251,9 @@ public class GameLoop implements Runnable {
         return waveManager;
     }
 
+    public Thread getWaveManagerThread() {
+        return waveManagerThread;
+    }
 }
 
 

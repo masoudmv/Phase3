@@ -60,12 +60,16 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
         createEpsilonView(id, image);
         damageSize.put(AttackTypes.ASTRAPE, 0);
         impactables.add(this);
-        this.health = 5000000;
+        this.health = 10;
         epsilons.add(this);
     }
 
     public static EpsilonModel getINSTANCE() {
         return INSTANCE;
+    }
+
+    public static void setNull() {
+        INSTANCE = null;
     }
 
     public String getId() {
@@ -213,6 +217,7 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
 
     @Override
     public void eliminate() {
+        super.eliminate();
     }
 
     @Override
@@ -429,43 +434,31 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
             if (!isOnFall) impact(new CollisionState(intersection));
             return;
         }
-
-        if (other instanceof CollectibleModel || other instanceof SmileyBullet){
-            return;
-        }
-
+        if (other instanceof CollectibleModel || other instanceof SmileyBullet) return;
         // todo this may need to change
         damage((Entity) other, AttackTypes.ASTRAPE);
 
         if (other instanceof Smiley) impact(new CollisionState(intersection));
         if (other instanceof Fist) impact(new CollisionState(intersection));
-        if (other instanceof SquarantineModel) {
+        if (other instanceof Hand) impact(new CollisionState(intersection));
 
-
-            impact(relativeLocation(getAnchor(), intersection), intersection, other);
-        }
-        if (other instanceof TrigorathModel) impact(relativeLocation(getAnchor(), intersection), intersection, other);
-        if (other instanceof Hand) {
-
-
-
-            impact(new CollisionState(intersection));
-        }
         if (other instanceof BarricadosModel) impact(new CollisionState(intersection));
-        if (other instanceof OmenoctModel) impact(new CollisionState(intersection));
+        if (other instanceof OmenoctModel || other instanceof TrigorathModel || other instanceof SquarantineModel) {
+            impact(new CollisionState(intersection));
+            for (int i = 0; i < ((GeoShapeModel) other).myPolygon.npoints; i++) {
+                Point2D vertex = ((GeoShapeModel) other).myPolygon.getVertices()[i];
+                double distance = vertex.distance(this.anchor);
+                if (distance < this.getRadius()) ((Entity) other).damage(this, AttackTypes.MELEE);
+            }
+        }
         if (other instanceof Orb) {
             transferOutside(intersection);
             if (!isOnFall) impact(new CollisionState(intersection));
         }
         if (other instanceof NecropickModel) if (!((NecropickModel) other).isHovering()) impact(new CollisionState(intersection)); // :)
-//        if (other instanceof CollectibleModel) Profile.getCurrent().inGameXP += ((CollectibleModel) other).getCollectibleXP();
-//        if (other instanceof BulletModel) ;
-//        if (other instanceof SmileyBullet) ;
 
     }
 
     @Override
-    public void onCollision(Collidable other, Point2D poly1, Point2D poly2) {
-
-    }
+    public void onCollision(Collidable other, Point2D poly1, Point2D poly2) {}
 }

@@ -25,15 +25,15 @@ import static controller.constants.Constants.FRAME_DIMENSION;
 import static controller.constants.EntityConstants.*;
 import static model.imagetools.ToolBox.getBufferedImage;
 
-public class Smiley extends GeoShapeModel implements Collidable, Enemy {
+public class Smiley extends GeoShapeModel implements Collidable {
 
 
     static BufferedImage image;
     public static ArrayList<Smiley> smilies = new ArrayList<>();
     private FinalPanelModel finalPanelModel;
     protected static MyPolygon pol;
-    private double lastRapidFire = 0;
-    private double lastVomit = 0;
+    private double lastRapidFire;
+    private double lastVomit;
 
 
     private Hand leftHand;
@@ -44,6 +44,9 @@ public class Smiley extends GeoShapeModel implements Collidable, Enemy {
 
     public Smiley(Point2D anchor, Hand leftHand, Hand rightHand) {
         super(anchor, image, new MyPolygon());
+
+        lastVomit = Game.elapsedTime + 3;
+        lastRapidFire = Game.elapsedTime - 15;
 
         Point2D loc = new Point2D.Double(getAnchor().getX() - 150, getAnchor().getY() - 150);
         Dimension size = new Dimension(300, 300);
@@ -58,7 +61,14 @@ public class Smiley extends GeoShapeModel implements Collidable, Enemy {
         this.health = 300;
         this.vulnerable = true;
 
+
+
     }
+
+
+    public Smiley() {
+    }
+
 
     private void checkForProjectileCoolDown(){
         double now = Game.elapsedTime;
@@ -336,21 +346,14 @@ public class Smiley extends GeoShapeModel implements Collidable, Enemy {
         rightHand.eliminate();
     }
 
-    @Override
-    public void create() {
+
+    public static void create() {
         Hand l = new LeftHand(new Point2D.Double(500, 401));
         Hand r = new Hand(new Point2D.Double(1500, 400));
         new Smiley(new Point2D.Double(1000, 200), l , r);
+        Game.getINSTANCE().getGameLoop().getWaveManagerThread().interrupt();
     }
 
-    @Override
-    public int getMinSpawnWave() {
-        return 6;
-    }
 
-    @Override
-    public boolean isUniquePerGame(){
-        return true;
-    }
 
 }

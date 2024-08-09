@@ -8,6 +8,7 @@ import model.charactersModel.blackOrb.Orb;
 import model.collision.Collidable;
 import model.collision.CollisionState;
 import model.collision.Impactable;
+import model.entities.AttackTypes;
 import model.interfaces.Enemy;
 import model.movement.Direction;
 import model.movement.Movable;
@@ -44,6 +45,7 @@ public class TrigorathModel extends GeoShapeModel implements Movable, Collidable
         impactables.add(this);
         this.health = 15;
         createTrigorathView(id);
+        damageSize.put(AttackTypes.MELEE, 10);
     }
 
     public TrigorathModel() {

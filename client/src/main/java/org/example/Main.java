@@ -1,18 +1,20 @@
 package org.example;
 
 import model.charactersModel.blackOrb.Orb;
-import model.entities.Profile;
 import model.charactersModel.*;
 import model.charactersModel.smiley.Fist;
 import model.charactersModel.smiley.Hand;
 import model.charactersModel.smiley.LeftHand;
 import model.charactersModel.smiley.Smiley;
-import model.entities.Skill;
 
 import javax.sound.sampled.*;
 import java.awt.*;
 import java.io.IOException;
 
+import model.entities.Profile;
+import model.entities.Skill;
+import view.MainFrame;
+import view.junks.EndGamePanel;
 import view.junks.Menu;
 
 
@@ -26,6 +28,7 @@ public class Main {
 
 
     public static void main(String[] args) throws LineUnavailableException, IOException, UnsupportedAudioFileException, InterruptedException {
+        MainFrame.getINSTANCE();
         LeftHand.loadImage();
         Hand.loadImage();
         SmileyBullet.loadImage();
@@ -43,14 +46,8 @@ public class Main {
 
         new Profile();
         Skill.initializeSkills();
-
-
-
-
         new Menu();
 
-
-
-
+//        EndGamePanel.getINSTANCE("title");
     }
 }

@@ -9,6 +9,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
+import model.charactersModel.smiley.Smiley;
 import model.interfaces.Enemy;
 import org.reflections.Reflections;
 
@@ -42,6 +43,10 @@ public class WaveManager implements Runnable {
 
     private void generateWaves() {
         for (int wave = 1; wave <= 6; wave++) {
+            if (wave == 6) {
+                Smiley.create();
+                break;
+            }
             System.out.println("Starting wave " + wave);
             generateWave(wave);
             waitForWaveCompletion();
@@ -49,6 +54,8 @@ public class WaveManager implements Runnable {
             waitForAllEnemiesToBeEliminated();
             System.out.println("All enemies for wave " + wave + " eliminated.");
         }
+
+
     }
 
     private void generateWave(int waveNumber) {

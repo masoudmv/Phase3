@@ -8,7 +8,6 @@ public class TrigorathView extends  GeoShapeView{
 
     public TrigorathView(String id) {
         super(id);
-
     }
 
     public void eliminate(){
