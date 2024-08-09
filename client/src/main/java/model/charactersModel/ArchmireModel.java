@@ -5,6 +5,7 @@ import model.MyPolygon;
 import model.TimedLocation;
 import model.collision.Collidable;
 import model.entities.AttackTypes;
+import model.interfaces.Enemy;
 import model.movement.Direction;
 import org.example.GraphicalObject;
 import javax.swing.*;
@@ -19,7 +20,7 @@ import static controller.constants.EntityConstants.*;
 import static model.charactersModel.EpsilonModel.epsilons;
 import static model.imagetools.ToolBox.getBufferedImage;
 
-public class ArchmireModel extends GeoShapeModel implements Collidable {
+public class ArchmireModel extends GeoShapeModel implements Collidable, Enemy {
     static BufferedImage image;
     protected static MyPolygon pol;
     public static ArrayList<ArchmireModel> archmireModels = new ArrayList<>();
@@ -37,6 +38,9 @@ public class ArchmireModel extends GeoShapeModel implements Collidable {
         collidables.add(this);
         damageSize.put(AttackTypes.DROWN, 10);
         damageSize.put(AttackTypes.AOE, 2);
+    }
+
+    public ArchmireModel() {
     }
 
     // BabyArchmire:
@@ -82,6 +86,7 @@ public class ArchmireModel extends GeoShapeModel implements Collidable {
         collidables.remove(this);
         archmireModels.remove(this);
 
+        Game.getINSTANCE().incrementDeadEnemies();
         CollectibleModel.dropCollectible(getAnchor(), ARCHMIRE_NUM_OF_COLLECTIBLES.getValue(), ARCHMIRE_COLLECTIBLES_XP.getValue());
 
         new BabyArchmire(new Point2D.Double(anchor.getX(), anchor.getY() + 40));
@@ -102,7 +107,7 @@ public class ArchmireModel extends GeoShapeModel implements Collidable {
 
 
     public void updateLocation() {
-        double now = Game.ELAPSED_TIME;
+        double now = Game.elapsedTime;
         updateDirection();
         if (now - lastUpdatedLocation > 0.5){
             locationHistory.addLast(new TimedLocation(myPolygon, now));
@@ -145,11 +150,7 @@ public class ArchmireModel extends GeoShapeModel implements Collidable {
                     this.damage(model, AttackTypes.AOE);
                 }
             }
-
-
         }
-
-
     }
 
     public void update() {
@@ -170,6 +171,17 @@ public class ArchmireModel extends GeoShapeModel implements Collidable {
     @Override
     public void onCollision(Collidable other, Point2D coll1, Point2D coll2) {
 
+    }
+
+    @Override
+    public void create() {
+        Point2D anchor = findRandomPoint();
+        new ArchmireModel(anchor);
+    }
+
+    @Override
+    public int getMinSpawnWave() {
+        return 2;
     }
 }
 

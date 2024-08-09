@@ -1,7 +1,6 @@
 package model.charactersModel;
 
 import controller.Game;
-import model.FinalPanelModel;
 import model.MyPolygon;
 import model.entities.Entity;
 import model.entities.Profile;
@@ -28,15 +27,14 @@ public abstract class GeoShapeModel extends Entity {
     public MyPolygon myPolygon;
     protected Direction direction = new Direction(new Point2D.Double(0, 0));
     protected double radius;
-    public FinalPanelModel localPanel;
     protected double angle;
     protected boolean isOnFall = false;
     protected boolean isHovering = false;
-    public static List<GeoShapeModel> entities = new CopyOnWriteArrayList<>();
+    public volatile static List<GeoShapeModel> entities = new CopyOnWriteArrayList<>();
 
     public GeoShapeModel(Point2D anchor, BufferedImage image, MyPolygon myPolygon) {
         this.id = UUID.randomUUID().toString();
-        this.anchor = new Point2D.Double(anchor.getX(), anchor.getY());
+        this.anchor = anchor;
         this.myPolygon = myPolygon;
         radius = (double) image.getWidth() / 2;
         Point2D img = new Point2D.Double((double) -image.getWidth() / 2, (double) -image.getHeight() / 2);
@@ -46,10 +44,9 @@ public abstract class GeoShapeModel extends Entity {
     }
 
 
-
     public GeoShapeModel(Point2D anchor, BufferedImage image, MyPolygon myPolygon, int zOrder) {
         this.id = UUID.randomUUID().toString();
-        this.anchor = new Point2D.Double(anchor.getX(), anchor.getY());
+        this.anchor = anchor;
         this.myPolygon = myPolygon;
         radius = (double) image.getWidth() / 2;
         Point2D img = new Point2D.Double((double) -image.getWidth() / 2, (double) -image.getHeight() / 2);
@@ -60,7 +57,7 @@ public abstract class GeoShapeModel extends Entity {
 
     public GeoShapeModel(Point2D anchor, BufferedImage image, MyPolygon myPolygon, boolean necropick) {
         this.id = UUID.randomUUID().toString();
-        this.anchor = new Point2D.Double(anchor.getX(), anchor.getY());
+        this.anchor = anchor;
         this.myPolygon = myPolygon;
         radius = (double) image.getHeight() / 2;
         Point2D img = new Point2D.Double((double) -image.getWidth() / 2, (double) -image.getHeight() / 2);
@@ -91,11 +88,16 @@ public abstract class GeoShapeModel extends Entity {
         createGeoShapeView(id);
     }
 
-    public GeoShapeModel() {
+    public GeoShapeModel(String id) {
         this.id = UUID.randomUUID().toString();
         entities.add(this);
         setDummyPolygon();
     }
+
+    public GeoShapeModel() {
+    }
+
+
 
     private void setDummyPolygon() {
         double[] x = {1, 2, 3};
@@ -158,8 +160,6 @@ public abstract class GeoShapeModel extends Entity {
     public synchronized void eliminate() {
         entities.remove(this);
         eliminateGeoShapeView(id);
-
-
     }
 
     public void setDirection(Direction direction) {
@@ -178,7 +178,6 @@ public abstract class GeoShapeModel extends Entity {
         }
         return false; // No intersection found, next position is valid
     }
-
 
     public boolean isInside(Point2D[] polygon) {
         ArrayList<Point2D> bound = this.getBoundingPoints();
@@ -382,15 +381,11 @@ public abstract class GeoShapeModel extends Entity {
     }
 
     public boolean dontUpdate(){
-        double now = Game.ELAPSED_TIME;
+        double now = Game.elapsedTime;
         double slumberInitiation = Profile.getCurrent().slumberInitiationTime;
         return now - slumberInitiation < 10;
     }
 
+    public void update(){}
 
-    public void update(){
-
-
-
-    }
 }

@@ -1,6 +1,7 @@
 package view.junks;
 
 
+import model.entities.Profile;
 import view.MainFrame;
 //import view.MainPanel;
 
@@ -10,22 +11,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
 import static controller.Game.*;
-import static controller.Sound.stopVictorySound;
+
 import static java.awt.Color.*;
-import static model.charactersModel.BulletModel.bulletModels;
-import static model.charactersModel.CollectibleModel.collectibleModels;
-import static model.charactersModel.EpsilonModel.nullifyEpsilon;
-import static model.charactersModel.SquarantineModel.squarantineModels;
-import static model.charactersModel.TrigorathModel.trigorathModels;
-import static model.collision.Collidable.collidables;
-import static model.collision.Impactable.impactables;
-import static model.movement.Movable.movables;
-import static view.charactersView.BulletView.bulletViews;
-//import static view.charactersView.CollectibleView.collectibleViews;
-//import static view.MainPanel.nullifyMainPanel;
-import static view.junks.Menu.addMenu;
-//import static view.charactersView.SquarantineView.squarantineViews;
-//import static view.charactersView.TrigorathView.trigorathViews;
 
 public class VictoryPanel extends JPanel implements MouseListener {
     private static VictoryPanel INSTANCE;
@@ -51,7 +38,7 @@ public class VictoryPanel extends JPanel implements MouseListener {
 
 
 
-        JLabel xp = new JLabel("XP: " + inGameXP);
+        JLabel xp = new JLabel("XP: " + Profile.getCurrent().inGameXP);
         xp.setBounds( 200,220, 200, 100);
         xp.setForeground(red);
         xp.setHorizontalAlignment(JLabel.CENTER);

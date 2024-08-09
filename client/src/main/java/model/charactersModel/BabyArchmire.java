@@ -1,6 +1,5 @@
 package model.charactersModel;
 
-import javafx.scene.shape.Arc;
 import model.MyPolygon;
 import model.collision.Collidable;
 import org.example.GraphicalObject;
@@ -21,6 +20,10 @@ public class BabyArchmire extends ArchmireModel {
     public BabyArchmire(Point2D anchor) {
         super(anchor, poly);
         this.health = BABY_ARCHMIRE_HEALTH.getValue();
+
+    }
+
+    public BabyArchmire(){
 
     }
 

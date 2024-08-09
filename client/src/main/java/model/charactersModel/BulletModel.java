@@ -27,7 +27,7 @@ public class BulletModel extends GeoShapeModel implements Movable, Collidable, I
     private boolean createdByEpsilon = true;
 
     public BulletModel(Point2D anchor, Direction direction) {
-        super();
+        super("");
 
         this.radius = BULLET_RADIUS;
         this.anchor = anchor;
@@ -54,7 +54,7 @@ public class BulletModel extends GeoShapeModel implements Movable, Collidable, I
 
 
     public BulletModel(Point2D anchor, Direction direction, boolean createdByEpsilon) {
-        super();
+        super("");
         this.radius = BULLET_RADIUS;
         this.anchor = anchor;
         this.direction = direction;
@@ -94,16 +94,6 @@ public class BulletModel extends GeoShapeModel implements Movable, Collidable, I
     public void setDirection(Direction direction) {}
 
 
-    // keeping this in case needed!
-//    public void bulletImpact(BulletModel bulletModel, Point2D collisionPoint, Collidable collidable) {
-//        ((Movable) collidable).bulletImpact(bulletModel, collisionPoint);
-//        for (Movable movable : movables){
-//            if (movable != this && movable != bulletModel && movable!= collidable){
-//                ((Impactable)movable).impact(new CollisionState(collisionPoint));
-//            }
-//        }
-//        this.eliminate();
-//    }
 
 
     @Override
@@ -184,7 +174,6 @@ public class BulletModel extends GeoShapeModel implements Movable, Collidable, I
     public void eliminate(){
         // is needed?
         bulletModels.remove(this);
-
         collidables.remove(this);
         movables.remove(this);
         eliminateBulletView(id);

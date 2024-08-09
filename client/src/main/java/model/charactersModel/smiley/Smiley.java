@@ -11,8 +11,8 @@ import model.charactersModel.GeoShapeModel;
 import model.charactersModel.SmileyBullet;
 import model.collision.Collidable;
 import model.entities.AttackTypes;
+import model.interfaces.Enemy;
 import model.movement.Direction;
-import org.example.GraphicalObject;
 
 import javax.swing.*;
 import java.awt.*;
@@ -20,15 +20,12 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import java.util.Random;
 
-import static controller.Utils.*;
 import static controller.constants.Constants.FRAME_DIMENSION;
 import static controller.constants.EntityConstants.*;
-import static controller.constants.EntityConstants.SMILEY_SLAP_COOLDOWN;
 import static model.imagetools.ToolBox.getBufferedImage;
 
-public class Smiley extends GeoShapeModel implements Collidable {
+public class Smiley extends GeoShapeModel implements Collidable, Enemy {
 
 
     static BufferedImage image;
@@ -64,7 +61,7 @@ public class Smiley extends GeoShapeModel implements Collidable {
     }
 
     private void checkForProjectileCoolDown(){
-        double now = Game.ELAPSED_TIME;
+        double now = Game.elapsedTime;
 
         if (!leftHand.isAlive() && !rightHand.isAlive()) return;
 
@@ -94,7 +91,7 @@ public class Smiley extends GeoShapeModel implements Collidable {
 
 
     private void checkForSqueezeCoolDown(){
-        double now = Game.ELAPSED_TIME;
+        double now = Game.elapsedTime;
         if (!rightHand.squeezeInProgress &&
                 now - rightHand.lastSqueezeTime > SMILEY_SQUEEZE_DURATION.getValue() + SMILEY_SQUEEZE_COOLDOWN.getValue()) {
             if (Hand.slapInProgress) return;
@@ -110,7 +107,7 @@ public class Smiley extends GeoShapeModel implements Collidable {
 
 
     private void updateVulnerability(){
-        double now = Game.ELAPSED_TIME;
+        double now = Game.elapsedTime;
         boolean isVomit = now - lastVomit > SMILEY_AOE_ACTIVATED_LIFETIME.getValue();
         boolean isRapidFire = now - lastRapidFire > 5;
         boolean isSqueeze = rightHand.squeezeInProgress && leftHand.squeezeInProgress;
@@ -156,7 +153,7 @@ public class Smiley extends GeoShapeModel implements Collidable {
         checkForSqueezeCoolDown();
 
 
-        double now = Game.ELAPSED_TIME;
+        double now = Game.elapsedTime;
 
 
         if (now - lastRapidFire > 20) {
@@ -338,4 +335,22 @@ public class Smiley extends GeoShapeModel implements Collidable {
         leftHand.eliminate();
         rightHand.eliminate();
     }
+
+    @Override
+    public void create() {
+        Hand l = new LeftHand(new Point2D.Double(500, 401));
+        Hand r = new Hand(new Point2D.Double(1500, 400));
+        new Smiley(new Point2D.Double(1000, 200), l , r);
+    }
+
+    @Override
+    public int getMinSpawnWave() {
+        return 6;
+    }
+
+    @Override
+    public boolean isUniquePerGame(){
+        return true;
+    }
+
 }

@@ -10,7 +10,6 @@ import model.charactersModel.GeoShapeModel;
 import model.charactersModel.SmileyBullet;
 import model.collision.Collidable;
 import model.entities.AttackTypes;
-import model.entities.Entity;
 import model.movement.Direction;
 import org.example.GraphicalObject;
 
@@ -19,7 +18,6 @@ import java.awt.*;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import java.util.Random;
 
 import static controller.Utils.*;
 import static controller.constants.EntityConstants.*;
@@ -54,7 +52,6 @@ public class Hand extends GeoShapeModel implements Collidable {
         this.health = 100;
         vulnerable = false;
         init();
-//        initializeProjectile();
     }
 
     public Hand(Point2D anchor, MyPolygon pol) {
@@ -87,7 +84,7 @@ public class Hand extends GeoShapeModel implements Collidable {
         if (projectileInProgress || squeezeInProgress || slapInProgress) return;
         slapInProgress = true;
         vulnerable = false;
-        lastSlapTime = Game.ELAPSED_TIME;
+        lastSlapTime = Game.elapsedTime;
         rotationState.startRotation(pointToEpsilon());
         beforeSlapPosition = new Point2D.Double(getAnchor().getX(), getAnchor().getY()); // Store exact position
         moveTo(EpsilonModel.getINSTANCE().getAnchor());
@@ -98,7 +95,7 @@ public class Hand extends GeoShapeModel implements Collidable {
         if (squeezeInProgress || slapInProgress || projectileInProgress) return;
         if (movementState.isMovingToDestination) return;
         if (rotationState.rotating) return;
-        lastProjectileTime = Game.ELAPSED_TIME;
+        lastProjectileTime = Game.elapsedTime;
         projectileInProgress = true;
         rotationState.startRotation(pointToEpsilon());
         beforeSlapPosition = new Point2D.Double(getAnchor().getX(), getAnchor().getY()); // Store exact position
@@ -110,7 +107,7 @@ public class Hand extends GeoShapeModel implements Collidable {
         if (movementState.isMovingToDestination) return;
         if (rotationState.rotating) return;
 
-        lastSqueezeTime = Game.ELAPSED_TIME;
+        lastSqueezeTime = Game.elapsedTime;
         squeezeInProgress = true;
         finalPanelModel.setRigid(true);
         beforeSlapPosition = new Point2D.Double(getAnchor().getX(), getAnchor().getY()); // Store exact position
@@ -165,13 +162,13 @@ public class Hand extends GeoShapeModel implements Collidable {
     }
 
     private void creatBulletFromPointingVertex() {
-        if (Game.ELAPSED_TIME - projectileState.getLastShotBulletTime() < 0.5) return;
+        if (Game.elapsedTime - projectileState.getLastShotBulletTime() < 0.5) return;
         BufferedImage ba = SmileyBullet.loadImage();
         GraphicalObject bos = new GraphicalObject(ba);
         MyPolygon pl = bos.getMyBoundingPolygon();
         Point2D startPos = getPointingVertexPoint2D();
         new SmileyBullet(startPos).setDirection(findBulletDirection(startPos));
-        projectileState.updateLastShotBulletTime(Game.ELAPSED_TIME);
+        projectileState.updateLastShotBulletTime(Game.elapsedTime);
     }
 
     private Direction findBulletDirection(Point2D startPos) {
@@ -190,7 +187,7 @@ public class Hand extends GeoShapeModel implements Collidable {
     }
 
     private void updateActions(){
-        double now = Game.ELAPSED_TIME;
+        double now = Game.elapsedTime;
         if (squeezeInProgress && now - lastSqueezeTime > SMILEY_SQUEEZE_DURATION.getValue())  {
             squeezeInProgress = false;
             finalPanelModel.setRigid(false);
@@ -246,7 +243,7 @@ public class Hand extends GeoShapeModel implements Collidable {
 //            checkForProjectileCoolDown();
 //        }
 
-        double now = Game.ELAPSED_TIME;
+        double now = Game.elapsedTime;
 
 
 

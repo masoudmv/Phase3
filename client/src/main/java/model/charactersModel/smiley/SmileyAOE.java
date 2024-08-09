@@ -25,7 +25,7 @@ public class SmileyAOE extends GeoShapeModel {
 
 
     public SmileyAOE(Point2D anchor) {
-        super();
+        super("");
         this.anchor = anchor;
         this.radius = SMILEY_AOE_RADIUS.getValue();
 
@@ -36,7 +36,7 @@ public class SmileyAOE extends GeoShapeModel {
 
     public static void updateAll(){
         if (birthTime == Double.MAX_VALUE) return;
-        double now = Game.ELAPSED_TIME;
+        double now = Game.elapsedTime;
         if (now - birthTime > SMILEY_AOE_ACTIVATION_TIME.getValue()) isActivated = true;
         if (now - birthTime > SMILEY_AOE_ACTIVATED_LIFETIME.getValue()) {
             eliminateAll();
@@ -44,7 +44,6 @@ public class SmileyAOE extends GeoShapeModel {
         }
 
         if (isActivated && isEpsilonInside()) {
-            // TODO damage epsilon
             EpsilonModel.getINSTANCE().health -= 5;
         }
     }
@@ -69,7 +68,7 @@ public class SmileyAOE extends GeoShapeModel {
     public static void createVomitAOEs(){
         if (birthTime != Double.MAX_VALUE) return;
 
-        birthTime = Game.ELAPSED_TIME;
+        birthTime = Game.elapsedTime;
         isActivated = false;
 
         Point2D epsilonAnchor = EpsilonModel.getINSTANCE().getAnchor();
@@ -108,7 +107,7 @@ public class SmileyAOE extends GeoShapeModel {
     }
 
     public static boolean isEpsilonInside(){
-        double now = Game.ELAPSED_TIME;
+        double now = Game.elapsedTime;
         if (now - lastDamageTime < SMILEY_AOE_COOLDOWN.getValue()) return false;
 
         Point2D epsilon = EpsilonModel.getINSTANCE().getAnchor();

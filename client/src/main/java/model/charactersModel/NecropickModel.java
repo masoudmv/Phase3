@@ -4,6 +4,7 @@ import controller.Game;
 import model.MyPolygon;
 //import view.MainPanel;
 import model.collision.Collidable;
+import model.interfaces.Enemy;
 import model.movement.Direction;
 import org.example.GraphicalObject;
 
@@ -18,11 +19,10 @@ import static controller.UserInterfaceController.*;
 import static controller.constants.EntityConstants.*;
 import static model.imagetools.ToolBox.getBufferedImage;
 
-public class NecropickModel extends GeoShapeModel implements Collidable {
+public class NecropickModel extends GeoShapeModel implements Collidable, Enemy {
     static BufferedImage image;
     protected static MyPolygon pol;
     public static ArrayList<NecropickModel> necropickModels = new ArrayList<>();
-//    public Polygon polygon;
     private boolean isHovering; // equals isUnderGround!
     private double stateChangeTime = 0; // the last Time necropick changed its state
     private Point2D nextAnchor; // precomputed next location
@@ -32,12 +32,14 @@ public class NecropickModel extends GeoShapeModel implements Collidable {
     public NecropickModel() {
         super(new Point2D.Double(-100, -100), image, pol, true);
         necropickModels.add(this);
-        stateChangeTime = Game.ELAPSED_TIME; // Initialize state change time
+        stateChangeTime = Game.elapsedTime; // Initialize state change time
         isHovering = true; // Start in hovering state
         collidables.add(this);
         createNecropickView(id, image);
         this.health = NECROPICK_HEALTH.getValue();
     }
+
+
 
     public static BufferedImage loadImage() {
         Image img = new ImageIcon("./client/src/necropick.png").getImage();
@@ -80,7 +82,7 @@ public class NecropickModel extends GeoShapeModel implements Collidable {
 
     public void update() {
         if (dontUpdate()) return;
-        double elapsedTime = Game.ELAPSED_TIME;
+        double elapsedTime = Game.elapsedTime;
 
         if (!isHovering && (elapsedTime - stateChangeTime) >= HOVER_DURATION) {
             hideUnderGround();
@@ -110,9 +112,11 @@ public class NecropickModel extends GeoShapeModel implements Collidable {
         super.eliminate();
         collidables.remove(this);
         necropickModels.remove(this);
-
+        Game.getINSTANCE().incrementDeadEnemies();
         CollectibleModel.dropCollectible(
-                getAnchor(), NECROPICK_NUM_OF_COLLECTIBLES.getValue(), NECROPICK_COLLECTIBLES_XP.getValue()
+                getAnchor(),
+                NECROPICK_NUM_OF_COLLECTIBLES.getValue(),
+                NECROPICK_COLLECTIBLES_XP.getValue()
         );
     }
 
@@ -125,7 +129,6 @@ public class NecropickModel extends GeoShapeModel implements Collidable {
                 doesIntersect = findNextPos();
             }
         }
-
         updateNecropick(id);
     }
 
@@ -148,7 +151,6 @@ public class NecropickModel extends GeoShapeModel implements Collidable {
         new BulletModel(getAnchor(), new Direction(new Point2D.Double(-1, -1)), false);
         new BulletModel(getAnchor(), new Direction(new Point2D.Double(+1, +1)), false);
         new BulletModel(getAnchor(), new Direction(new Point2D.Double(-1, +1)), false);
-
     }
 
     @Override
@@ -164,5 +166,16 @@ public class NecropickModel extends GeoShapeModel implements Collidable {
     @Override
     public void onCollision(Collidable other, Point2D coll1, Point2D coll2) {
 
+    }
+
+    @Override
+    public void create() {
+        new NecropickModel();
+    }
+
+
+    @Override
+    public int getMinSpawnWave() {
+        return 3;
     }
 }

@@ -2,29 +2,23 @@ package view.charactersView;
 
 import model.MyPolygon;
 import model.TimedLocation;
-import model.charactersModel.GeoShapeModel;
 import view.FinalPanelView;
-
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import static controller.UserInterfaceController.*;
 import static controller.Utils.relativeLocation;
 import static model.imagetools.ToolBox.getBufferedImage;
 import static model.imagetools.ToolBox.rotateImage;
 
 public class GeoShapeView {
     String id;
-    //    Point2D currentLocation;
     BufferedImage image;
     double imageWidth;
     double imageHeight;
-    //    protected MyPolygon myPolygon;
     public volatile static CopyOnWriteArrayList<GeoShapeView> geoShapeViews = new CopyOnWriteArrayList<>();
     protected double angle;
     protected int zOrder = 3;
@@ -39,7 +33,6 @@ public class GeoShapeView {
         this.imageWidth = this.image.getWidth();
         this.imageHeight = this.image.getHeight();
         geoShapeViews.add(this);
-
         initiator(anchor, myPolygon);
     }
 
@@ -65,20 +58,14 @@ public class GeoShapeView {
     public GeoShapeView(String id) {
         this.id = id;
         geoShapeViews.add(this);
-
-//        initiator();
     }
 
     public void setCurrentLocation(String panelID, Point2D currentLocation) {
-//        this.currentLocation =
-//                new Point2D.Double(currentLocation.getX() - imageWidth/2, currentLocation.getY() - imageHeight/2);
+
 
         this.locations.put(panelID, currentLocation);
     }
 
-//    public Point2D getCurrentLocation() {
-//        return currentLocation;
-//    }
 
     public String getId() {
         return id;
@@ -111,7 +98,6 @@ public class GeoShapeView {
         for (FinalPanelView finalPanelView : FinalPanelView.finalPanelViews){ // finalPanelModel???
             String panelID = finalPanelView.getId();
 
-            Point2D currentLocation = calculateViewLocationPolygonalEnemy(finalPanelView, this.getId());
             Point corner = new Point(finalPanelView.getX(), finalPanelView.getY());
 
             Point2D p =  relativeLocation(anchor, corner);
@@ -129,24 +115,14 @@ public class GeoShapeView {
             MyPolygon myPol = new MyPolygon(xpoints, ypoints, myPolygon.npoints);
             this.setMyPolygon(panelID, myPol);
 
-
-
-
         }
     }
 
 
 
-
-    protected void drawPolygon(){
-
-    }
-
     public int getZOrder() {
         return zOrder;
     }
-
-    public void setZOrder(int zOrder) {this.zOrder = zOrder;}
 
     public void draw(Graphics g, String panelID){
         Graphics2D g2d = (Graphics2D) g;

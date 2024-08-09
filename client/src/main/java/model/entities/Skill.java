@@ -3,13 +3,11 @@ package model.entities;
 import controller.Game;
 import model.charactersModel.EpsilonModel;
 
-import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import static controller.UserInterfaceController.*;
 import static controller.constants.SkillConstants.*;
 import static controller.constants.EntityConstants.SKILL_COOLDOWN_IN_SECONDS;
 
@@ -135,7 +133,7 @@ public enum Skill {
     }
 
     public void fire() {
-        double now = Game.ELAPSED_TIME;
+        double now = Game.elapsedTime;
         if (now - lastSkillTime >= SKILL_COOLDOWN_IN_SECONDS.getValue()) {
             ActionListener action = getAction();
             if (action != null) {

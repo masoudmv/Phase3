@@ -22,7 +22,7 @@ public class Profile {
     public String activeSkillSaveName = "";
     public CopyOnWriteArrayList<String> acquiredSkillsNames = new CopyOnWriteArrayList<>();
     public int totalXP = 10000;
-    public int currentGameXP = 0;
+    public int inGameXP = 0;
 
     public double dismayInitiationTime = -Double.MAX_VALUE;
     public double slumberInitiationTime = -Double.MAX_VALUE;
@@ -43,7 +43,7 @@ public class Profile {
     }
 
     public void saveXP() {
-        totalXP += Profile.getCurrent().currentGameXP;
-        currentGameXP = 0;
+        totalXP += Profile.getCurrent().inGameXP;
+        inGameXP = 0;
     }
 }

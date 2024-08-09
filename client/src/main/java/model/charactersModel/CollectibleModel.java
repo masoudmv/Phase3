@@ -2,6 +2,7 @@ package model.charactersModel;
 import controller.Game;
 import model.MyPolygon;
 import model.collision.Collidable;
+import model.entities.Profile;
 import model.movement.Direction;
 import model.movement.Movable;
 
@@ -12,7 +13,7 @@ import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import static controller.UserInterfaceController.*;
-import static controller.Game.ELAPSED_TIME;
+import static controller.Game.elapsedTime;
 import static controller.Utils.*;
 import static controller.Utils.addVectors;
 import static controller.constants.Constants.PI;
@@ -32,8 +33,8 @@ public class CollectibleModel extends GeoShapeModel implements Collidable, Movab
 
 
     public CollectibleModel(Point2D anchor, Point2D direction, int collectibleXP) {
-        super();
-        birthTime = ELAPSED_TIME;
+        super("");
+        birthTime = elapsedTime;
         this.radius = COLLECTABLE_RADIUS.getValue();
 //        this.id= UUID.randomUUID().toString();
         this.anchor = anchor;
@@ -174,7 +175,7 @@ public class CollectibleModel extends GeoShapeModel implements Collidable, Movab
         collidables.remove(this);
         movables.remove(this);
         collectibleModels.remove(this);
-        Game.inGameXP += collectibleXP;
+        Profile.getCurrent().inGameXP += collectibleXP;
 //        findCollectibleView((this).getId()).remove();
     }
 

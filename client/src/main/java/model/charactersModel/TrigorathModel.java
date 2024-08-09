@@ -1,12 +1,14 @@
 
 package model.charactersModel;
 
+import controller.Game;
 import controller.Utils;
 import model.MyPolygon;
 import model.charactersModel.blackOrb.Orb;
 import model.collision.Collidable;
 import model.collision.CollisionState;
 import model.collision.Impactable;
+import model.interfaces.Enemy;
 import model.movement.Direction;
 import model.movement.Movable;
 
@@ -17,7 +19,6 @@ import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import static controller.constants.Constants.*;
 import static controller.UserInterfaceController.*;
@@ -25,14 +26,12 @@ import static controller.Utils.*;
 import static controller.constants.EntityConstants.*;
 import static model.imagetools.ToolBox.getBufferedImage;
 
-public class TrigorathModel extends GeoShapeModel implements Movable, Collidable, Impactable {
+public class TrigorathModel extends GeoShapeModel implements Movable, Collidable, Impactable, Enemy {
     public double impactMaxVelocity;
-
     private boolean impactInProgress = false;
     public static List<TrigorathModel> trigorathModels =new ArrayList<>();
     private double angularVelocity;
     private double angularAcceleration;
-
     static BufferedImage image;
     private static double edgeLength;
 
@@ -43,10 +42,12 @@ public class TrigorathModel extends GeoShapeModel implements Movable, Collidable
         collidables.add(this);
         movables.add(this);
         impactables.add(this);
-
         this.health = 15;
-
         createTrigorathView(id);
+    }
+
+    public TrigorathModel() {
+        super();
     }
 
     private void initVertices(){
@@ -85,10 +86,6 @@ public class TrigorathModel extends GeoShapeModel implements Movable, Collidable
         return anchor;
     }
 
-//    @Override
-//    public void setAnchor(Point2D anchor) {
-//
-//    }
 
     public static BufferedImage loadImage() {
         Image img = new ImageIcon("./client/src/squarantine.png").getImage();
@@ -106,7 +103,6 @@ public class TrigorathModel extends GeoShapeModel implements Movable, Collidable
             Point2D collisionPoint = collisionState.collisionPoint;
             Point2D collisionRelativeVector = relativeLocation(this.getAnchor(), collisionPoint);
             double impactCoefficient = getImpactCoefficient(collisionRelativeVector);
-//        impactCoefficient *= 2;
             Point2D impactVector = normalizeVector(relativeLocation(this.getAnchor(), collisionState.collisionPoint));
             impactVector = multiplyVector(impactVector, impactCoefficient);
             Point2D r2 = addVectors(this.getDirection().getNormalizedDirectionVector(), impactVector);
@@ -258,8 +254,6 @@ public class TrigorathModel extends GeoShapeModel implements Movable, Collidable
             impactCoefficient = coefficient * IMPACT_COEFFICIENT;
             impactMaxVelocity = 3* coefficient * impactCoefficient / 5;
         }
-//         impactCoefficient = getImpactCoefficient(collisionRelativeVector);
-//        impactCoefficient *= 2;
         Point2D impactVector = normalizeVector(relativeLocation(this.getAnchor(), collisionPoint));
         impactVector = multiplyVector(impactVector, impactCoefficient);
         Point2D r2 = addVectors(this.getDirection().getNormalizedDirectionVector(), impactVector);
@@ -284,9 +278,7 @@ public class TrigorathModel extends GeoShapeModel implements Movable, Collidable
 
     @Override
     public void update(Direction direction) {
-
         Point2D movement = multiplyVector(direction.getDirectionVector(), direction.getMagnitude());
-
         movePolygon(movement);
         rotate();
         friction();
@@ -311,30 +303,16 @@ public class TrigorathModel extends GeoShapeModel implements Movable, Collidable
 
     @Override
     public void friction(){
-//        System.out.println(getDirection().getMagnitude());
-
         direction.setMagnitude(direction.getMagnitude() * FRICTION);
         double distanceByEpsilon = getAnchor().distance(EpsilonModel.getINSTANCE().getAnchor());
         if (direction.getMagnitude() < 1) {
-//            System.out.println("ddsdsd");
-            setDirection(
-                    new Direction(relativeLocation(EpsilonModel.getINSTANCE().getAnchor(), getAnchor())));
+            setDirection(new Direction(relativeLocation(EpsilonModel.getINSTANCE().getAnchor(), getAnchor())));
             getDirection().adjustDirectionMagnitude();
             setImpactInProgress(false);
-
+        } if (distanceByEpsilon > TRIGORATH_MAX_VEL_RADIUS && direction.getMagnitude() < 1.5){
+            setDirection(new Direction(relativeLocation(EpsilonModel.getINSTANCE().getAnchor(), getAnchor())));
+            getDirection().adjustTrigorathDirectionMagnitude();
         }
-
-        if (distanceByEpsilon > TRIGORATH_MAX_VEL_RADIUS && direction.getMagnitude() < 1.5){
-//            System.out.println("ddsdsd");
-            setDirection(
-                    new Direction(relativeLocation(EpsilonModel.getINSTANCE().getAnchor(), getAnchor())));
-             getDirection().adjustTrigorathDirectionMagnitude();
-        }
-        else {
-//            System.out.println("saaaaaaaaaaaa");
-        }
-
-
     }
 
     public double getAngle() {
@@ -351,50 +329,14 @@ public class TrigorathModel extends GeoShapeModel implements Movable, Collidable
     }
 
     public void rotate(){
-//        System.out.println(angularVelocity);
-//        angularVelocity *= 0.99;
-//        if (Math.abs(angularVelocity) < 0.001) {
-//            angularVelocity = 0;
-//        }
-        if (Math.abs(angularVelocity) < 0.0001 && angularAcceleration ==0){
-            angularVelocity = 0;
-        }
-
+        if (Math.abs(angularVelocity) < 0.0001 && angularAcceleration ==0) angularVelocity = 0;
         // Angular Friction
-        if (angularVelocity<0 && angularAcceleration==0){
-            angularVelocity += 0.0004;
-        } else if (angularVelocity>0 && angularAcceleration==0) {
-            angularVelocity -= 0.0004;
-        }
-
-
-
-        if (Math.abs(angularVelocity) < Math.abs(angularAcceleration*10)) {
-            angularVelocity += angularAcceleration;
-        }
+        if (angularVelocity<0 && angularAcceleration==0) angularVelocity += 0.0004;
+        else if (angularVelocity>0 && angularAcceleration==0) angularVelocity -= 0.0004;
+        if (Math.abs(angularVelocity) < Math.abs(angularAcceleration*10)) angularVelocity += angularAcceleration;
         else angularAcceleration = 0;
         angle += angularVelocity;
-
-//        vertices[0] = new Point2D.Double(anchor.getX()-radius*Math.sin(angle), anchor.getY()-radius*Math.cos(angle));
-//        vertices[1] = new Point2D.Double(anchor.getX()+radius*Math.cos(Math.PI/6-angle), anchor.getY()+radius*Math.sin(Math.PI/6-angle));
-//        vertices[2] = new Point2D.Double(anchor.getX()-radius*Math.cos(Math.PI/6+angle), anchor.getY()+radius*Math.sin(Math.PI/6+angle));
-
         myPolygon = rotateMyPolygon(myPolygon, Math.toDegrees(-angularVelocity), anchor);
-
-    }
-    public Point2D reflect(Point2D normalVector){
-        double dotProduct = dotVectors(getDirection().getDirectionVector(), normalVector);
-        Point2D reflection = addVectors(
-                getDirection().getDirectionVector(),
-                multiplyVector(normalVector,-2*dotProduct
-                ));
-        return normalizeVector(reflection);
-    }
-    private double calculateTrigorathInertia(){
-        double mass = 100;
-        double length = TRIGORATH_RADIUS* (1.5);
-//        System.out.println(mass*length*length/12);
-        return 50000;
     }
 
     @Override
@@ -408,19 +350,16 @@ public class TrigorathModel extends GeoShapeModel implements Movable, Collidable
 
     public void eliminate(){
         super.eliminate();
-
         collidables.remove(this);
         trigorathModels.remove(this);
         movables.remove(this);
-
-//        aliveEnemies--;
-
+        Game.getINSTANCE().incrementDeadEnemies();
         CollectibleModel.dropCollectible(getAnchor(), TRIGORATH_NUM_OF_COLLECTIBLES.getValue(), TRIGORATH_COLLECTIBLES_XP.getValue());
-
-
     }
 
-    public static void create() {
+
+    @Override
+    public void create() {
         Point2D anchor;
         boolean isValid;
         double MIN_DISTANCE = 100.0; // The minimum distance to avoid collision
@@ -449,17 +388,21 @@ public class TrigorathModel extends GeoShapeModel implements Movable, Collidable
         }
     }
 
+    @Override
+    public int getMinSpawnWave() {
+        return 1;
+    }
 
-
+    @Override
+    public boolean isUniquePerWave(){
+        return false;
+    }
 
     @Override
     public void onCollision(Collidable other, Point2D intersection) {
-        if (other instanceof EpsilonModel) {
-            impact(relativeLocation(intersection, anchor), intersection, other);
-        }
+        if (other instanceof EpsilonModel) impact(relativeLocation(intersection, anchor), intersection, other);
         if (other instanceof Orb) impact(relativeLocation(intersection, anchor), intersection, other);
         if (other instanceof BulletModel) {
-            System.out.println("impact");
             impact(Utils.relativeLocation(intersection, anchor), intersection, other, 6200);
             createImpactWave(this, other, intersection);
         }

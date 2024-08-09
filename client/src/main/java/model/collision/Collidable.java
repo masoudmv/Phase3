@@ -2,6 +2,8 @@ package model.collision;
 
 import model.FinalPanelModel;
 import model.charactersModel.*;
+import model.charactersModel.SquarantineModel;
+import model.charactersModel.TrigorathModel;
 //import view.MainPanel;
 //import view.Panel;
 

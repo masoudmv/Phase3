@@ -46,7 +46,7 @@ public class MouseController implements MouseListener,MouseMotionListener {
         Point2D direction = new Point2D.Double(velX, velY);
         mousePosition = new Point2D.Double(e.getX(), e.getY());
 
-        double now = ELAPSED_TIME;
+        double now = elapsedTime;
         double empowerInitTime = Profile.getCurrent().empowerInitiationTime;
 
         new BulletModel(epsilon.getAnchor(), new Direction(direction));

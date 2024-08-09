@@ -1,6 +1,7 @@
 package view;
 
 import controller.Game;
+import model.entities.Profile;
 
 import javax.swing.*;
 import java.awt.*;
@@ -21,8 +22,8 @@ public final class MainFrame extends JFrame {
         setLocationRelativeTo(null);
         setVisible(true);
         setLayout(null);
-        label = new JLabel("<html>Wave: "+ Game.wave + "<br>Elapsed Time: "+ Game.ELAPSED_TIME
-                + "<br> XP: "+Game.inGameXP +"<br>HP: "+ 100);
+        label = new JLabel("<html>Wave: "+ Game.wave + "<br>Elapsed Time: "+ Game.elapsedTime
+                + "<br> XP: "+ Profile.getCurrent().inGameXP +"<br>HP: "+ 100);
         label.setForeground(Color.red);
         label.setBounds(0,0,120,100);
         label.setBackground(Color.black);

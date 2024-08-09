@@ -14,7 +14,7 @@ import static controller.constants.EntityConstants.BABY_EPSILON_RADIUS;
 public class BabyEpsilon extends GeoShapeModel {
 
     BabyEpsilon(Point2D anchor) {
-        super();
+        super("");
         this.anchor = anchor;
         this.radius = BABY_EPSILON_RADIUS.getValue();
         createBabyEpsilonView(id);

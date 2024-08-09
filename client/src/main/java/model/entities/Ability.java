@@ -6,8 +6,6 @@ import model.charactersModel.EpsilonModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import static controller.constants.EntityConstants.SKILL_COOLDOWN_IN_SECONDS;
-
 public enum Ability {
     BANISH, EMPOWER, HEAL,
     DISMAY, SLUMBER, SLAUGHTER;
@@ -43,10 +41,10 @@ public enum Ability {
     public ActionListener getAction() {
         return switch (this) {
             case BANISH -> null;
-            case EMPOWER -> e -> Profile.getCurrent().empowerInitiationTime = Game.ELAPSED_TIME;
+            case EMPOWER -> e -> Profile.getCurrent().empowerInitiationTime = Game.elapsedTime;
             case HEAL -> e -> EpsilonModel.getINSTANCE().health += 10;
-            case DISMAY -> e -> Profile.getCurrent().dismayInitiationTime = Game.ELAPSED_TIME;
-            case SLUMBER -> e -> Profile.getCurrent().slumberInitiationTime = Game.ELAPSED_TIME;
+            case DISMAY -> e -> Profile.getCurrent().dismayInitiationTime = Game.elapsedTime;
+            case SLUMBER -> e -> Profile.getCurrent().slumberInitiationTime = Game.elapsedTime;
             case SLAUGHTER -> e ->Profile.getCurrent().BULLET_DAMAGE = 50;
         };
     }

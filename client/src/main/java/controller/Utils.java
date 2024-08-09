@@ -1,19 +1,14 @@
 package controller;
 
-//import model.charactersModel.Edge;
-//import model.charactersModel.Polygon;
+
 import model.FinalPanelModel;
 import model.MyPolygon;
-//import model.NonRigid;
-import model.collision.Edge;
-
 import java.awt.*;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.HashMap;
-
 import static java.lang.Math.abs;
 import static java.lang.Math.min;
 import static model.geometry.GeometricToolBox.clockwiseSort;
@@ -26,15 +21,11 @@ public class Utils {
     public static Point2D multiplyVector(Point2D point,double scalar){
         return new Point2D.Double(point.getX()*scalar,point.getY()*scalar);
     }
-    public static Point2D multiplyVectorXYComponent(Point2D point,double scalarX, double scalarY){
-        return new Point2D.Double(point.getX()*scalarX, point.getY() * scalarY);
-    }
+
     public static Point2D addVectors(Point2D point1,Point2D point2){
         return new Point2D.Double(point1.getX()+point2.getX(),point1.getY()+point2.getY());
     }
-    public static Point2D weightedAddVectors(Point2D point1,Point2D point2,double weight1,double weight2){
-        return multiplyVector(addVectors(multiplyVector(point1,weight1),multiplyVector(point2,weight2)),1/(weight1+weight2));
-    }
+
     public static double dotVectors(Point2D point1, Point2D point2){
         return point1.getX() * point2.getX() + point1.getY() * point2.getY();
     }
@@ -63,31 +54,7 @@ public class Utils {
         return new Point2D.Double(-vector.getY(), vector.getX());
     }
 
-//    public static Point2D PerpendicularVector(Line2D line2D)
-//    {
-//        return new Point2D.Double(-vector.getY(), vector.getX());
-//    }
 
-//    public static Point2D getIntersectionPoint(Line2D line1, Line2D line2) {
-//        if (!line1.intersectsLine(line2)) return null;
-//
-//        double px = line1.getX1(),
-//                py = line1.getY1(),
-//                rx = line1.getX2() - px,
-//                ry = line1.getY2() - py;
-//        double qx = line2.getX1(),
-//                qy = line2.getY1(),
-//                sx = line2.getX2() - qx,
-//                sy = line2.getY2() - qy;
-//
-//        double det = rx * sy - ry * sx;
-//        if (det == 0) {
-//            return null;  // Lines are parallel
-//        } else {
-//            double t = ((qx - px) * sy - (qy - py) * sx) / det;
-//            return new Point2D.Double(px + t * rx, py + t * ry);
-//        }
-//    }
     public static Point2D findMidPoint(Point2D point1, Point2D point2){
         return new Point2D.Double((point1.getX()+point2.getX())/2, (point1.getY()+point2.getY())/2);
     }
@@ -128,7 +95,6 @@ public class Utils {
 
 
     public static Point2D findClosestPointOnEdges(Point2D point, ArrayList<Line2D> edges) {
-//        if (edges == null) return null;
         Point2D closestPoint = null;
         double minDistance = Double.MAX_VALUE;
 
@@ -186,12 +152,6 @@ public class Utils {
 
 
     public static HashMap<Integer, Point2D> closestPointOnEdges(Point2D point, ArrayList<Line2D> edges){
-
-//        System.out.println("dsdsdsdsdsdsdsd");
-
-//        System.out.println(edges.get(0).head1);
-
-
         double minDistance = Double.MAX_VALUE;
         Point2D closest = null;
         int edgeIndex = -1;
@@ -211,27 +171,6 @@ public class Utils {
         result.put(edgeIndex, closest);
         return result;
     }
-
-
-
-//    public static Point2D closestPointOnEdgesOfAPolygon(Point2D point, Polygon polygon){
-//        ArrayList<Edge> edges = polygon.getEdges();
-//        double minDistance = Double.MAX_VALUE;
-//        Point2D closest = null;
-//        for (Edge edge : edges) {
-//            Point2D head1 = edge.head1;
-//            Point2D head2 = edge.head2;
-//            Point2D temp = getClosestPointOnSegment(head1, head2, point);
-//            double distance = temp.distance(point);
-//            if (distance < minDistance) {
-//                minDistance = distance;
-//                closest = temp;
-//            }
-//        }
-//        return closest;
-//    }
-
-
 
 
     public static Point2D getClosestPointOnSegment(Point2D head1, Point2D head2, Point2D point) {
@@ -256,28 +195,6 @@ public class Utils {
     }
 
 
-    public static void AABB(Rectangle2D rect1, Rectangle2D rect2){
-
-        boolean a = rect1.getMaxX() < rect2.getMinX();
-        boolean b = rect1.getMinX() > rect2.getMaxX();
-
-        boolean c = rect1.getMaxY() < rect2.getMinY();
-        boolean d = rect1.getMinY() > rect2.getMaxY();
-
-        if (!a && !b){
-            double distance1 = abs(rect1.getMaxX() - rect2.getMinX());
-            double distance2 = abs(rect2.getMaxX() - rect1.getMinX());
-            double movementX = min(distance1, distance2);
-        }
-
-        if (!c && !d){
-            double distance1 = abs(rect1.getMaxY() - rect2.getMinY());
-            double distance2 = abs(rect2.getMaxY() - rect1.getMinY());
-            double movementY = min(distance1, distance2);
-        }
-
-    }
-
     // I think this one is the correct AABB check!
     public static boolean doAABBsIntersect(Rectangle2D rect1, Rectangle2D rect2) {
         // Check overlap in X-axis
@@ -290,147 +207,7 @@ public class Utils {
         return overlapX && overlapY;
     }
 
-
     public static boolean isPointInPolygon(Point2D point, Point2D[] polygon) {
-        boolean result = false;
-        int n = polygon.length;
-        for (int i = 0, j = n - 1; i < n; j = i++) {
-            if ((polygon[i].getY() > point.getY()) != (polygon[j].getY() > point.getY()) &&
-                    (point.getX() < (polygon[j].getX() - polygon[i].getX()) * (point.getY() - polygon[i].getY()) / (polygon[j].getY() - polygon[i].getY()) + polygon[i].getX())) {
-                result = !result;
-            }
-        }
-        return result;
-    }
-
-    private static boolean isIntersecting(Point2D point, Point2D vertex1, Point2D vertex2) {
-        double px = point.getX();
-        double py = point.getY();
-        double v1x = vertex1.getX();
-        double v1y = vertex1.getY();
-        double v2x = vertex2.getX();
-        double v2y = vertex2.getY();
-
-        if (v1y > v2y) {
-            Point2D temp = vertex1;
-            vertex1 = vertex2;
-            vertex2 = temp;
-        }
-
-        if (py == v1y || py == v2y) {
-            py += 0.0001;
-        }
-
-        if ((py > v2y || py < v1y) || (px > Math.max(v1x, v2x))) {
-            return false;
-        }
-
-        if (px < Math.min(v1x, v2x)) {
-            return true;
-        }
-
-        double red = (px - v1x) * (v2y - v1y) - (py - v1y) * (v2x - v1x);
-        if (red == 0) {
-            return true;
-        }
-
-        return red < 0;
-    }
-
-
-    public static Point2D getIntersection(Point2D A, Point2D B, Point2D C, Point2D D) {
-        double a1 = B.getY() - A.getY();
-        double b1 = A.getX() - B.getX();
-        double c1 = a1 * A.getX() + b1 * A.getY();
-
-        double a2 = D.getY() - C.getY();
-        double b2 = C.getX() - D.getX();
-        double c2 = a2 * C.getX() + b2 * C.getY();
-
-        double delta = a1 * b2 - a2 * b1;
-        if (delta == 0) {
-            return null; // Parallel lines
-        }
-
-        double x = (b2 * c1 - b1 * c2) / delta;
-        double y = (a1 * c2 - a2 * c1) / delta;
-        Point2D intersection = new Point2D.Double(x, y);
-
-        if (isPointOnLineSegment(intersection, A, B) && isPointOnLineSegment(intersection, C, D)) {
-            return intersection;
-        }
-        return null;
-    }
-
-    private static boolean isPointOnLineSegment(Point2D point, Point2D A, Point2D B) {
-        return point.getX() >= Math.min(A.getX(), B.getX()) &&
-                point.getX() <= Math.max(A.getX(), B.getX()) &&
-                point.getY() >= Math.min(A.getY(), B.getY()) &&
-                point.getY() <= Math.max(A.getY(), B.getY());
-    }
-
-    public static ArrayList<Point> convertPoint2DToPoint(ArrayList<Point2D> point2DList) {
-        ArrayList<Point> pointList = new ArrayList<>();
-        for (Point2D point2D : point2DList) {
-            pointList.add(new Point((int) point2D.getX(), (int) point2D.getY()));
-        }
-        return pointList;
-    }
-
-    public static Point findWeightedAvg(ArrayList<? extends Point> points){
-        int xAvg = 0;
-        int yAvg = 0;
-
-        for (Point p : points){
-            xAvg += p.x;
-            yAvg += p.y;
-        }
-        return new Point(xAvg, yAvg);
-    }
-
-
-    // todo edit this fucking ugly method
-    public static Polygon combinePolygons(Polygon p1, Polygon p2){
-        int xSum=0;
-        int ySum=0;
-        Point[] pVertices1  = new Point[p1.npoints];
-        for (int i = 0; i < p1.npoints; i++) {
-            pVertices1[i] = new Point(p1.xpoints[i], p1.ypoints[i]);
-            xSum+=p1.xpoints[i];
-            ySum+=p1.ypoints[i];
-        }
-        Point[] pVertices2  = new Point[p2.npoints];
-        for (int i = 0; i < p2.npoints; i++) {
-            pVertices2[i] = new Point(p2.xpoints[i], p2.ypoints[i]);
-
-            xSum+=p2.xpoints[i];
-            ySum+=p2.ypoints[i];
-        }
-        Point pivot = new Point(xSum, ySum);
-        ArrayList<Point> vertices = new ArrayList<>();
-        for (int i = 0; i < p1.npoints; i++) {
-            Point vtx1 = new Point(p1.xpoints[i], p1.ypoints[i]);
-            if (isPointInPolygon(vtx1, pVertices2)) vertices.add(vtx1);
-        }
-        for (int i = 0; i < p2.npoints; i++) {
-            Point vtx2 = new Point(p2.xpoints[i], p2.ypoints[i]);
-            if (isPointInPolygon(vtx2, pVertices1)) vertices.add(vtx2);
-        }
-        return pointsToPolygon(clockwiseSort(vertices, pivot));
-    }
-
-
-    public static Polygon createSinglePolygon(ArrayList<Polygon> polygons){
-        if (polygons == null) return null;
-        Polygon cur = polygons.get(0);
-        for (int i = 1; i < polygons.size(); i++) {
-            cur = combinePolygons(cur, polygons.get(i));
-        }
-        return cur;
-    }
-
-
-    public static boolean isPointInPolygon(Point point, Point[] polygon) {
         boolean result = false;
         int n = polygon.length;
         for (int i = 0, j = n - 1; i < n; j = i++) {
@@ -485,7 +262,7 @@ public class Utils {
                 if (intersection != null) intersections.add(intersection);
             }
         }
-        if (intersections.size() != 2) return null; // todo check if this line is useful or not!
+        if (intersections.size() != 2) return null;
         return intersections;
     }
 
@@ -544,9 +321,4 @@ public class Utils {
 
         return edges;
     }
-
-
-
-
-
 }

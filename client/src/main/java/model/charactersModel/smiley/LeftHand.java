@@ -1,7 +1,6 @@
 package model.charactersModel.smiley;
 
 import model.MyPolygon;
-import model.charactersModel.BabyArchmire;
 import org.example.GraphicalObject;
 
 import javax.swing.*;
@@ -28,11 +27,7 @@ public class LeftHand extends Hand{
         Image img = new ImageIcon("./client/src/hand.png").getImage();
         LeftHand.image = getBufferedImage(img);
         GraphicalObject bowser = new GraphicalObject(image);
-//        bowser.refine();
-
         polygon = bowser.getMyBoundingPolygon();
-
-
         return LeftHand.image;
     }
 

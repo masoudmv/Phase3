@@ -3,8 +3,9 @@ package controller;
 import model.FinalPanelModel;
 import model.MyPolygon;
 import model.TimedLocation;
-import model.charactersModel.BulletModel;
 import model.charactersModel.*;
+import model.charactersModel.ArchmireModel;
+import model.charactersModel.NecropickModel;
 import model.entities.Ability;
 import model.entities.Skill;
 import view.FinalPanelView;
@@ -15,20 +16,16 @@ import view.charactersView.*;
 
 import java.awt.*;
 import java.awt.geom.Point2D;
-import java.util.ArrayList;
 import java.util.LinkedList;
 
 import static controller.Utils.relativeLocation;
 import static model.charactersModel.NecropickModel.necropickModels;
-import static model.charactersModel.SquarantineModel.squarantineModels;
-import static model.charactersModel.TrigorathModel.trigorathModels;
 import static view.FinalPanelView.finalPanelViews;
 import static view.charactersView.BulletView.bulletViews;
 import static view.charactersView.GeoShapeView.geoShapeViews;
 import static view.charactersView.NecropickView.necropickViews;
 
 public abstract class UserInterfaceController {
-
 
     public static void createEpsilonView(String id, Image image){
         new EpsilonView(id, image);
@@ -38,51 +35,28 @@ public abstract class UserInterfaceController {
     }
     public static void createTrigorathView(String id){ new TrigorathView(id); }
     public static void createOmenoctView(String id){ new SquarantineView(id); }
-
     public static void creatBulletView(String id){ new BulletView(id); }
     public static void createCollectibleView(String id){ new CollectibleView(id); }
     public static void createBabyEpsilonView(String id){ new BabyEpsilonView(id); }
     public static void createSmileyAOEView(String id){ new SmileyAOE(id); }
 
-
-
-
-
-
-
-
-    public static void createFinalPanelView(String id, Point2D location, Dimension size){
-        new FinalPanelView(id, location, size);
-    } // todo edit parameters
-
-
-
+    public static void createFinalPanelView(String id, Point2D location, Dimension size){new FinalPanelView(id, location, size);}
     public static void createGeoShapeView(String id, Image image){
         new GeoShapeView(id, image);
     }
-
     public static void createGeoShapeView(String id, Image image, int zOrder){
         new GeoShapeView(id, image, zOrder);
     }
-
-
-
-
     public static void createNecropickView(String id, Image image){
         new NecropickView(id, image);
     }
-
     public static void createArchmireView(String id, Image image){
         new ArchmireView(id, image);
     }
-
     public static void createLaserView(String id){
         new LaserView(id);
     }
-
     public static void createGeoShapeView(String id){ new GeoShapeView(id); }
-
-
 
     public static Point2D calculateViewLocationPolygonalEnemy(FinalPanelView component, String id){
         GeoShapeModel geoShapeModel = findGeoShapeModel(id);
@@ -90,9 +64,6 @@ public abstract class UserInterfaceController {
         assert geoShapeModel != null;
         return relativeLocation(geoShapeModel.getAnchor(), corner);
     }
-
-
-
 
     public static MyPolygon calculateEntityView(FinalPanelView component, String id){
         GeoShapeModel geoShapeModel = findGeoShapeModel(id);
@@ -110,15 +81,11 @@ public abstract class UserInterfaceController {
         return new MyPolygon(xpoints, ypoints, geoShapeModel.myPolygon.npoints);
     }
 
-
     public static double calculateGeoShapeViewAngle(String id){
         GeoShapeModel geoShapeModel = findGeoShapeModel(id);
         assert geoShapeModel != null;
         return geoShapeModel.getAngle();
     }
-
-
-
 
     public static GeoShapeModel findGeoShapeModel(String id){
         for (GeoShapeModel geoShapeModel : GeoShapeModel.entities){
@@ -134,15 +101,15 @@ public abstract class UserInterfaceController {
         return null;
     }
 
-
     public static void updateGeoShapeViewProperties(){
         for (FinalPanelView finalPanelView : finalPanelViews){
             for (GeoShapeView geoShapeView : geoShapeViews){
-                Point2D currentLocation = calculateViewLocationPolygonalEnemy(finalPanelView, geoShapeView.getId());
+                String id = geoShapeView.getId();
+                Point2D currentLocation = calculateViewLocationPolygonalEnemy(finalPanelView, id);
                 String panelID = finalPanelView.getId();
                 geoShapeView.setCurrentLocation(panelID, currentLocation);
-                geoShapeView.setMyPolygon(panelID, calculateEntityView(finalPanelView, geoShapeView.getId()));
-                geoShapeView.setHistory(panelID, calculateLocationHistory(finalPanelView, geoShapeView.getId()));
+                geoShapeView.setMyPolygon(panelID, calculateEntityView(finalPanelView, id));
+                geoShapeView.setHistory(panelID, calculateLocationHistory(finalPanelView, id));
             }
         }
 
@@ -150,7 +117,6 @@ public abstract class UserInterfaceController {
             geoShapeView.setAngle(calculateGeoShapeViewAngle(geoShapeView.getId()));
         }
     }
-
 
     public static void updateNecropick(String id){
         NecropickModel m = findNecropickModel(id);
@@ -183,8 +149,6 @@ public abstract class UserInterfaceController {
         return result;
     }
 
-
-
     public static Point2D calculateLocationOfFinalPanelView(String id){
         FinalPanelModel f = findFinalPanelModel(id);
         return f.getLocation();
@@ -197,37 +161,12 @@ public abstract class UserInterfaceController {
 
     }
 
-
-
-
-
-    public static EpsilonModel findModel(String id){
-        return EpsilonModel.getINSTANCE();
-    }
-
-    public static SquarantineModel findSquarantineModel(String id){
-        for (SquarantineModel squarantineModel: squarantineModels){
-            if (squarantineModel.getId().equals(id)) return squarantineModel;
-        }
-        return null;
-    }
-    public static TrigorathModel findTrigorathModel(String id){
-        for (TrigorathModel trigorathModel: trigorathModels){
-            if (trigorathModel.getId().equals(id)) return trigorathModel;
-        }
-        return null;
-    }
-
-
-
     public static FinalPanelModel findFinalPanelModel(String id){
         for (FinalPanelModel f: FinalPanelModel.finalPanelModels){
             if (f.getId().equals(id)) return f;
         }
         return null;
     }
-
-
 
 
     public static void removeFinalPanelView(String id){
@@ -245,10 +184,6 @@ public abstract class UserInterfaceController {
     public static void eliminateBulletView(String id){
         findBulletView(id).eliminate();
     }
-
-
-
-
 
     public static NecropickView findNecropickView(String id){
         for (NecropickView n: necropickViews){
@@ -271,16 +206,6 @@ public abstract class UserInterfaceController {
         return null;
     }
 
-
-    public static Skill findSkill(String name) {
-        for (Skill.SkillType type : Skill.SkillType.values()) {
-            for (Skill skill : Skill.values()) {
-                if (skill.getType().equals(type) && skill.getName().equals(name)) return skill;
-            }
-        }
-        return null;
-    }
-
     public static void fireSkill() {
         if (Skill.activeSkill != null) {
             Skill.activeSkill.fire();
@@ -294,17 +219,7 @@ public abstract class UserInterfaceController {
         }
     }
 
-    public static boolean isGameRunning() {
-        return GameLoop.getINSTANCE().isRunning();
-    }
-
-    public static boolean isGameOn() {
-        return GameLoop.getINSTANCE().isOn();
-    }
-
     public static void eliminateGeoShapeView(String id){
         findGeoShapeView(id).eliminate();
     }
-
-
 }

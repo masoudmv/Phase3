@@ -2,10 +2,7 @@ package view.charactersView;
 
 import model.MyPolygon;
 import view.FinalPanelView;
-
 import java.awt.*;
-import java.awt.geom.Point2D;
-import java.util.ArrayList;
 
 public class TrigorathView extends  GeoShapeView{
 

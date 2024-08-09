@@ -5,6 +5,8 @@ import controller.PolygonUtils;
 import model.FinalPanelModel;
 import model.MyPolygon;
 import model.collision.Collidable;
+import model.entities.Entity;
+import model.interfaces.Enemy;
 import model.movement.Direction;
 import org.example.GraphicalObject;
 //import view.MainPanel;
@@ -23,7 +25,7 @@ import static controller.constants.EntityConstants.*;
 import static controller.constants.SmileyConstants.BULLET_SPEED;
 import static model.imagetools.ToolBox.getBufferedImage;
 
-public class OmenoctModel extends GeoShapeModel implements Collidable {
+public class OmenoctModel extends GeoShapeModel implements Collidable, Enemy {
     public boolean isOnEpsilonPanel = false;
     protected static MyPolygon pol;
     static BufferedImage image;
@@ -39,6 +41,9 @@ public class OmenoctModel extends GeoShapeModel implements Collidable {
         this.health = OMENOCT_HEALTH.getValue();
         initVertices();
         createOmenoctView(id);
+    }
+
+    public OmenoctModel() {
     }
 
     private void initVertices() {
@@ -63,7 +68,7 @@ public class OmenoctModel extends GeoShapeModel implements Collidable {
 
 
     private void shootNonRigidBullet(){
-        double now = Game.ELAPSED_TIME;
+        double now = Game.elapsedTime;
         if (now - lastShotBullet < OMENOCT_SHOT_DELAY) return;
         BufferedImage ba = SmileyBullet.loadImage();
         GraphicalObject bos = new GraphicalObject(ba);
@@ -87,8 +92,12 @@ public class OmenoctModel extends GeoShapeModel implements Collidable {
         collidables.remove(this);
         omenoctModels.remove(this);
 
+        Game.getINSTANCE().incrementDeadEnemies();
+
         CollectibleModel.dropCollectible(
-                getAnchor(), OMENOCT_NUM_OF_COLLECTIBLES.getValue(), OMENOCT_COLLECTIBLES_XP.getValue()
+                getAnchor(),
+                OMENOCT_NUM_OF_COLLECTIBLES.getValue(),
+                OMENOCT_COLLECTIBLES_XP.getValue()
         );
     }
 
@@ -204,9 +213,7 @@ public class OmenoctModel extends GeoShapeModel implements Collidable {
         return closest;
     }
 
-//    private void setDirection(Direction direction) {
-//        this.direction = direction;
-//    }
+
 
     private void clockWiseMovement() {
         System.out.println(omenoctEdgeIndex);
@@ -322,25 +329,7 @@ public class OmenoctModel extends GeoShapeModel implements Collidable {
         }
     }
 
-    private Point2D findClosestPointOnPolygon(MyPolygon polygon, Point2D[] vertices) {
-        Point2D closestPoint = null;
-        double minDistance = Double.MAX_VALUE;
 
-        for (int i = 0; i < vertices.length; i++) {
-            int nextIndex = (i + 1) % vertices.length;
-            Point2D p1 = vertices[i];
-            Point2D p2 = vertices[nextIndex];
-
-            Point2D closest = getClosestPointOnSegment(p1, p2, polygon.getCenter());
-            double distance = closest.distance(polygon.getCenter());
-
-            if (distance < minDistance) {
-                minDistance = distance;
-                closestPoint = closest;
-            }
-        }
-        return closestPoint;
-    }
 
     private Point2D getClosestPointOnSegment(Point2D p1, Point2D p2, Point2D p) {
         double xDelta = p2.getX() - p1.getX();
@@ -365,6 +354,38 @@ public class OmenoctModel extends GeoShapeModel implements Collidable {
     }
 
 
+    public void create() {
+        Point2D anchor;
+        boolean isValid;
+        double MIN_DISTANCE = 100.0; // The minimum distance to avoid collision
+        int maxAttempts = 100;
+        int attempts = 0;
 
+        do {
+            isValid = true;
+            anchor = findRandomPoint();
+            attempts++;
 
+            for (GeoShapeModel model : Entity.entities) {
+                double distance = model.getAnchor().distance(anchor);
+                if (distance < MIN_DISTANCE) {
+                    isValid = false;
+                    break;
+                }
+            }
+        } while (!isValid && attempts < maxAttempts);
+
+        if (isValid) {
+            // Add the new enemy to the game's entities
+            new OmenoctModel(anchor);
+        } else {
+            System.out.println("Failed to create SquarantineModel without intersection after " + maxAttempts + " attempts.");
+        }
+    }
+
+    @Override
+    public int getMinSpawnWave() {
+        // todo handle omenoct collision ...
+        return 3;
+    }
 }

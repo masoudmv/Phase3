@@ -4,13 +4,11 @@ import controller.Game;
 import controller.UserInputHandler;
 import model.entities.Ability;
 import model.entities.Profile;
-import view.MainFrame;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 
 public class AbilityShopPanel extends JPanel {
     private final JFrame frame;
@@ -36,7 +34,6 @@ public class AbilityShopPanel extends JPanel {
             add(abilityButton, gbc);
         }
 
-
         // Add key binding for escape key
         InputMap inputMap = getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
         ActionMap actionMap = getActionMap();
@@ -51,9 +48,6 @@ public class AbilityShopPanel extends JPanel {
                 UserInputHandler.abilityShopFrame = null;
             }
         });
-
-
-
     }
 
     private void performAbilityAction(Ability ability) {
@@ -66,18 +60,18 @@ public class AbilityShopPanel extends JPanel {
 
     private void purchaseAbility(Ability ability) {
         if (ability == Ability.SLAUGHTER){
-            double now = Game.ELAPSED_TIME;
+            double now = Game.elapsedTime;
             double initiation = Profile.getCurrent().slaughterInitiationTime;
             if (now - initiation < 120) {
                 JOptionPane.showMessageDialog(frame, "You should wait at least 120 seconds after your previous slaughter!");
                 return;
             }
         }
-        int currentXP = Game.inGameXP;
+        int currentXP = Profile.getCurrent().inGameXP;
         if (currentXP >= ability.getCost()) {
-            Game.inGameXP -= ability.getCost();
+            Profile.getCurrent().inGameXP -= ability.getCost();
             Ability.activeAbility = ability;
-            if (ability == Ability.SLAUGHTER) Profile.getCurrent().slaughterInitiationTime = Game.ELAPSED_TIME;
+            if (ability == Ability.SLAUGHTER) Profile.getCurrent().slaughterInitiationTime = Game.elapsedTime;
             JOptionPane.showMessageDialog(frame, ability.getName() + " was successfully activated");
         } else {
             JOptionPane.showMessageDialog(frame, "You don't have enough XP!", "Error", JOptionPane.ERROR_MESSAGE);
@@ -86,6 +80,6 @@ public class AbilityShopPanel extends JPanel {
 
     @Override
     protected void paintComponent(Graphics g) {
-        super.paintComponent(g); // Call the superclass method to ensure proper painting
+        super.paintComponent(g);
     }
 }

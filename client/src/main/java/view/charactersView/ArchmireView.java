@@ -54,7 +54,7 @@ public class ArchmireView extends GeoShapeView {
 
         for (TimedLocation location : locationHistory) {
             Polygon pol = location.getPolygon();
-            double time = Game.ELAPSED_TIME - location.getTimestamp();
+            double time = Game.elapsedTime - location.getTimestamp();
             int alpha = Math.max(minAlpha, Math.min(maxAlpha, baseAlpha - (int) (time * baseAlpha / 5)));
 
             // Get or create the dimmer color with the cached alpha value

@@ -36,50 +36,32 @@ import static controller.Utils.normalizeVector;
 import static model.imagetools.ToolBox.getBufferedImage;
 
 public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, Impactable {
-    static transient BufferedImage image; // transient to avoid serialization
-    private static transient EpsilonModel INSTANCE;
+    static BufferedImage image; // transient to avoid serialization
+    private static EpsilonModel INSTANCE;
     private double lastCerebrus = -Double.MAX_VALUE;
-
-
-
-
     private boolean impactInProgress = false;
-
-
     public int numberOfVertices = 0;
-
-
     public ArrayList<Point2D> vertices = new ArrayList<>();
-
     BabyEpsilon[] babies = new BabyEpsilon[3];
-
     public static List<EpsilonModel> epsilons = new CopyOnWriteArrayList<>();
-
-    //    @SerializedName("localPanel")
-//    @Expose
     private FinalPanelModel localPanel;
 
     public EpsilonModel(Point2D anchor, MyPolygon myPolygon) {
         super(anchor, image, myPolygon, true);
         INSTANCE = this;
-        Point2D loc = new Point2D.Double(getAnchor().getX() - 250, getAnchor().getY() - 250); // todo spawn epsilon in the middle of screen
+        Point2D loc = new Point2D.Double(getAnchor().getX() - 250, getAnchor().getY() - 250);
         DoubleDimension2D size = new DoubleDimension2D(500, 500);
         localPanel = new FinalPanelModel(loc, size);
         localPanel.setIsometric(false);
         Point vector = new Point(0, 0); //todo shitty design
         this.direction = new Direction(vector);
-//        epsilonModels.add(this);
         collidables.add(this);
         movables.add(this);
         createEpsilonView(id, image);
-//        this.h = 100;
-//        damageSize.put(AttackTypes.AOE, 5);
         damageSize.put(AttackTypes.ASTRAPE, 0);
         impactables.add(this);
-
         this.health = 5000000;
         epsilons.add(this);
-
     }
 
     public static EpsilonModel getINSTANCE() {
@@ -197,16 +179,10 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
     @Override
     public void update() {
         applyDismay();
-//        System.out.println(Profile.getCurrent().PANEL_SHRINKAGE_COEFFICIENT);
         updateLocalPanel();
-
-
         moveBabies(direction);
         update(direction);
-
         applyCerebrus();
-
-
     }
 
     private void moveBabies(Direction direction){
@@ -334,23 +310,6 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
     }
 
 
-
-//    public void damage(Entity entity, double damage) {
-//        // maybe usable for melee damage of epsilon?
-//        if (damage == 0) return;
-//        this.health += (int) Profile.getCurrent().EPSILON_HEALTH_REGAIN;
-//        System.out.println("DAMAGING ...");
-//        if (entity.vulnerable) {
-//            entity.health -= damageSize.get(damage);
-//            if (entity.health <= 0) {
-//                entity.eliminate();
-//            }
-//        }
-//    }
-
-
-
-
     private void updateLocalPanel() {
         if (localPanel != null) if (isInFinalPanelModel(localPanel)) return;
         for (FinalPanelModel panel : FinalPanelModel.finalPanelModels) {
@@ -393,7 +352,7 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
         return new Point2D.Double(closestX, closestY);
     }
 
-    // todo change name:
+
     private void transferOutside(Point2D intersection){
         Point2D closestPointOnCircumference = getClosestPointOnCircumference(getAnchor(), intersection);
         Point2D offset = new Point2D.Double(intersection.getX() - closestPointOnCircumference.getX(),
@@ -401,13 +360,6 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
         anchor = addVectors(offset, getAnchor());
     }
 
-//    // tod/o change name:
-//    private void transferOutsideOfCircle(Point2D intersection){
-//        Point2D closestPointOnCircumference = getClosestPointOnCircumference(getAnchor(), intersection);
-//        Point2D offset = new Point2D.Double(intersection.getX() - closestPointOnCircumference.getX(),
-//                intersection.getY() - closestPointOnCircumference.getY());
-//        anchor = addVectors(offset, getAnchor());
-//    }
 
     private void applyCerebrus(){
         if (babies[0] == null) return;
@@ -420,10 +372,10 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
                 for (int i = 0; i < babies.length; i++) {
                     List<Point2D> points = babies[i].getBoundingPoints();
                     boolean apply = babies[i].isInside(enemy.myPolygon.getVertices());
-                    double now = Game.ELAPSED_TIME;
+                    double now = Game.elapsedTime;
                     if (apply && now - lastCerebrus > 15) {
                         babies[i].damage(enemy, AttackTypes.MELEE);
-                        lastCerebrus = Game.ELAPSED_TIME;
+                        lastCerebrus = Game.elapsedTime;
                     }
                 }
 
@@ -441,7 +393,7 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
 
 
     private void applyDismay() {
-        double now = Game.ELAPSED_TIME;
+        double now = Game.elapsedTime;
         double initiationTime = Profile.getCurrent().dismayInitiationTime;
         if (now - initiationTime > 10) return;
 
@@ -506,9 +458,9 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
             if (!isOnFall) impact(new CollisionState(intersection));
         }
         if (other instanceof NecropickModel) if (!((NecropickModel) other).isHovering()) impact(new CollisionState(intersection)); // :)
-        if (other instanceof CollectibleModel) Game.inGameXP += ((CollectibleModel) other).getCollectibleXP();
-        if (other instanceof BulletModel) ;
-        if (other instanceof SmileyBullet) ;
+//        if (other instanceof CollectibleModel) Profile.getCurrent().inGameXP += ((CollectibleModel) other).getCollectibleXP();
+//        if (other instanceof BulletModel) ;
+//        if (other instanceof SmileyBullet) ;
 
     }
 

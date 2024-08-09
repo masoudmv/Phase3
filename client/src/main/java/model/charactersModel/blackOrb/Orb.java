@@ -1,5 +1,6 @@
 package model.charactersModel.blackOrb;
 
+import controller.Game;
 import javafx.scene.shape.Circle;
 import model.FinalPanelModel;
 import model.charactersModel.BulletModel;
@@ -36,22 +37,16 @@ public class Orb extends GeoShapeModel implements Collidable {
         collidables.add(this);
         this.health = ORB_HEALTH.getValue();
 
-
         /**
          checking for intersection with epsilon
          if it touches the orb in the creation process, YOU DIE!
          */
-
         for (EpsilonModel epsilon : epsilons){
             for (GeoShapeModel model : entities){
                 if (model.intersects(this) && !model.equals(this)) model.eliminate();
 
-            }
-
-            if (epsilon.intersects(this)) System.out.println("YOU ARE DEAD!");
-            // todo show death panel ...
+            } if (epsilon.intersects(this)) System.out.println("YOU ARE DEAD!");
         }
-
     }
 
     public static BufferedImage loadImage() {
@@ -95,9 +90,6 @@ public class Orb extends GeoShapeModel implements Collidable {
 
     @Override
     public void onCollision(Collidable other, Point2D intersection) {
-//        if (other instanceof BulletModel) {
-//            this.damage((Entity) other, AttackTypes.MELEE);
-//        }
     }
 
     @Override
@@ -114,13 +106,9 @@ public class Orb extends GeoShapeModel implements Collidable {
     @Override
     public void eliminate() {
         super.eliminate();
-
         CollectibleModel.dropCollectible(getAnchor(), ORB_NUM_OF_COLLECTIBLES.getValue(), ORB_COLLECTIBLES_XP.getValue());
-
         collidables.remove(this);
-        // List to collect lasers to be removed
         CopyOnWriteArrayList<Laser> lasersToRemove = new CopyOnWriteArrayList<>();
-
         // Iterate and collect lasers to be removed
         for (Laser laser : lasers) {
             if (laser.getOrbsOfALaser()[0] == this || laser.getOrbsOfALaser()[1] == this) {
@@ -128,12 +116,8 @@ public class Orb extends GeoShapeModel implements Collidable {
                 lasersToRemove.add(laser);
             }
         }
-
-        // Remove collected lasers from the list
         lasers.removeAll(lasersToRemove);
-
-
         panel.eliminate();
-//        collidables.remove(this);
+        Game.getINSTANCE().incrementDeadEnemies();
     }
 }

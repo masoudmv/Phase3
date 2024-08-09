@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static controller.constants.EntityConstants.*;
-import static controller.constants.EntityConstants.SMILEY_AOE_ACTIVATED_LIFETIME;
 
 public class SmileyAOE extends GeoShapeView{
     private double radius;
@@ -16,7 +15,7 @@ public class SmileyAOE extends GeoShapeView{
     public SmileyAOE(String id) {
         super(id);
         this.radius = SMILEY_AOE_RADIUS.getValue();
-        birthTime = Game.ELAPSED_TIME;
+        birthTime = Game.elapsedTime;
         zOrder = 1;
     }
 
@@ -33,7 +32,7 @@ public class SmileyAOE extends GeoShapeView{
         if (locations.get(panelID) == null) return;
 
 
-        double now = Game.ELAPSED_TIME;
+        double now = Game.elapsedTime;
         g.setColor(Color.green);
 
         Point2D currentLocation = locations.get(panelID);
