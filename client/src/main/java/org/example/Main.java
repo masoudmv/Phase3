@@ -41,8 +41,6 @@ public class Main {
         Hand.loadImage();
         SmileyBullet.loadImage();
         Smiley.loadImage();
-
-
         SquarantineModel.loadImage();
         TrigorathModel.loadImage();
         OmenoctModel.loadImage();
@@ -52,32 +50,23 @@ public class Main {
         Orb.loadImage();
         BarricadosModel.loadImage();
         Fist.loadImage();
+        TrigorathModel.loadImage();
+
+        new Profile();
+        Skill.initializeSkills();
 
 
-        BufferedImage b = EpsilonModel.loadImage();
-        GraphicalObject bows = new GraphicalObject(b);
-        MyPolygon pol = bows.myBoundingPolygon;
-        new EpsilonModel(new Point2D.Double(1000, 700), pol);
+
 
 //        Hand l = new LeftHand(new Point2D.Double(500, 401));
 //        Hand r = new Hand(new Point2D.Double(1500, 400));
 //        new Smiley(new Point2D.Double(1000, 200), l , r);
-//        new Menu();
-
-        TrigorathModel.loadImage();
 
 
-        TrigorathModel.create();
-        TrigorathModel.create();
-        TrigorathModel.create();
-        TrigorathModel.create();
+        new Menu();
 
 
 
-        MainFrame.getINSTANCE();
-        new Profile();
-        new Game(); // uncoment this todo
-        Skill.initializeSkills();
 
     }
 }

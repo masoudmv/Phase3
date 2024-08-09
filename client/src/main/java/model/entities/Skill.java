@@ -21,6 +21,10 @@ public enum Skill {
     public static Skill activeSkill = EMPUSA;
     public boolean acquired = false;
     public double lastSkillTime = -Double.MAX_VALUE;
+    private static List<Skill> activeSkills = new CopyOnWriteArrayList<>();
+
+    private static Skill s1 = null;
+    private static Skill s2 = null;
 
     // Define the prerequisites for each skill
     private static final Map<Skill, List<Skill>> prerequisites = new HashMap<>();
@@ -67,7 +71,10 @@ public enum Skill {
     }
 
     public static String buySkill(Skill skill, int xp) {
-        if (skill.isAcquired()) return "this skill is already purchased!";
+        if (skill.isAcquired()) {
+            Skill.activeSkill = skill;
+            return  skill.getName() + "is set as your active skill!";
+        }
         List<Skill> pres = prerequisites.get(skill);
         for (Skill s : pres){
             if (!s.isAcquired()) return "You must activate the previous skills in this branch first!";
@@ -77,6 +84,7 @@ public enum Skill {
 
         Profile.getCurrent().totalXP -= skill.getCost();
         skill.acquired = true;
+        activeSkills.add(skill);
         return "The skill was successfully purchased!";
     }
 
@@ -109,7 +117,20 @@ public enum Skill {
             case ATHENA -> e -> Profile.getCurrent().PANEL_SHRINKAGE_COEFFICIENT *= 0.80;
             case PROTEUS -> e -> EpsilonModel.getINSTANCE().addVertex();
             case EMPUSA -> e -> EpsilonModel.getINSTANCE().empusa();
-            case DOLUS -> null;
+            case DOLUS -> e -> {
+                List<Skill> actives = activeSkills;
+                Random rand = new Random();
+                int index1 = rand.nextInt(actives.size());
+                int index2 = rand.nextInt(actives.size());
+                do {
+                    index2 = rand.nextInt(actives.size());
+                } while (index2 == index1);
+
+                s1 = actives.get(index1);
+                s2 = actives.get(index2);
+                s1.fire();
+                s2.fire();
+            };
         };
     }
 

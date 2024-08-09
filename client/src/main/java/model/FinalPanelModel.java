@@ -1,7 +1,6 @@
 package model;
 
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
+
 import controller.Game;
 import controller.Utils;
 import model.charactersModel.BulletModel;
@@ -28,36 +27,28 @@ import static model.PanelManager.handlePanelPanelCollision;
 import static model.charactersModel.EpsilonModel.epsilons;
 
 public class FinalPanelModel implements Collidable, Serializable {
-    @SerializedName("id")
-    @Expose
+
     private String id;
 
-    @SerializedName("vertices")
-    @Expose
+
     private ArrayList<Point2D> vertices;
 
     private transient ArrayList<Line2D> edges = new ArrayList<>();
 
-    @SerializedName("size")
-    @Expose
+
     protected Dimension2D size;
 
-    @SerializedName("location")
-    @Expose
     protected Point2D location;
 
     public static List<FinalPanelModel> finalPanelModels = new ArrayList<>();
 
-    @SerializedName("isIsometric")
-    @Expose
+
     private boolean isIsometric;
 
-    @SerializedName("isRigid")
-    @Expose
+
     private boolean isRigid;
 
-    @SerializedName("isStatic")
-    @Expose
+
     private boolean isStatic;
 
     private transient boolean moveUp = false;
@@ -74,12 +65,9 @@ public class FinalPanelModel implements Collidable, Serializable {
 
     private boolean shallBeEliminated = false;
 
-    @SerializedName("acceleration")
-    @Expose
     private double acceleration;
 
-    @SerializedName("velocity")
-    @Expose
+
     private double velocity;
     private boolean motionLock = false;
 

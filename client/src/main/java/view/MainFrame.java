@@ -28,6 +28,8 @@ public final class MainFrame extends JFrame {
         label.setBackground(Color.black);
         label.setOpaque(true);
 
+
+
     }
 
     public static MainFrame getINSTANCE() {

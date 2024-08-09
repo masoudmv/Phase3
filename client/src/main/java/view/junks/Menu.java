@@ -114,8 +114,6 @@ public class Menu extends JPanel implements MouseListener {
             r.keyRelease(KeyEvent.VK_TAB);
             r.keyRelease(KeyEvent.VK_ALT);
 
-//            MainFrame.getINSTANCE().makeFrameNull();
-//            MainFrame.getINSTANCE();
             new Game();
         }
         if (e.getY() > settings.y && e.getY() < settings.y + buttonHeight && settings.x < e.getX() && e.getX() < settings.x + buttonWidth) {

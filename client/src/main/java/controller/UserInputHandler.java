@@ -26,8 +26,8 @@ public class UserInputHandler implements KeyListener {
     public static Set<Integer> keysPressed = new HashSet<>();
     private Timer movementTimer;
 
-    private AbilityShopPanel abilityShopPanel = null;
-    private JFrame abilityShopFrame = null;
+    public static AbilityShopPanel abilityShopPanel = null;
+    public static JFrame abilityShopFrame = null;
 
     public UserInputHandler() {
 
@@ -73,6 +73,7 @@ public class UserInputHandler implements KeyListener {
         Map<String, Integer> keyBindings = KeyBindingMenu.getINSTANCE().getKeyBindings();
 
         if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+            Game.getINSTANCE().getGameLoop().pauseGame();
             handleAbilityShopPanelToggle();
         }
 

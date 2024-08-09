@@ -46,9 +46,14 @@ import static view.MainFrame.label;
 
 public class GameLoop implements Runnable {
 
-    public static GameLoop INSTANCE;
+
+
     private final AtomicBoolean running = new AtomicBoolean(false);
     private final AtomicBoolean exit = new AtomicBoolean(false);
+    private final AtomicBoolean paused = new AtomicBoolean(false);
+
+    public static GameLoop INSTANCE;
+
 
     private long lastUpdateTime;
 
@@ -95,9 +100,6 @@ public class GameLoop implements Runnable {
     }
 
 
-
-
-
     public void start() {
         if (running.get()) return;
         running.set(true);
@@ -115,6 +117,7 @@ public class GameLoop implements Runnable {
 
 
     public void updateView() {
+        if (paused.get()) return;
 
 
         label.setText("<html>Wave: "+ Game.wave + "<br>Elapsed Time: "+ (int) Game.ELAPSED_TIME
@@ -159,6 +162,7 @@ public class GameLoop implements Runnable {
     }
 
     public void updateModel() {
+        if (paused.get()) return;
 
 
         for (int i = 0; i < finalPanelModels.size(); i++) {
@@ -317,6 +321,19 @@ public class GameLoop implements Runnable {
 
     public boolean isOn() {
         return !exit.get();
+    }
+
+
+    public void pauseGame() {
+        paused.set(true);
+    }
+
+    public void resumeGame() {
+        paused.set(false);
+    }
+
+    public boolean isPaused() {
+        return paused.get();
     }
 
 }

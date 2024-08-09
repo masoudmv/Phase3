@@ -1,7 +1,6 @@
 package model.charactersModel;
 
-import com.google.gson.annotations.Expose;
-import com.google.gson.annotations.SerializedName;
+
 import controller.Game;
 import model.DoubleDimension2D;
 import model.FinalPanelModel;
@@ -43,16 +42,13 @@ public class EpsilonModel extends GeoShapeModel implements Movable, Collidable, 
 
 
 
-    @SerializedName("impactInProgress")
-    @Expose
+
     private boolean impactInProgress = false;
 
-    @SerializedName("numberOfVertices")
-    @Expose
+
     public int numberOfVertices = 0;
 
-    @SerializedName("vertices")
-    @Expose
+
     public ArrayList<Point2D> vertices = new ArrayList<>();
 
     BabyEpsilon[] babies = new BabyEpsilon[3];

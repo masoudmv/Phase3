@@ -1,8 +1,12 @@
 package controller;
 
 import controller.constants.Constants;
+import model.MyPolygon;
 import model.charactersModel.EpsilonModel;
 //import view.MainPanel;
+
+import model.charactersModel.TrigorathModel;
+import org.example.GraphicalObject;
 import org.example.Main;
 import view.MainFrame;
 //import view.MainPanel;
@@ -10,6 +14,7 @@ import view.MainFrame;
 import javax.sound.sampled.Clip;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 
 import static view.MainFrame.label;
@@ -24,7 +29,7 @@ public class Game {
 
 
 
-    private static GameLoop gameLoop;
+    private GameLoop gameLoop;
 
 
 
@@ -35,22 +40,28 @@ public class Game {
         inGameXP=0;
         wave=1;
         Constants.RADIUS = 15;
-        MainFrame frame = MainFrame.getINSTANCE();
-//        frame.addMouseListener(new MouseController());
-//        frame.addMouseMotionListener(new MouseController());
 
+
+        BufferedImage b = EpsilonModel.loadImage();
+        GraphicalObject bows = new GraphicalObject(b);
+        MyPolygon pol = bows.getMyBoundingPolygon();
+
+        new EpsilonModel(new Point2D.Double(1000, 700), pol);
+
+
+        TrigorathModel.create();
+        TrigorathModel.create();
+        TrigorathModel.create();
+        TrigorathModel.create();
 
         SwingUtilities.invokeLater(() -> {
             MainFrame.getINSTANCE().add(label);
 
-//            MainPanel.getINSTANCE();
-//            gameLoop = new GameLoop();
+
             MainFrame.getINSTANCE().addKeyListener(UserInputHandler.getINSTANCE());
-            new GameLoop();
-//            GameLoop.getINSTANCE().initializeGame();
-//            GameLoop.getINSTANCE().start();
-//            GameLoop.getINSTANCE();
-//            gameLoop.run(); // todo change the logic of game loop
+
+            gameLoop = new GameLoop();
+
 
         });
     }
@@ -81,6 +92,9 @@ public class Game {
     public static void nullifyGameInstance() {
         INSTANCE = null;
 //        MainFrame.getINSTANCE().removeKeyListener(gameLoop); // todo: now the gameLoop doesnt contain KeyLister
-        gameLoop =null;
+    }
+
+    public GameLoop getGameLoop() {
+        return gameLoop;
     }
 }

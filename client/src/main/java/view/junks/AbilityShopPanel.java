@@ -1,12 +1,16 @@
 package view.junks;
 
 import controller.Game;
+import controller.UserInputHandler;
 import model.entities.Ability;
 import model.entities.Profile;
 import view.MainFrame;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
 public class AbilityShopPanel extends JPanel {
     private final JFrame frame;
@@ -31,6 +35,25 @@ public class AbilityShopPanel extends JPanel {
             gbc.gridy = buttonY++; // Increment row index for each button
             add(abilityButton, gbc);
         }
+
+
+        // Add key binding for escape key
+        InputMap inputMap = getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+        ActionMap actionMap = getActionMap();
+
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "escape");
+        actionMap.put("escape", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Game.getINSTANCE().getGameLoop().resumeGame();
+                frame.dispose();
+                UserInputHandler.abilityShopPanel = null;
+                UserInputHandler.abilityShopFrame = null;
+            }
+        });
+
+
+
     }
 
     private void performAbilityAction(Ability ability) {
